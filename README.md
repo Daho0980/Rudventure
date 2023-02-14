@@ -1,2 +1,2 @@
 # Rudventure
-# Rudventure
+The rogue like terminal game.
