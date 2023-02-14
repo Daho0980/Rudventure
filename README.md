@@ -1,2 +1,2 @@
 # Rudventure
-The rogue like terminal game.
+Why do you think this repo needs a README?
