@@ -17,8 +17,8 @@ class enemy:
     def start(self, sethp):
         self.hp = sethp
         while True:
-            sX  = random.randrange(1,len(s.room))
-            sY  = random.randrange(1,len(s.room))
+            sX  = random.randrange(1,len(s.room)-1)
+            sY  = random.randrange(1,len(s.room)-1)
             CEZ = [s.p1, s.R, s.wall, s.item, s.goal]
             if s.room[sY][sX] in CEZ: continue
             else:
