@@ -10,28 +10,35 @@ def what(): 1 + 1
 
 def endPrint(text): print(text, end='')
 
+def statusBarFormatPrint(status, statusName, minusStatus=0, color=s.colors['R'], tag="", space=" "):
+    Display = ""
+    Display += f"{statusName} :{space}["
+    for i in range(status): Display += f"{color}🁢{s.colors['end']}"
+    if minusStatus != 0:
+        for j in range(minusStatus-status): Display += f"{s.colors['lB1']}🁢{s.colors['end']}"
+    Display += f"] {tag}\n"
+
+    return Display
+
 def asciiPrint():
-    endPrint("hp     : [")
-    for HP in range(s.hp): endPrint(f"{s.colors['R']}🁢{s.colors['end']}")
-    for eHP in range(s.Mhp-s.hp): endPrint(f"{s.colors['lB1']}🁢{s.colors['end']}")
-    endPrint("]\ndef    : [")
-    for DEF in range(s.df): endPrint(f"{s.colors['B']}🁢{s.colors['end']}")
-    for eDEF in range(s.Mdf-s.df): endPrint(f"{s.colors['lB1']}🁢{s.colors['end']}")
-    endPrint(f"]\nhunger : [")
-    for Hunger in range(math.ceil(((s.hunger/500)*100)/10)): endPrint(f"{s.colors['lY']}🁢{s.colors['end']}")
-    if math.ceil(((s.hunger/500)*100)/10) <= 1: endPrint(f"] {s.colors['lY']}{s.hunger:0.0f}{s.colors['end']}")
-    else: endPrint(f"] {s.colors['lY']}{(s.hunger/500)*100:0.0f}%{s.colors['end']}")
-    endPrint("\natk    : [")
-    for ATK in range(s.atk): endPrint(f"{s.colors['G']}🁢{s.colors['end']}")
-    print("]\n")
+    Display = ""
+    Display += statusBarFormatPrint(s.hp, "hp", s.Mhp, space="     ")
+    Display += statusBarFormatPrint(s.df, "def", s.Mdf, s.colors['B'], space="    ")
+    if math.ceil(((s.hunger/500)*10)) <= 1: hungerTag = str(s.hunger)
+    else: hungerTag = f"{s.colors['lY']}{(s.hunger/500)*100:0.0f}%{s.colors['end']}"
+    Display += statusBarFormatPrint(math.ceil(((s.hunger/500)*100)/10), "hunger", color=s.colors['lY'], tag=hungerTag)
+    Display += statusBarFormatPrint(s.atk, "atk", color=s.colors['G'], space="    ")
+    Display += "\n"
+
+    return Display
 
 def fieldPrint():
-    if s.showStateDesign == 1: print(f"hp : {s.colors['R']}{s.hp}/{s.Mhp}{s.colors['end']} | def : {s.colors['B']}{s.df}/{s.Mdf}{s.colors['end']}\nhunger : {s.colors['lY']}{(s.hunger/500)*100:0.0f}%{s.colors['end']} | atk : {s.colors['G']}{s.atk}{s.colors['end']}\n")
-    elif s.showStateDesign == 2: asciiPrint()
-    Display = ''
+    Display = ""
+    if s.showStateDesign == 1: Display += f"hp : {s.colors['R']}{s.hp}/{s.Mhp}{s.colors['end']} | def : {s.colors['B']}{s.df}/{s.Mdf}{s.colors['end']}\nhunger : {s.colors['lY']}{(s.hunger/500)*100:0.0f}%{s.colors['end']} | atk : {s.colors['G']}{s.atk}{s.colors['end']}\n\n"
+    elif s.showStateDesign == 2: Display += asciiPrint()
     for i in range(len(s.room)): Display += ' '.join(map(str, s.room[i])); Display += '\n'
     print(Display)
-    print(s.objects)
+    print(s.entities)
 
 def slash():
     if os.name == 'posix': return '/'

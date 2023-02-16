@@ -68,7 +68,7 @@ hpLow = False
 TFP = f'{os.getcwd()}/Packages/'
 frame = 0
 sound = True
-objects = []
+entities = []
 
 # in game print settings
 showStateDesign = 1 # normal = 1

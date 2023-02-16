@@ -1,18 +1,18 @@
 import random, time
 from   Packages.modules         import states, player
 from   Packages.globalFunctions import play
-from   Packages.modules.states  import objects
+from   Packages.modules.states  import entities
 
 s, p = states, player
 onoPoint = [s.R, s.wall, s.goal]
 
 class enemy:
     def __init__(self, y, x, hp, name):
-        global objects
+        global entities
         self.y    = y
         self.x    = x
         self.hp   = hp
-        objects.append(name)
+        entities.append(name)
 
     def start(self, sethp):
         self.hp = sethp
