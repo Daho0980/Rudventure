@@ -1,0 +1,8 @@
+print("\n=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n\n    0 : Normal :        \033[0ma\033[0m")
+print("    1 : Bold :          \033[1ma\033[0m")
+print("    2 : Invisible :     \033[2ma\033[0m")
+print("    3 : Italic :        \033[3ma\033[0m")
+print("    4 : Underscore :    \033[4ma\033[0m")
+print("    7 : Reversal :      \033[7ma\033[0m")
+print("    8 : RealInvisible : \033[8ma\033[0m")
+print("    9 : Strikethrough : \033[9ma\033[0m\n\n=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")

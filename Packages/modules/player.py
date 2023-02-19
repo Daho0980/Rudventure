@@ -1,4 +1,4 @@
-import random
+import random, time
 from   pynput.keyboard          import Key
 from   Packages.modules         import states, rooms, stages
 from   Packages.globalFunctions import play
@@ -57,12 +57,9 @@ class player:
                 s.dfCrack = 1
             else: sound = f'{s.TFP}sounds{s.s}Hit.wav'
         elif s.room[s.y][s.x] in enemys:
-            if s.y == S1.e.y and s.x == S1.e.x:
-                if S1.e.hp > 0: S1.e.hp -= s.atk
-            elif s.y == S1.e1.y and s.x == S1.e1.x:
-                if S1.e1.hp > 0: S1.e1.hp -= s.atk
-            elif s.y == S1.boss.y and s.x == S1.boss.x:
-                if S1.boss.hp > 0: S1.boss.hp -= s.atk
+            s.Wanted = [eval(f"{s.y}"), eval(f"{s.x}")]
+            time.sleep(0.01)
+            s.Wanted = []
             sound = f'{s.TFP}sounds{s.s}slash.wav'
         elif s.room[s.y][s.x] == '◘':
             boxEvent()

@@ -9,9 +9,10 @@ def quest(stage):
     output = 0
     
     if stage == 0:
-        if S1.e.hp <= 0:
-            if s.room == r.field:
-                s.room[0][2] = s.R
+        # if S1.e.hp <= 0:
+        #     if s.room == r.field:
+        #         s.room[0][2] = s.R
+        if len(s.entities) == 0 and s.room == r.field: s.room[0][2] = s.R
         if r.room_1[3][3] == s.p1:
             output = 1
 
@@ -43,7 +44,7 @@ def quest(stage):
             output = 1
 
     elif stage == 4:
-        if S1.e.hp <= 0:
+        if len(s.entities) == 0:
             if setGoal == 0:
                 s.room[0][7] = s.goal
                 setGoal += 1

@@ -17,14 +17,6 @@ s.s    = gbf.slash()
 clear()
 p.set()
 
-def enemyMove():
-    while True:
-        if s.main <= 0: break
-        elif s.jpsf:
-            S1.e.move()
-            S1.e1.move()
-            S1.boss.bossMove()
-
 def keyInput(key):
     if s.jpsf:
         victory = quests.quest(s.stage)
@@ -38,11 +30,10 @@ def key_release(key):
 
     if yctuoh == False:
         if key == Key.esc:
-            print('\033[2m\033[3mEnter를 한 번 눌러주세요\033[0m\n')
+            print(f"{s.markdown([2, 3])}Enter를 한 번 눌러주세요{s.colors['end']}\n")
             options.menu()
 
 keyinput = Listener(on_press=keyInput, name='keyinput', on_release=key_release)
-eMove = threading.Thread(target=enemyMove, name='Enemy')
 
 
 def gameChecker():
@@ -61,7 +52,7 @@ def gameChecker():
         time.sleep(1)
         yctuoh = True
         clear()
-        print('\033[2m\033[3mEnter를 한 번 눌러주세요\033[0m')
+        print(f"{s.markdown([2, 3])}Enter를 한 번 눌러주세요{s.colors['end']}")
         selectStat = selector.selector.Dropdown("올릴 스탯을 선택해주세요", {"체력 증가":"체력의 최대치가 1 증가합니다.", "방어력 증가":"방어력의 최대치가 1 증가합니다.","공격력 증가":"공격력이 1 상승합니다."}, [1,0,255,10], '@')
         if selectStat == 1: s.Mhp += 1
         elif selectStat == 2: s.Mdf += 1
@@ -100,20 +91,19 @@ input(f"{s.colors['bold']}게임 설명{s.colors['end']}\n______________________
 gbf.play(f'{s.TFP}sounds{s.s}select.wav'); clear()
 
 keyinput.start()
-eMove.start()
 
 while s.main > 0:
     S.stage(s.stage)
     time.sleep(1)
     gbf.play(f'{s.TFP}sounds{s.s}smash.wav')
-    if s.stage == 0: print(f"\033[1mT U T O R I A L{s.STOP}")
-    else: print(f"\033[1mS T A G E   {s.stage}{s.STOP}")
+    if s.stage == 0: print(f"{s.markdown(1)}T U T O R I A L{s.colors['end']}")
+    else: print(f"{s.markdown(1)}S T A G E   {s.stage}{s.colors['end']}")
     time.sleep(1)
-    gbf.play(f'{s.TFP}sounds{s.s}smash.wav')
-    print(f"\n\n\033[3m{s.stageName}{s.STOP}")
+    gbf.play(f"{s.TFP}sounds{s.s}smash.wav")
+    print(f"\n\n{s.markdown(3)}{s.stageName}{s.colors['end']}")
     time.sleep(1.5)
     clear()
-    gbf.play(f'{s.TFP}sounds{s.s}smash.wav')
+    gbf.play(f"{s.TFP}sounds{s.s}smash.wav")
     s.jpsf = True
 
     while True:

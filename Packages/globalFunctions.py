@@ -48,7 +48,7 @@ def play(File):
     def s1():
         playsound = __import__("playsound")
         playsound.playsound(File)
-    if s.sound == True: threading.Thread(target=s1, name="sound").start()
+    if s.sound == True: threading.Thread(target=s1, name="sound", daemon=True).start()
 
 def slowLogoPrint(text):
     for word in text:
@@ -56,9 +56,35 @@ def slowLogoPrint(text):
         play(f"{s.TFP}sounds{s.s}smash.wav")
         time.sleep(0.5)
 
-def addEntity(entityName):
-    def EntityInteraction(): exec(f"{entityName}.move()")
-    threading.Thread(target=EntityInteraction, name=entityName).start()
+def addEntity(entityType, initHp, x=0, y=0):
+    kinds                = ["monster", "boss"]
+    classType            = ["enemy", "boss"]
+    additionalProperties = ["", f", {y}, {x}"]
+    Name                 = kinds[entityType]
+    a = 0
+    while True:
+        if Name + f"_{a}" not in s.entities:
+            Name  = Name + f"_{a}"
+            Rname = kinds[entityType] + f"_{a}"
+            break
+        a += 1
+    nameSpace = {f"{Name}" : Name, "Rname" : Rname}
+    exec(f"""
+from Packages.modules import enemy, states
+{Name} = enemy.{classType[entityType]}(0, 0, 0)
+{Name}.start({initHp}{additionalProperties[entityType]})
+states.entities.append(Rname)
+    """, nameSpace)
+    def EntityInteraction():
+        exec(f"""
+from Packages.modules import states
+while True:
+    if {Name}.hp <= 0 or states.main != 1:
+        states.entities.remove(Rname)
+        break
+    elif states.jpsf: {Name}.move()
+        """, nameSpace)
+    threading.Thread(target=EntityInteraction, name=Rname).start()
 
 # def addDoor(roomName, room, x, y, x1, y1, afterroomName, afterroom):
 #     print(s.Rooms)

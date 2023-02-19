@@ -23,7 +23,7 @@ class selector:
         for i in range(lineSpace): output += ' '
         return output
 
-    def printSelect(title, subtitle, arrow, icon, Enter, maxLine, lineSpace, subtitleValues, nowSelectColumn, nowSelectRow, tag):
+    def printSelect(title, subtitle, arrow, Enter, maxLine, lineSpace, subtitleValues, nowSelectColumn, nowSelectRow, tag):
         def positionOutput(subtitle, row, column):
             if row == len(subtitle)-1:
                 row     = 0
@@ -42,7 +42,7 @@ class selector:
                 row, column = positionOutput(subtitle, row, column)
                 subtitleLine += (f'{arrow[row][column]} {subtitle[row][column]}{selector.lineSpaceMaker(lineSpace)}')
             Display += subtitleLine; Display += '\n'
-        if subtitleValues != []: Display += f'\033[0m\033[2m\033[3m\n    {subtitleValues[(maxLine*nowSelectRow)+nowSelectColumn]}'
+        if subtitleValues != []: Display += f"{s.markdown([0,2,3])}\n    {subtitleValues[(maxLine*nowSelectRow)+nowSelectColumn]}"
         Display += tag
         print(Display)
 
@@ -87,14 +87,14 @@ class selector:
             for j in range(maxLine): arrow[i].append(' ')
         while True: # 어쩔반복
             arrow[nowSelectRow][nowSelectColumn] = f'\033[{arrowColor}m{icon}' # 화살표 위치 설정
-            if nowSelectRow        < len(subtitleKeys)-1:               arrow[nowSelectRow+1][nowSelectColumn] = f'\033[0m ' # 다음 가로줄이 존재할 때: 다음 가로줄의 nowSelectColumn번째 요소를 기본색, 상태로 되돌린다(색 전염 방지)
-            if nowSelectRow        > 0 and nowSelectColumn < maxLine-1: arrow[0][nowSelectColumn+1] = f'\033[0m ' # 이전 가로줄이 존재하고 맨 아래쪽 줄이 아닐 때: 첫 가로줄의 아랫칸을 기본색, 상태로 되돌린다(색 전염 방지22)
-            if nowSelectColumn + 1 < maxLine:                           arrow[nowSelectRow][nowSelectColumn+1] = f'\033[0m ' # 현재 위치 + 1이 subtitle 최대 개수보다 적을 때: 다음칸을 기본색, 상태로 되돌린다(색 전염 방지333)
-            selector.printSelect(title, subtitleKeys, arrow, icon, Enter, maxLine, lineSpace, subtitleValues, nowSelectColumn, nowSelectRow, tag)
+            if nowSelectRow        < len(subtitleKeys)-1:               arrow[nowSelectRow+1][nowSelectColumn] = f"\033[0m " # 다음 가로줄이 존재할 때: 다음 가로줄의 nowSelectColumn번째 요소를 기본색, 상태로 되돌린다(색 전염 방지)
+            if nowSelectRow        > 0 and nowSelectColumn < maxLine-1: arrow[0][nowSelectColumn+1] = f"\033[0m " # 이전 가로줄이 존재하고 맨 아래쪽 줄이 아닐 때: 첫 가로줄의 아랫칸을 기본색, 상태로 되돌린다(색 전염 방지22)
+            if nowSelectColumn + 1 < maxLine:                           arrow[nowSelectRow][nowSelectColumn+1] = f"\033[0m " # 현재 위치 + 1이 subtitle 최대 개수보다 적을 때: 다음칸을 기본색, 상태로 되돌린다(색 전염 방지333)
+            selector.printSelect(title, subtitleKeys, arrow, Enter, maxLine, lineSpace, subtitleValues, nowSelectColumn, nowSelectRow, tag)
 
             SNum, SNum1                          = 1, 0 # 가로, 세로 변환 정도값
             up, down, left, right                = ['w', 'W', 'ㅈ'], ['s', 'S', 'ㄴ'], ['a', 'A', 'ㅁ'], ['d', 'D', 'ㅇ']
-            Input                                = input(f'\033[0m>>>')
+            Input                                = input(f"{s.colors['end']}>>>")
             arrow[nowSelectRow][nowSelectColumn] = ' '
             if Input in up: # sublist 현재 위치 올리기
                 while True:
