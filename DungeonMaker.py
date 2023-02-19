@@ -25,7 +25,7 @@ def GraphicMaker(MapData):
 
 for i in range(9):
     Map.append([])
-    for j in range(9): Map[i].append(['.', 0, 0, 0, 0])
+    for j in range(9): Map[i].append([' ', 0, 0, 0, 0])
 
 x, y         = 4, 4
 rooms        = ['\033[31m^\033[0m', '^', '\033[32m*\033[0m', '\033[33m!\033[0m', '\033[34m/\033[0m']
@@ -71,6 +71,7 @@ def showProgress():
             savedRoomGraphic                           = MfS[progress[i][0]][progress[i][1]][0]
             MfS[4][4][0]                               = rooms[0]
         print(progress[i])
+        print(f"Data : {Map[progress[i][0]][progress[i][1]]}")
         MfS[progress[i][0]][progress[i][1]][0]         = f"\033[45m{MfS[progress[i][0]][progress[i][1]][0]}\033[0m"
         gridPrint(GraphicMaker(MfS))
         time.sleep(1)
