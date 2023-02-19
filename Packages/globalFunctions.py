@@ -38,7 +38,6 @@ def fieldPrint():
     elif s.showStateDesign == 2: Display += asciiPrint()
     for i in range(len(s.room)): Display += ' '.join(map(str, s.room[i])); Display += '\n'
     print(Display)
-    print(s.entities)
 
 def slash():
     if os.name == 'posix': return '/'
