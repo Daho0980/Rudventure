@@ -1,6 +1,6 @@
 import os, time, random
 from modules import rooms
-from modules.osd import clear
+from globalFunctions import clear
 
 r = rooms
 blockType = {

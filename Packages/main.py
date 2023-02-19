@@ -5,11 +5,11 @@ else:               s = '/'
 TFP = f'{os.getcwd()}{s}'
 try:    exec(open(f'{TFP}Packages{s}downloadModules.py').read())
 except: exec(open(f'{TFP}Packages{s}downloadModules.py').read())
-from   pynput.keyboard          import Key, Listener
-import Packages.options         as     options
-import Packages.globalFunctions as     globalFunctions
-from   Packages.modules         import player, rooms, states, stages, quests, selector
-from   Packages.modules.osd     import clear
+from   pynput.keyboard              import Key, Listener
+import Packages.options             as     options
+import Packages.globalFunctions     as     globalFunctions
+from   Packages.modules             import player, rooms, states, stages, quests, selector
+from   Packages.globalFunctions     import clear
 
 p, r, s, S, S1, gbf= player.player, rooms, states, stages.stages, stages, globalFunctions
 yctuoh = False

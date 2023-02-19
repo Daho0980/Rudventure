@@ -1,4 +1,4 @@
-from Packages.modules.osd import clear
+from Packages.globalFunctions import clear
 import pip, sys
 
 def install(package):

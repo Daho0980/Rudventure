@@ -1,7 +1,7 @@
 import time, json
-from   Packages.modules         import states, selector
-from   Packages.modules.osd     import clear
-from   Packages.globalFunctions import play
+from   Packages.modules             import states, selector
+from   Packages.globalFunctions     import clear
+from   Packages.globalFunctions     import play
 
 s  = states
 sc = selector.selector

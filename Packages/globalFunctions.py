@@ -8,6 +8,8 @@ s, r = states, rooms
 
 def what(): 1 + 1
 
+def clear(): os.system("clear" if os.name == "posix" else "cls")
+
 def endPrint(text): print(text, end='')
 
 def statusBarFormatPrint(status, statusName, minusStatus=0, color=s.colors['R'], tag="", space=" "):
