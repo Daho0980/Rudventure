@@ -69,7 +69,7 @@ main = 1
 LOGO   = "  _   \n /_/     _/   _  _ _/_    _ _ \n/ \ /_//_/ |//_\'/ //  /_// /_\'\n\n𝘢 𝘭 𝘱 𝘩 𝘢\n\n"
 p1 = f"{colors['G']}{markdown(3)}@{colors['end']}" # 0, 255, 10
 e = '𓃦'
-boss = '𓀚'
+boss = '𓃙'
 wall = '◼'
 R = '▒'
 item = '◘'
@@ -81,8 +81,8 @@ doors = [[[0,2,5,3,r.room_1]], [[6,3,1,2,r.field]], [[9,14,1,1,r.invisible_walls
 stepableBlocks = [floor]
 
 # stage
-nowStage = 0
-stage = 0
+nowStage = 4
+stage = 4
 stageName = ""
 
 # background Vars

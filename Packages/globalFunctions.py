@@ -82,6 +82,8 @@ while True:
         states.entities.remove(Rname)
         break
     elif states.jpsf: {Name}.move()
+states.room[{Name}.y][{Name}.x] = states.stepableBlocks[{Name}.stepped]
+{Name}
         """, nameSpace)
     threading.Thread(target=EntityInteraction, name=Rname).start()
 

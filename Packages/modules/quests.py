@@ -18,7 +18,7 @@ def quest(stage):
 
     elif stage == 1:
         s.room = r.maze_big[:]
-        if S1.e.hp <= 0 and S1.e1.hp <= 0:
+        if len(s.entities) == 0:
             if s.room[20][11] == s.p1:
                 output = 1
 

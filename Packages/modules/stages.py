@@ -4,9 +4,6 @@ from   Packages import globalFunctions
 
 s, p, r = states, player, rooms
 gbf = globalFunctions
-e = enemy.enemy(0, 0, 0)
-e1 = enemy.enemy(0, 0, 0)
-boss = enemy.enemy(0, 0, 0)
 
 class stages:
     def stage(stage):

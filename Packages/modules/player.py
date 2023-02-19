@@ -60,6 +60,7 @@ class player:
             s.Wanted = [eval(f"{s.y}"), eval(f"{s.x}")]
             time.sleep(0.01)
             s.Wanted = []
+            s.y, s.x = s.bfy, s.bfx
             sound = f'{s.TFP}sounds{s.s}slash.wav'
         elif s.room[s.y][s.x] == '◘':
             boxEvent()

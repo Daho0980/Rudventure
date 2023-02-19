@@ -29,8 +29,8 @@ class enemy:
         sound = f'{s.TFP}sounds{s.s}enemy_Hit.wav'
         if s.df > 0:
             s.df -= damage
-            if s.df < 0: s.hp += s.df
-            s.df = round(s.df)
+            if s.df < 0       : s.hp += s.df
+            if round(s.df) < 0: s.df = 0
             if s.df == 0 and s.dfCrack <= 0:
                 sound     = f'{s.TFP}sounds{s.s}crack.wav'
                 s.dfCrack = 1
@@ -93,6 +93,13 @@ class boss(enemy):
     def move(self):
         global onoPoint
 
+        def Targetted():
+            for i in range(2):
+                s.room[self.y][self.x] = f"{s.colors['R']}𓃚{s.colors['end']}"
+                time.sleep(0.1)
+                s.room[self.y][self.x] = s.boss
+                time.sleep(0.1)
+
         if len(s.Wanted) > 0 and s.Wanted[0] == self.y and s.Wanted[1] == self.x:
             self.hp -= s.atk
 
@@ -103,35 +110,28 @@ class boss(enemy):
             bfx, bfy = self.x, self.y
             if self.hp > 0:
                 Moves, Moves1 = ["+=", "-="], ["+", "-"]
-                canBreak      = [s.item, s.p1, s.floor]
+                canBreak      = [s.item, s.floor]
                 a             = 0
                 if self.x == s.x or self.y == s.y:
                     play(f"{s.TFP}sounds{s.s}TargetLocked.wav")
                     if self.x == s.x:
-                        for i in range(2):
-                            s.room[self.y][self.x] = f"{s.colors['R']}{s.boss}{s.colors['end']}"
-                            time.sleep(0.1)
-                            s.room[self.y][self.x] = s.boss
-                            time.sleep(0.1)
+                        Targetted()
                         if self.y < s.y: a = 0
                         else: a = 1
                         while True:
+                            if s.room[eval(f"self.y{Moves1[a]}1")][self.x] == s.p1: enemy.pDamage(2)
                             if s.room[eval(f"self.y{Moves1[a]}1")][self.x] not in canBreak: break
-                            elif s.room[eval(f"self.y{Moves1[a]}1")][self.x] == s.p1: enemy.pDamage(2)
                             s.room[self.y][self.x] = s.floor
                             exec(f"self.y{Moves[a]}1"); s.room[self.y][self.x] = s.boss
                             time.sleep(0.1)
 
                     elif self.y == s.y:
-                        for i in range(2):
-                            s.room[self.y][self.x] = f"{s.colors['R']}{s.boss}{s.colors['end']}"
-                            time.sleep(0.2)
-                            s.room[self.y][self.x] = s.boss
+                        Targetted()
                         if self.x < s.x: a = 0
                         else: a = 1
                         while True:
+                            if s.room[self.y][eval(f"self.x{Moves1[a]}1")] == s.p1: enemy.pDamage(2)
                             if s.room[self.y][eval(f"self.x{Moves1[a]}1")] not in canBreak: break
-                            elif s.room[self.y][eval(f"self.x{Moves1[a]}1")] == s.p1: enemy.pDamage(2)
                             s.room[self.y][self.x] = s.floor
                             exec(f"self.x{Moves[a]}1"); s.room[self.y][self.x] = s.boss
                             time.sleep(0.1)
