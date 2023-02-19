@@ -14,6 +14,32 @@ colors = {
     'end':"\033[0m"
 }
 
+def customColor(R, G, B, Type=1):
+    colorKinds = {
+        1 : '38', # text color
+        2 : '48' # bg color
+    }
+    return f'{colorKinds[Type]};2;{R};{G};{B}'
+
+def markdown(Type=0):
+    MarkdownKinds = {
+        0 : "\033[0m", # normal
+        1 : "\033[1m", # bold
+        2 : "\033[2m", # covered
+        3 : "\033[3m", # italic
+        4 : "\033[4m", # underscore
+        5 : "\033[7m", # reversal
+        6 : "\033[8m", # invisible
+        7 : "\033[9m" # strikethrough
+    }
+    if isinstance(Type, list):
+        output = ""
+        for i in Type: output += MarkdownKinds[i]
+    else: output = MarkdownKinds[Type]
+
+    return output
+
+
 # positions
 x = 0
 bfx = 0
@@ -41,7 +67,7 @@ main = 1
 
 # icons and doors
 LOGO   = "  _   \n /_/     _/   _  _ _/_    _ _ \n/ \ /_//_/ |//_\'/ //  /_// /_\'\n\n𝘢 𝘭 𝘱 𝘩 𝘢\n\n"
-p1 = '@'
+p1 = f"{colors['G']}{markdown(3)}@{colors['end']}" # 0, 255, 10
 e = '𓃦'
 boss = '𓀚'
 wall = '◼'
@@ -52,6 +78,7 @@ floor = '.'
 fakeFloor = '∙'
 doorRooms = [r.field, r.room_1, r.invisible_walls1]
 doors = [[[0,2,5,3,r.room_1]], [[6,3,1,2,r.field]], [[9,14,1,1,r.invisible_walls2]]]
+stepableBlocks = [floor]
 
 # stage
 nowStage = 0
@@ -61,7 +88,6 @@ stageName = ""
 # background Vars
 s = ''
 room = r.field
-STOP = '\033[0m'
 power = 1
 jpsf = False
 hpLow = False
@@ -69,6 +95,7 @@ TFP = f'{os.getcwd()}/Packages/'
 frame = 0
 sound = True
 entities = []
+Wanted = []
 
 # in game print settings
 showStateDesign = 1 # normal = 1
