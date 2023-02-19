@@ -81,8 +81,8 @@ doors = [[[0,2,5,3,r.room_1]], [[6,3,1,2,r.field]], [[9,14,1,1,r.invisible_walls
 stepableBlocks = [floor]
 
 # stage
-nowStage = 4
-stage = 4
+nowStage = 0
+stage = 0
 stageName = ""
 
 # background Vars
