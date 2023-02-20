@@ -2,6 +2,7 @@
 import os, sys, time, threading, random
 if os.name == 'nt': s = '\\'
 else:               s = '/'
+# s = '/' if os.name == "posix" else "\\"
 TFP = f'{os.getcwd()}{s}'
 try:    exec(open(f'{TFP}Packages{s}downloadModules.py').read())
 except: exec(open(f'{TFP}Packages{s}downloadModules.py').read())

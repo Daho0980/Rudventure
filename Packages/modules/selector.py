@@ -88,7 +88,7 @@ class selector:
         while True: # 어쩔반복
             arrow[nowSelectRow][nowSelectColumn] = f'\033[{arrowColor}m{icon}' # 화살표 위치 설정
             if nowSelectRow        < len(subtitleKeys)-1:               arrow[nowSelectRow+1][nowSelectColumn] = f"\033[0m " # 다음 가로줄이 존재할 때: 다음 가로줄의 nowSelectColumn번째 요소를 기본색, 상태로 되돌린다(색 전염 방지)
-            if nowSelectRow        > 0 and nowSelectColumn < maxLine-1: arrow[0][nowSelectColumn+1] = f"\033[0m " # 이전 가로줄이 존재하고 맨 아래쪽 줄이 아닐 때: 첫 가로줄의 아랫칸을 기본색, 상태로 되돌린다(색 전염 방지22)
+            if nowSelectRow        > 0 and nowSelectColumn < maxLine-1: arrow[0][nowSelectColumn+1]            = f"\033[0m " # 이전 가로줄이 존재하고 맨 아래쪽 줄이 아닐 때: 첫 가로줄의 아랫칸을 기본색, 상태로 되돌린다(색 전염 방지22)
             if nowSelectColumn + 1 < maxLine:                           arrow[nowSelectRow][nowSelectColumn+1] = f"\033[0m " # 현재 위치 + 1이 subtitle 최대 개수보다 적을 때: 다음칸을 기본색, 상태로 되돌린다(색 전염 방지333)
             selector.printSelect(title, subtitleKeys, arrow, Enter, maxLine, lineSpace, subtitleValues, nowSelectColumn, nowSelectRow, tag)
 
