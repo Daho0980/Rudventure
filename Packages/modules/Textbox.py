@@ -1,21 +1,55 @@
 import unicodedata
+import re
 
-def TextBox(Inp, Type=0, maxLine=100, fillChar=" ", distance=0):
-        Display = ""
-        Line = {0:["╔", "╗"], 1:["╚", "╝"]}
-        Display += "\n"*distance
+def escapeAnsi(line):
+    ansi_escape =re.compile(r'(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]')
+    return ansi_escape.sub('', line)
+
+def checkActualLen(line):
+    Len = 0
+    for i in line:
+        if unicodedata.east_asian_width(i) in ['F', 'W']: Len += 2
+        else: Len += 1
+    return Len
+
+def TextBox(Inp, Type="left", maxLine=100, fillChar=" ", inDistance=0, outDistance=0, AMLS=False, endLineBreak=False):
+        Display  = ""
+
+        Line       = {0:["╔", "╗"], 1:["╚", "╝"], 2:["╠", "╣"]}
+        Texts      = Inp.split("\n")
+        FrontSpace = ""
+        BackSpace  = ""
+        endLine    = "\n" if endLineBreak == True else ""
+        if AMLS == True:
+            maxLine = 0
+            for i in Texts:
+                if maxLine < checkActualLen(escapeAnsi(i)): maxLine = checkActualLen(escapeAnsi(i))
+
+        Display += "\n"*outDistance
         Display += Line[0][0]+"═"*(maxLine)+Line[0][1]+"\n"
-        Texts = Inp.split("\n")
+        Display += ("║"+fillChar*maxLine+"║"+"\n")*inDistance
         for i in range(len(Texts)):
             space = 0
-            for j in range(len(Texts[i])):
-                if unicodedata.east_asian_width(Texts[i][j]) in ['F', 'W']: space += 2
-                else: space += 1
-            FrontHalfSpace = int((maxLine-space)/2)
-            BackHalfSpace  = int((maxLine-space)/2) if (maxLine-space)%2 == 0 else int((maxLine-space)/2)+1
-            Display += ("║"+fillChar*FrontHalfSpace)+Texts[i]+(fillChar*BackHalfSpace+"║")+"\n"
-        Display += Line[1][0]+"═"*(maxLine)+Line[1][1]
-        Display += "\n"*distance
+            if Texts[i] == "TextBox.Line": Display += Line[2][0]+"═"*(maxLine)+Line[2][1]+"\n"
+            else:
+                for j in range(len(escapeAnsi(Texts[i]))):
+                    if unicodedata.east_asian_width(escapeAnsi(Texts[i])[j]) in ['F', 'W']: space += 2
+                    else                                                                  : space += 1
+                if Type == "left"    : BackSpace = fillChar*(maxLine-space)
+                elif Type == "middle":
+                    FrontSpace = fillChar*int((maxLine-space)/2)
+                    BackSpace  = fillChar*(int((maxLine-space)/2) if (maxLine-space)%2 == 0 else int((maxLine-space)/2)+1)
+                elif Type == "right": FrontSpace = fillChar*(maxLine-space)
+                Display += ("║"+FrontSpace)+Texts[i]+(BackSpace+"║")+"\n"
+        Display += ("║"+fillChar*maxLine+"║"+"\n")*inDistance
+        Display += Line[1][0]+"═"*(maxLine)+Line[1][1]+endLine
+        Display += "\n"*outDistance
         return Display
 
-# print(TextBox(TextBox(TextBox(TextBox(TextBox(TextBox(TextBox(TextBox(TextBox(TextBox(TextBox(TextBox(TextBox(TextBox(TextBox(TextBox(TextBox(TextBox(TextBox(TextBox("와! 이제 영어(asdf)든 한글이든 막 써도 박스가 안터진다!\n이히히\n역시 둥근모꼴이야.")))))))))))))))))))))
+# print(TextBox("기본 박스(100칸)"))
+# print(TextBox("왼쪽(기본)"))
+# print(TextBox("중간", Type="middle"))
+# print(TextBox("오른쪽", Type='right'))
+# print(TextBox("최대 길이 자동 설정\n아래에 짧은 줄이 있든\n\n존나 긴 줄이 있든 알아서 정해줌\n\n(현재: Type=middle, AMLS=True)", Type="middle", AMLS=True))
+# print(TextBox("글상자 안/밖 거리 설정도 가능", inDistance=5, outDistance=3, AMLS=True, Type="middle"))
+# print(TextBox("\033[1m   W a !   S a n s ! !   \033[0m", Type="middle", inDistance=1, outDistance=2, AMLS=True))
