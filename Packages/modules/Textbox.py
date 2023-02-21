@@ -4,9 +4,6 @@ import re
 def escapeAnsi(line):
     ansi_escape =re.compile(r'(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]')
     return ansi_escape.sub('', line)
-# ┌─┐
-# │ │
-# └─┘
 def checkActualLen(line):
     Len = 0
     for i in line:
@@ -73,6 +70,6 @@ def TextBox(Inp, Type="left", maxLine=100, fillChar=" ", inDistance=0, outDistan
 # print(TextBox("오른쪽", Type='right'))
 # print(TextBox("최대 길이 자동 설정\n아래에 짧은 줄이 있든\n\n존나 긴 줄이 있든 알아서 정해줌\n\n(현재: Type=middle, AMLS=True)", Type="middle", AMLS=True))
 # print(TextBox("글상자 안/밖 거리 설정도 가능", inDistance=5, outDistance=3, AMLS=True, Type="middle"))
-print(TextBox("일반"))
-print(TextBox("볼드", LineType="bold"))
-print(TextBox("더블", LineType='double'))
+# print(TextBox("일반"))
+# print(TextBox("볼드", LineType="bold"))
+# print(TextBox("더블", LineType='double'))
