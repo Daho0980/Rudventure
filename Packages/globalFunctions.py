@@ -59,7 +59,7 @@ def slowLogoPrint(text):
         time.sleep(0.5)
 
 def addEntity(entityType, initHp, x=0, y=0):
-    kinds                = ["개새끼", "보스"]
+    kinds                = ["적군", "보스"]
     classType            = ["enemy", "boss"]
     additionalProperties = ["", f", {y}, {x}"]
     Name                 = kinds[entityType]
