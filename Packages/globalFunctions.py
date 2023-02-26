@@ -39,6 +39,7 @@ def fieldPrint():
     if s.showStateDesign == 1: Display += f"hp : {s.colors['R']}{s.hp}/{s.Mhp}{s.colors['end']} | def : {s.colors['B']}{s.df}/{s.Mdf}{s.colors['end']}\nhunger : {s.colors['lY']}{(s.hunger/500)*100:0.0f}%{s.colors['end']} | atk : {s.colors['G']}{s.atk}{s.colors['end']}\n\n"
     elif s.showStateDesign == 2: Display += asciiPrint()
     for i in range(len(s.room)): Display += ' '.join(map(str, s.room[i])); Display += '\n'
+    for i in s.onDisplay: Display += f"{i}\n"
     print(Display)
 
 def slash():
@@ -58,7 +59,7 @@ def slowLogoPrint(text):
         time.sleep(0.5)
 
 def addEntity(entityType, initHp, x=0, y=0):
-    kinds                = ["monster", "boss"]
+    kinds                = ["개새끼", "보스"]
     classType            = ["enemy", "boss"]
     additionalProperties = ["", f", {y}, {x}"]
     Name                 = kinds[entityType]
@@ -78,14 +79,15 @@ states.entities.append(Rname)
     """, nameSpace)
     def EntityInteraction():
         exec(f"""
-from Packages.modules import states
+from Packages.modules        import states
+from Packages.modules.logger import addLog
 while True:
     if {Name}.hp <= 0 or states.main != 1:
         states.entities.remove(Rname)
         break
     elif states.jpsf: {Name}.move()
 states.room[{Name}.y][{Name}.x] = states.stepableBlocks[{Name}.stepped]
-{Name}
+addLog(f\"{states.colors['R']}{Name}{states.colors['end']}이(가) 죽었습니다!\")
         """, nameSpace)
     threading.Thread(target=EntityInteraction, name=Rname).start()
 

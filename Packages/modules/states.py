@@ -10,7 +10,6 @@ colors = {
     'B':"\033[34m",
     'C':"\033[36m",
     'lB1':"\033[90m",
-    'bold':"\033[1m",
     'end':"\033[0m"
 }
 
@@ -96,6 +95,11 @@ frame = 0
 sound = True
 entities = []
 Wanted = []
+
+# log system
+onDisplay = [] # max is 5
+onTime = [] # max is 5
+maxOnTime = 5 # max is 10
 
 # in game print settings
 showStateDesign = 1 # normal = 1
