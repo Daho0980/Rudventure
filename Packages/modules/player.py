@@ -83,6 +83,6 @@ class player:
                 s.room[s.y][cx] == s.R: s.y, s.x = s.bfy, s.bfx
                 else: s.room[s.y][cx] = '☒'
 
-        s.room[s.y][s.x] = '.'
+        s.room[s.bfy][s.bfx] = '.'
         s.room[s.y][s.x] = s.p1
         play(sound)
