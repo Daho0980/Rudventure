@@ -1,1 +1,0 @@
-(lambda r:print("총 {}번 맞췄습니다.".format(sum((lambda r:[r[0],print(r[1])])((lambda x:[0,"홀/짝이 아닙니다."] if x not in ["홀","짝"] else [[1,"정답"],[0,"오답"]][r()])(input("훌/짝 입력 >")))[0] for i in range(10)))))(lambda:__import__("random").randint(0,1))
