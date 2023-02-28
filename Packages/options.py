@@ -1,24 +1,24 @@
 import time, json
-from   Packages.modules             import states, selector
+from   Packages.modules             import status, selector
 from   Packages.globalFunctions     import clear
 from   Packages.globalFunctions     import play
 
-s  = states
+s  = status
 sc = selector.selector
 
 def saveFile():
-    Vars        = [name for name in dir(states) if not name.startswith('__')]
+    Vars        = [name for name in dir(status) if not name.startswith('__')]
     uselessVars = ['doorRooms', 'doors', 'p1', 'e', 'wall', 'R', 'item', 'goal', 'floor', 'fakeFloor', 'TFP', 'Rooms', 'room', 'r', 's', 'os', 'LOGO', 'colors']
     for i in uselessVars: Vars.remove(i)
 
     file_path    = './savefile.json'
     data         = {}
     data['Data'] = []
-    StatesData   = {}
+    statusData   = {}
     for i in Vars:
-        # data['states'].append({i : eval(f'states.{i}')})
-        StatesData[i] = eval(f"states.{i}")
-    data['Data'].append({"states" : StatesData})
+        # data['status'].append({i : eval(f'status.{i}')})
+        statusData[i] = eval(f"status.{i}")
+    data['Data'].append({"status" : statusData})
 
     with open(file_path, "w") as outfile: json.dump(data, outfile, indent=4, ensure_ascii=False)
 

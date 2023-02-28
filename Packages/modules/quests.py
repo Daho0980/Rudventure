@@ -1,6 +1,6 @@
-from Packages.modules import stages, states, rooms, player
+from Packages.modules import stages, status, rooms, player
 
-S1, s, r, p = stages, states, rooms, player.player
+S1, s, r, p = stages, status, rooms, player.player
 setGoal = 0
 
 def quest(stage):

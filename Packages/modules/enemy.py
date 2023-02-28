@@ -1,9 +1,10 @@
 import random, time
-from   Packages.modules         import states, player
+from   Packages.modules         import status, player
 from   Packages.globalFunctions import play
-from   Packages.modules.states  import entities
+from   Packages.modules.status  import entities
+from   Packages.modules.logger  import addLog
 
-s, p = states, player
+s, p = status, player
 onoPoint = [s.R, s.wall, s.goal, s.e, s.boss, s.item, s.p1]
 
 class enemy:
@@ -49,14 +50,17 @@ class enemy:
             if s.room[self.y][self.x] not in onoPoint: self.stepped = s.stepableBlocks.index(s.room[self.y][self.x])
             bfx, bfy = self.x, self.y
             if self.hp > 0:
-                if s.p1 in [eval("s.room[self.y-1][self.x]"), eval("s.room[self.y+1][self.x]"), eval("s.room[self.y][self.x-1]"), eval("s.room[self.y][self.x+1]")]:
+                nms   = {'s':s}
+                exPos = [eval(f"s.room[{self.y-1}][{self.x}]", nms), eval(f"s.room[{self.y+1}][{self.x}]", nms), eval(f"s.room[{self.y}][{self.x-1}]", nms), eval(f"s.room[{self.y}][{self.x+1}]", nms)]
+                exTen = ["self.y-=1", "self.y+=1", "self.x-=1", "self.x+=1"]
+                if s.p1 in exPos:
                     enemy.pDamage(1)
                     if random.randrange(1,110) == 85: play(f"{s.TFP}sounds{s.s}growl.wav")
-
-                    if s.room[self.y-1][self.x] == s.p1: self.y -= 1
-                    elif s.room[self.y+1][self.x] == s.p1: self.y += 1
-                    elif s.room[self.y][self.x-1] == s.p1: self.x -= 1
-                    elif s.room[self.y][self.x+1] == s.p1: self.x += 1
+                    exec(exTen[exPos.index(s.p1)])
+                    # if s.room[self.y-1][self.x] == s.p1: self.y -= 1
+                    # elif s.room[self.y+1][self.x] == s.p1: self.y += 1
+                    # elif s.room[self.y][self.x-1] == s.p1: self.x -= 1
+                    # elif s.room[self.y][self.x+1] == s.p1: self.x += 1
                 else:
                     while True:
                         if random.randrange(1,25) == 3: play(f"{s.TFP}sounds{s.s}growl.wav")

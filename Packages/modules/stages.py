@@ -1,8 +1,8 @@
 import random
-from   Packages.modules import states, rooms, enemy, player
+from   Packages.modules import status, rooms, enemy, player
 from   Packages import globalFunctions
 
-s, p, r = states, player, rooms
+s, p, r = status, player, rooms
 gbf = globalFunctions
 
 class stages:

@@ -1,5 +1,5 @@
-from Packages.modules import states
-Vars = [name for name in dir(states) if not name.startswith('__')]
+from Packages.modules import status
+Vars = [name for name in dir(status) if not name.startswith('__')]
 uselessVars = ['doorRooms', 'doors', 'p1', 'e', 'wall', 'R', 'item', 'goal', 'floor', 'fakeFloor', 'TFP', 'Rooms', 'room', 'r', 's', 'os', 'LOGO', 'colors', 'boss', 'Wanted', ]
 for i in uselessVars: Vars.remove(i)
 print(Vars)

@@ -2,11 +2,9 @@ import os
 import threading
 import math
 import time
-from Packages.modules import states, rooms
+from Packages.modules import status, rooms, Textbox
 
-s, r = states, rooms
-
-def what(): 1 + 1
+s, r = status, rooms
 
 def clear(): os.system("clear" if os.name == "posix" else "cls")
 
@@ -72,22 +70,22 @@ def addEntity(entityType, initHp, x=0, y=0):
         a += 1
     nameSpace = {f"{Name}" : Name, "Rname" : Rname}
     exec(f"""
-from Packages.modules import enemy, states
+from Packages.modules import enemy, status
 {Name} = enemy.{classType[entityType]}(0, 0, 0)
 {Name}.start({initHp}{additionalProperties[entityType]})
-states.entities.append(Rname)
+status.entities.append(Rname)
     """, nameSpace)
     def EntityInteraction():
         exec(f"""
-from Packages.modules        import states
+from Packages.modules        import status
 from Packages.modules.logger import addLog
 while True:
-    if {Name}.hp <= 0 or states.main != 1:
-        states.entities.remove(Rname)
+    if {Name}.hp <= 0 or status.main != 1:
+        status.entities.remove(Rname)
         break
-    elif states.jpsf: {Name}.move()
-states.room[{Name}.y][{Name}.x] = states.stepableBlocks[{Name}.stepped]
-addLog(f\"{states.colors['R']}{Name}{states.colors['end']}이(가) 죽었습니다!\")
+    elif status.jpsf: {Name}.move()
+status.room[{Name}.y][{Name}.x] = status.stepableBlocks[{Name}.stepped]
+addLog(f\"{status.colors['R']}{Name}{status.colors['end']}이(가) 죽었습니다!\")
         """, nameSpace)
     threading.Thread(target=EntityInteraction, name=Rname).start()
 
@@ -101,11 +99,11 @@ addLog(f\"{states.colors['R']}{Name}{states.colors['end']}이(가) 죽었습니�
 #         s.doors.append([])
 #     print(s.doorRooms)
 #     s.doors[s.doorRooms.index(room)].append([x,y,x1,y1,'r.'+afterroomName])
-#     with open('modules/states.py', 'r') as f:
+#     with open('modules/status.py', 'r') as f:
 #         data = f.readlines()
 #         for i in range(len(data)):
 #             if data[i].startswith('doors'): data[i] = f'doors = {s.doors}'
 #             elif data[i].startswith('doorRooms'): data[i] = f'doorRooms = {s.doorRooms}\n'
-#         with open('modules/states.py', 'w') as wf: wf.writelines(data)
+#         with open('modules/status.py', 'w') as wf: wf.writelines(data)
 
 # addDoor('field', r.field, 0, 0, 0, 0, 'room_1', r.room_1)

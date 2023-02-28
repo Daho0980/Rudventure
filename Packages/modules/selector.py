@@ -1,4 +1,4 @@
-from Packages.modules             import states as s
+from Packages.modules             import status as s
 from Packages.globalFunctions     import clear
 from Packages.globalFunctions     import play
 

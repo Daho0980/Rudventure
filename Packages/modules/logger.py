@@ -1,5 +1,5 @@
 import threading, os
-from   Packages.modules import states as s
+from   Packages.modules import status as s
 
 def clear(): os.system("clear" if os.name == "posix" else "cls")
 
@@ -29,4 +29,4 @@ def logChecker():
                 del s.onTime[s.onTime.index(0)]
             else: break
 
-threading.Thread(target=logChecker, name="logger").start()
+threading.Thread(target=logChecker, name="logger", daemon=True).start()
