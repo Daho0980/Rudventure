@@ -1,19 +1,12 @@
 import random, time
 from   pynput.keyboard          import Key
-from   Packages.modules         import states, rooms, stages
+from   Packages.modules         import status, rooms, stages
 from   Packages.globalFunctions import play
 
-S1, s, r = stages, states, rooms
+S1, s, r = stages, status, rooms
 dfCrack  = 0
 
 def boxEvent():
-    # if r == 1:
-    #     s.Mdf += 5
-    #     s.df += 7
-    # elif r == 2: s.atk += 1
-    # elif r == 3:
-    #     s.Mhp += 1
-    #     s.hp += 1
     if s.hp < s.Mhp: s.hp += random.randrange(1, 2)
     s.hunger += 25
 
@@ -34,29 +27,26 @@ class player:
         s.y = y
 
     def move(Dir, Int): 
-        enemys = [s.e, s.boss]
+        enemies = [s.e, s.boss]
 
         if s.df > 0: s.dfCrack = 0
         s.bfx = s.x
         s.bfy = s.y
-        s.room[s.y][s.x] = '.'
-        if Dir == 'w': s.hp += 1
         if Dir == Key.up: s.y -= Int
         elif Dir == Key.down: s.y += Int
         elif Dir == Key.left: s.x -= Int
         elif Dir == Key.right: s.x += Int
         s.hunger -= 1
-        sound = f'{s.TFP}sounds{s.s}move.wav'
-        if s.room[s.y][s.x] == '◼' or\
-        s.room[s.y][s.x] == '∙':
+        sound     = f'{s.TFP}sounds{s.s}move.wav'
+        if s.room[s.y][s.x] in [s.wall, s.fakeFloor]:
             player.damage()
             s.x = s.bfx
             s.y = s.bfy
-            if s.df == 0 and s.dfCrack <= 0:
+            if s.df <= 0 and s.dfCrack <= 0:
                 sound = f'{s.TFP}sounds{s.s}crack.wav'
                 s.dfCrack = 1
             else: sound = f'{s.TFP}sounds{s.s}Hit.wav'
-        elif s.room[s.y][s.x] in enemys:
+        elif s.room[s.y][s.x] in enemies:
             s.Wanted = [eval(f"{s.y}"), eval(f"{s.x}")]
             time.sleep(0.01)
             s.Wanted = []
@@ -74,7 +64,7 @@ class player:
                     s.x = nowRdoorsNum[i][3]
                     s.room = nowRdoorsNum[i][4]
                     break
-        elif s.room[s.y][s.x] == ' ': s.hp -= s.hp
+        elif s.room[s.y][s.x] == ' ': s.hp, s.df = 0, 0
         if s.room[s.y][s.x] == '☒':
             sound = f'{s.TFP}sounds{s.s}move_box.wav'
             cx, cy = 0, 0
@@ -93,5 +83,6 @@ class player:
                 s.room[s.y][cx] == s.R: s.y, s.x = s.bfy, s.bfx
                 else: s.room[s.y][cx] = '☒'
 
+        s.room[s.y][s.x] = '.'
         s.room[s.y][s.x] = s.p1
         play(sound)
