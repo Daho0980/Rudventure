@@ -84,7 +84,7 @@ from Packages.modules        import status
 from Packages.modules.logger import addLog
 
 while True:
-    if {Name}.hp <= 1 or status.main != 1:
+    if {Name}.hp <= 0 or status.main != 1:
         status.entities.remove(Rname)
         break
     elif status.jpsf: {Name}.move()
