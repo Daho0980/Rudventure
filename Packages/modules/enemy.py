@@ -44,7 +44,7 @@ class enemy:
 
         if len(s.Wanted) > 0 and s.Wanted[0] == self.y and s.Wanted[1] == self.x:
             self.hp -= s.atk
-            addLog(f"{s.colors['R']}{self.name}{s.colors['end']}이(가) {s.colors['G']}{s.atk}{s.colors['end']}만큼의 피해를 입었습니다! {s.colors['R']}(체력 : {self.hp}){s.colors['end']}")
+            if self.hp > 0: addLog(f"{s.colors['R']}{self.name}{s.colors['end']}이(가) {s.colors['G']}{s.atk}{s.colors['end']}만큼의 피해를 입었습니다! {s.colors['R']}(체력 : {self.hp}){s.colors['end']}")
 
         if self.coolTime == 0:
             self.coolTime = 100

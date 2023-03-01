@@ -84,8 +84,10 @@ from Packages.modules        import status
 from Packages.modules.logger import addLog
 
 while True:
-    if {Name}.hp > 0 and status.main == 1 and status.jpsf == True: {Name}.move()
-status.entities.remove(Rname)
+    if {Name}.hp <= 1 or status.main != 1:
+        status.entities.remove(Rname)
+        break
+    elif status.jpsf: {Name}.move()
 status.room[{Name}.y][{Name}.x] = status.stepableBlocks[{Name}.stepped]
 addLog(f\"{status.colors['R']}{Name}{status.colors['end']}이(가) 죽었습니다!\")
         """, nameSpace)
