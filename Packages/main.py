@@ -90,6 +90,7 @@ while s.main > 0:
             gameChecker()
             if s.nowStage < s.stage:
                 s.nowStage += 1
+                break
             elif s.main <= 0: break
             gbf.fieldPrint()
             time.sleep(1/s.frame)
