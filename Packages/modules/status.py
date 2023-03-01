@@ -72,6 +72,7 @@ main = 1
 # Icons and doors
 LOGO           = "  _   \n /_/     _/   _  _ _/_    _ _ \n/ \ /_//_/ |//_\'/ //  /_// /_\'\n\n𝘢 𝘭 𝘱 𝘩 𝘢\n\n"
 p1             = f"{colors['G']}{markdown(3)}@{colors['end']}" # 0, 255, 10
+squishy        = [f"{colors['B']}{markdown(1)}O{colors['end']}", f"{colors['B']}{markdown(1)}o{colors['end']}"]
 e              = '𓃦'
 boss           = '𓃙'
 wall           = '◼'

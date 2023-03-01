@@ -101,4 +101,5 @@ class stages:
         elif stage == 5:
             s.stageName = "Shelter"
             s.room = r.shelter
+            s.room[2][3] = s.squishy[0]
             p.player.start(2, 2)

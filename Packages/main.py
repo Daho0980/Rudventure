@@ -63,7 +63,7 @@ except: s.TFP = f'{s.s}'; gbf.play(f'{os.getcwd()}{s.s}Packages{s.s}sounds{s.s}s
 if s.frame == 0:
     selectFrame = selector.selector.Dropdown(f'{s.LOGO}를 시작하기 전에, 프레임을 설정해주세요', {'1프레임':'컨트롤을 포기하겠다는 의지가 느껴집니다.', '30프레임 (권장)':'위쪽 터미널 바가 덜 깜빡거립니다.', '60프레임':'위쪽 터미널 바가 더 깜빡거립니다.'}, [1,0,255,10], '@')
     frames = [1, 30, 60]; s.frame = frames[selectFrame-1]; gbf.play(f'{s.TFP}sounds{s.s}smash.wav')
-gbf.play(f'{s.TFP}sounds{s.s}INTRO_short.wav')
+# gbf.play(f'{s.TFP}sounds{s.s}INTRO_short.wav')
 gbf.play(f'{s.TFP}sounds{s.s}crack.wav')
 print(s.LOGO)
 time.sleep(3.4)

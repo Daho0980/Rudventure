@@ -28,7 +28,7 @@ for i in range(9):
     for j in range(9): Map[i].append([' ', 0, 0, 0, 0])
 
 x, y         = 4, 4
-rooms        = ['\033[31m^\033[0m', '^', '\033[32m*\033[0m', '\033[33m!\033[0m', '\033[34m/\033[0m']
+rooms        = ['\033[31m§\033[0m', '•', '\033[32m*\033[0m', '\033[33m!\033[0m', '\033[34m/\033[0m']
 Map[y][x][0] = rooms[0]
 
 def gridPrint(grid):
@@ -84,7 +84,7 @@ def initBranch(Map):
     global progress
 
     nowLength                                        = 0
-    maxBranchLength                                  = random.randrange(5, 17)
+    maxBranchLength                                  = random.randrange(9, 17)
     maxEventRoomCount, nowEventRoomCount             = random.randrange(1, 3), 0
     maxTreasureBoxRoomCount, nowTreasureBoxRoomCount = 1, 0
     bfx, bfy = 0, 0
@@ -112,18 +112,19 @@ def initBranch(Map):
             getBack(nowLength, bfx, bfy)
             continue
         
-        selectRoomKind = random.randrange(1, 4)
-        if selectRoomKind == 2:
+        selectRoomKind = random.randrange(1, 4) # 방 종류 설정
+        if selectRoomKind == 2: # 이벤트 방
             if nowEventRoomCount >= maxEventRoomCount:
                 selectRoomKind = 1
                 print(f"\033[32mEventroom\033[0m was changed in \033[31mnowLength:{nowLength} [{y}, {x}]\033[0m")
             else: nowEventRoomCount += 1
-        elif selectRoomKind == 3:
+        elif selectRoomKind in [3, 4]: # 보물 방
             if nowTreasureBoxRoomCount >= maxTreasureBoxRoomCount:
                 selectRoomKind = 1
                 print(f"\033[33mTreasureBoxroom\033[0m was changed in \033[31mnowLength:{nowLength} [{y}, {x}]\033[0m")
             else: nowTreasureBoxRoomCount += 1
-        if maxBranchLength - nowLength == 1: selectRoomKind = 4
+        else: selectRoomKind = 1
+        if maxBranchLength - nowLength == 1: selectRoomKind = 4 # 출구 & 보스방
         Map[y][x][0]                              = rooms[selectRoomKind]
         nowLength                                += 1
         Map[y][x][direction[locationData[2]]]     = 1

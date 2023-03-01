@@ -72,7 +72,7 @@ class player:
 
         elif s.room[s.y][s.x] == ' ': s.hp, s.df = 0, 0
 
-        if s.room[s.y][s.x] == s.box:
+        elif s.room[s.y][s.x] == s.box:
             sound  = f'{s.TFP}sounds{s.s}move_box.wav'
             cx, cy = 0, 0
             if Dir == Key.up or Dir == Key.down:
@@ -89,6 +89,12 @@ class player:
                 s.room[s.y][cx] == s.e or\
                 s.room[s.y][cx] == s.R: s.y, s.x = s.bfy, s.bfx
                 else: s.room[s.y][cx] = s.box
+
+        elif s.room[s.y][s.x] in s.squishy:
+            sound = f'{s.TFP}sounds{s.s}squish.wav'
+            if s.room[s.y][s.x] == s.squishy[0]: s.room[s.y][s.x] = s.squishy[1]
+            else: s.room[s.y][s.x] = s.squishy[0]
+            s.y, s.x = s.bfy, s.bfx
 
         s.room[s.bfy][s.bfx] = s.floor
         s.room[s.y][s.x] = s.p1
