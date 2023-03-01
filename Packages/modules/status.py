@@ -79,6 +79,7 @@ wall           = '◼'
 R              = '▒'
 item           = f"{colors['Y']}◘{colors['end']}"
 box            = '☒'
+boxMark        = f"{colors['R']}✘{colors['end']}"
 goal           = f'\033[31m⚑\033[0m'
 floor          = '.'
 fakeFloor      = '∙'
