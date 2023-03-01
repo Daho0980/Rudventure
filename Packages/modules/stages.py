@@ -1,5 +1,5 @@
 import random
-from   Packages.modules import status, rooms, enemy, player
+from   Packages.modules import status, rooms, player
 from   Packages import globalFunctions
 
 s, p, r = status, player, rooms
@@ -23,15 +23,14 @@ class stages:
                     s.room[Ry][Rx] == '◼':
                         continue
                     else:
-                        s.room[Ry][Rx] = '◘'
+                        s.room[Ry][Rx] = s.item
                         break
             r.room_1[3][3] = s.goal
         elif stage == 1:
             s.stageName = "미로"
             s.room = r.maze_big[:]
             p.player.start(9, 0)
-            gbf.addEntity(0, eHp)
-            gbf.addEntity(0, eHp)
+            for i in range(3): gbf.addEntity(0, eHp)
             for i in range(4):
                 while True:
                     Rx = random.randrange(0,20)
@@ -41,7 +40,7 @@ class stages:
                     s.room[Ry][Rx] == '◼':
                         continue
                     else:
-                        s.room[Ry][Rx] = '◘'
+                        s.room[Ry][Rx] = s.item
                         break
             s.room[20][11] = s.goal
         elif stage == 2:
@@ -97,8 +96,8 @@ class stages:
             s.stageName = "감시자"
             s.room = r.bossStage
             p.player.start(7, 14)
-            gbf.addEntity(1, 15, 1, 9)
-            gbf.addEntity(1, 15, 1, 5)
+            gbf.addEntity(1, 25, 1, 9)
+            gbf.addEntity(1, 25, 1, 5)
         elif stage == 5:
             s.stageName = "Shelter"
             s.room = r.shelter
