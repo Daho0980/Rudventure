@@ -1,0 +1,32 @@
+{
+    "Data": [
+        {
+            "status": {
+                "Mdf": 5,
+                "Mhp": 10,
+                "TFP": "/Volumes/SAVE/Core/Programing/indivisual/python/what/Rudventure/Packages/",
+                "atk": 1,
+                "bfx": 2,
+                "bfy": 1,
+                "df": 5,
+                "dfCrack": 0,
+                "frame": 30,
+                "goalX": 0,
+                "goalY": 0,
+                "hp": 10,
+                "hpLow": false,
+                "hunger": 523,
+                "name": "shelter",
+                "nowStage": 0,
+                "s": "/",
+                "showStateDesign": 1,
+                "sound": true,
+                "stage": 0,
+                "stageName": "안녕 세상",
+                "steppedBlock": ".",
+                "x": 3,
+                "y": 5
+            }
+        }
+    ]
+}

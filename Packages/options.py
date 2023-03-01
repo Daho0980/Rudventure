@@ -1,14 +1,13 @@
 import time, json
-from   Packages.modules             import status, selector
-from   Packages.globalFunctions     import clear
-from   Packages.globalFunctions     import play
+from   Packages.modules             import status, selector, makeNewListener
+from   Packages.globalFunctions     import clear, play
 
 s  = status
 sc = selector.selector
 
 def saveFile():
     Vars        = [name for name in dir(status) if not name.startswith('__')]
-    uselessVars = ['doorRooms', 'doors', 'p1', 'e', 'wall', 'R', 'item', 'goal', 'floor', 'fakeFloor', 'TFP', 'Rooms', 'room', 'r', 's', 'os', 'LOGO', 'colors']
+    uselessVars = ["colors", "customColor", "markdown", "btnX", "btnY", "btn1X", "btn1Y", "main", "LOGO", "p1", "e", "boss", "wall", "R", "item", "goal", "floor", "fakeFloor", "doorRooms", "doors", "stepableBlocks", "jpsf", "entities", "Wanted", "onDisplay", "onTime", "maxOnTime", "Rooms", "os", "r", "room", "yctuoh"]
     for i in uselessVars: Vars.remove(i)
 
     file_path    = './savefile.json'
@@ -16,7 +15,6 @@ def saveFile():
     data['Data'] = []
     statusData   = {}
     for i in Vars:
-        # data['status'].append({i : eval(f'status.{i}')})
         statusData[i] = eval(f"status.{i}")
     data['Data'].append({"status" : statusData})
 
@@ -44,7 +42,7 @@ def menu():
             saveFile()
             print('완료!')
             time.sleep(1)
-            clear()
+            makeNewListener.addListener();clear()
             menu()
         elif mainMenu == 4: sc.Dropdown('만든이:\n    다호\n\n도와준 이:\n    내 전두엽\n    내 전전두엽\n    사파리\n    내 눈\n    내 손\n    내 감각수용체\n    내 해마\n    내 등뼈\n    내 골반\n    내 손, 발목\n    내 책상\n\nSpecial Thanks:\n    레포\n    업로드\n    형', ['돌아가기'], [1, 0, 255, 10], '@')
         elif mainMenu == 5: sc.Dropdown("IDLE:\n    Visual Studio Code\n\n프로그래밍한 언어:\n    Python\n\n다른 프로그램들:\n    사운드 제작 프로그램:\n        bfxr\n        beepBox\n", ['돌아가기'], [1, 0, 255, 10], '@')

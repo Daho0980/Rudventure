@@ -2,12 +2,30 @@ import os
 import threading
 import math
 import time
-from Packages.modules import status, rooms, Textbox
+from   Packages.modules import status, rooms
 
 s, r = status, rooms
 
+# ---------- Others ----------
 def clear(): os.system("clear" if os.name == "posix" else "cls")
 
+def slash():
+    if os.name == 'posix': return '/'
+    else: return '\\'
+
+def play(File):
+    def s1():
+        playsound = __import__("playsound")
+        playsound.playsound(File)
+    if s.sound == True: threading.Thread(target=s1, name="sound", daemon=True).start()
+
+def slowLogoPrint(text):
+    for word in text:
+        print(word, flush=True)
+        play(f"{s.TFP}sounds{s.s}smash.wav")
+        time.sleep(0.5)
+
+# ---------- Display ----------
 def endPrint(text): print(text, end='')
 
 def statusBarFormatPrint(status, statusName, minusStatus=0, color=s.colors['R'], tag="", space=" "):
@@ -40,22 +58,7 @@ def fieldPrint():
     for i in s.onDisplay: Display += f"{i}\n"
     print(Display)
 
-def slash():
-    if os.name == 'posix': return '/'
-    else: return '\\'
-
-def play(File):
-    def s1():
-        playsound = __import__("playsound")
-        playsound.playsound(File)
-    if s.sound == True: threading.Thread(target=s1, name="sound", daemon=True).start()
-
-def slowLogoPrint(text):
-    for word in text:
-        print(word, flush=True)
-        play(f"{s.TFP}sounds{s.s}smash.wav")
-        time.sleep(0.5)
-
+# ---------- Thread section ----------
 def addEntity(entityType, initHp, x=0, y=0):
     kinds                = ["적군", "보스"]
     classType            = ["enemy", "boss"]
