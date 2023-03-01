@@ -85,13 +85,11 @@ while s.main > 0:
     clear()
     s.jpsf = True
 
-    while True:
-        if s.jpsf:
-            gameChecker()
-            if s.nowStage < s.stage:
-                s.nowStage += 1
-                break
-            elif s.main <= 0: break
-            gbf.fieldPrint()
-            time.sleep(1/s.frame)
-            clear()
+    while s.jpsf:
+        gameChecker()
+        if s.nowStage < s.stage:
+            s.nowStage += 1
+        elif s.main <= 0: break
+        gbf.fieldPrint()
+        time.sleep(1/s.frame)
+        clear()

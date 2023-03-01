@@ -60,7 +60,7 @@ def fieldPrint():
 
 # ---------- Thread section ----------
 def addEntity(entityType, initHp, x=0, y=0):
-    kinds                = ["적군", "보스"]
+    kinds                = ["몬스터", "보스"]
     classType            = ["enemy", "boss"]
     additionalProperties = ["", f", {y}, {x}"]
     Name                 = kinds[entityType]
@@ -74,7 +74,7 @@ def addEntity(entityType, initHp, x=0, y=0):
     nameSpace = {f"{Name}" : Name, "Rname" : Rname}
     exec(f"""
 from Packages.modules import enemy, status
-{Name} = enemy.{classType[entityType]}(0, 0, 0)
+{Name} = enemy.{classType[entityType]}(0, 0, 0, \"{Name}\")
 {Name}.start({initHp}{additionalProperties[entityType]})
 status.entities.append(Rname)
     """, nameSpace)
@@ -82,11 +82,10 @@ status.entities.append(Rname)
         exec(f"""
 from Packages.modules        import status
 from Packages.modules.logger import addLog
+
 while True:
-    if {Name}.hp <= 0 or status.main != 1:
-        status.entities.remove(Rname)
-        break
-    elif status.jpsf: {Name}.move()
+    if {Name}.hp > 0 and status.main == 1 and status.jpsf == True: {Name}.move()
+status.entities.remove(Rname)
 status.room[{Name}.y][{Name}.x] = status.stepableBlocks[{Name}.stepped]
 addLog(f\"{status.colors['R']}{Name}{status.colors['end']}이(가) 죽었습니다!\")
         """, nameSpace)

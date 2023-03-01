@@ -8,13 +8,14 @@ s, p = status, player
 onoPoint = [s.R, s.wall, s.goal, s.e, s.boss, s.item, s.p1]
 
 class enemy:
-    def __init__(self, y, x, hp):
+    def __init__(self, y, x, hp, name):
         global entities
         self.y        = y
         self.x        = x
         self.hp       = hp
         self.stepped  = 0
         self.coolTime = 0
+        self.name     = name
 
     def start(self, sethp):
         self.hp = sethp
@@ -43,6 +44,7 @@ class enemy:
 
         if len(s.Wanted) > 0 and s.Wanted[0] == self.y and s.Wanted[1] == self.x:
             self.hp -= s.atk
+            addLog(f"{s.colors['R']}{self.name}{s.colors['end']}이(가) {s.colors['G']}{s.atk}{s.colors['end']}만큼의 피해를 입었습니다! {s.colors['R']}(체력 : {self.hp}){s.colors['end']}")
 
         if self.coolTime == 0:
             self.coolTime = 100
@@ -57,10 +59,6 @@ class enemy:
                     enemy.pDamage(1)
                     if random.randrange(1,110) == 85: play(f"{s.TFP}sounds{s.s}growl.wav")
                     exec(exTen[exPos.index(s.p1)])
-                    # if s.room[self.y-1][self.x] == s.p1: self.y -= 1
-                    # elif s.room[self.y+1][self.x] == s.p1: self.y += 1
-                    # elif s.room[self.y][self.x-1] == s.p1: self.x -= 1
-                    # elif s.room[self.y][self.x+1] == s.p1: self.x += 1
                 else:
                     while True:
                         if random.randrange(1,25) == 3: play(f"{s.TFP}sounds{s.s}growl.wav")
@@ -86,8 +84,8 @@ class enemy:
 
 
 class boss(enemy):
-    def __init__(self, y, x, hp):
-        super().__init__(y, x, hp)
+    def __init__(self, y, x, hp, name):
+        super().__init__(y, x, hp, name)
 
     def start(self, sethp, x, y):
         self.hp                = sethp
