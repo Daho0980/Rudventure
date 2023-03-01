@@ -2,6 +2,7 @@ import os
 import threading
 import math
 import time
+import random
 from   Packages.modules import status, rooms
 
 s, r = status, rooms
@@ -24,6 +25,14 @@ def slowLogoPrint(text):
         print(word, flush=True)
         play(f"{s.TFP}sounds{s.s}smash.wav")
         time.sleep(0.5)
+
+def placeRandomBlock(Map, block, y:list, x:list, conditions):
+    while True:
+        Ry, Rx = random.randrange(y[0], y[1]), random.randrange(x[0], x[1])
+        if Map[Ry][Rx] in conditions: continue
+        Map[Ry][Rx] = block
+        break
+
 
 # ---------- Display ----------
 def endPrint(text): print(text, end='')
