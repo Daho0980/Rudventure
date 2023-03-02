@@ -40,7 +40,7 @@ class enemy:
                 s.dfCrack = 1
         else: s.hp -= damage
         play(sound)
-        addLog(f"{s.lightName}이(가) {s.colors['R']}{self.name}{s.colors['end']} 에 의해 {s.colors['R']}{s.atk}{s.colors['end']}만큼의 피해를 입었습니다! {s.colors['R']}(현재 체력 : {s.hp}){s.colors['end']} {s.colors['B']}(현재 방어력 : {s.df}){s.colors['end']}")
+        addLog(f"{s.lightName}이(가) {s.colors['R']}{self.name}{s.colors['end']} 에 의해 {s.colors['R']}{damage}{s.colors['end']}만큼의 피해를 입었습니다! {s.colors['R']}(현재 체력 : {s.hp}){s.colors['end']} {s.colors['B']}(현재 방어력 : {s.df}){s.colors['end']}")
         return
 
     def move(self):

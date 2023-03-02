@@ -20,7 +20,7 @@ class player:
     def damage(block="?"):
         if s.df > 0: s.df -= 1
         else: s.hp -= 1
-        logger.addLog(f"{s.lightName}이(가) {s.markdown(1)}[ {block} ]{s.colors['end']} 에 의해 상처입었습니다 {s.colors['R']}(현재 체력 : {s.hp}){s.colors['end']} {s.colors['B']}(현재 방어력 : {s.df}){s.colors['end']}")
+        logger.addLog(f"{s.lightName}이(가) {s.markdown(1)}[ {block} ]{s.colors['end']} 에 의해 상처입었습니다 {s.colors['R']}(남은 체력 : {s.hp}){s.colors['end']} {s.colors['B']}(남은 방어력 : {s.df}){s.colors['end']}")
 
     def start(y, x):
         s.room[y][x] = s.p1
