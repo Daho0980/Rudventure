@@ -26,7 +26,7 @@ def init():
     s.name, s.lightName = temporaryName, f"{s.colors['lY']}{temporaryName}{s.colors['end']}"
     s.welcomeMessage = [f"나락에 오신 걸 환영합니다, {s.lightName}.", f"오실 때 {s.colors['R']}{s.markdown([1, 3])}피자{s.colors['end']}는 가져오셨죠? 장난입니다, {s.lightName}."]
     gbf.play(f'{s.TFP}sounds{s.s}select.wav'); gbf.clear()
-    print(s.name)
+
     if random.randrange(0, 4) == 1: logger.addLog(s.welcomeMessage[1], 8)
     else: logger.addLog(s.welcomeMessage[0], 8)
     mnl.addListener()
