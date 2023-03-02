@@ -5,7 +5,6 @@ from   Packages.modules.status  import entities
 from   Packages.modules.logger  import addLog
 
 s, p = status, player
-onoPoint = [s.R, s.wall, s.goal, s.e, s.boss, s.item, s.p1, s.box, s.boxMark]
 
 class enemy:
     def __init__(self, y, x, hp, name):
@@ -23,7 +22,7 @@ class enemy:
             while True:
                 sX  = random.randrange(1,len(s.room)-1)
                 sY  = random.randrange(1,len(s.room)-1)
-                if s.room[sY][sX] in onoPoint: continue
+                if s.room[sY][sX] in [s.R, s.wall, s.goal, s.e, s.boss, s.item, s.p1, s.box, s.boxMark]: continue
                 else:
                     self.x, self.y = sX, sY
                     break
@@ -41,20 +40,18 @@ class enemy:
                 s.dfCrack = 1
         else: s.hp -= damage
         play(sound)
-        addLog(f"{s.lightName}이(가) {s.colors['R']}{self.name}{s.colors['end']} 에 의해 {s.colors['R']}{damage}{s.colors['end']}만큼의 피해를 입었습니다! {s.colors['R']}(현재 체력 : {s.hp}){s.colors['end']} {s.colors['B']}(현재 방어력 : {s.df}){s.colors['end']}")
+        addLog(f"{s.lightName}이(가) {s.colors['R']}{self.name}{s.colors['end']} 에 의해 {s.colors['R']}{damage}{s.colors['end']}만큼의 피해를 입었습니다!")
         return
 
     def move(self):
-        global onoPoint
-
         if len(s.Wanted) > 0 and s.Wanted[0] == self.y and s.Wanted[1] == self.x:
             self.hp -= s.atk
             if self.hp > 0: addLog(f"{s.colors['R']}{self.name}{s.colors['end']}이(가) {s.colors['G']}{s.atk}{s.colors['end']}만큼의 피해를 입었습니다! {s.colors['R']}(체력 : {self.hp}){s.colors['end']}")
 
         if self.coolTime == 0:
             self.coolTime = 70
-            if self.stepped in onoPoint              : self.stepped = s.floor
-            if s.room[self.y][self.x] not in onoPoint: self.stepped = s.stepableBlocks.index(s.room[self.y][self.x])
+            if self.stepped not in s.stepableBlocks                                                            : self.stepped = s.floor
+            if s.room[self.y][self.x] in s.stepableBlocks and s.room[self.y][self.x] not in [s.item, s.boxMark]: self.stepped = s.stepableBlocks[s.stepableBlocks.index(s.room[self.y][self.x])]
             bfx, bfy = self.x, self.y
             if self.hp > 0:
                 nms   = {'s':s}
@@ -62,7 +59,6 @@ class enemy:
                 exTen = ["self.y-=1", "self.y+=1", "self.x-=1", "self.x+=1"]
                 if s.p1 in exPos:
                     enemy.pDamage(self, 1)
-                    if random.randrange(1,110) == 92: play(f"{s.TFP}sounds{s.s}growl.wav")
                     exec(exTen[exPos.index(s.p1)])
                 else:
                     while True:
@@ -75,12 +71,12 @@ class enemy:
                         elif enemyMove == 2:
                             if self.y + Ry > len(s.room)-1: continue
                             self.y += Ry
-                        if s.room[self.y][self.x] in onoPoint:
+                        if s.room[self.y][self.x] not in s.stepableBlocks:
                             self.x, self.y = bfx, bfy
                             continue
                         if s.room[self.y][self.x] == s.p1: enemy.pDamage(self, 1)
                         break
-                s.room[bfy][bfx] = s.stepableBlocks[self.stepped]
+                s.room[bfy][bfx] = s.stepableBlocks[s.stepableBlocks.index(self.stepped)]
                 s.room[self.y][self.x] = s.e
         else:
             self.coolTime -= 1
@@ -95,8 +91,6 @@ class boss(enemy):
         super().start(sethp, y, x)
 
     def move(self):
-        global onoPoint
-
         def Targetted():
             for i in range(2):
                 s.room[self.y][self.x] = f"{s.colors['R']}𓃚{s.colors['end']}"
@@ -110,7 +104,7 @@ class boss(enemy):
 
         if self.coolTime == 0:
             self.coolTime = 50
-            if self.stepped in onoPoint: self.stepped = s.floor
+            if self.stepped not in s.stepableBlocks: self.stepped = s.floor
             elif s.room[self.y][self.x] in s.stepableBlocks: self.stepped = s.stepableBlocks.index(s.room[self.y][self.x])
             bfx, bfy = self.x, self.y
             if self.hp > 0:
@@ -143,11 +137,11 @@ class boss(enemy):
                 else:
                     bfx, bfy = self.x, self.y
                     if random.randrange(1,3) == 1:
-                        if self.x < s.x and s.room[self.y][self.x+1] not in onoPoint: self.x += 1
-                        elif self.x > s.x and s.room[self.y][self.x-1] not in onoPoint: self.x -= 1
+                        if self.x < s.x and s.room[self.y][self.x+1] in s.stepableBlocks: self.x += 1
+                        elif self.x > s.x and s.room[self.y][self.x-1] in s.stepableBlocks: self.x -= 1
                     else:
-                        if self.y < s.y and s.room[self.y+1][self.x] not in onoPoint: self.y += 1
-                        elif self.y > s.y and s.room[self.y-1][self.x] not in onoPoint: self.y -= 1
+                        if self.y < s.y and s.room[self.y+1][self.x] in s.stepableBlocks: self.y += 1
+                        elif self.y > s.y and s.room[self.y-1][self.x] in s.stepableBlocks: self.y -= 1
                     s.room[bfy][bfx] = s.floor
                     s.room[self.y][self.x] = s.boss
         else:

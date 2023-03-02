@@ -3,7 +3,7 @@ import threading
 import math
 import time
 import random
-from   Packages.modules import status, rooms
+from   Packages.modules import status, rooms, logger
 
 s, r = status, rooms
 
@@ -87,17 +87,18 @@ status.entities.append(Rname)
     """, nameSpace)
     def EntityInteraction():
         exec(f"""
-from Packages.modules        import status
-from Packages.modules.logger import addLog
+from Packages.modules                 import status
+from Packages.modules.logger          import addLog
 
 while True:
     if {Name}.hp <= 0 or status.main != 1:
         status.entities.remove(Rname)
         break
     elif status.jpsf: {Name}.move()
-status.room[{Name}.y][{Name}.x] = status.stepableBlocks[{Name}.stepped]
-addLog(f\"{status.colors['R']}{Name}{status.colors['end']}이(가) 죽었습니다!\")
+status.room[{Name}.y][{Name}.x] = status.stepableBlocks[status.stepableBlocks.index({Name}.stepped)]
         """, nameSpace)
+        play(f"{s.TFP}sounds{s.s}monster_dead.wav")
+        logger.addLog(f"{status.colors['R']}{Name}{status.colors['end']}이(가) 죽었습니다!")
     threading.Thread(target=EntityInteraction, name=Rname).start()
 
 # def addDoor(roomName, room, x, y, x1, y1, afterroomName, afterroom):

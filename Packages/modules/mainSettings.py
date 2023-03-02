@@ -30,3 +30,20 @@ def init():
     if random.randrange(0, 4) == 1: logger.addLog(s.welcomeMessage[1], 8)
     else: logger.addLog(s.welcomeMessage[0], 8)
     mnl.addListener()
+
+def upgradeStatus():
+    print(f"{s.markdown([2, 3])}Enter를 한 번 눌러주세요{s.colors['end']}")
+    selectStat = selector.selector.Dropdown("올릴 스탯을 선택해주세요", {"체력 증가":"체력의 최대치가 1 증가합니다.", "방어력 증가":"방어력의 최대치가 1 증가합니다.","공격력 증가":"공격력이 1 상승합니다."}, [1,0,255,10], '@')
+    if selectStat == 1:
+        s.Mhp += 1
+        if s.Mhp < s.hp: s.hp += 1
+    elif selectStat == 2:
+        s.Mdf += 1
+        if s.Mdf < s.df: s.df += 1
+    else: s.atk += 1
+    
+    if random.randrange(1,4) == 3:
+        if s.hp < s.Mhp and s.Mhp - s.hp == 1: s.hp += 1
+        elif s.hp < s.Mhp and s.Mhp - s.hp >= 2: s.hp += random.randrange(1,3)
+
+    if s.Mdf < s.df: s.df += 1

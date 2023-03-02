@@ -89,7 +89,7 @@ floor          = '.'
 fakeFloor      = '∙'
 doorRooms      = [r.field, r.room_1, r.invisible_walls1]
 doors          = [[[0,2,5,3,r.room_1]], [[6,3,1,2,r.field]], [[9,14,1,1,r.invisible_walls2]]]
-stepableBlocks = [floor]
+stepableBlocks = [floor, item, boxMark]
 
 # Stage settings
 nowStage  = 0
