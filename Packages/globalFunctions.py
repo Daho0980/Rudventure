@@ -50,7 +50,7 @@ def asciiPrint():
     Display = ""
     Display += statusBarFormatPrint(s.hp, "hp", s.Mhp, space="     ")
     Display += statusBarFormatPrint(s.df, "def", s.Mdf, s.colors['B'], space="    ")
-    if math.ceil(((s.hunger/500)*10)) <= 1: hungerTag = s.colors['lY'] + str(s.hunger) + s.colors['end']
+    if math.ceil(((s.hunger/500)*10)) <= 50: hungerTag = s.colors['lY'] + str(s.hunger) + s.colors['end']
     else: hungerTag = f"{s.colors['lY']}{(s.hunger/500)*100:0.0f}%{s.colors['end']}"
     Display += statusBarFormatPrint(math.ceil(((s.hunger/500)*100)/10), "hunger", color=s.colors['lY'], tag=hungerTag)
     Display += statusBarFormatPrint(s.atk, "atk", color=s.colors['G'], space="    ")
