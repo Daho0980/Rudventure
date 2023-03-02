@@ -46,6 +46,7 @@ class player:
             s.y = s.bfy
             if s.df <= 0 and s.dfCrack <= 0:
                 sound = f'{s.TFP}sounds{s.s}crack.wav'
+                logger.addLog(f"{s.colors['B']}방어구{s.colors['end']}가 부서졌습니다!")
                 s.dfCrack = 1
             else: sound = f'{s.TFP}sounds{s.s}Hit.wav'
 
