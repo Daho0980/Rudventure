@@ -21,7 +21,7 @@ class player:
         if s.df > 0: s.df -= 1
         else: s.hp -= 1
 
-    def start(x, y):
+    def start(y, x):
         s.room[y][x] = s.p1
         s.x = x
         s.y = y

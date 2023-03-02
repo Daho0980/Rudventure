@@ -68,10 +68,9 @@ def fieldPrint():
     print(Display)
 
 # ---------- Thread section ----------
-def addEntity(entityType, initHp, x=0, y=0):
+def addEntity(entityType, initHp, y=[1, len(s.room)], x=[1, len(s.room[0])]):
     kinds                = ["몬스터", "보스"]
     classType            = ["enemy", "boss"]
-    additionalProperties = ["", f", {y}, {x}"]
     Name                 = kinds[entityType]
     a = 0
     while True:
@@ -84,7 +83,7 @@ def addEntity(entityType, initHp, x=0, y=0):
     exec(f"""
 from Packages.modules import enemy, status
 {Name} = enemy.{classType[entityType]}(0, 0, 0, \"{Name}\")
-{Name}.start({initHp}{additionalProperties[entityType]})
+{Name}.start({initHp}, {y}, {x})
 status.entities.append(Rname)
     """, nameSpace)
     def EntityInteraction():

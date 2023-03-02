@@ -5,7 +5,7 @@ from   Packages.modules.status  import entities
 from   Packages.modules.logger  import addLog
 
 s, p = status, player
-onoPoint = [s.R, s.wall, s.goal, s.e, s.boss, s.item, s.p1]
+onoPoint = [s.R, s.wall, s.goal, s.e, s.boss, s.item, s.p1, s.box, s.boxMark]
 
 class enemy:
     def __init__(self, y, x, hp, name):
@@ -17,15 +17,17 @@ class enemy:
         self.coolTime = 0
         self.name     = name
 
-    def start(self, sethp):
+    def start(self, sethp, y, x):
         self.hp = sethp
-        while True:
-            sX  = random.randrange(1,len(s.room)-1)
-            sY  = random.randrange(1,len(s.room)-1)
-            if s.room[sY][sX] in onoPoint: continue
-            else:
-                self.x, self.y = sX, sY
-                break
+        if isinstance(y, list) and isinstance(x, list):
+            while True:
+                sX  = random.randrange(1,len(s.room)-1)
+                sY  = random.randrange(1,len(s.room)-1)
+                if s.room[sY][sX] in onoPoint: continue
+                else:
+                    self.x, self.y = sX, sY
+                    break
+        else: self.y, self.x = y, x
 
     def pDamage(damage):
         sound = f'{s.TFP}sounds{s.s}enemy_Hit.wav'
@@ -47,7 +49,7 @@ class enemy:
             if self.hp > 0: addLog(f"{s.colors['R']}{self.name}{s.colors['end']}이(가) {s.colors['G']}{s.atk}{s.colors['end']}만큼의 피해를 입었습니다! {s.colors['R']}(체력 : {self.hp}){s.colors['end']}")
 
         if self.coolTime == 0:
-            self.coolTime = 100
+            self.coolTime = 70
             if self.stepped in onoPoint              : self.stepped = s.floor
             if s.room[self.y][self.x] not in onoPoint: self.stepped = s.stepableBlocks.index(s.room[self.y][self.x])
             bfx, bfy = self.x, self.y
@@ -57,14 +59,13 @@ class enemy:
                 exTen = ["self.y-=1", "self.y+=1", "self.x-=1", "self.x+=1"]
                 if s.p1 in exPos:
                     enemy.pDamage(1)
-                    if random.randrange(1,110) == 85: play(f"{s.TFP}sounds{s.s}growl.wav")
+                    if random.randrange(1,110) == 92: play(f"{s.TFP}sounds{s.s}growl.wav")
                     exec(exTen[exPos.index(s.p1)])
                 else:
                     while True:
                         if random.randrange(1,25) == 3: play(f"{s.TFP}sounds{s.s}growl.wav")
                         enemyMove = random.randrange(1,3)
-                        Rx        = random.randrange(-1,2)
-                        Ry        = random.randrange(-1,2)
+                        Rx, Ry    = random.randrange(-1,2), random.randrange(-1,2)
                         if enemyMove == 1:
                             if self.x + Rx > len(s.room[self.x])-1: continue
                             self.x += Rx
@@ -87,10 +88,8 @@ class boss(enemy):
     def __init__(self, y, x, hp, name):
         super().__init__(y, x, hp, name)
 
-    def start(self, sethp, x, y):
-        self.hp                = sethp
-        self.x                 = x
-        self.y                 = y
+    def start(self, sethp, y, x):
+        super().start(sethp, y, x)
 
     def move(self):
         global onoPoint
@@ -104,6 +103,7 @@ class boss(enemy):
 
         if len(s.Wanted) > 0 and s.Wanted[0] == self.y and s.Wanted[1] == self.x:
             self.hp -= s.atk
+            if self.hp > 0: addLog(f"{s.colors['R']}{self.name}{s.colors['end']}이(가) {s.colors['G']}{s.atk}{s.colors['end']}만큼의 피해를 입었습니다! {s.colors['R']}(체력 : {self.hp}){s.colors['end']}")
 
         if self.coolTime == 0:
             self.coolTime = 50
