@@ -29,7 +29,7 @@ class enemy:
                     break
         else: self.y, self.x = y, x
 
-    def pDamage(damage):
+    def pDamage(self, damage):
         sound = f'{s.TFP}sounds{s.s}enemy_Hit.wav'
         if s.df > 0:
             s.df -= damage
@@ -40,6 +40,8 @@ class enemy:
                 s.dfCrack = 1
         else: s.hp -= damage
         play(sound)
+        addLog(f"{s.lightName}이(가) {s.colors['R']}{self.name}{s.colors['end']} 에 의해 {s.colors['R']}{s.atk}{s.colors['end']}만큼의 피해를 입었습니다! {s.colors['R']}(현재 체력 : {s.hp}){s.colors['end']} {s.colors['B']}(현재 방어력 : {s.df}){s.colors['end']}")
+        return
 
     def move(self):
         global onoPoint
@@ -58,7 +60,7 @@ class enemy:
                 exPos = [eval(f"s.room[{self.y-1}][{self.x}]", nms), eval(f"s.room[{self.y+1}][{self.x}]", nms), eval(f"s.room[{self.y}][{self.x-1}]", nms), eval(f"s.room[{self.y}][{self.x+1}]", nms)]
                 exTen = ["self.y-=1", "self.y+=1", "self.x-=1", "self.x+=1"]
                 if s.p1 in exPos:
-                    enemy.pDamage(1)
+                    enemy.pDamage(self, 1)
                     if random.randrange(1,110) == 92: play(f"{s.TFP}sounds{s.s}growl.wav")
                     exec(exTen[exPos.index(s.p1)])
                 else:
@@ -75,7 +77,7 @@ class enemy:
                         if s.room[self.y][self.x] in onoPoint:
                             self.x, self.y = bfx, bfy
                             continue
-                        if s.room[self.y][self.x] == s.p1: enemy.pDamage(1)
+                        if s.room[self.y][self.x] == s.p1: enemy.pDamage(self, 1)
                         break
                 s.room[bfy][bfx] = s.stepableBlocks[self.stepped]
                 s.room[self.y][self.x] = s.e
@@ -121,7 +123,7 @@ class boss(enemy):
                         if self.y < s.y: a = 0
                         else: a = 1
                         while True:
-                            if s.room[eval(f"self.y{Moves1[a]}1")][self.x] == s.p1: enemy.pDamage(2)
+                            if s.room[eval(f"self.y{Moves1[a]}1")][self.x] == s.p1: enemy.pDamage(self, 2)
                             if s.room[eval(f"self.y{Moves1[a]}1")][self.x] not in canBreak: break
                             s.room[self.y][self.x] = s.floor
                             exec(f"self.y{Moves[a]}1"); s.room[self.y][self.x] = s.boss
@@ -132,7 +134,7 @@ class boss(enemy):
                         if self.x < s.x: a = 0
                         else: a = 1
                         while True:
-                            if s.room[self.y][eval(f"self.x{Moves1[a]}1")] == s.p1: enemy.pDamage(2)
+                            if s.room[self.y][eval(f"self.x{Moves1[a]}1")] == s.p1: enemy.pDamage(self, 2)
                             if s.room[self.y][eval(f"self.x{Moves1[a]}1")] not in canBreak: break
                             s.room[self.y][self.x] = s.floor
                             exec(f"self.x{Moves[a]}1"); s.room[self.y][self.x] = s.boss

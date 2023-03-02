@@ -103,8 +103,7 @@ class selector:
                         nowSelectColumn = maxLine - 1
                         SNum                      = 0
                         nowSelectRow             -= 1
-                    if subtitleKeys[nowSelectRow - SNum1][nowSelectColumn - SNum] == '' or\
-                       subtitleKeys[nowSelectRow - SNum1][nowSelectColumn - SNum] == ' ':
+                    if subtitleKeys[nowSelectRow - SNum1][nowSelectColumn - SNum] in ['', ' ']:
                         if nowSelectColumn - SNum < 0:
                             if nowSelectRow - SNum1 < 0:
                                 SNum, SNum1 = 0, 0

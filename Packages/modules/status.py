@@ -41,7 +41,9 @@ def markdown(Type=0):
     return output
 
 
-# positions
+# status
+name         = ""
+lightName    = ""
 x            = 0
 bfx          = 0
 y            = 0
@@ -71,7 +73,9 @@ main = 1
 
 # Icons and doors
 LOGO           = "  _   \n /_/     _/   _  _ _/_    _ _ \n/ \ /_//_/ |//_\'/ //  /_// /_\'\n\n𝘢 𝘭 𝘱 𝘩 𝘢\n\n"
+welcomeMessage = []
 p1             = f"{colors['G']}{markdown(3)}@{colors['end']}" # 0, 255, 10
+p2             = "#"
 squishy        = [f"{colors['B']}{markdown(1)}O{colors['end']}", f"{colors['B']}{markdown(1)}o{colors['end']}"]
 e              = '𓃦'
 boss           = '𓃙'
@@ -88,8 +92,8 @@ doors          = [[[0,2,5,3,r.room_1]], [[6,3,1,2,r.field]], [[9,14,1,1,r.invisi
 stepableBlocks = [floor]
 
 # Stage settings
-nowStage  = 0
-stage     = 0
+nowStage  = 5
+stage     = 5
 stageName = ""
 
 # Background vars
@@ -105,7 +109,6 @@ Wanted   = []
 # Log system
 onDisplay = [] # max is 5
 onTime    = [] # max is 5
-maxOnTime = 5 # max is 5
 
 # In game print settings
 showStateDesign = 1 # normal = 1

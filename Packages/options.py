@@ -7,7 +7,7 @@ sc = selector.selector
 
 def saveFile():
     Vars        = [name for name in dir(status) if not name.startswith('__')]
-    uselessVars = ["colors", "customColor", "markdown", "btnX", "btnY", "btn1X", "btn1Y", "main", "LOGO", "p1", "e", "boss", "wall", "R", "item", "goal", "floor", "fakeFloor", "doorRooms", "doors", "stepableBlocks", "jpsf", "entities", "Wanted", "onDisplay", "onTime", "maxOnTime", "Rooms", "os", "r", "room", "yctuoh"]
+    uselessVars = ["colors", "customColor", "markdown", "btnX", "btnY", "btn1X", "btn1Y", "main", "LOGO", "p1", "e", "boss", "wall", "R", "item", "goal", "floor", "fakeFloor", "doorRooms", "doors", "stepableBlocks", "jpsf", "entities", "Wanted", "onDisplay", "onTime", "maxOnTime", "Rooms", "os", "r", "room", "yctuoh", "lightName", "welcomeMessage"]
     for i in uselessVars: Vars.remove(i)
 
     file_path    = './savefile.json'

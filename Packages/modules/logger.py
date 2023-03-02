@@ -3,12 +3,12 @@ from   Packages.modules import status as s
 
 def clear(): os.system("clear" if os.name == "posix" else "cls")
 
-def addLog(text):
+def addLog(text, time=5):
 
     def add():
         nonlocal text
         s.onDisplay.append(text)
-        s.onTime.append(s.maxOnTime)
+        s.onTime.append(time)
 
     def remove():
         del s.onDisplay[0]

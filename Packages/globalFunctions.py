@@ -33,7 +33,6 @@ def placeRandomBlock(Map, block, y:list, x:list, conditions):
         Map[Ry][Rx] = block
         break
 
-
 # ---------- Display ----------
 def endPrint(text): print(text, end='')
 
