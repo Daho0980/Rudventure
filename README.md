@@ -5,13 +5,14 @@
    
 ## 플레이 방법   
 ### Mac   
-    ```
-    git clone https://github.com/Daho0980/Rudventure.git
-    cd Rudventure
+```
+git clone https://github.com/Daho0980/Rudventure.git
+cd Rudventure
 
-    python runGame.py
-    안된다면: python3 runGame.py
-    ```
+python runGame.py
+안된다면: python3 runGame.py
+```
+- 이와 같이 다운로드 시 게임 파일은 (사용자 이름)/Rudventure 에 위치해 있음
 
 ### Windows   
     몰?루
