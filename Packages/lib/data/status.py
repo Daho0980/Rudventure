@@ -1,5 +1,5 @@
 import os
-from   Packages.modules import rooms as r
+from   Packages.lib.data import rooms as r
 
 # Colors
 colors = {

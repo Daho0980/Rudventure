@@ -1,6 +1,7 @@
 import random
-from   Packages.modules import status, rooms, player
-from   Packages import globalFunctions
+from   Packages.lib.data import rooms, status
+from   Packages.lib      import player
+from   Packages          import globalFunctions
 
 s, p, r = status, player, rooms
 gbf = globalFunctions

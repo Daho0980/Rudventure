@@ -1,6 +1,8 @@
 import random, time
 from   pynput.keyboard          import Key
-from   Packages.modules         import status, rooms, stages, logger
+from   Packages.lib             import stages
+from   Packages.lib.data        import rooms, status
+from   Packages. lib.modules    import logger
 from   Packages.globalFunctions import play
 
 S1, s, r = stages, status, rooms

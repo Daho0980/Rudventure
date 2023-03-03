@@ -1,4 +1,5 @@
-from Packages.modules import stages, status, rooms, player
+from Packages.lib      import stages, player
+from Packages.lib.data import rooms, status
 
 S1, s, r, p = stages, status, rooms, player.player
 setGoal = 0

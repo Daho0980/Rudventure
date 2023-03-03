@@ -1,5 +1,5 @@
 import threading, os
-from   Packages.modules import status as s
+from   Packages.lib.data import status as s
 
 def clear(): os.system("clear" if os.name == "posix" else "cls")
 

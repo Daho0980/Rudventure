@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
-import os, sys, time, random
-if os.name == 'nt': s = '\\'
-else:               s = '/'
-# s = '/' if os.name == "posix" else "\\"
+import os, sys, time
+from   Packages.lib.data import rooms, status
+from   Packages.lib      import quests
+s = '\\' if os.name == "nt" else "/"
 TFP = f'{os.getcwd()}{s}'
-try:    exec(open(f'{TFP}Packages{s}downloadModules.py').read())
-except: exec(open(f'{TFP}Packages{s}downloadModules.py').read())
-import Packages.globalFunctions     as     globalFunctions
-from   Packages.modules             import player, rooms, status, stages, quests, Textbox, logger, makeNewListener, mainSettings
-from   Packages.globalFunctions     import clear
+exec(open(f"{TFP}Packages{s}downloadModules.py").read())
+from Packages                   import globalFunctions
+from Packages.lib               import player, stages
+from Packages.lib.system        import mainSettings
+from Packages.lib.modules       import Textbox, makeNewListener, logger
+from   Packages.globalFunctions import clear
 
 p, r, s, S, S1, gbf, t, mnl= player.player, rooms, status, stages.stages, stages, globalFunctions, Textbox, makeNewListener
 s.s    = gbf.slash()

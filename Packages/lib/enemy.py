@@ -1,8 +1,9 @@
 import random, time
-from   Packages.modules         import status, player
-from   Packages.globalFunctions import play
-from   Packages.modules.status  import entities
-from   Packages.modules.logger  import addLog
+from   Packages.lib                import player
+from   Packages.lib.data           import status
+from   Packages.lib.data.status    import entities
+from   Packages.globalFunctions    import play
+from   Packages.lib.modules.logger import addLog
 
 s, p = status, player
 

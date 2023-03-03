@@ -3,7 +3,8 @@ import threading
 import math
 import time
 import random
-from   Packages.modules import status, rooms, logger
+from   Packages.lib.data    import rooms, status
+from   Packages.lib.modules import logger
 
 s, r = status, rooms
 
@@ -80,15 +81,16 @@ def addEntity(entityType, initHp, y=[1, len(s.room)], x=[1, len(s.room[0])]):
         a += 1
     nameSpace = {f"{Name}" : Name, "Rname" : Rname}
     exec(f"""
-from Packages.modules import enemy, status
+from Packages.lib import enemy
+from Packages.lib.data import status
 {Name} = enemy.{classType[entityType]}(0, 0, 0, \"{Name}\")
 {Name}.start({initHp}, {y}, {x})
 status.entities.append(Rname)
     """, nameSpace)
     def EntityInteraction():
         exec(f"""
-from Packages.modules                 import status
-from Packages.modules.logger          import addLog
+from Packages.lib.data import status
+from Packages.lib.modules.logger import addLog
 
 while True:
     if {Name}.hp <= 0 or status.main != 1:

@@ -1,5 +1,4 @@
-import unicodedata
-import re
+import unicodedata, re
 
 def escapeAnsi(line):
     ansi_escape =re.compile(r'(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]')

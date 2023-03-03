@@ -1,5 +1,6 @@
-from pynput.keyboard  import Key, Listener
-from Packages.modules import status, quests, player
+from pynput.keyboard   import Key, Listener
+from Packages.lib.data import status
+from Packages.lib      import quests, player
 
 def addListener():
     def key_press(key):
@@ -10,7 +11,7 @@ def addListener():
                 if status.df > 0: status.dfCrack = 0
 
     def key_release(key):
-        from Packages.modules import options
+        from Packages.lib.system import options
         if status.yctuoh == False:
             if key == Key.esc:
                 print(f"{status.markdown([2, 3])}Enter를 한 번 눌러주세요{status.colors['end']}\n")

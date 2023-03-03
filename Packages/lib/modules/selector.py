@@ -1,6 +1,5 @@
-from Packages.modules             import status as s
-from Packages.globalFunctions     import clear
-from Packages.globalFunctions     import play
+from Packages.lib.data        import status      as s
+from Packages.globalFunctions import clear, play
 
 class selector:
     def Change2D(subtitle, maxLine): # 1차원 subtitle을 2차원으로 재배열
