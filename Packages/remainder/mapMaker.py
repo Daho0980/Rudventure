@@ -1,3 +1,6 @@
+# !!!!!!!!! This code was archived. !!!!!!!!!
+# !!!!!!!  Maybe I can't use anymore. !!!!!!!
+
 import os, time, random
 from modules import rooms
 from globalFunctions import clear
