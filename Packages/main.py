@@ -4,7 +4,7 @@ from   Packages.lib.data import rooms, status
 from   Packages.lib      import quests
 s = '\\' if os.name == "nt" else "/"
 TFP = f'{os.getcwd()}{s}'
-exec(open(f"{TFP}Packages{s}downloadModules.py").read())
+exec(open(f"{TFP}Packages{s}lib{s}system{s}downloadModules.py").read())
 from Packages                   import globalFunctions
 from Packages.lib               import player, stages
 from Packages.lib.system        import mainSettings
