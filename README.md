@@ -5,7 +5,13 @@
    
 ## 플레이 방법   
 ### Mac   
-    runGame.py 파일을 우클릭 후 python launcher로 실행   
+    ```
+    git clone https://github.com/Daho0980/Rudventure.git
+    cd Rudventure
+
+    python runGame.py
+    안된다면: python3 runGame.py
+    ```
 
 ### Windows   
     몰?루
