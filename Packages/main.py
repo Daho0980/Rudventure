@@ -7,7 +7,7 @@ TFP = f'{os.getcwd()}{s}'
 try:    exec(open(f'{TFP}Packages{s}downloadModules.py').read())
 except: exec(open(f'{TFP}Packages{s}downloadModules.py').read())
 import Packages.globalFunctions     as     globalFunctions
-from   Packages.modules             import player, rooms, status, stages, quests, selector, Textbox, logger, makeNewListener, mainSettings
+from   Packages.modules             import player, rooms, status, stages, quests, Textbox, logger, makeNewListener, mainSettings
 from   Packages.globalFunctions     import clear
 
 p, r, s, S, S1, gbf, t, mnl= player.player, rooms, status, stages.stages, stages, globalFunctions, Textbox, makeNewListener

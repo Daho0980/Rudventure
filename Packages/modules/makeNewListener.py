@@ -10,7 +10,7 @@ def addListener():
                 if status.df > 0: status.dfCrack = 0
 
     def key_release(key):
-        from Packages import options
+        from Packages.modules import options
         if status.yctuoh == False:
             if key == Key.esc:
                 print(f"{status.markdown([2, 3])}Enter를 한 번 눌러주세요{status.colors['end']}\n")
