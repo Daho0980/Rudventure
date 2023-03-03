@@ -62,7 +62,7 @@ class enemy:
                     exec(exTen[exPos.index(s.p1)])
                 else:
                     while True:
-                        if random.randrange(1,25) == 3: play(f"{s.TFP}sounds{s.s}growl.wav")
+                        if random.randrange(1,110) == 3: play(f"{s.TFP}sounds{s.s}growl.wav")
                         enemyMove = random.randrange(1,3)
                         Rx, Ry    = random.randrange(-1,2), random.randrange(-1,2)
                         if enemyMove == 1:
