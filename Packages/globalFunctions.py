@@ -89,7 +89,7 @@ status.entities.append(Rname)
     """, nameSpace)
     def EntityInteraction():
         exec(f"""
-from Packages.lib.data import status
+from Packages.lib.data           import status
 from Packages.lib.modules.logger import addLog
 
 while True:

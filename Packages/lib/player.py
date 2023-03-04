@@ -3,7 +3,7 @@ from   pynput.keyboard          import Key
 from   Packages.lib             import stages
 from   Packages.lib.data        import rooms, status
 from   Packages. lib.modules    import logger
-from   Packages.globalFunctions import play
+from   Packages.globalFunctions import play, fieldPrint, clear
 
 S1, s, r = stages, status, rooms
 dfCrack  = 0
@@ -103,4 +103,5 @@ class player:
 
         s.room[s.bfy][s.bfx] = s.floor
         s.room[s.y][s.x] = s.p1
+        if s.frame == 0: clear(); fieldPrint()
         play(sound)

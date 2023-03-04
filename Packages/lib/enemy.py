@@ -2,7 +2,7 @@ import random, time
 from   Packages.lib                import player
 from   Packages.lib.data           import status
 from   Packages.lib.data.status    import entities
-from   Packages.globalFunctions    import play
+from   Packages.globalFunctions    import play, fieldPrint, clear
 from   Packages.lib.modules.logger import addLog
 
 s, p = status, player
@@ -41,7 +41,7 @@ class enemy:
                 s.dfCrack = 1
         else: s.hp -= damage
         play(sound)
-        addLog(f"{s.lightName}이(가) {s.colors['R']}{self.name}{s.colors['end']} 에 의해 {s.colors['R']}{damage}{s.colors['end']}만큼의 피해를 입었습니다!")
+        addLog(f"{s.lightName}이(가) {s.colors['R']}{self.name}{s.colors['end']}({s.e}) 에 의해 {s.colors['R']}{damage}{s.colors['end']}만큼의 피해를 입었습니다!")
         return
 
     def move(self):
@@ -79,6 +79,7 @@ class enemy:
                         break
                 s.room[bfy][bfx] = s.stepableBlocks[s.stepableBlocks.index(self.stepped)]
                 s.room[self.y][self.x] = s.e
+                if s.frame == 0: clear(); fieldPrint()
         else:
             self.coolTime -= 1
             time.sleep(0.01)
@@ -94,7 +95,7 @@ class boss(enemy):
     def move(self):
         def Targetted():
             for i in range(2):
-                s.room[self.y][self.x] = f"{s.colors['R']}𓃚{s.colors['end']}"
+                s.room[self.y][self.x] = f"{s.colors['R']}/{s.colors['end']}"
                 time.sleep(0.1)
                 s.room[self.y][self.x] = s.boss
                 time.sleep(0.1)
@@ -145,6 +146,7 @@ class boss(enemy):
                         elif self.y > s.y and s.room[self.y-1][self.x] in s.stepableBlocks: self.y -= 1
                     s.room[bfy][bfx] = s.floor
                     s.room[self.y][self.x] = s.boss
+                    if s.frame == 0: clear(); fieldPrint()
         else:
             self.coolTime -= 1
             time.sleep(0.01)

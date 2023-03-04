@@ -2,7 +2,6 @@
 import os, sys, time
 s = '\\' if os.name == "nt" else "/"
 TFP = f'{os.getcwd()}{s}'
-print("checkPoint 1")
 exec(open(f"{TFP}Packages{s}lib{s}system{s}downloadModules.py", encoding='utf8').read())
 from Packages                   import globalFunctions
 from Packages.lib               import player, stages, quests
@@ -72,6 +71,8 @@ while s.main > 0:
                 s.nowStage += 1
                 break
             elif s.main <= 0: break
-            gbf.fieldPrint()
-            time.sleep(1/s.frame)
-            clear()
+            
+            if s.frame != 0:
+                gbf.fieldPrint()
+                time.sleep(1/s.frame)
+                clear()

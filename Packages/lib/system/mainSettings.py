@@ -9,8 +9,8 @@ def init():
     try: gbf.play(f'{os.getcwd()}{s.s}Packages{s.s}sounds{s.s}smash.wav')
     except: s.TFP = f'{s.s}'; gbf.play(f'{os.getcwd()}{s.s}Packages{s.s}sounds{s.s}smash.wav')
     if s.frame == 0:
-        selectFrame = selector.selector.Dropdown(f'{s.LOGO}를 시작하기 전에, 프레임을 설정해주세요', {'1프레임':'컨트롤을 포기하겠다는 의지가 느껴집니다.', '30프레임 (권장)':'위쪽 터미널 바가 덜 깜빡거립니다.', '60프레임':'위쪽 터미널 바가 더 깜빡거립니다.'}, [1,0,255,10], '@')
-        frames = [1, 30, 60]; s.frame = frames[selectFrame-1]; gbf.play(f'{s.TFP}Packages{s.s}sounds{s.s}smash.wav')
+        selectFrame = selector.selector.Dropdown(f'{s.LOGO}를 시작하기 전에, 프레임을 설정해주세요', {"1프레임":"컨트롤을 포기하겠다는 의지가 느껴집니다.", "30프레임 (권장)":"위쪽 터미널 바가 덜 깜빡거립니다.", "60프레임":"30프레임과 큰 차이는 없지만 억까가 줄어들 가능성이 있습니다.", "":"", "비동기 모드":"프레임을 신경쓰지 않고 업데이트가 일어날 때마다 화면을 새로고침합니다."}, [1,0,255,10], '@')
+        frames = [1, 30, 60, 0]; s.frame = frames[selectFrame-1]; gbf.play(f'{s.TFP}Packages{s.s}sounds{s.s}smash.wav')
     gbf.play(f'{s.TFP}Packages{s.s}sounds{s.s}crack.wav')
     print(s.LOGO)
     time.sleep(1.5)
