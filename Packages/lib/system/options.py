@@ -58,7 +58,7 @@ def menu():
         elif mainMenu == 7:
             while True:
                 styles = ["number", "ascii"]
-                showIconOptionTags = ["\'hp : 10\'과 같은 형식으로 나타납니다.", "\'hp : [🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢]\'과 같은 형식으로 나타납니다."]
+                showIconOptionTags = ["\'hp : 10\'과 같은 형식으로 나타납니다.", "\'hp : [||||||||||]\'과 같은 형식으로 나타납니다."]
                 soundSet = sc.Dropdown('아이콘 설정', [f'현재 아이콘 : {styles[s.showStateDesign-1]}', '', '돌아가기'], [1, 0, 255, 10], '@', tag=f"{s.markdown([0,2,3])}\n    {showIconOptionTags[s.showStateDesign-1]}")
                 if soundSet == 1:
                     if s.showStateDesign == 1: s.showStateDesign = 2
