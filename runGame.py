@@ -8,4 +8,4 @@ else: s = '\\'
 TFP = f"{Path.cwd()}{s}"
 print(f"It called by {Path('runGame.py').resolve()}")
 
-exec(open(Path(f'Packages{s}main.py').resolve()).read())
+exec(open(Path(f'Packages{s}main.py').resolve(), encoding='utf8').read())
