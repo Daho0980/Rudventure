@@ -40,9 +40,9 @@ def endPrint(text): print(text, end='')
 def statusBarFormatPrint(status, statusName, minusStatus=0, color=s.colors['R'], tag="", space=" "):
     Display = ""
     Display += f"{statusName} :{space}["
-    for i in range(status): Display += f"{color}🁢{s.colors['end']}"
+    for i in range(status): Display += f"{color}|{s.colors['end']}"
     if minusStatus != 0:
-        for j in range(minusStatus-status): Display += f"{s.colors['lB1']}🁢{s.colors['end']}"
+        for j in range(minusStatus-status): Display += f"{s.colors['lB1']}|{s.colors['end']}"
     Display += f"] {tag}\n"
 
     return Display
