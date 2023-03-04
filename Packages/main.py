@@ -71,8 +71,6 @@ while s.main > 0:
                 s.nowStage += 1
                 break
             elif s.main <= 0: break
-            
-            if s.frame != 0:
-                gbf.fieldPrint()
-                time.sleep(1/s.frame)
-                clear()
+            gbf.fieldPrint()
+            time.sleep(1/s.frame)
+            clear()

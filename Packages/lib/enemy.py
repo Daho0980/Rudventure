@@ -80,7 +80,6 @@ class enemy:
                         break
                 s.room[bfy][bfx] = s.stepableBlocks[s.stepableBlocks.index(self.stepped)]
                 s.room[self.y][self.x] = self.icon
-                if s.frame == 0: clear(); fieldPrint()
         else:
             self.coolTime -= 1
             time.sleep(0.01)
@@ -147,7 +146,6 @@ class boss(enemy):
                         elif self.y > s.y and s.room[self.y-1][self.x] in s.stepableBlocks: self.y -= 1
                     s.room[bfy][bfx] = s.floor
                     s.room[self.y][self.x] = self.icon
-                    if s.frame == 0: clear(); fieldPrint()
         else:
             self.coolTime -= 1
             time.sleep(0.01)
