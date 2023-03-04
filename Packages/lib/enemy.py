@@ -8,7 +8,7 @@ from   Packages.lib.modules.logger import addLog
 s, p = status, player
 
 class enemy:
-    def __init__(self, y, x, hp, name):
+    def __init__(self, y, x, hp, name, icon):
         global entities
         self.y        = y
         self.x        = x
@@ -16,6 +16,7 @@ class enemy:
         self.stepped  = 0
         self.coolTime = 0
         self.name     = name
+        self.icon     = icon
 
     def start(self, sethp, y, x):
         self.hp = sethp
@@ -41,7 +42,7 @@ class enemy:
                 s.dfCrack = 1
         else: s.hp -= damage
         play(sound)
-        addLog(f"{s.lightName}이(가) {s.colors['R']}{self.name}{s.colors['end']}({s.e}) 에 의해 {s.colors['R']}{damage}{s.colors['end']}만큼의 피해를 입었습니다!")
+        addLog(f"{s.lightName}이(가) {s.colors['R']}{self.name}{s.colors['end']}({self.icon}) 에 의해 {s.colors['R']}{damage}{s.colors['end']}만큼의 피해를 입었습니다!")
         return
 
     def move(self):
@@ -78,7 +79,7 @@ class enemy:
                         if s.room[self.y][self.x] == s.p1: enemy.pDamage(self, 1)
                         break
                 s.room[bfy][bfx] = s.stepableBlocks[s.stepableBlocks.index(self.stepped)]
-                s.room[self.y][self.x] = s.e
+                s.room[self.y][self.x] = self.icon
                 if s.frame == 0: clear(); fieldPrint()
         else:
             self.coolTime -= 1
@@ -86,8 +87,8 @@ class enemy:
 
 
 class boss(enemy):
-    def __init__(self, y, x, hp, name):
-        super().__init__(y, x, hp, name)
+    def __init__(self, y, x, hp, name, icon):
+        super().__init__(y, x, hp, name, icon)
 
     def start(self, sethp, y, x):
         super().start(sethp, y, x)
@@ -95,7 +96,7 @@ class boss(enemy):
     def move(self):
         def Targetted():
             for i in range(2):
-                s.room[self.y][self.x] = f"{s.colors['R']}/{s.colors['end']}"
+                s.room[self.y][self.x] = f"{s.colors['R']}{self.icon}{s.colors['end']}"
                 time.sleep(0.1)
                 s.room[self.y][self.x] = s.boss
                 time.sleep(0.1)
@@ -123,7 +124,7 @@ class boss(enemy):
                             if s.room[eval(f"self.y{Moves1[a]}1")][self.x] == s.p1: enemy.pDamage(self, 2)
                             if s.room[eval(f"self.y{Moves1[a]}1")][self.x] not in canBreak: break
                             s.room[self.y][self.x] = s.floor
-                            exec(f"self.y{Moves[a]}1"); s.room[self.y][self.x] = s.boss
+                            exec(f"self.y{Moves[a]}1"); s.room[self.y][self.x] = self.icon
                             time.sleep(0.1)
 
                     elif self.y == s.y:
@@ -134,7 +135,7 @@ class boss(enemy):
                             if s.room[self.y][eval(f"self.x{Moves1[a]}1")] == s.p1: enemy.pDamage(self, 2)
                             if s.room[self.y][eval(f"self.x{Moves1[a]}1")] not in canBreak: break
                             s.room[self.y][self.x] = s.floor
-                            exec(f"self.x{Moves[a]}1"); s.room[self.y][self.x] = s.boss
+                            exec(f"self.x{Moves[a]}1"); s.room[self.y][self.x] = self.icon
                             time.sleep(0.1)
                 else:
                     bfx, bfy = self.x, self.y
@@ -145,7 +146,7 @@ class boss(enemy):
                         if self.y < s.y and s.room[self.y+1][self.x] in s.stepableBlocks: self.y += 1
                         elif self.y > s.y and s.room[self.y-1][self.x] in s.stepableBlocks: self.y -= 1
                     s.room[bfy][bfx] = s.floor
-                    s.room[self.y][self.x] = s.boss
+                    s.room[self.y][self.x] = self.icon
                     if s.frame == 0: clear(); fieldPrint()
         else:
             self.coolTime -= 1

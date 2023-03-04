@@ -71,6 +71,7 @@ def fieldPrint():
 def addEntity(entityType, initHp, y=[1, len(s.room)], x=[1, len(s.room[0])]):
     kinds                = ["몬스터", "보스"]
     classType            = ["enemy", "boss"]
+    icons                = [s.e, s.boss]
     Name                 = kinds[entityType]
     a = 0
     while True:
@@ -83,7 +84,7 @@ def addEntity(entityType, initHp, y=[1, len(s.room)], x=[1, len(s.room[0])]):
     exec(f"""
 from Packages.lib import enemy
 from Packages.lib.data import status
-{Name} = enemy.{classType[entityType]}(0, 0, 0, \"{Name}\")
+{Name} = enemy.{classType[entityType]}(0, 0, 0, \"{Name}\", \"{icons[entityType]}\")
 {Name}.start({initHp}, {y}, {x})
 status.entities.append(Rname)
     """, nameSpace)
