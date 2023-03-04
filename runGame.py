@@ -6,6 +6,6 @@ if os.name == "posix": s = '/'
 else: s = '\\'
 
 TFP = f"{Path.cwd()}{s}"
-print(f"It called by {Path('pathlibTest.py').resolve()}")
+print(f"It called by {Path('runGame.py').resolve()}")
 
 exec(open(Path(f'Packages{s}main.py').resolve()).read())
