@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 import os, sys, time
-from   Packages.lib.data import rooms, status
-from   Packages.lib      import quests
 s = '\\' if os.name == "nt" else "/"
 TFP = f'{os.getcwd()}{s}'
 exec(open(f"{TFP}Packages{s}lib{s}system{s}downloadModules.py", encoding='utf8').read())
 from Packages                   import globalFunctions
-from Packages.lib               import player, stages
+from Packages.lib               import player, stages, quests
+from   Packages.lib.data import rooms, status
 from Packages.lib.system        import mainSettings
 from Packages.lib.modules       import Textbox, makeNewListener, logger
 from   Packages.globalFunctions import clear
