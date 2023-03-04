@@ -24,7 +24,7 @@ def play(File):
 def slowLogoPrint(text):
     for word in text:
         print(word, flush=True)
-        play(f"{s.TFP}sounds{s.s}smash.wav")
+        play(f"{s.TFP}Packages{s.s}sounds{s.s}smash.wav")
         time.sleep(0.5)
 
 def placeRandomBlock(Map, block, y:list, x:list, conditions):
@@ -99,7 +99,7 @@ while True:
     elif status.jpsf: {Name}.move()
 status.room[{Name}.y][{Name}.x] = status.stepableBlocks[status.stepableBlocks.index({Name}.stepped)]
         """, nameSpace)
-        play(f"{s.TFP}sounds{s.s}monster_dead.wav")
+        play(f"{s.TFP}Packages{s.s}sounds{s.s}monster_dead.wav")
         logger.addLog(f"{status.colors['R']}{Name}{status.colors['end']}이(가) 죽었습니다!")
     threading.Thread(target=EntityInteraction, name=Rname).start()
 

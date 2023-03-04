@@ -27,7 +27,7 @@ def menu():
     s.jpsf = False
     clear()
     time.sleep(0.1)
-    play(f'{s.TFP}sounds{s.s}smash.wav')
+    play(f'{s.TFP}Packages{s.s}sounds{s.s}smash.wav')
     while True:
         mainMenu = sc.Dropdown('  _   \n /_/     _/   _  _ _/_    _ _ \n/ \ /_//_/ |//_\'/ //  /_// /_\'\n\n𝘢 𝘭 𝘱 𝘩 𝘢\n< 메뉴 >', ['게임으로 돌아가기', '게임 종료', '게임 저장', '만든이', '만들 때 사용한 프로그램', '소리 설정', '아이콘 설정'], [1,0,255,10], '@')
         if mainMenu == 1:

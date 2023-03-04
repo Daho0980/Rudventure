@@ -114,7 +114,7 @@ class selector:
                     else: break
                 nowSelectRow    -= SNum1
                 nowSelectColumn -= SNum
-                play(f'{s.TFP}sounds{s.s}select.wav')
+                play(f'{s.TFP}Packages{s.s}sounds{s.s}select.wav')
                 clear()
             elif Input in down: # sublist 현재 위치 내리기
                 while True:
@@ -136,15 +136,15 @@ class selector:
                     else: break
                 nowSelectRow    += SNum1
                 nowSelectColumn += SNum
-                play(f'{s.TFP}sounds{s.s}select.wav')
+                play(f'{s.TFP}Packages{s.s}sounds{s.s}select.wav')
                 clear()
             elif Input in left and nowSelectRow > 0:
                 nowSelectRow -= 1
-                play(f'{s.TFP}sounds{s.s}select.wav'); clear()
+                play(f'{s.TFP}Packages{s.s}sounds{s.s}select.wav'); clear()
             elif Input in right and nowSelectRow < len(subtitleKeys)-1:
                 nowSelectRow += 1
-                play(f'{s.TFP}sounds{s.s}select.wav'); clear()
-            elif Input == '': play(f'{s.TFP}sounds{s.s}get_item.wav'); break # enter
+                play(f'{s.TFP}Packages{s.s}sounds{s.s}select.wav'); clear()
+            elif Input == '': play(f'{s.TFP}Packages{s.s}sounds{s.s}get_item.wav'); break # enter
             else: clear() # 별 개같은거 칠 때 방지용
         clear() # 최종
         blankD = 0 # 공백 개수 변수 선언

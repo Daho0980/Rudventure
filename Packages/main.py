@@ -2,16 +2,18 @@
 import os, sys, time
 s = '\\' if os.name == "nt" else "/"
 TFP = f'{os.getcwd()}{s}'
+print("checkPoint 1")
 exec(open(f"{TFP}Packages{s}lib{s}system{s}downloadModules.py", encoding='utf8').read())
 from Packages                   import globalFunctions
 from Packages.lib               import player, stages, quests
-from   Packages.lib.data import rooms, status
+from Packages.lib.data          import rooms, status
 from Packages.lib.system        import mainSettings
 from Packages.lib.modules       import Textbox, makeNewListener, logger
-from   Packages.globalFunctions import clear
+from Packages.globalFunctions   import clear
 
 p, r, s, S, S1, gbf, t, mnl= player.player, rooms, status, stages.stages, stages, globalFunctions, Textbox, makeNewListener
-s.s    = gbf.slash()
+s.s                        = gbf.slash()
+s.TFP                      = TFP
 clear()
 p.set()
 
@@ -19,7 +21,7 @@ p.set()
 def gameChecker():
     if int((s.hp / s.Mhp) * 100) <= 30 and s.hpLow == False:
         s.hpLow = True
-        gbf.play(f"{s.TFP}sounds{s.s}hp_low.wav"); logger.addLog(f"{s.colors['lY']}{s.name}{s.colors['end']} 님의 체력이 부족합니다! {s.colors['R']}(현재 체력 : {s.hp}){s.colors['end']}")
+        gbf.play(f"{s.TFP}Packages{s.s}sounds{s.s}hp_low.wav"); logger.addLog(f"{s.colors['lY']}{s.name}{s.colors['end']} 님의 체력이 부족합니다! {s.colors['R']}(현재 체력 : {s.hp}){s.colors['end']}")
     elif int((s.hp / s.Mhp) * 100) > 30: s.hpLow = False
 
     victory = quests.quest(s.stage)
@@ -31,7 +33,7 @@ def gameChecker():
             print("T U T O R I A L   C L E A R !")
         else:
             print(f"S T A G E   {s.stage}   C L E A R !")
-        gbf.play(f'{s.TFP}sounds{s.s}clear.wav')
+        gbf.play(f'{s.TFP}Packages{s.s}sounds{s.s}clear.wav')
         time.sleep(1)
         s.yctuoh = True
         clear()
@@ -44,7 +46,7 @@ def gameChecker():
         print(f"G A M E   O V E R")
         s.jpsf = False
         s.main = -1
-        gbf.play(f'{s.TFP}sounds{s.s}defeat.wav')
+        gbf.play(f'{s.TFP}Packages{s.s}sounds{s.s}defeat.wav')
         time.sleep(1)
         s.main = 0
         sys.exit()
@@ -57,9 +59,9 @@ while s.main > 0:
     time.sleep(1)
     if s.stage == 0: print(t.TextBox(f"{s.markdown(1)}   T U T O R I A L   {s.colors['end']}\n\n{s.markdown(3)}{s.stageName}{s.colors['end']}", Type="middle", inDistance=1, outDistance=5, AMLS=True, endLineBreak=True, LineType="double"))
     else: print(t.TextBox(f"{s.markdown(1)}   S T A G E   {s.stage}{s.colors['end']}   \n\n{s.markdown(3)}{s.stageName}{s.colors['end']}", Type="middle", inDistance=1, outDistance=5, AMLS=True, endLineBreak=True, LineType="double"))
-    gbf.play(f"{s.TFP}sounds{s.s}smash.wav")
+    gbf.play(f"{s.TFP}Packages{s.s}sounds{s.s}smash.wav")
     time.sleep(2)
-    gbf.play(f"{s.TFP}sounds{s.s}smash.wav")
+    gbf.play(f"{s.TFP}Packages{s.s}sounds{s.s}smash.wav")
     clear()
     s.jpsf = True
 

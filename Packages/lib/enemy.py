@@ -30,13 +30,13 @@ class enemy:
         else: self.y, self.x = y, x
 
     def pDamage(self, damage):
-        sound = f'{s.TFP}sounds{s.s}enemy_Hit.wav'
+        sound = f'{s.TFP}Packages{s.s}sounds{s.s}enemy_Hit.wav'
         if s.df > 0:
             s.df -= damage
             if s.df < 0       : s.hp += s.df
             if round(s.df) < 0: s.df = 0
             if s.df == 0 and s.dfCrack <= 0:
-                sound     = f'{s.TFP}sounds{s.s}crack.wav'
+                sound     = f'{s.TFP}Packages{s.s}sounds{s.s}crack.wav'
                 addLog(f"{s.colors['B']}방어구{s.colors['end']}가 부서졌습니다!")
                 s.dfCrack = 1
         else: s.hp -= damage
@@ -63,7 +63,7 @@ class enemy:
                     exec(exTen[exPos.index(s.p1)])
                 else:
                     while True:
-                        if random.randrange(1,110) == 3: play(f"{s.TFP}sounds{s.s}growl.wav")
+                        if random.randrange(1,110) == 3: play(f"{s.TFP}Packages{s.s}sounds{s.s}growl.wav")
                         enemyMove = random.randrange(1,3)
                         Rx, Ry    = random.randrange(-1,2), random.randrange(-1,2)
                         if enemyMove == 1:
@@ -113,7 +113,7 @@ class boss(enemy):
                 canBreak      = [s.item, s.floor]
                 a             = 0
                 if self.x == s.x or self.y == s.y:
-                    play(f"{s.TFP}sounds{s.s}TargetLocked.wav")
+                    play(f"{s.TFP}Packages{s.s}sounds{s.s}TargetLocked.wav")
                     if self.x == s.x:
                         Targetted()
                         if self.y < s.y: a = 0

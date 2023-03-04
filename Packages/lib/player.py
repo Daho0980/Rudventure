@@ -40,32 +40,32 @@ class player:
         elif Dir == Key.left: s.x -= Int
         elif Dir == Key.right: s.x += Int
         s.hunger -= 1
-        sound     = f'{s.TFP}sounds{s.s}move.wav'
+        sound     = f'{s.TFP}Packages{s.s}sounds{s.s}move.wav'
 
         if s.room[s.y][s.x] in [s.wall, s.fakeFloor]:
             player.damage(s.room[s.y][s.x])
             s.x = s.bfx
             s.y = s.bfy
             if s.df <= 0 and s.dfCrack <= 0:
-                sound = f'{s.TFP}sounds{s.s}crack.wav'
+                sound = f'{s.TFP}Packages{s.s}sounds{s.s}crack.wav'
                 logger.addLog(f"{s.colors['B']}방어구{s.colors['end']}가 부서졌습니다!")
                 s.dfCrack = 1
-            else: sound = f'{s.TFP}sounds{s.s}Hit.wav'
+            else: sound = f'{s.TFP}Packages{s.s}sounds{s.s}Hit.wav'
 
         elif s.room[s.y][s.x] in enemies:
             s.Wanted = [eval(f"{s.y}"), eval(f"{s.x}")]
             time.sleep(0.01)
             s.Wanted = []
             s.y, s.x = s.bfy, s.bfx
-            sound = f'{s.TFP}sounds{s.s}slash.wav'
+            sound = f'{s.TFP}Packages{s.s}sounds{s.s}slash.wav'
 
         elif s.room[s.y][s.x] == s.item:
             boxEvent()
-            sound = f'{s.TFP}sounds{s.s}get_item.wav'
+            sound = f'{s.TFP}Packages{s.s}sounds{s.s}get_item.wav'
 
         elif s.room[s.y][s.x] == s.R:
             s.room[s.y][s.x] = s.floor
-            sound = f'{s.TFP}sounds{s.s}open.wav'
+            sound = f'{s.TFP}Packages{s.s}sounds{s.s}open.wav'
             nowRdoorsNum = s.doors[s.doorRooms.index(s.room)]
             for i in range(len(nowRdoorsNum)):
                 if nowRdoorsNum[i][0] == s.y and nowRdoorsNum[i][1] == s.x:
@@ -77,7 +77,7 @@ class player:
         elif s.room[s.y][s.x] == ' ': s.hp, s.df = 0, 0
 
         elif s.room[s.y][s.x] == s.box:
-            sound  = f'{s.TFP}sounds{s.s}move_box.wav'
+            sound  = f'{s.TFP}Packages{s.s}sounds{s.s}move_box.wav'
             cx, cy = 0, 0
             if Dir == Key.up or Dir == Key.down:
                 if Dir == Key.up: cy = s.y - Int
@@ -95,7 +95,7 @@ class player:
                 else: s.room[s.y][cx] = s.box
 
         elif s.room[s.y][s.x] in s.squishy:
-            sound = f'{s.TFP}sounds{s.s}squish.wav'
+            sound = f'{s.TFP}Packages{s.s}sounds{s.s}squish.wav'
             if s.room[s.y][s.x] == s.squishy[0]: s.room[s.y][s.x] = s.squishy[1]
             else: s.room[s.y][s.x] = s.squishy[0]
             s.y, s.x = s.bfy, s.bfx
