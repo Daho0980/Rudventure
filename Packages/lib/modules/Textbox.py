@@ -11,7 +11,17 @@ def checkActualLen(line):
         else                                            : Len += 1
     return Len
 
-def TextBox(Inp, Type="left", maxLine=100, fillChar=" ", inDistance=0, outDistance=0, AMLS=False, endLineBreak=False, LineType="normal"):
+# Inp          : 텍스트박스 내용
+# Type         : 위치 설정
+# maxLine      : 최대 박스 길이 설정. AMLS를 True로 할거라면 그냥 신경쓰지 않는 게 좋음
+# fillChar     : 박스 안을 채울 텍스트. 딱 한 개만 허용
+# inDistance   : 박스 안쪽 텍스트의 위, 아래 공백 크기 설정
+# outDistance  : 박스 바깥의 공백 크기 설정
+# AMLS         : 가장 긴 텍스트의 길이에 맞게 설정할지에 대한 여부. 이미 maxLine을 설정했다면 신경쓰지 않는 게 좋음
+# endLineBreak : 개행 문자 여부
+# LineType     : 텍스트박스 테두리 종류 설정
+# animation    : 텍스트 박스 출력 시 나오게 할 애니메이션 설정. [종류, 텀] 으로 이루어짐 
+def TextBox(Inp, Type="left", maxLine=100, fillChar=" ", inDistance=0, outDistance=0, AMLS=False, endLineBreak=False, LineType="normal", animation=[None, 0]):
         Display  = ""
 
         Line       = {
