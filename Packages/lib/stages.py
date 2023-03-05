@@ -22,7 +22,7 @@ class stages:
         elif stage == 1:
             s.stageName = "미로"
             s.room = copy.deepcopy(r.maze_big)
-            s.roomName = ("maze_big")
+            s.roomName = "maze_big"
             p.player.start(0, 9)
             for Monster in range(3): gbf.addEntity(0, eHp)
             for Item in range(4): gbf.placeRandomBlock(s.room, s.item, [1, 20], [1, 20], [s.p1, s.e, s.wall])
@@ -31,7 +31,7 @@ class stages:
         elif stage == 2:
             s.stageName = "움직이는 상자"
             s.room = copy.deepcopy(r.field)
-            s.roomName = ("field")
+            s.roomName = "field"
             p.player.start(8, 4)
             for addMark in range(2):
                 while True:
