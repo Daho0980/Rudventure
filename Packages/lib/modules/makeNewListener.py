@@ -9,8 +9,9 @@ def addListener():
         if status.jpsf:
             if quests.quest(status.stage) != 1:
                 inputs = (Key.up, Key.down, Key.left, Key.right)
-                if key in inputs: player.player.move(key, 1)
-                if status.df > 0: status.dfCrack = 0
+                
+                if key in inputs    : player.player.move(key, 1)
+                if status.df > 0    : status.dfCrack = 0
                 if status.frame == 0: clear(); fieldPrint()
 
     def key_release(key):

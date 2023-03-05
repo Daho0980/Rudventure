@@ -21,7 +21,7 @@ class player:
 
     def damage(block="?"):
         if s.df > 0: s.df -= 1
-        else: s.hp -= 1
+        else       : s.hp -= 1
         logger.addLog(f"{s.lightName}이(가) {s.markdown(1)}[ {block} ]{s.colors['end']} 에 의해 상처입었습니다 {s.colors['R']}(남은 체력 : {s.hp}){s.colors['end']} {s.colors['B']}(남은 방어력 : {s.df}){s.colors['end']}")
 
     def start(y, x):
@@ -34,9 +34,9 @@ class player:
         if s.df > 0: s.dfCrack = 0
         s.bfy, s.bfx = s.y, s.x
         match Dir:
-            case Key.up: s.y -= Int
-            case Key.down: s.y += Int
-            case Key.left: s.x -= Int
+            case Key.up   : s.y -= Int
+            case Key.down : s.y += Int
+            case Key.left : s.x -= Int
             case Key.right: s.x += Int
         s.hunger -= 1
         sound     = f'{s.TFP}Packages{s.s}sounds{s.s}move.wav'
@@ -49,7 +49,7 @@ class player:
                 sound = f'{s.TFP}Packages{s.s}sounds{s.s}crack.wav'
                 logger.addLog(f"{s.colors['B']}방어구{s.colors['end']}가 부서졌습니다!")
                 s.dfCrack = 1
-            else: sound = f'{s.TFP}Packages{s.s}sounds{s.s}Hit.wav'
+            else                           : sound = f'{s.TFP}Packages{s.s}sounds{s.s}Hit.wav'
 
         elif s.room[s.y][s.x] in enemies:
             s.Wanted = [eval(f"{s.y}"), eval(f"{s.x}")]
@@ -68,9 +68,9 @@ class player:
             nowRdoorsNum = s.doors[s.doorRooms.index(s.roomName)]
             for i in range(len(nowRdoorsNum)):
                 if nowRdoorsNum[i][0] == s.y and nowRdoorsNum[i][1] == s.x:
-                    s.y = nowRdoorsNum[i][2]
-                    s.x = nowRdoorsNum[i][3]
-                    s.room = copy.deepcopy(eval(f"r.{nowRdoorsNum[i][4]}"))
+                    s.y        = nowRdoorsNum[i][2]
+                    s.x        = nowRdoorsNum[i][3]
+                    s.room     = copy.deepcopy(eval(f"r.{nowRdoorsNum[i][4]}"))
                     s.roomName = nowRdoorsNum[i][4]
                     break
 
@@ -96,10 +96,11 @@ class player:
         elif s.room[s.y][s.x] in s.squishy:
             sound = f'{s.TFP}Packages{s.s}sounds{s.s}squish.wav'
             if s.room[s.y][s.x] == s.squishy[0]: s.room[s.y][s.x] = s.squishy[1]
-            else: s.room[s.y][s.x] = s.squishy[0]
+            else                               : s.room[s.y][s.x] = s.squishy[0]
+
             s.y, s.x = s.bfy, s.bfx
             logger.addLog(f"{s.lightName}이(가) {s.colors['B']}말랑이{s.colors['end']}를 만졌습니다 (말랑)")
 
         s.room[s.bfy][s.bfx] = s.floor
-        s.room[s.y][s.x] = s.p1
+        s.room[s.y][s.x]     = s.p1
         play(sound)

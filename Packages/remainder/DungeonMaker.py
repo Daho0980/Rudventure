@@ -78,7 +78,7 @@ def showProgress():
 
 
 def initBranch(Map):
-    global x, y
+    global y, x
     global rooms
     global direction
     global progress
@@ -91,7 +91,7 @@ def initBranch(Map):
 
     def getBack(e, bfx, bfy):
         global x, y
-        e -= 1
+        e   -= 1
         x, y = bfx, bfy
 
     while nowLength < maxBranchLength:    
@@ -102,6 +102,7 @@ def initBranch(Map):
         possibility         = [['y', 1, 'U', 'D'], ['y', -1, 'D', 'U'], ['x', 1, 'L', 'R'], ['x', -1, 'R', 'L']]
         locationData        = possibility[random.randrange(0,4)]
         coordinateNamespace = {'x':x, 'y':y}
+        
         exec(f"{locationData[0]}+={locationData[1]}", coordinateNamespace)
         x, y                = coordinateNamespace['x'], coordinateNamespace['y']
 

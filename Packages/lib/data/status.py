@@ -36,7 +36,7 @@ def markdown(Type=0):
     if isinstance(Type, list):
         output = ""
         for i in Type: output += MarkdownKinds[i]
-    else: output = MarkdownKinds[Type]
+    else                     : output = MarkdownKinds[Type]
 
     return output
 

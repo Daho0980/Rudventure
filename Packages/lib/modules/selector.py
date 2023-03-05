@@ -8,17 +8,18 @@ class selector:
         subListColumn = -1 # 세로
         while True:
             if subListColumn >= len(subtitle)-1: break
-            else:
+            else                               :
                 newSubtitle.append([]) # 새로운 세로 배열셋 추가
                 subListRow += 1 # 가로 추가
             for i in range(maxLine):
                 subListColumn += 1 # 세로 추가
                 if subListColumn == len(subtitle): newSubtitle[subListRow].append(' ') # 세로 배열셋 내 공백 옵션 새로 추가
-                else: newSubtitle[subListRow].append(subtitle[subListColumn]) # 세로 배열셋 내 옵션 새로 추가
+                else                             : newSubtitle[subListRow].append(subtitle[subListColumn]) # 세로 배열셋 내 옵션 새로 추가
         return newSubtitle
 
     def lineSpaceMaker(lineSpace):
         output = ''
+
         for i in range(lineSpace): output += ' '
         return output
 
@@ -28,17 +29,19 @@ class selector:
                 row     = 0
                 column += 1
             else: row += 1
+
             return row, column
 
         if isinstance(title, list): print(title[0] + Enter) # list형 title 방지
         else:                       print(title + Enter)
+
         row     = -1
         column  = 0
         Display = ""
         for i in range(maxLine):
             subtitleLine = ''
             for j in range(len(subtitle)):
-                row, column = positionOutput(subtitle, row, column)
+                row, column   = positionOutput(subtitle, row, column)
                 subtitleLine += (f'{arrow[row][column]} {subtitle[row][column]}{selector.lineSpaceMaker(lineSpace)}')
             Display += subtitleLine; Display += '\n'
         if subtitleValues != []: Display += f"{s.markdown([0,2,3])}\n    {subtitleValues[(maxLine*nowSelectRow)+nowSelectColumn]}"

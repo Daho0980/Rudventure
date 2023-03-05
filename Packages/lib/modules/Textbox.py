@@ -3,35 +3,21 @@ import unicodedata, re
 def escapeAnsi(line):
     ansi_escape =re.compile(r'(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]')
     return ansi_escape.sub('', line)
+
 def checkActualLen(line):
     Len = 0
     for i in line:
         if unicodedata.east_asian_width(i) in ['F', 'W']: Len += 2
-        else: Len += 1
+        else                                            : Len += 1
     return Len
 
 def TextBox(Inp, Type="left", maxLine=100, fillChar=" ", inDistance=0, outDistance=0, AMLS=False, endLineBreak=False, LineType="normal"):
         Display  = ""
 
         Line       = {
-                     "normal":{
-                              0:["┌", "┐"],
-                              1:["└", "┘"],
-                              2:["├", "┤"],
-                              3:["─", "│"]
-                              },
-                     "double":{
-                              0:["╔", "╗"],
-                              1:["╚", "╝"],
-                              2:["╠", "╣"],
-                              3:["═", "║"]
-                              },
-                     "bold":{
-                              0:["┏", "┓"],
-                              1:["┗", "┛"],
-                              2:["┣", "┫"],
-                              3:["━", "┃"],
-                     }
+                     "normal":{0:["┌", "┐"], 1:["└", "┘"], 2:["├", "┤"], 3:["─", "│"]},
+                     "double":{0:["╔", "╗"], 1:["╚", "╝"], 2:["╠", "╣"], 3:["═", "║"]},
+                     "bold"  :{0:["┏", "┓"], 1:["┗", "┛"], 2:["┣", "┫"], 3:["━", "┃"]}
                      }
         Texts      = Inp.split("\n")
         FrontSpace = ""
