@@ -3,7 +3,7 @@ from   pynput.keyboard          import Key
 from   Packages.lib             import stages
 from   Packages.lib.data        import rooms, status
 from   Packages. lib.modules    import logger
-from   Packages.globalFunctions import play
+from   Packages.lib.system.globalFunctions import play
 
 S1, s, r = stages, status, rooms
 dfCrack  = 0

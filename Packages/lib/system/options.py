@@ -1,7 +1,7 @@
 import time, json
 from   Packages.lib.data        import status
 from   Packages.lib.modules     import selector, makeNewListener
-from   Packages.globalFunctions import clear, play
+from   Packages.lib.system.globalFunctions import clear, play
 
 s  = status
 sc = selector.selector

@@ -1,5 +1,5 @@
 import os, time, random
-from   Packages             import globalFunctions                            as gbf
+from   Packages.lib.system             import globalFunctions                            as gbf
 from Packages.lib.data      import status
 from   Packages.lib.modules import selector, Textbox, logger, makeNewListener
 

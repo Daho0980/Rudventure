@@ -1,4 +1,4 @@
-from   Packages.globalFunctions import clear
+from   Packages.lib.system.globalFunctions import clear
 import pip, sys
 
 def install(package):

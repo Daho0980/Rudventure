@@ -1,7 +1,7 @@
 from pynput.keyboard          import Key, Listener
 from Packages.lib             import quests, player
 from Packages.lib.data        import status
-from Packages.globalFunctions import fieldPrint, clear
+from Packages.lib.system.globalFunctions import fieldPrint, clear
 
 
 def addListener():

@@ -3,12 +3,12 @@ import os, sys, time
 s = '\\' if os.name == "nt" else "/"
 TFP = f'{os.getcwd()}{s}'
 exec(open(f"{TFP}Packages{s}lib{s}system{s}downloadModules.py", encoding='utf8').read())
-from Packages                   import globalFunctions
+from Packages.lib.system                   import globalFunctions
 from Packages.lib               import player, stages, quests
 from Packages.lib.data          import rooms, status
 from Packages.lib.system        import mainSettings
 from Packages.lib.modules       import Textbox, makeNewListener, logger
-from Packages.globalFunctions   import clear
+from Packages.lib.system.globalFunctions   import clear
 
 p, r, s, S, S1, gbf, t, mnl= player.player, rooms, status, stages.stages, stages, globalFunctions, Textbox, makeNewListener
 s.s                        = gbf.slash()
