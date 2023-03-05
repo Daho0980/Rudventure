@@ -79,19 +79,19 @@ class player:
         elif s.room[s.y][s.x] == s.box:
             sound  = f'{s.TFP}Packages{s.s}sounds{s.s}move_box.wav'
             cx, cy = 0, 0
+            Type = 0
             if Dir in [Key.up, Key.down]:
                 if Dir == Key.up: cy = s.y - Int
                 elif Dir == Key.down: cy = s.y + Int
 
-                if s.room[cy][s.x] in [s.wall, s.e, s.R, s.boss, s.box, s.fakeFloor, s.goal, s.squishy]: s.y, s.x = s.bfy, s.bfx
-                else: s.room[cy][s.x] = s.box
-
             elif Dir in [Key.left, Key.right]:
+                Type = 1
                 if Dir == Key.left: cx = s.x - Int
                 elif Dir == Key.right: cx = s.x + Int
-                
-                if s.room[s.y][cx] in [s.wall, s.e, s.R, s.boss, s.box, s.fakeFloor, s.goal, s.squishy]: s.y, s.x = s.bfy, s.bfx
-                else: s.room[s.y][cx] = s.box
+
+            positions = [[cy, s.x], [s.y, cx]]
+            if s.room[positions[Type][0]][positions[Type][1]] in [s.wall, s.e, s.R, s.boss, s.box, s.fakeFloor, s.goal, s.squishy]: s.y, s.x = s.bfy, s.bfx
+            else: s.room[positions[Type][0]][positions[Type][1]] = s.box
 
         elif s.room[s.y][s.x] in s.squishy:
             sound = f'{s.TFP}Packages{s.s}sounds{s.s}squish.wav'
