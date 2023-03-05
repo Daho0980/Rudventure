@@ -32,8 +32,6 @@ class stages:
             s.stageName = "움직이는 상자"
             s.room = copy.deepcopy(r.field)
             s.roomName = ("field")
-            # s.room[0][1], s.room[0][2],  s.room[0][3] = s.wall, s.wall, s.wall
-            # s.room[1][2] = s.floor
             p.player.start(8, 4)
             for addMark in range(2):
                 while True:

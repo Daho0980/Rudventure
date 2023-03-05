@@ -2,7 +2,7 @@ import random, time
 from   Packages.lib                import player
 from   Packages.lib.data           import status
 from   Packages.lib.data.status    import entities
-from   Packages.globalFunctions    import play, fieldPrint, clear
+from   Packages.globalFunctions    import play
 from   Packages.lib.modules.logger import addLog
 
 s, p = status, player

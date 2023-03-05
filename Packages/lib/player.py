@@ -67,7 +67,6 @@ class player:
             s.room[s.y][s.x] = s.floor
             sound = f'{s.TFP}Packages{s.s}sounds{s.s}open.wav'
             nowRdoorsNum = s.doors[s.doorRooms.index(s.roomName)]
-            # doors          = [[[0,2,5,3,"room_1"]], [[6,3,1,2,"field"]], [[9,14,1,1,"invisible_walls2"]]]
             for i in range(len(nowRdoorsNum)):
                 if nowRdoorsNum[i][0] == s.y and nowRdoorsNum[i][1] == s.x:
                     s.y = nowRdoorsNum[i][2]
