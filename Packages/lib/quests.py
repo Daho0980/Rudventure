@@ -30,9 +30,9 @@ def quest(stage):
         if s.room[9][14] == s.p1: output = 1
 
     elif stage == 4:
-        if len(s.entities) == 0:
-            isGoal = True
+        if len(s.entities) == 0 and isGoal == False:
             s.room[0][6] = s.goal
+            isGoal = True
             
         if s.room[0][7] == s.p1 and isGoal == True: output = 1; isGoal = False
 
