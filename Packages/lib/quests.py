@@ -31,7 +31,7 @@ def quest(stage):
 
     elif stage == 4:
         if len(s.entities) == 0 and isGoal == False:
-            s.room[0][6] = s.goal
+            s.room[0][7] = s.goal
             isGoal = True
             
         if s.room[0][7] == s.p1 and isGoal == True: output = 1; isGoal = False
