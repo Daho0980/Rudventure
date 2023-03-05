@@ -20,7 +20,7 @@ def customColor(R, G, B, Type=1):
     }
     return f'{colorKinds[Type]};2;{R};{G};{B}'
 
-#    ┏━━━━ Wait, you're not color >:(
+#    ┏━━━━ Wait, you're not a color >:(
 #   v
 def markdown(Type=0):
     MarkdownKinds = {
@@ -75,7 +75,7 @@ main = 1
 LOGO           = "  _   \n /_/     _/   _  _ _/_    _ _ \n/ \ /_//_/ |//_\'/ //  /_// /_\'\n\n𝘢 𝘭 𝘱 𝘩 𝘢\n\n"
 welcomeMessage = []
 p1             = f"{colors['G']}{markdown(3)}@{colors['end']}" # 0, 255, 10
-p2             = "#"
+p2             = "&"
 squishy        = [f"{colors['B']}{markdown(1)}O{colors['end']}", f"{colors['B']}{markdown(1)}o{colors['end']}"]
 e              = '%'
 boss           = '#'

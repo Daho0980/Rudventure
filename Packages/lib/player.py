@@ -26,19 +26,18 @@ class player:
 
     def start(y, x):
         s.room[y][x] = s.p1
-        s.x = x
-        s.y = y
+        s.y, s.x = y, x
 
     def move(Dir, Int): 
         enemies = [s.e, s.boss]
 
         if s.df > 0: s.dfCrack = 0
-        s.bfx = s.x
-        s.bfy = s.y
-        if Dir == Key.up: s.y -= Int
-        elif Dir == Key.down: s.y += Int
-        elif Dir == Key.left: s.x -= Int
-        elif Dir == Key.right: s.x += Int
+        s.bfy, s.bfx = s.y, s.x
+        match Dir:
+            case Key.up: s.y -= Int
+            case Key.down: s.y += Int
+            case Key.left: s.x -= Int
+            case Key.right: s.x += Int
         s.hunger -= 1
         sound     = f'{s.TFP}Packages{s.s}sounds{s.s}move.wav'
 
@@ -80,19 +79,18 @@ class player:
         elif s.room[s.y][s.x] == s.box:
             sound  = f'{s.TFP}Packages{s.s}sounds{s.s}move_box.wav'
             cx, cy = 0, 0
-            if Dir == Key.up or Dir == Key.down:
+            if Dir in [Key.up, Key.down]:
                 if Dir == Key.up: cy = s.y - Int
                 elif Dir == Key.down: cy = s.y + Int
-                if s.room[cy][s.x] == s.wall or\
-                s.room[cy][s.x] == s.e or\
-                s.room[cy][s.x] == s.R: s.y, s.x = s.bfy, s.bfx
+
+                if s.room[cy][s.x] in [s.wall, s.e, s.R, s.boss, s.box, s.fakeFloor, s.goal, s.squishy]: s.y, s.x = s.bfy, s.bfx
                 else: s.room[cy][s.x] = s.box
-            elif Dir == Key.left or Dir == Key.right:
+
+            elif Dir in [Key.left, Key.right]:
                 if Dir == Key.left: cx = s.x - Int
                 elif Dir == Key.right: cx = s.x + Int
-                if s.room[s.y][cx] == s.wall or\
-                s.room[s.y][cx] == s.e or\
-                s.room[s.y][cx] == s.R: s.y, s.x = s.bfy, s.bfx
+                
+                if s.room[s.y][cx] in [s.wall, s.e, s.R, s.boss, s.box, s.fakeFloor, s.goal, s.squishy]: s.y, s.x = s.bfy, s.bfx
                 else: s.room[s.y][cx] = s.box
 
         elif s.room[s.y][s.x] in s.squishy:
