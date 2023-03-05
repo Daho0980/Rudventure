@@ -11,7 +11,7 @@ def quest(stage):
     
     if stage == 0:
         if len(s.entities) == 0 and s.roomName == "field": s.room[0][2] = s.R
-        if s.room[3][3] == s.p1:
+        if s.room[3][3] == s.p1 and s.roomName == "room_1":
             output = 1
 
     elif stage == 1:
