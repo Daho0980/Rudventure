@@ -26,11 +26,9 @@ def gameChecker():
     victory = quests.quest(s.stage)
     if victory == 1:
         s.room[s.y][s.x] = s.floor
-        clear()
         s.jpsf = False
-        if s.stage == 0: print(s.colors['G']+s.markdown(1)); print(t.TextBox(f"   T U T O R I A L   C L E A R !   ", Type="middle", inDistance=1, outDistance=1, AMLS=True, endLineBreak=True, LineType="bold")); print(s.colors['end'])
-        else           : print(s.colors['G']+s.markdown(1)); print(t.TextBox(f"   S T A G E   {s.stage}   C L E A R !   ", Type="middle", inDistance=1, outDistance=1, AMLS=True, endLineBreak=True, LineType="bold")); print(s.colors['end'])
-        gbf.play(f'{s.TFP}Packages{s.s}sounds{s.s}clear.wav')
+        clear(); gbf.play(f'{s.TFP}Packages{s.s}sounds{s.s}clear.wav')
+        print(s.colors['G']+s.markdown(1)); t.TextBox(f"   T U T O R I A L   C L E A R !   " if s.stage == 0 else f"   S T A G E   {s.stage}   C L E A R !   ", Type="middle", inDistance=1, outDistance=1, AMLS=True, endLineBreak=True, LineType="bold", animation=["blind", 0.2]); print(s.colors['end'])
         time.sleep(1)
         s.yctuoh = True
         clear()
@@ -40,12 +38,11 @@ def gameChecker():
         clear()
         s.stage += 1
     elif s.hp <= 0 or s.hunger <= 0:
-        clear()
-        print(s.colors['R']+s.markdown(1)); print(t.TextBox(f"   G A M E   O V E R   ", Type="middle", inDistance=1, outDistance=1, AMLS=True, endLineBreak=True, LineType="bold")); print(s.colors['end'])
         s.jpsf = False
-        s.main = 0
-        gbf.play(f'{s.TFP}Packages{s.s}sounds{s.s}defeat.wav')
+        clear(); gbf.play(f'{s.TFP}Packages{s.s}sounds{s.s}defeat.wav')
+        print(s.colors['R']+s.markdown(1)); t.TextBox(f"   G A M E   O V E R   ", Type="middle", inDistance=1, outDistance=1, AMLS=True, endLineBreak=True, LineType="bold", animation=["blind", 0.2, ]); print(s.colors['end'])
         time.sleep(1)
+        s.main = 0
         sys.exit()
 
 
@@ -54,9 +51,7 @@ mainSettings.init()
 while s.main > 0:
     S.stage(s.stage)
     time.sleep(1)
-    if s.stage == 0: print(t.TextBox(f"{s.markdown(1)}   T U T O R I A L   {s.colors['end']}\n\n{s.markdown(3)}{s.stageName}{s.colors['end']}", Type="middle", inDistance=1, outDistance=5, AMLS=True, endLineBreak=True, LineType="double"))
-    else           : print(t.TextBox(f"{s.markdown(1)}   S T A G E   {s.stage}{s.colors['end']}   \n\n{s.markdown(3)}{s.stageName}{s.colors['end']}", Type="middle", inDistance=1, outDistance=5, AMLS=True, endLineBreak=True, LineType="double"))
-    gbf.play(f"{s.TFP}Packages{s.s}sounds{s.s}smash.wav")
+    t.TextBox(f"{s.markdown(1)}   T U T O R I A L   {s.colors['end']}\n\n{s.markdown(3)}{s.stageName}{s.colors['end']}" if s.stage == 0 else f"{s.markdown(1)}   S T A G E   {s.stage}{s.colors['end']}   \n\n{s.markdown(3)}{s.stageName}{s.colors['end']}", Type="middle", inDistance=1, outDistance=5, AMLS=True, endLineBreak=True, LineType="double", animation=["blind", 0.1, None, f"{s.TFP}Packages{s.s}sounds{s.s}smash.wav"])
     time.sleep(2)
     gbf.play(f"{s.TFP}Packages{s.s}sounds{s.s}smash.wav")
     clear()

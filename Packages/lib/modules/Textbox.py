@@ -1,4 +1,5 @@
-import unicodedata, re
+import unicodedata, re, time
+from   Packages.lib.system.globalFunctions import play
 
 def escapeAnsi(line):
     ansi_escape =re.compile(r'(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]')
@@ -20,8 +21,9 @@ def checkActualLen(line):
 # AMLS         : 가장 긴 텍스트의 길이에 맞게 설정할지에 대한 여부. 이미 maxLine을 설정했다면 신경쓰지 않는 게 좋음
 # endLineBreak : 개행 문자 여부
 # LineType     : 텍스트박스 테두리 종류 설정
-# animation    : 텍스트 박스 출력 시 나오게 할 애니메이션 설정. [종류, 텀] 으로 이루어짐 
-def TextBox(Inp, Type="left", maxLine=100, fillChar=" ", inDistance=0, outDistance=0, AMLS=False, endLineBreak=False, LineType="normal", animation=[None, 0]):
+# returnText   : 텍스트박스 글자 return 여부
+# animation    : 텍스트 박스 출력 시 나오게 할 애니메이션 설정. [종류, 텀, 진행 사운드, 마침 사운드] 으로 이루어짐 
+def TextBox(Inp, Type="left", maxLine=100, fillChar=" ", inDistance=0, outDistance=0, AMLS=False, endLineBreak=False, LineType="normal", returnText=False, animation=[None, 0, "", ""]):
         Display  = ""
 
         Line       = {
@@ -57,14 +59,25 @@ def TextBox(Inp, Type="left", maxLine=100, fillChar=" ", inDistance=0, outDistan
         Display += (Line[LineType][3][1]+fillChar*maxLine+Line[LineType][3][1]+"\n")*inDistance
         Display += Line[LineType][1][0]+Line[LineType][3][0]*(maxLine)+Line[LineType][1][1]+endLine
         Display += "\n"*outDistance
-        return Display
 
-# print(TextBox("기본 박스(100칸)"))
-# print(TextBox("왼쪽(기본)"))
-# print(TextBox("중간", Type="middle"))
-# print(TextBox("오른쪽", Type='right'))
-# print(TextBox("최대 길이 자동 설정\n아래에 짧은 줄이 있든\n\n존나 긴 줄이 있든 알아서 정해줌\n\n(현재: Type=middle, AMLS=True)", Type="middle", AMLS=True))
-# print(TextBox("글상자 안/밖 거리 설정도 가능", inDistance=5, outDistance=3, AMLS=True, Type="middle"))
-# print(TextBox("일반"))
-# print(TextBox("볼드", LineType="bold"))
-# print(TextBox("더블", LineType='double'))
+        if returnText == False:
+            if animation[0] == "blind":
+                lines = Display.split("\n")
+                for i in range(len(lines)):
+                    if len(animation) != 2:
+                        if i != len(lines)-1 and animation[2]!=None: play(animation[2])
+                        elif i == len(lines)-1 and animation[3]!=None: play(animation[3])
+                    print(lines[i])
+                    if lines[i] != "": time.sleep(animation[1])
+            else                      : print(Display)
+        else: return Display
+
+# TextBox("기본 박스(100칸)")
+# TextBox("왼쪽(기본)")
+# TextBox("중간", Type="middle")
+# TextBox("오른쪽", Type='right')
+# TextBox("최대 길이 자동 설정\n아래에 짧은 줄이 있든\n\n존나 긴 줄이 있든 알아서 정해줌\n\n(현재: Type=middle, AMLS=True)", Type="middle", AMLS=True)
+# TextBox("글상자 안/밖 거리 설정도 가능", inDistance=5, outDistance=3, AMLS=True, Type="middle")
+# TextBox("일반")
+# TextBox("볼드", LineType="bold")
+# TextBox("더블", LineType='double')
