@@ -87,14 +87,15 @@ boxMark        = f"{colors['R']}✘{colors['end']}"
 goal           = f'\033[31mF\033[0m'
 floor          = '.'
 fakeFloor      = '∙'
-doorRooms      = [r.field, r.room_1, r.invisible_walls1]
-doors          = [[[0,2,5,3,r.room_1]], [[6,3,1,2,r.field]], [[9,14,1,1,r.invisible_walls2]]]
+doorRooms      = ["field", "room_1", "invisible_walls1"]
+doors          = [[[0,2,5,3,"room_1"]], [[6,3,1,2,"field"]], [[9,14,1,1,"invisible_walls2"]]]
 stepableBlocks = [floor, item, boxMark]
 
 # Stage settings
 nowStage  = 0
 stage     = 0
 stageName = ""
+roomName  = ""
 
 # Background vars
 s        = ''

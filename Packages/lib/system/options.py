@@ -8,16 +8,16 @@ sc = selector.selector
 
 def saveFile():
     Vars        = [name for name in dir(status) if not name.startswith('__')]
-    uselessVars = ["colors", "customColor", "markdown", "btnX", "btnY", "btn1X", "btn1Y", "main", "LOGO", "p1", "e", "boss", "wall", "R", "item", "goal", "floor", "fakeFloor", "doorRooms", "doors", "stepableBlocks", "jpsf", "entities", "Wanted", "onDisplay", "onTime", "maxOnTime", "Rooms", "os", "r", "room", "yctuoh", "lightName", "welcomeMessage"]
+    uselessVars = ['LOGO', 'R', 'Wanted', 'bfx', 'bfy', 'boss', 'box', 'boxMark', 'btn1X', 'btn1Y', 'btnX', 'btnY', 'colors', 'customColor', 'doorRooms', 'doors', 'e', 'entities', 'fakeFloor', 'floor', 'goal', 'goalX', 'goalY', 'hpLow', 'item', 'jpsf', 'main', 'markdown', 'onDisplay', 'onTime', 'os', 'p1', 'p2', 'r', 'room', 's', 'squishy', 'stepableBlocks', 'steppedBlock', 'wall', 'x', 'y', 'yctuoh']
     for i in uselessVars: Vars.remove(i)
 
     file_path    = './savefile.json'
     data         = {}
-    data['Data'] = []
+    data[s.name] = []
     statusData   = {}
     for i in Vars:
         statusData[i] = eval(f"status.{i}")
-    data['Data'].append({"status" : statusData})
+    data[s.name].append({"status" : statusData})
 
     with open(file_path, "w") as outfile: json.dump(data, outfile, indent=4, ensure_ascii=False)
 

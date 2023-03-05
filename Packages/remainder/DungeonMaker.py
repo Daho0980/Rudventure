@@ -132,9 +132,9 @@ def initBranch(Map):
         progress.append([y, x])
     return GraphicMaker(Map)
 
-gridPrint(initBranch(Map))
-print(f"{rooms[0]} = start\n{rooms[1]} = basic room\n{rooms[2]} = event room\n{rooms[3]} = treasurebox room\n{rooms[4]} = exit\n")
-checkOpenDoor(Map)
+# gridPrint(initBranch(Map))
+# print(f"{rooms[0]} = start\n{rooms[1]} = basic room\n{rooms[2]} = event room\n{rooms[3]} = treasurebox room\n{rooms[4]} = exit\n")
+# checkOpenDoor(Map)
 
-input("\nSee progress__")
-showProgress()
+# input("\nSee progress__")
+# showProgress()
