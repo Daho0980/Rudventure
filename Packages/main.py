@@ -28,8 +28,8 @@ def gameChecker():
         s.room[s.y][s.x] = s.floor
         clear()
         s.jpsf = False
-        if s.stage == 0: print("T U T O R I A L   C L E A R !")
-        else: print(f"S T A G E   {s.stage}   C L E A R !")
+        if s.stage == 0: print(s.colors['G']+s.markdown(1)); print(t.TextBox(f"   T U T O R I A L   C L E A R !   ", Type="middle", inDistance=1, outDistance=1, AMLS=True, endLineBreak=True, LineType="bold")); print(s.colors['end'])
+        else           : print(s.colors['G']+s.markdown(1)); print(t.TextBox(f"   S T A G E   {s.stage}   C L E A R !   ", Type="middle", inDistance=1, outDistance=1, AMLS=True, endLineBreak=True, LineType="bold")); print(s.colors['end'])
         gbf.play(f'{s.TFP}Packages{s.s}sounds{s.s}clear.wav')
         time.sleep(1)
         s.yctuoh = True
@@ -41,7 +41,7 @@ def gameChecker():
         s.stage += 1
     elif s.hp <= 0 or s.hunger <= 0:
         clear()
-        print(f"G A M E   O V E R")
+        print(s.colors['R']+s.markdown(1)); print(t.TextBox(f"   G A M E   O V E R   ", Type="middle", inDistance=1, outDistance=1, AMLS=True, endLineBreak=True, LineType="bold")); print(s.colors['end'])
         s.jpsf = False
         s.main = 0
         gbf.play(f'{s.TFP}Packages{s.s}sounds{s.s}defeat.wav')
