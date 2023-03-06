@@ -20,7 +20,9 @@ def GraphicMaker(MapData):
     grid = []
     for i in range(len(MapData)):
         grid.append([])
-        for j in range(len(MapData[i])): grid[i].append(MapData[i][j]["room"])
+        for j in range(len(MapData[i])):
+            if len(MapData[i][j]) > 0: grid[i].append(MapData[i][j]["room"])
+            else                     : grid[i].append(' ')
 
     return grid
 
