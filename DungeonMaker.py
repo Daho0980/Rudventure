@@ -2,6 +2,7 @@ import random
 import time
 import copy
 import os
+from Packages.lib.data import status, rooms
 
 Map       = []
 progress  = [[4, 4]]
@@ -21,18 +22,18 @@ def GraphicMaker(MapData):
     for i in range(len(MapData)):
         grid.append([])
         for j in range(len(MapData[i])):
-            if len(MapData[i][j]) > 0: grid[i].append(MapData[i][j]["room"])
+            if len(MapData[i][j]) > 0: grid[i].append(MapData[i][j]["roomIcon"])
             else                     : grid[i].append(' ')
 
     return grid
 
 for i in range(9):
     Map.append([])
-    for j in range(9): Map[i].append({"room":' ', "doorPos":{"U":0, "R":0, "D":0, "L":0}, "roomType":None, "isPlayerHere":False, "isPlayerVisited":False})
+    for j in range(9): Map[i].append({"room":[], "roomIcon":' ', "doorPos":{"U":0, "R":0, "D":0, "L":0}, "roomType":None, "isPlayerHere":False, "isPlayerVisited":False})
 
-x, y         = 4, 4
-rooms        = ['\033[31m§\033[0m', '•', '\033[32m*\033[0m', '\033[33m!\033[0m', '\033[34m/\033[0m']
-Map[y][x]["room"]     = rooms[0]
+x, y                  = 4, 4
+roomIcons             = ['\033[31m§\033[0m', '•', '\033[32m*\033[0m', '\033[33m!\033[0m', '\033[34m/\033[0m']
+Map[y][x]["roomIcon"] = roomIcons[0]
 Map[y][x]["roomType"] = 0
 
 def gridPrint(grid):
@@ -45,7 +46,7 @@ def returnBlankDataInRawMap(grid):
     return grid
 
 def checkOpenDoor(grid):
-    global rooms
+    global roomIcons
 
     print("code running")
 
@@ -76,26 +77,41 @@ def checkOpenDoor(grid):
 def showProgress():
     global progress
     global Map
-    global rooms
+    global roomIcons
 
     MfS = copy.deepcopy(Map)
     savedRoomGraphic = ''
     for i in range(len(progress)):
         clear()
         if i > 0:
-            MfS[progress[i-1][0]][progress[i-1][1]]['room'] = savedRoomGraphic
-            savedRoomGraphic                                = MfS[progress[i][0]][progress[i][1]]['room']
-            MfS[4][4]['room']                               = rooms[0]
+            MfS[progress[i-1][0]][progress[i-1][1]]["roomIcon"] = savedRoomGraphic
+            savedRoomGraphic                                = MfS[progress[i][0]][progress[i][1]]["roomIcon"]
+            MfS[4][4]["roomIcon"]                               = roomIcons[0]
         print(progress[i])
         print(f"Data : {Map[progress[i][0]][progress[i][1]]}")
-        MfS[progress[i][0]][progress[i][1]]['room']         = f"\033[45m{MfS[progress[i][0]][progress[i][1]]['room']}\033[0m"
+        MfS[progress[i][0]][progress[i][1]]["roomIcon"]         = f'\033[45m{MfS[progress[i][0]][progress[i][1]]["roomIcon"]}\033[0m'
         gridPrint(GraphicMaker(MfS))
         time.sleep(1)
 
+def makeRoom(Map):
+    output = copy.deepcopy(Map)
+
+    for row in range(len(output)):
+        for column in range(len(output[row])):
+            if len(output[row][column]) > 0:
+                baseMap   = copy.deepcopy(rooms.Room)
+                RDP = list(output[row][column]["doorPos"].values())
+                GRDP   = [[0, 7], [7, 14], [14, 7], [7, 0]]
+
+                for DIE in range(len(RDP)):
+                    baseMap[GRDP[DIE][0]][GRDP[DIE][1]] = status.R if RDP[DIE] == 1 else status.wall
+                
+                output[row][column]["room"] = baseMap
+    return output
 
 def initBranch(Map, rawPrint=False):
     global y, x
-    global rooms
+    global roomIcons
     global direction
     global progress
 
@@ -105,7 +121,7 @@ def initBranch(Map, rawPrint=False):
     maxTreasureBoxRoomCount, nowTreasureBoxRoomCount = 1, 0
     bfx, bfy = 0, 0
 
-    def getBack(e, bfx, bfy):
+    def getBack(bfx, bfy):
         global x, y
         x, y       = bfx, bfy
 
@@ -122,14 +138,14 @@ def initBranch(Map, rawPrint=False):
         x, y                = coordinateNamespace['x'], coordinateNamespace['y']
 
         if y > len(Map)-1 or y < 0 or x > len(Map[0])-1 or x < 0: # 맵 탈출(outOfRangeError) 방지
-            getBack(nowLength, bfx, bfy)
+            getBack(bfx, bfy)
             continue
-        if Map[y][x]["room"] in rooms: # 방 덮어쓰기 방지
+        if Map[y][x]["roomIcon"] in roomIcons: # 방 덮어쓰기 방지
             p = [[y-1 if y>0 else y, x], [y+1 if y<len(Map)-1 else y, x], [y, x-1 if x>0 else x], [y, x+1 if x<len(Map[0])-1 else x]]
             if None not in [Map[p[0][0]][p[0][1]]['roomType'], Map[p[1][0]][p[1][1]]['roomType'], Map[p[2][0]][p[2][1]]['roomType'], Map[p[3][0]][p[3][1]]['roomType']]:
-                Map[y][x] = {"room":rooms[4], "doorPos":Map[y][x]['doorPos'], "roomType":4, "isPlayerHere":False, "isPlayerVisited":False}
+                Map[y][x] = {"roomIcon":roomIcons[4], "doorPos":Map[y][x]['doorPos'], "roomType":4, "isPlayerHere":False, "isPlayerVisited":False}
                 break
-            getBack(nowLength, bfx, bfy)
+            getBack(bfx, bfy)
             continue
         
         selectRoomKind = random.randrange(1, 4) # 방 종류 설정
@@ -149,7 +165,7 @@ def initBranch(Map, rawPrint=False):
         else: selectRoomKind = 1
 
         if maxBranchLength - nowLength == 1: selectRoomKind = 4 # 출구 & 보스방
-        Map[y][x]["room"]                         = rooms[selectRoomKind]
+        Map[y][x]["roomIcon"]                         = roomIcons[selectRoomKind]
         Map[y][x]["roomType"]                     = selectRoomKind
         Map[y][x]["doorPos"][locationData[2]]     = 1
         Map[bfy][bfx]["doorPos"][locationData[3]] = 1
@@ -162,7 +178,7 @@ def initBranch(Map, rawPrint=False):
 a = initBranch(Map, rawPrint=True)
 # print(a)
 gridPrint(GraphicMaker(a))
-print(f"{rooms[0]} = start\n{rooms[1]} = basic room\n{rooms[2]} = event room\n{rooms[3]} = treasurebox room\n{rooms[4]} = exit\n")
+print(f"{roomIcons[0]} = start\n{roomIcons[1]} = basic room\n{roomIcons[2]} = event room\n{roomIcons[3]} = treasurebox room\n{roomIcons[4]} = exit\n")
 checkOpenDoor(Map)
 
 input("\nSee progress__")
@@ -170,3 +186,10 @@ showProgress()
 
 input("\nSee raw map data__")
 print(returnBlankDataInRawMap(a))
+
+input("\nSee all Map Rooms__")
+testVar = makeRoom(Map)
+for i in range(len(testVar)):
+    for j in range(len(testVar[i])):
+        clear()
+        if len(testVar[i][j]) > 0: print(f"\n\ny : {i}, x : {j}\ndoors : {Map[i][j]['doorPos']}\nType : {Map[i][j]['roomIcon']}, {Map[i][j]['roomType']}\n\n"); gridPrint(testVar[i][j]["room"]); input("check__")
