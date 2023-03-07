@@ -175,21 +175,20 @@ def initBranch(Map, rawPrint=False):
     if rawPrint == False: return GraphicMaker(Map)
     else                : return Map
 
-a = initBranch(Map, rawPrint=True)
-# print(a)
-gridPrint(GraphicMaker(a))
-print(f"{roomIcons[0]} = start\n{roomIcons[1]} = basic room\n{roomIcons[2]} = event room\n{roomIcons[3]} = treasurebox room\n{roomIcons[4]} = exit\n")
-checkOpenDoor(Map)
+# a = initBranch(Map, rawPrint=True)
+# gridPrint(GraphicMaker(a))
+# print(f"{roomIcons[0]} = start\n{roomIcons[1]} = basic room\n{roomIcons[2]} = event room\n{roomIcons[3]} = treasurebox room\n{roomIcons[4]} = exit\n")
+# checkOpenDoor(Map)
 
-input("\nSee progress__")
-showProgress()
+# input("\nSee progress__")
+# showProgress()
 
-input("\nSee raw map data__")
-print(returnBlankDataInRawMap(a))
+# input("\nSee raw map data__")
+# print(returnBlankDataInRawMap(a))
 
-input("\nSee all Map Rooms__")
-testVar = makeRoom(Map)
-for i in range(len(testVar)):
-    for j in range(len(testVar[i])):
-        clear()
-        if len(testVar[i][j]) > 0: print(f"\n\ny : {i}, x : {j}\ndoors : {Map[i][j]['doorPos']}\nType : {Map[i][j]['roomIcon']}, {Map[i][j]['roomType']}\n\n"); gridPrint(testVar[i][j]["room"]); input("check__")
+# input("\nSee all Map Rooms__")
+# testVar = makeRoom(Map)
+# for i in range(len(testVar)):
+#     for j in range(len(testVar[i])):
+#         clear()
+#         if len(testVar[i][j]) > 0: print(f"\n\ny : {i}, x : {j}\ndoors : {Map[i][j]['doorPos']}\nType : {Map[i][j]['roomIcon']}, {Map[i][j]['roomType']}\n\n"); gridPrint(testVar[i][j]["room"]); input("check__")

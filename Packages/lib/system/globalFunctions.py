@@ -71,6 +71,19 @@ def fieldPrint():
     for i in s.onDisplay       : Display += f"{i}\n"
     print(Display)
 
+# ---------- ID section ----------
+def IDIncryption(DungeonPos:list, RoomPos=None):
+    Dy, Dx = DungeonPos[0], DungeonPos[1]
+    Ry = '?' if RoomPos == None or len(RoomPos) < 1 else RoomPos[0]
+    Rx = '?' if RoomPos == None or len(RoomPos) < 2 else RoomPos[1]
+    return f"Rud.{Dy}.{Dx}.room.{Ry}.{Rx}"
+
+def IDDecryption(ID):
+    if ID.startswith("Rud"):
+        output = ID.split('.')
+        del output[0]
+        return output
+
 # ---------- Thread section ----------
 def addEntity(entityType, initHp, y=[1, len(s.room)], x=[1, len(s.room[0])]):
     kinds                = ["몬스터", "보스"]
