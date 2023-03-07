@@ -2,21 +2,18 @@ import random
 import time
 import copy
 import os
-from Packages.lib.data import status, rooms
+from   Packages.lib.data import status, rooms
 
 Map       = []
-progress  = [[4, 4]]
 direction = {
     'U' : 1,
     'R' : 2,
     'D' : 3,
     'L' : 4
 }
+roomIcons             = ['\033[31m§\033[0m', '•', '\033[32m*\033[0m', '\033[33m!\033[0m', '\033[34m/\033[0m']
 
-def clear():
-    if os.name == 'posix': os.system("clear")
-    else                 : os.system("cls")
-
+# ---------- Graphic section ----------
 def GraphicMaker(MapData):
     grid = []
     for i in range(len(MapData)):
@@ -27,23 +24,8 @@ def GraphicMaker(MapData):
 
     return grid
 
-for i in range(9):
-    Map.append([])
-    for j in range(9): Map[i].append({"room":[], "roomIcon":' ', "doorPos":{"U":0, "R":0, "D":0, "L":0}, "roomType":None, "isPlayerHere":False, "isPlayerVisited":False})
-
-x, y                  = 4, 4
-roomIcons             = ['\033[31m§\033[0m', '•', '\033[32m*\033[0m', '\033[33m!\033[0m', '\033[34m/\033[0m']
-Map[y][x]["roomIcon"] = roomIcons[0]
-Map[y][x]["roomType"] = 0
-
 def gridPrint(grid):
     for i in grid: print(' '.join(map(str, i)))
-
-def returnBlankDataInRawMap(grid):
-    for row in range(len(grid)):
-        for column in range(len(grid[row])): grid[row][column] = {} if grid[row][column]['roomType'] == None else grid[row][column]
-
-    return grid
 
 def checkOpenDoor(grid):
     global roomIcons
@@ -74,15 +56,15 @@ def checkOpenDoor(grid):
                             break
                 print(f"The door located at \033[31my : {row}, x : {column} {RoomKind[grid[row][column]['roomType']]}\033[0m is open to the \033[32m{' and '.join(map(str, OpenDoor))}\033[0m")
 
-def showProgress():
-    global progress
-    global Map
+def showProgress(Data:list):
     global roomIcons
 
+    Map, progress = Data[0], Data[1]
     MfS = copy.deepcopy(Map)
     savedRoomGraphic = ''
     for i in range(len(progress)):
-        clear()
+        from Packages.lib.system import globalFunctions as gbf
+        gbf.clear()
         if i > 0:
             MfS[progress[i-1][0]][progress[i-1][1]]["roomIcon"] = savedRoomGraphic
             savedRoomGraphic                                = MfS[progress[i][0]][progress[i][1]]["roomIcon"]
@@ -93,6 +75,7 @@ def showProgress():
         gridPrint(GraphicMaker(MfS))
         time.sleep(1)
 
+# ---------- Init section ----------
 def makeRoom(Map):
     output = copy.deepcopy(Map)
 
@@ -109,24 +92,29 @@ def makeRoom(Map):
                 output[row][column]["room"] = baseMap
     return output
 
-def initBranch(Map, rawPrint=False):
-    global y, x
+def deleteBlankData(grid):
+    for row in range(len(grid)):
+        for column in range(len(grid[row])): grid[row][column] = {} if grid[row][column]['roomType'] == None else grid[row][column]
+
+    return grid
+
+def initBranch(Map, y, x, rawPrint=False):
     global roomIcons
     global direction
-    global progress
 
     nowLength                                        = 0
     maxBranchLength                                  = random.randrange(9, 17)
     maxEventRoomCount, nowEventRoomCount             = random.randrange(1, 3), 0
     maxTreasureBoxRoomCount, nowTreasureBoxRoomCount = 1, 0
-    bfx, bfy = 0, 0
+    bfx, bfy                                         = 0, 0
+    progress                                         = [[4, 4]]
 
     def getBack(bfx, bfy):
-        global x, y
-        x, y       = bfx, bfy
+        nonlocal y, x
+        y, x = bfy, bfx
 
     while nowLength < maxBranchLength:     
-        bfx, bfy = x, y
+        bfy, bfx = y, x
 #                        | 0 | 1 | 2 |
 #         locationData = ['', 0, '']
 #          └─ 0:axis, 1:movement, 2:direction
@@ -151,15 +139,13 @@ def initBranch(Map, rawPrint=False):
         selectRoomKind = random.randrange(1, 4) # 방 종류 설정
 
         if selectRoomKind == 2: # 이벤트 방
-            if nowEventRoomCount >= maxEventRoomCount:
-                selectRoomKind = 1
-                print(f"\033[32mEventroom\033[0m was changed in \033[31mnowLength:{nowLength} [{y}, {x}]\033[0m")
+            if nowEventRoomCount >= maxEventRoomCount: selectRoomKind = 1
+                # ^조건문 포함 텍스트 print(f"\033[32mEventroom\033[0m was changed in \033[31mnowLength:{nowLength} [{y}, {x}]\033[0m")
             else: nowEventRoomCount += 1
 
         elif selectRoomKind in [3, 4]: # 보물 방
-            if nowTreasureBoxRoomCount >= maxTreasureBoxRoomCount:
-                selectRoomKind = 1
-                print(f"\033[33mTreasureBoxroom\033[0m was changed in \033[31mnowLength:{nowLength} [{y}, {x}]\033[0m")
+            if nowTreasureBoxRoomCount >= maxTreasureBoxRoomCount: selectRoomKind = 1
+                # ^조건문 포함 텍스트 print(f"\033[33mTreasureBoxroom\033[0m was changed in \033[31mnowLength:{nowLength} [{y}, {x}]\033[0m")
             else: nowTreasureBoxRoomCount += 1
 
         else: selectRoomKind = 1
@@ -172,8 +158,22 @@ def initBranch(Map, rawPrint=False):
         nowLength                                += 1
         progress.append([y, x])
 
-    if rawPrint == False: return GraphicMaker(Map)
+    if   rawPrint == False     : return GraphicMaker(Map)
     else                : return Map
+
+def DungeonMaker():
+    output = []
+
+    for i in range(9):
+        output.append([])
+        for j in range(9): output[i].append({"room":[], "roomIcon":' ', "doorPos":{"U":0, "R":0, "D":0, "L":0}, "roomType":None, "isPlayerHere":False, "isPlayerVisited":False})
+
+    output[4][4]["roomIcon"] = '\033[31m§\033[0m'
+    output[4][4]["roomType"] = 0
+    
+    output = makeRoom(deleteBlankData(initBranch(output, 4, 4, rawPrint=True)))
+    return output
+
 
 # a = initBranch(Map, rawPrint=True)
 # gridPrint(GraphicMaker(a))
@@ -190,5 +190,5 @@ def initBranch(Map, rawPrint=False):
 # testVar = makeRoom(Map)
 # for i in range(len(testVar)):
 #     for j in range(len(testVar[i])):
-#         clear()
+#         gbf.clear()
 #         if len(testVar[i][j]) > 0: print(f"\n\ny : {i}, x : {j}\ndoors : {Map[i][j]['doorPos']}\nType : {Map[i][j]['roomIcon']}, {Map[i][j]['roomType']}\n\n"); gridPrint(testVar[i][j]["room"]); input("check__")

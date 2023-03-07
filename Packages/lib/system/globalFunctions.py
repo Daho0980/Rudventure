@@ -63,11 +63,11 @@ def asciiPrint():
 
     return Display
 
-def fieldPrint():
+def fieldPrint(grid):
     Display = ""
     if s.showStateDesign == 1  : Display += f"hp : {s.colors['R']}{s.hp}/{s.Mhp}{s.colors['end']} | def : {s.colors['B']}{s.df}/{s.Mdf}{s.colors['end']}\nhunger : {s.colors['lY']}{(s.hunger/500)*100:0.0f}%{s.colors['end']} | atk : {s.colors['G']}{s.atk}{s.colors['end']}\n\n"
     elif s.showStateDesign == 2: Display += asciiPrint()
-    for i in range(len(s.room)): Display += ' '.join(map(str, s.room[i])); Display += '\n'
+    for i in range(len(grid)): Display += ' '.join(map(str, grid[i])); Display += '\n'
     for i in s.onDisplay       : Display += f"{i}\n"
     print(Display)
 
@@ -78,10 +78,13 @@ def IDIncryption(DungeonPos:list, RoomPos=None):
     Rx = '?' if RoomPos == None or len(RoomPos) < 2 else RoomPos[1]
     return f"Rud.{Dy}.{Dx}.room.{Ry}.{Rx}"
 
-def IDDecryption(ID):
+def IDDecryption(ID:str):
     if ID.startswith("Rud"):
         output = ID.split('.')
         del output[0]
+
+        for i in range(len(output)):
+            if output[i].isdigit(): output[i] = int(output[i])
         return output
 
 # ---------- Thread section ----------

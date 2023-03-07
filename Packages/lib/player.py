@@ -32,7 +32,9 @@ class player:
         enemies = [s.e, s.boss]
 
         if s.df > 0: s.dfCrack = 0
-        s.bfy, s.bfx = s.y, s.x
+        bfy, bfx   = s.y, s.x
+        bfDy, bfDx = s.Dy, s.Dx
+
         match Dir:
             case Key.up   : s.y -= Int
             case Key.down : s.y += Int
@@ -43,8 +45,8 @@ class player:
 
         if s.room[s.y][s.x] in [s.wall, s.fakeFloor]:
             player.damage(s.room[s.y][s.x])
-            s.x = s.bfx
-            s.y = s.bfy
+            s.x = bfx
+            s.y = bfy
             if s.df <= 0 and s.dfCrack <= 0:
                 sound = f'{s.TFP}Packages{s.s}sounds{s.s}crack.wav'
                 logger.addLog(f"{s.colors['B']}방어구{s.colors['end']}가 부서졌습니다!")
@@ -55,7 +57,8 @@ class player:
             s.Wanted = [eval(f"{s.y}"), eval(f"{s.x}")]
             time.sleep(0.01)
             s.Wanted = []
-            s.y, s.x = s.bfy, s.bfx
+            s.y, s.x   = bfy, bfx
+            s.Dy, s.Dx = bfDy, bfDx
             sound = f'{s.TFP}Packages{s.s}sounds{s.s}slash.wav'
 
         elif s.room[s.y][s.x] == s.item:
@@ -90,7 +93,9 @@ class player:
                 elif Dir == Key.right: cx = s.x + Int
 
             positions = [[cy, s.x], [s.y, cx]]
-            if s.room[positions[Type][0]][positions[Type][1]] in [s.wall, s.e, s.R, s.boss, s.box, s.fakeFloor, s.goal, s.squishy]: s.y, s.x = s.bfy, s.bfx
+            if s.room[positions[Type][0]][positions[Type][1]] in [s.wall, s.e, s.R, s.boss, s.box, s.fakeFloor, s.goal, s.squishy]:
+                s.y, s.x = bfy, bfx
+                s.Dy, s.Dx = bfDy, bfDx
             else: s.room[positions[Type][0]][positions[Type][1]] = s.box
 
         elif s.room[s.y][s.x] in s.squishy:
@@ -98,9 +103,10 @@ class player:
             if s.room[s.y][s.x] == s.squishy[0]: s.room[s.y][s.x] = s.squishy[1]
             else                               : s.room[s.y][s.x] = s.squishy[0]
 
-            s.y, s.x = s.bfy, s.bfx
+            s.y, s.x = bfy, bfx
+            s.Dy, s.Dx = bfDy, bfDx
             logger.addLog(f"{s.lightName}이(가) {s.colors['B']}말랑이{s.colors['end']}를 만졌습니다 (말랑)")
 
-        s.room[s.bfy][s.bfx] = s.floor
+        s.room[bfy][bfx] = s.floor
         s.room[s.y][s.x]     = s.p1
         play(sound)

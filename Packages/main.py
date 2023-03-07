@@ -6,11 +6,11 @@ exec(open(f"{TFP}Packages{s}lib{s}system{s}downloadModules.py", encoding='utf8')
 from Packages.lib.system                   import globalFunctions
 from Packages.lib               import player, stages, quests
 from Packages.lib.data          import rooms, status
-from Packages.lib.system        import mainSettings
+from Packages.lib.system        import mainSettings, DungeonMaker
 from Packages.lib.modules       import Textbox, makeNewListener, logger
 from Packages.lib.system.globalFunctions   import clear
 
-p, r, s, S, S1, gbf, t, mnl= player.player, rooms, status, stages.stages, stages, globalFunctions, Textbox, makeNewListener
+p, r, s, S, S1, gbf, t, mnl, dgm = player.player, rooms, status, stages.stages, stages, globalFunctions, Textbox, makeNewListener, DungeonMaker
 s.s                        = gbf.slash()
 s.TFP                      = TFP
 clear()
@@ -24,6 +24,7 @@ def gameChecker():
     elif int((s.hp / s.Mhp) * 100) > 30: s.hpLow = False
 
     victory = quests.quest(s.stage)
+    victory = 0
     if victory == 1:
         s.room[s.y][s.x] = s.floor
         s.jpsf = False
@@ -49,7 +50,8 @@ def gameChecker():
 mainSettings.init()
 
 while s.main > 0:
-    S.stage(s.stage)
+    # S.stage(s.stage)
+    s.Dungeon = dgm.DungeonMaker()
     time.sleep(1)
     clear()
     if s.stage == 0:
@@ -73,11 +75,11 @@ while s.main > 0:
 
     while True:
         if s.jpsf:
-            gameChecker()
+            # gameChecker()
             if s.nowStage < s.stage:
                 s.nowStage += 1
                 break
             elif s.main <= 0: break
-            gbf.fieldPrint()
+            gbf.fieldPrint(s.room)
             time.sleep(1/s.frame)
             clear()

@@ -20,8 +20,8 @@ def customColor(R, G, B, Type=1):
     }
     return f'{colorKinds[Type]};2;{R};{G};{B}'
 
-#    ┏━━━━ Wait, you're not a color >:(
-#   v
+  #  ┏━━━━ Wait, you're not a color >:(
+  # v
 def markdown(Type=0):
     MarkdownKinds = {
         0 : "\033[0m", # normal
@@ -44,10 +44,16 @@ def markdown(Type=0):
 # status
 name         = ""
 lightName    = ""
+
+Dy           = 0
+bfDy         = 0
+Dx           = 0
+bfDx         = 0
 x            = 0
 bfx          = 0
 y            = 0
 bfy          = 0
+
 hp           = 0
 Mhp          = 0
 hpLow        = False
@@ -73,12 +79,15 @@ main = 1
 
 # Icons and doors
 LOGO           = "  _   \n /_/     _/   _  _ _/_    _ _ \n/ \ /_//_/ |//_\'/ //  /_// /_\'\n\n𝘢 𝘭 𝘱 𝘩 𝘢\n\n"
+
 welcomeMessage = []
+
 p1             = f"{colors['G']}{markdown(3)}@{colors['end']}" # 0, 255, 10
 p2             = "&"
-squishy        = [f"{colors['B']}{markdown(1)}O{colors['end']}", f"{colors['B']}{markdown(1)}o{colors['end']}"]
 e              = '%'
 boss           = '#'
+
+squishy        = [f"{colors['B']}{markdown(1)}O{colors['end']}", f"{colors['B']}{markdown(1)}o{colors['end']}"]
 wall           = '▀'
 R              = '▒'
 item           = f"{colors['Y']}◘{colors['end']}"
@@ -87,9 +96,11 @@ boxMark        = f"{colors['R']}✘{colors['end']}"
 goal           = f'\033[31mF\033[0m'
 floor          = '.'
 fakeFloor      = '∙'
+
+stepableBlocks = [floor, item, boxMark]
+
 doorRooms      = ["field", "room_1", "invisible_walls1"]
 doors          = [[[0,2,5,3,"room_1"]], [[6,3,1,2,"field"]], [[9,14,1,1,"invisible_walls2"]]]
-stepableBlocks = [floor, item, boxMark]
 
 # Stage settings
 nowStage  = 0
@@ -100,10 +111,13 @@ roomName  = ""
 # Background vars
 s        = ''
 room     = r.field
+Dungeon  = []
+
 jpsf     = False
 TFP      = ""
 sound    = True
 yctuoh   = False
+
 entities = []
 Wanted   = []
 
