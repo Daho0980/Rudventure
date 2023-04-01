@@ -1,5 +1,5 @@
 import unicodedata, re, time
-from   Packages.lib.system.globalFunctions import play
+from   Packages.lib.system.globalFunc.sound import play
 
 def escapeAnsi(line):
     ansi_escape =re.compile(r'(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]')
@@ -12,18 +12,31 @@ def checkActualLen(line):
         else                                            : Len += 1
     return Len
 
-# Inp          : 텍스트박스 내용
-# Type         : 위치 설정
-# maxLine      : 최대 박스 길이 설정. AMLS를 True로 할거라면 그냥 신경쓰지 않는 게 좋음
-# fillChar     : 박스 안을 채울 텍스트. 딱 한 개만 허용
-# inDistance   : 박스 안쪽 텍스트의 위, 아래 공백 크기 설정
-# outDistance  : 박스 바깥의 공백 크기 설정
-# AMLS         : 가장 긴 텍스트의 길이에 맞게 설정할지에 대한 여부. 이미 maxLine을 설정했다면 신경쓰지 않는 게 좋음
-# endLineBreak : 개행 문자 여부
-# LineType     : 텍스트박스 테두리 종류 설정
-# returnText   : 텍스트박스 글자 return 여부
-# animation    : 텍스트 박스 출력 시 나오게 할 애니메이션 설정. [종류, 텀, 진행 사운드, 마침 사운드] 으로 이루어짐 
-def TextBox(Inp, Type="left", maxLine=100, fillChar=" ", inDistance=0, outDistance=0, AMLS=False, endLineBreak=False, LineType="normal", returnText=False, animation=[None, 0, "", ""]):
+def TextBox(Inp, Type="left", maxLine=100, fillChar=" ", inDistance=0, outDistance=0, AMLS=False, endLineBreak=False, LineType="normal", animation=[None, 0, "", "", False]):
+        """
+        ``Inp``(str)                                      : 텍스트박스 내용, 줄바꿈하려면 `\n`을 사용해야 함
+        ``Type``(str["left", "middle", "right"])          : 위치 설정, 기본적으로 `"left"`로 설정되어 있음
+        ``maxLine``(int)                                  : 최대 박스 길이 설정. AMLS를 True로 할거라면 그냥 신경쓰지 않는 게 좋음, 기본적으로 `100`으로 설정되어 있음
+        ``fillChar``(char)                                : 박스 안을 채울 텍스트. 딱 한 개만 허용, 기본적으로 `" "`로 설정되어 있음
+        ``inDistance``(int>=0)                            : 박스 안쪽 텍스트의 위, 아래 공백 크기 설정, 기본적으로 `0`으로 설정되어 있음
+        ``outDistance``(int>=0)                           : 박스 바깥의 공백 크기 설정, 기본적으로 `0`으로 설정되어 있음
+        ``AMLS``(bool)                                    : 가장 긴 텍스트의 길이에 맞게 설정할지에 대한 여부. 이미 maxLine을 설정했다면 신경쓰지 않는 게 좋음, 기본적으로 `False`로 설정되어 있음
+        ``endLineBreak``(bool)                            : 개행 문자 여부, 기본적으로 `False`로 설정되어 있음
+        ``LineType``(str["normal", "double", "bold"])     : 텍스트박스 테두리 종류 설정, 기본적으로 `"normal"`로 설정되어 있음\n
+        ``animation``
+            (
+                list[\n
+                    animationType(list) : [\n
+                        "blind"\n
+                    ],\n
+                    animationRestTime(int>=0),\n
+                    animationUsingSound(str(soundCoord)),\n
+                    animationEndSound(str(soundCoord)),\n
+                    useAnimation(bool)
+                ]
+            )
+                                                          : 텍스트 박스 출력 시 나오게 할 애니메이션 설정. `[종류, 텀, 진행 사운드, 마침 사운드, 애니메이션 사용 여부]`로 이루어짐, 기본적으로 `[None, 0, "", "", False]`로 설정되어 있음
+        """
         Display  = ""
 
         Line       = {
@@ -60,7 +73,7 @@ def TextBox(Inp, Type="left", maxLine=100, fillChar=" ", inDistance=0, outDistan
         Display += Line[LineType][1][0]+Line[LineType][3][0]*(maxLine)+Line[LineType][1][1]+endLine
         Display += "\n"*outDistance
 
-        if returnText == False:
+        if animation[4] == True:
             if animation[0] == "blind":
                 lines = Display.split("\n")
                 for i in range(len(lines)):

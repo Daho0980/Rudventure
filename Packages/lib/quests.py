@@ -1,10 +1,10 @@
-from Packages.lib      import stages, player
+from Packages.lib      import player, stages
 from Packages.lib.data import rooms, status
 
 S1, s, r, p = stages, status, rooms, player.player
 isGoal = False
 
-def quest(stage):
+def trash(stage):
     global isGoal
     output = 0
     
@@ -38,3 +38,8 @@ def quest(stage):
 
     return output
 
+
+def quest():
+    output = 0
+    if s.Dungeon[s.Dy][s.Dx]['roomType'] == 4 and s.Dungeon[s.Dy][s.Dx]['room'][6][6] in [s.p1, s.p2]: output = 1
+    return output

@@ -1,8 +1,24 @@
-from Packages.lib.data        import status      as s
-from Packages.lib.system.globalFunctions import clear, play
+"""
+메뉴바 모듈
+
+    ``selector`` : 모듈의 모든 기능을 담은 클래스
+"""
+from Packages.lib.data                      import status as s
+from Packages.lib.system.doubleBuffer       import DoubleBuffer
+from Packages.lib.system.globalFunc.graphic import clear
+from Packages.lib.system.globalFunc.sound   import play
 
 class selector:
+    """
+    ``Change2D``    : 1차원 list인 메뉴를 2차원으로 변경\n
+    ``printSelect`` : 변경된 값을 모두 반영해 화면에 출력함\n
+    ``Dropdown``    : 이 모듈의 실질적인 핵심 함수, 모든 데이터를 변경함
+    """
     def Change2D(subtitle, maxLine): # 1차원 subtitle을 2차원으로 재배열
+        """
+        `subtitle`(list(1d)) : 리스트의 메뉴, 무조건 기입해야 함\n
+        `maxLine`(int)       : 메뉴가 1개 이상일 때 적용할 수 있는 column 방향의 최대 나열 갯수, 무조건 기입해야 함
+        """
         newSubtitle   = [] # 2차원 배열로 변환될 subtitle
         subListRow    = -1 # 가로
         subListColumn = -1 # 세로
@@ -17,13 +33,20 @@ class selector:
                 else                             : newSubtitle[subListRow].append(subtitle[subListColumn]) # 세로 배열셋 내 옵션 새로 추가
         return newSubtitle
 
-    def lineSpaceMaker(lineSpace):
-        output = ''
-
-        for i in range(lineSpace): output += ' '
-        return output
-
-    def printSelect(title, subtitle, arrow, Enter, maxLine, lineSpace, subtitleValues, nowSelectColumn, nowSelectRow, tag):
+    def printSelect(title, subtitle, arrow, Enter, maxLine, lineSpace, subtitleValues, nowSelectColumn, nowSelectRow, dbf, tag, frontTag):
+        """
+        `title`(str, list)                     : 메뉴바의 타이틀이 될 문자열, 리스트 형태로 기입 시 타이틀과 메뉴의 공백이 제거됨, 무조건 기입해야 함\n
+        `subtitle`(list(1d))                   : 메뉴바의 메뉴가 될 리스트, 무조건 기입해야 함\n
+        `arrow`(str)                           :  현재 타겟된 메뉴를 표시하는 문자열, 무조건 기입해야 함\n
+        `Enter`(str)                           : 타이틀과 메뉴의 공백, 무조건 기입해야 함\n
+        `maxLine`(int)                         : 메뉴가 1개 이상일 때 적용할 수 있는 column 방향의 최대 나열 갯수, 무조건 기입해야 함\n
+        `lineSpace`(int)                       : column이 한 개 이상일 때 적용되는 공백의 길이, 무조건 기입해야 함\n
+        `subtitleValues`(list)                 : 각 메뉴의 타입이
+            `{subtitle:values}` <-- 이와 같이 나올 경우 각 key에 할당된 value값들만 모아둔 리스트, 무조건 기입해야 함\n
+        `nowSelectColumn`, `nowSelectRow`(int) : 현재 타겟된 메뉴의 위치, 무조건 기입해야 함\n
+        `tag`(str)                             : 상시로 메뉴 맨 아래에 생기는 문자열, 무조건 기입해야 함
+        `dbf`(class)                           : 셀렉터용 더블 버퍼
+        """
         def positionOutput(subtitle, row, column):
             if row == len(subtitle)-1:
                 row     = 0
@@ -32,26 +55,37 @@ class selector:
 
             return row, column
 
-        if isinstance(title, list): print(title[0] + Enter) # list형 title 방지
-        else:                       print(title + Enter)
-
+        Display = ""
+        Display += f"{s.markdown([2,3])}{frontTag}{s.colors['end']}\n"
+        Display += f"{title[0]}{Enter}" if isinstance(title, list) else f"{title}{Enter}"
         row     = -1
         column  = 0
-        Display = ""
+
         for i in range(maxLine):
             subtitleLine = ''
             for j in range(len(subtitle)):
                 row, column   = positionOutput(subtitle, row, column)
-                subtitleLine += (f'{arrow[row][column]} {subtitle[row][column]}{selector.lineSpaceMaker(lineSpace)}')
-            Display += subtitleLine; Display += '\n'
-        if subtitleValues != []: Display += f"{s.markdown([0,2,3])}\n    {subtitleValues[(maxLine*nowSelectRow)+nowSelectColumn]}"
-        Display += tag
-        print(Display)
+                subtitleLine += (f'{arrow[row][column]} {subtitle[row][column]}{" "*lineSpace}')
+            Display += f"{subtitleLine}\n"
+        if subtitleValues != []: Display += f"{s.markdown([0,2,3])}\n    {subtitleValues[(maxLine*nowSelectRow)+nowSelectColumn]}{s.colors['end']}"
+        Display += f"{s.markdown([2,3])}{tag}{s.colors['end']}\n\n"
+        dbf.write(Display); dbf.render()
 
-    def Dropdown(title, subtitle = {'Why did you do...' : 'WHY...'}, color = 0, icon = '>', maxLine = 'max', lineSpace = 1, tag=''):
+
+    def Dropdown(title, subtitle = {'Why did you do...' : 'WHY...'}, color = 0, icon:str='>', maxLine = 'max', lineSpace:int=1, tag:str="", frontTag:str=""):
+        """
+        `title`(str, list)                     : 메뉴바의 타이틀이 될 문자열, 리스트 형태로 기입 시 타이틀과 메뉴의 공백이 제거됨\n
+        `subtitle`(list(1d))                   : 메뉴바의 메뉴가 될 리스트, 아무것도 지정하지 않을 시
+            `{'Why did you do...' : 'WHY...'}`와 같은 이스터에그 출력\n
+        `arrow`(str)                           :  현재 타겟된 메뉴를 표시하는 문자열, 기본적으로 `'>'`로 지정되어 있음\n
+        `maxLine`(int)                         : 메뉴가 1개 이상일 때 적용할 수 있는 column 방향의 최대 나열 갯수, 기본적으로 `'max'`로 지정되어 있음\n
+        `lineSpace`(int)                       : column이 한 개 이상일 때 적용되는 공백의 길이, 기본적으로 `1`로 지정되어 있음\n
+        `tag`(str)                             : 상시로 메뉴 맨 아래에 생기는 문자열, 기본적으로`''`으로 지정되어 있음\n
+        """
+        dbf = DoubleBuffer()
         subtitleKeys   = []
         subtitleValues = []
-        Enter          = '\n'
+        Enter          = '\n\n'
         colors         = {
             0 : '0', # end
             1 : '41', # red
@@ -68,7 +102,7 @@ class selector:
             subtitleValues = list(subtitle.values())
         else:
             subtitleKeys = subtitle
-        if   isinstance(title, list): Enter      = '' # title이 list면 title이랑 subtitle 사이의 공백 제거
+        if   isinstance(title, list): Enter      = '\n' # title이 list면 title이랑 subtitle 사이의 공백 제거
         if   isinstance(color, int):  arrowColor = colors[color] # 화살표 기본색 간단설정
         elif isinstance(color, list): arrowColor = f'{PrintColorType[color[0]]};2;{color[1]};{color[2]};{color[3]}' # 세부 RGB 설정
         subtitleKeys = selector.Change2D(subtitleKeys, maxLine)
@@ -92,13 +126,14 @@ class selector:
             if nowSelectRow        < len(subtitleKeys)-1:               arrow[nowSelectRow+1][nowSelectColumn] = f"\033[0m " # 다음 가로줄이 존재할 때: 다음 가로줄의 nowSelectColumn번째 요소를 기본색, 상태로 되돌린다(색 전염 방지)
             if nowSelectRow        > 0 and nowSelectColumn < maxLine-1: arrow[0][nowSelectColumn+1]            = f"\033[0m " # 이전 가로줄이 존재하고 맨 아래쪽 줄이 아닐 때: 첫 가로줄의 아랫칸을 기본색, 상태로 되돌린다(색 전염 방지22)
             if nowSelectColumn + 1 < maxLine:                           arrow[nowSelectRow][nowSelectColumn+1] = f"\033[0m " # 현재 위치 + 1이 subtitle 최대 개수보다 적을 때: 다음칸을 기본색, 상태로 되돌린다(색 전염 방지333)
-            selector.printSelect(title, subtitleKeys, arrow, Enter, maxLine, lineSpace, subtitleValues, nowSelectColumn, nowSelectRow, tag)
+            selector.printSelect(title, subtitleKeys, arrow, Enter, maxLine, lineSpace, subtitleValues, nowSelectColumn, nowSelectRow, dbf, tag, frontTag)
 
             SNum, SNum1                          = 1, 0 # 가로, 세로 변환 정도값
             up, down, left, right                = ['w', 'W', 'ㅈ'], ['s', 'S', 'ㄴ'], ['a', 'A', 'ㅁ'], ['d', 'D', 'ㅇ']
-            Input                                = input(f"{s.colors['end']}>>>")
+            Input                                = input(s.colors['end'])
             arrow[nowSelectRow][nowSelectColumn] = ' '
-            if Input in up: # sublist 현재 위치 올리기
+
+            if Input in up: # sublist row값 감소
                 while True:
                     if nowSelectColumn == 0     and nowSelectRow == 0: SNum, SNum1 = 0, 0
                     if nowSelectColumn-SNum < 0 and nowSelectRow > 0:
@@ -117,9 +152,9 @@ class selector:
                     else: break
                 nowSelectRow    -= SNum1
                 nowSelectColumn -= SNum
-                play(f'{s.TFP}Packages{s.s}sounds{s.s}select.wav')
-                clear()
-            elif Input in down: # sublist 현재 위치 내리기
+                play("select")
+
+            elif Input in down: # sublist row값 증가
                 while True:
                     if nowSelectColumn == maxLine-1 and nowSelectRow == len(subtitleKeys)-1: SNum, SNum1 = 0, 0
                     if nowSelectColumn+SNum > maxLine-1: # 내렸을 때 maxLine-1보다 nowSelectColumn+SNum이 더 높을 때:
@@ -139,21 +174,20 @@ class selector:
                     else: break
                 nowSelectRow    += SNum1
                 nowSelectColumn += SNum
-                play(f'{s.TFP}Packages{s.s}sounds{s.s}select.wav')
-                clear()
-            elif Input in left and nowSelectRow > 0:
+                play("select")
+
+            elif Input in left and nowSelectRow > 0: # column 값 감소
                 nowSelectRow -= 1
-                play(f'{s.TFP}Packages{s.s}sounds{s.s}select.wav'); clear()
-            elif Input in right and nowSelectRow < len(subtitleKeys)-1:
+                play("select")
+
+            elif Input in right and nowSelectRow < len(subtitleKeys)-1: # column 값 증가
                 nowSelectRow += 1
-                play(f'{s.TFP}Packages{s.s}sounds{s.s}select.wav'); clear()
-            elif Input == '': play(f'{s.TFP}Packages{s.s}sounds{s.s}get_item.wav'); break # enter
-            else: clear() # 별 개같은거 칠 때 방지용
+                play("select")
+
+            elif Input == '': play("get_item"); break # enter
         clear() # 최종
         blankD = 0 # 공백 개수 변수 선언
         for i in range(0, nowSelectRow+1): # 처음부터 현재 위치까지 존재하는 공백 개수 확인
             for j in range(0, nowSelectColumn+1):
                 if subtitleKeys[i][j] == '': blankD += 1
         return (maxLine*nowSelectRow)+nowSelectColumn+1-blankD # 최대 라인 x 현재 가로줄 위치 + 현재 세로줄 위치 + 1 - 공백 개수
-
-# selector.Dropdown('Title', ['subtitle', 'subtitle1', 'subtitle2'])
