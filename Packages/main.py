@@ -1,89 +1,88 @@
-"""
-곧 버려질 불쌍한 코드입니다. 대신해서 울어주세요 ㅠㅠ
-"""
-
 # -*- coding: utf-8 -*-
-import os, sys, time
-player = '\\' if os.name == "nt" else "/"
-TFP = f'{os.getcwd()}{player}'
-exec(open(f"{TFP}Packages{player}lib{player}system{player}downloadModules.py", encoding='utf8').read())
-from Packages.lib.system                   import globalFunctions
-from Packages.lib               import player, stages, quests
-from Packages.lib.data          import rooms, status
-from Packages.lib.system        import mainSettings, DungeonMaker
-from Packages.lib.modules       import Textbox, logger, makeNewListener
-from Packages.lib.system.globalFunc.graphic   import clear
 
-p, r, player, S, S1, gbf, t, mnl, dgm = player.player, rooms, status, stages.stages, stages, globalFunctions, Textbox, makeNewListener, DungeonMaker
-player.s                        = gbf.slash()
-player.TFP                      = TFP
-clear()
-p.set()
+import os
+import time
+import random
+from   Packages.lib import player, quests
+from   Packages.lib.data import status, comments
+from   Packages.lib.modules import makeNewListener, Textbox, logger
+from   Packages.lib.system import DungeonMaker, options, mainSettings
+from   Packages.lib.system.Secret.cursorType import cursor
+from   Packages.lib.system.doubleBuffer import DoubleBuffer
+from   Packages.lib.system.globalFunc import osRelated, graphic, idRelated, entity, system, sound
+
+roomNames               = ["\033[31mStart\033[0m", "Normal Room", "\033[32mEvent Room\033[0m", "\033[33mTreasure Room\033[0m", "\033[34mExit\033[0m"]
+p, s, dgm, mnl, t       = player.player, status, DungeonMaker, makeNewListener, Textbox
+osr, grp, idr, ent, snd = osRelated, graphic, idRelated, entity, sound
+q                       = quests
+s.s                     = osr.slash()
+s.TFP                   = f"{os.getcwd()}{s.s}"
+dbf                     = DoubleBuffer()
 
 
 def gameChecker():
-    if int((player.hp / player.Mhp) * 100) <= 30 and player.hpLow == False:
-        player.hpLow = True
-        gbf.play(f"{player.TFP}Packages{player.s}sounds{player.s}hp_low.wav"); logger.addLog(f"{player.colors['lY']}{player.name}{player.colors['end']} 님의 체력이 부족합니다! {player.colors['R']}(현재 체력 : {player.hp}){player.colors['end']}")
-    elif int((player.hp / player.Mhp) * 100) > 30: player.hpLow = False
+    if s.main == 1:
+        grp.clear()
+        s.jpsf == False
+        if s.hp <= 0 or s.hunger <= 0:
+            s.killAll = True
+            snd.play("defeat")
+            print(f"{s.colors['R']}{s.markdown(1)}")
+            print(t.TextBox(f"   사 망 하 셨 습 니 다   \n\n   {s.markdown([0, 3])}{s.colors['R']}\"{random.choice(comments.defeatComment)}\"{s.markdown([0, 1])}{s.colors['R']}   ", Type="middle", inDistance=1, outDistance=1, AMLS=True, endLineBreak=True, LineType="bold"))
+            print(s.colors['end'])
+            time.sleep(2.5)
+            Achievements = {
+                "내려간 깊이" : f"{s.colors['lY']}{s.stage}{s.colors['end']}",
+                "최대 레벨"   : f"{s.colors['lP']}{s.lvl}{s.colors['end']}"
+            }
+            for num, text in enumerate(Achievements):
+                print(f"{text} : {list(Achievements.values())[num]}")
+                time.sleep(0.2)
+            s.main = 0
 
-    victory = quests.quest(player.stage)
-    victory = 0
-    if victory == 1:
-        player.room[player.y][player.x] = player.floor
-        player.jpsf = False
-        clear(); gbf.play(f'{player.TFP}Packages{player.s}sounds{player.s}clear.wav')
-        print(player.colors['G']+player.markdown(1)); t.TextBox(f"   T U T O R I A L   C L E A R !   " if player.stage == 0 else f"   S T A G E   {player.stage}   C L E A R !   ", Type="middle", inDistance=1, outDistance=1, AMLS=True, endLineBreak=True, LineType="bold", animation=["blind", 0.2]); print(player.colors['end'])
-        time.sleep(1)
-        player.yctuoh = True
-        clear()
+        else:
+            snd.play("clear")
+            print(f"{s.colors['G']}{s.markdown(1)}")
+            print(t.TextBox(f"   지 배   성 공   \n\n   {s.markdown([0, 3])}{s.colors['G']}\"{random.choice(comments.victoryComment)}\"{s.markdown([0, 1])}{s.colors['G']}   ", Type="middle", inDistance=1, outDistance=1, AMLS=True, endLineBreak=True, LineType="bold"))
+            print(s.colors['end'])
+            time.sleep(2)
 
-        mainSettings.upgradeStatus()
-        player.yctuoh = False
-        clear()
-        player.stage += 1
-    elif player.hp <= 0 or player.hunger <= 0:
-        player.jpsf = False
-        clear(); gbf.play(f'{player.TFP}Packages{player.s}sounds{player.s}defeat.wav')
-        print(player.colors['R']+player.markdown(1)); t.TextBox(f"   G A M E   O V E R   ", Type="middle", inDistance=1, outDistance=1, AMLS=True, endLineBreak=True, LineType="bold", animation=["blind", 0.2, ]); print(player.colors['end'])
-        time.sleep(1)
-        player.main = 0
-        sys.exit()
+def playerChecker():
+    if s.df > 0   : s.dfCrack = 0
 
+    if int((s.hp / s.Mhp) * 100) <= 30 and s.hpLow == False:
+        s.hpLow = True
+        snd.play(f"hp_low")
+        logger.addLog(f"{s.lightName} 님의 체력이 부족합니다! {s.colors['R']}(현재 체력 : {s.hp}){s.colors['end']}")
+    elif int((s.hp / s.Mhp) * 100) > 30: s.hpLow = False
+
+cursor.hide()
 
 mainSettings.init()
+grp.clear()
+p.set()
 
-while player.main > 0:
-    # S.stage(s.stage)
-    player.Dungeon = dgm.DungeonMaker()
-    time.sleep(1)
-    clear()
-    if player.stage == 0:
-        gbf.play(f"{player.TFP}Packages{player.s}sounds{player.s}smash.wav")
-        t.TextBox(f"{player.markdown(1)}   T U T O R I A L   {player.colors['end']}\n\n", Type="middle", inDistance=1, outDistance=5, AMLS=True, endLineBreak=True, LineType="double")
-        time.sleep(1)
-        clear()
-        gbf.play(f"{player.TFP}Packages{player.s}sounds{player.s}smash.wav")
-        t.TextBox(f"{player.markdown(1)}   T U T O R I A L   {player.colors['end']}\n\n{player.markdown(3)}{player.stageName}{player.colors['end']}", Type="middle", inDistance=1, outDistance=5, AMLS=True, endLineBreak=True, LineType="double")
-    else:
-        gbf.play(f"{player.TFP}Packages{player.s}sounds{player.s}smash.wav")
-        t.TextBox(f"{player.markdown(1)}   S T A G E   {player.stage}{player.colors['end']}   \n\n", Type="middle", inDistance=1, outDistance=5, AMLS=True, endLineBreak=True, LineType="double")
-        time.sleep(1)
-        clear()
-        gbf.play(f"{player.TFP}Packages{player.s}sounds{player.s}smash.wav")
-        t.TextBox(f"{player.markdown(1)}   S T A G E   {player.stage}{player.colors['end']}   \n\n{player.markdown(3)}{player.stageName}{player.colors['end']}", Type="middle", inDistance=1, outDistance=5, AMLS=True, endLineBreak=True, LineType="double")
-    time.sleep(2)
-    gbf.play(f"{player.TFP}Packages{player.s}sounds{player.s}smash.wav")
-    clear()
-    player.jpsf = True
+s.jpsf = False
+while s.main == 1:
+    SN        = f"{s.colors['G']}지 상{s.colors['end']}" if s.stage == 0 else f"{s.colors['R']}{s.stage} 번 째   나 락{s.colors['end']}"
+    grp.clear()
+    s.Dungeon = dgm.DungeonMaker()
+    options.showMap()
 
-    while True:
-        if player.jpsf:
-            # gameChecker()
-            if player.nowStage < player.stage:
-                player.nowStage += 1
-                break
-            elif player.main <= 0: break
-            gbf.fieldPrint(player.room)
-            time.sleep(1/player.frame)
-            clear()
+    p.start(4, 4, 6, 6)
+    system.roomChecker.placeRandomOrbs()
+    grp.showStage(f"{s.colors['R']}- {s.stage}{s.colors['end']}", stageName=SN)
+
+    s.stage += 1
+    s.jpsf = True
+    while q.quest() == 0:
+        if s.hp <= 0 or s.hunger <= 0 or s.main != 1: break
+        if s.jpsf:
+            playerChecker()
+            dbf.write(grp.fieldPrint(s.Dungeon[s.Dy][s.Dx]['room'])); dbf.render()
+            system.roomChecker.main()
+            if s.frame > 0: time.sleep(1/s.frame)
+    gameChecker()
+
+#으허허 나 개발하기 너무 귀ㅣ찮아ㅏㅏ 손이 녹아내리고잇ㅅ어ㅓㅓㅓㅓ
+# ㅡ화ㅡ아ㅏㅇㅇ난;ㅐㅑㅓ해ㅑㅓㅁ;ㅐㅑㅓㄹ;중ㄹ
