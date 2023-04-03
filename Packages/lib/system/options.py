@@ -1,5 +1,5 @@
 import time, json
-from   Packages.lib                            import data
+from   Packages.lib.data                       import status, lockers
 from   Packages.lib.modules                    import selector, Textbox
 from   Packages.lib.system                     import DungeonMaker
 from   Packages.lib.system.Secret.rudConverter import converter
@@ -7,9 +7,9 @@ from   Packages.lib.system.Secret.cursorType   import cursor
 from   Packages.lib.system.globalFunc.graphic  import clear
 from   Packages.lib.system.globalFunc.sound    import play
 
-s, l  = data.status, data.lockers
-sc = selector.selector
-dgm = DungeonMaker
+s, l  = status, lockers
+sc    = selector.selector
+dgm   = DungeonMaker
 
 def saveFile():
     Vars        = [name for name in dir(s) if not name.startswith('__')]
@@ -103,4 +103,3 @@ def showMap():
         [1,0,255,10], 
         '@'
     )
-    l.jpsf = 1

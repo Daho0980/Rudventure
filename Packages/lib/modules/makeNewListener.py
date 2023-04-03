@@ -1,15 +1,14 @@
-from pynput.keyboard          import Key, Listener
-from Packages.lib             import player
-from Packages.lib             import data
-from Packages.lib.system      import options
+from pynput.keyboard                      import Key, Listener
+from Packages.lib                         import player
+from Packages.lib.data                    import status, lockers
+from Packages.lib.system                  import options
 from Packages.lib.system.globalFunc.sound import play
 
-s, l = data.status, data.lockers
+s, l = status, lockers
 
 def addListener():
     def key_press(key):
         if l.jpsf == 1:
-            print(s.lightName)
             if key in [Key.up, Key.down, Key.left, Key.right]: player.player.move(key, 1)
 
     def key_release(key):
