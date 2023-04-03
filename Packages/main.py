@@ -66,9 +66,7 @@ p.set()
 mnl.addListener()
 while s.main == 1:
     grp.clear()
-    # SN        = f"{s.colors['G']}지 상{s.colors['end']}" if s.stage == 0 else f"{s.colors['R']}{s.stage} 번 째   나 락{s.colors['end']}"
-    if l.jpsf == 0: SN = "지금 꺼져있다고 개새끼들아"
-    else: SN = f"{s.colors['G']}지 상{s.colors['end']}" if s.stage == 0 else f"{s.colors['R']}{s.stage} 번 째   나 락{s.colors['end']}"
+    SN        = f"{s.colors['G']}지 상{s.colors['end']}" if s.stage == 0 else f"{s.colors['R']}{s.stage} 번 째   나 락{s.colors['end']}"
     s.Dungeon = dgm.DungeonMaker()
     options.showMap()
 
