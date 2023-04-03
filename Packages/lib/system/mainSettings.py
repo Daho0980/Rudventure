@@ -1,9 +1,9 @@
 import os, time, random
 from   Packages.lib.data              import status
-from   Packages.lib.modules           import logger, selector, Textbox, makeNewListener
+from   Packages.lib.modules           import logger, selector, Textbox
 from   Packages.lib.system.globalFunc import sound, graphic
 
-s, t, mnl = status, Textbox, makeNewListener
+s, t = status, Textbox
 snd, grp = sound, graphic
 
 def init():
@@ -37,5 +37,4 @@ def init():
     snd.play("select"); grp.clear()
 
     logger.addLog(s.welcomeMessage[random.randrange(0, len(s.welcomeMessage))])
-    mnl.addListener()
     

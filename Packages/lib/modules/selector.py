@@ -4,7 +4,7 @@
     ``selector`` : 모듈의 모든 기능을 담은 클래스
 """
 from Packages.lib.data                      import status as s
-from Packages.lib.system.doubleBuffer       import DoubleBuffer
+from Packages.lib.system.Secret.doubleBuffer       import DoubleBuffer
 from Packages.lib.system.globalFunc.graphic import clear
 from Packages.lib.system.globalFunc.sound   import play
 

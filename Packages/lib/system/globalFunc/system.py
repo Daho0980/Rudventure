@@ -6,11 +6,12 @@ Global Functions 중 System 옵션
 """
 
 import random
-import os
-from   Packages.lib.data                    import status as s
+from   Packages.lib                          import data
 from   Packages.lib.modules                 import logger, selector
 from   Packages.lib.system.globalFunc.entity import addEntity
 from   Packages.lib.system.globalFunc.sound import play 
+
+s, l = data.status, data.lockers
 
 def placeRandomBlock(block:str, y:list, x:list, allowedBlocks:list):
     """
@@ -135,7 +136,7 @@ class roomChecker:
 
     def main():
         data = s.Dungeon[s.Dy][s.Dx]
-        if s.jpsf:
+        if l.jpsf == 1:
             if data['summonCount'] > 0 and s.roomLock == False:
                 logger.addLog(f"자, 즐길 시간이야 베이비{s.colors['R']}♥{s.colors['end']} {s.markdown(3)}(방문을 걸어잠그며){s.colors['end']}")
                 roomChecker.summonRandomMonster(data)

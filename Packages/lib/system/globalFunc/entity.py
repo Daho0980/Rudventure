@@ -50,19 +50,21 @@ status.entities.append(Rname)
     def EntityInteraction():
         exec(f"""
 import time
-from   Packages.lib.data           import status
+from   Packages.lib                import data
 from   Packages.lib.modules.logger import addLog
 from   Packages.lib.system.globalFunc.system import xpSystem as xps
 
-while status.main == 1:
-    if status.killAll == True: break
-    if status.jpsf:
+s, l = data.status, data.lockers
+
+while s.main == 1:
+    if s.killAll == True: break
+    if l.jpsf == 1:
         if {Name}.hp <= 0:
-            status.entities.remove(Rname)
+            s.entities.remove(Rname)
             break
         {Name}.move()
-status.Dungeon[{Name}.Dy][{Name}.Dx]['room'][{Name}.y][{Name}.x] = status.stepableBlocks[status.stepableBlocks.index({Name}.stepped)]
-if status.main == 1 and status.killAll == False: xps.getXP(xpType[entityType])
+s.Dungeon[{Name}.Dy][{Name}.Dx]['room'][{Name}.y][{Name}.x] = s.stepableBlocks[s.stepableBlocks.index({Name}.stepped)]
+if s.main == 1 and s.killAll == False: xps.getXP(xpType[entityType])
         """, nameSpace)
         if s.main == 1 and s.killAll == False:
             play("monster_dead")

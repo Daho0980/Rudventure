@@ -163,10 +163,8 @@ Dungeon  = []
 roomLock = False
 killAll = False
 
-jpsf     = False
 TFP      = ""
 sound    = True
-yctuoh   = False
 
 entities = []
 Wanted   = []

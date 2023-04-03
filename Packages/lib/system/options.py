@@ -1,17 +1,18 @@
 import time, json
-from   Packages.lib.data                       import status
-from   Packages.lib.modules                    import selector, makeNewListener, Textbox
+from   Packages.lib                            import data
+from   Packages.lib.modules                    import selector, Textbox
 from   Packages.lib.system                     import DungeonMaker
 from   Packages.lib.system.Secret.rudConverter import converter
+from   Packages.lib.system.Secret.cursorType   import cursor
 from   Packages.lib.system.globalFunc.graphic  import clear
 from   Packages.lib.system.globalFunc.sound    import play
 
-s  = status
+s, l  = data.status, data.lockers
 sc = selector.selector
 dgm = DungeonMaker
 
 def saveFile():
-    Vars        = [name for name in dir(status) if not name.startswith('__')]
+    Vars        = [name for name in dir(s) if not name.startswith('__')]
     uselessVars = ["colors", "customColor", "markdown", "Dy", "bfDy", "Dx", "bfDx", "x", "bfx", "y", "bfy", "steppedBlock", "btnX", "btnY", "btn1X", "btn1Y", "goalX", "goalY", "main", "LOGO", "p1", "p2", "e", "boss", "enemies", "squishy", "wall", "R", "item", "box", "boxMark", "goal", "floor", "fakeFloor", "orbs", "stepableBlocks", "doorRooms", "doors", "nowStage", "roomName", "s", "room", "Dungeon", "roomLock", "jpsf", "TFP", "sound", "yctuoh", "entities", "Wanted", "onDisplay", "onTime", "showDungeonMap"]
     print('저장중...')
     try:
@@ -45,7 +46,7 @@ def menu():
     global s, sc
 
     clear()
-    s.jpsf = False
+    l.jpsf = 0
     time.sleep(0.1)
     play("smash")
     what = 0
@@ -56,12 +57,12 @@ def menu():
         elif what == 1: mainMenu = sc.Dropdown(f'{s.LOGO}\n        << 메뉴 >>', ['게임으로 돌아가기', '게임 종료', '게임 저장', 'Credits', '만들 때 사용한 프로그램', '소리 설정', '아이콘 설정'], [1,0,255,10], '@')
 
         if mainMenu == 1:
-            s.jpsf = True
+            l.jpsf = 1
             break
 
         elif mainMenu == 2:
-            print('언젠가 다시 만나요..')
-            time.sleep(1)
+            print('당신이 다시 돌아오길 기다리겠습니다...')
+            cursor.show()
             s.main = 0; break
 
         elif mainMenu == 3:
@@ -92,7 +93,7 @@ def menu():
 def showMap():
     roomIcons = ['\033[31m§\033[0m', '•', '\033[32m*\033[0m', '\033[33m!\033[0m', '\033[34m/\033[0m']
 
-    s.jpsf = False
+    l.jpsf = 0
     time.sleep(0.1)
     play("smash")
     
@@ -102,4 +103,4 @@ def showMap():
         [1,0,255,10], 
         '@'
     )
-    s.jpsf = True
+    l.jpsf = 1

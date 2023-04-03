@@ -1,5 +1,7 @@
 import threading, os, time
-from   Packages.lib.data import status as s
+from   Packages.lib import data
+
+s, l = data.status, data.lockers
 
 def clear(): os.system("clear" if os.name == "posix" else "cls")
 
@@ -19,7 +21,7 @@ def addLog(text, time=50):
 
 def logChecker():
     while s.main == 1:
-        if s.jpsf:
+        if l.jpsf == 1:
             time.sleep(0.1)
             if len(s.onTime) > 0:
                 for i in range(len(s.onTime)): s.onTime[i] = s.onTime[i]-1

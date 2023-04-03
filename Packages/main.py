@@ -1,18 +1,19 @@
 # -*- coding: utf-8 -*-
-
 import os
 import time
 import random
-from   Packages.lib import player, quests
-from   Packages.lib.data import status, comments
-from   Packages.lib.modules import makeNewListener, Textbox, logger
-from   Packages.lib.system import DungeonMaker, options, mainSettings
+from   Packages.lib                          import player, quests
+# from   Packages.lib.data                     import status, comments
+from   Packages.lib                          import data
+from   Packages.lib.modules                  import makeNewListener, Textbox, logger
+from   Packages.lib.system                   import DungeonMaker, options, mainSettings
 from   Packages.lib.system.Secret.cursorType import cursor
-from   Packages.lib.system.doubleBuffer import DoubleBuffer
-from   Packages.lib.system.globalFunc import osRelated, graphic, idRelated, entity, system, sound
+from   Packages.lib.system.Secret.doubleBuffer      import DoubleBuffer
+from   Packages.lib.system.globalFunc        import osRelated, graphic, idRelated, entity, system, sound
 
 roomNames               = ["\033[31mStart\033[0m", "Normal Room", "\033[32mEvent Room\033[0m", "\033[33mTreasure Room\033[0m", "\033[34mExit\033[0m"]
-p, s, dgm, mnl, t       = player.player, status, DungeonMaker, makeNewListener, Textbox
+s, l                    = data.status, data.lockers
+p, dgm, mnl, t          = player.player, DungeonMaker, makeNewListener, Textbox
 osr, grp, idr, ent, snd = osRelated, graphic, idRelated, entity, sound
 q                       = quests
 s.s                     = osr.slash()
@@ -23,12 +24,12 @@ dbf                     = DoubleBuffer()
 def gameChecker():
     if s.main == 1:
         grp.clear()
-        s.jpsf == False
+        l.jpsf == 0
         if s.hp <= 0 or s.hunger <= 0:
             s.killAll = True
             snd.play("defeat")
             print(f"{s.colors['R']}{s.markdown(1)}")
-            print(t.TextBox(f"   사 망 하 셨 습 니 다   \n\n   {s.markdown([0, 3])}{s.colors['R']}\"{random.choice(comments.defeatComment)}\"{s.markdown([0, 1])}{s.colors['R']}   ", Type="middle", inDistance=1, outDistance=1, AMLS=True, endLineBreak=True, LineType="bold"))
+            print(t.TextBox(f"   사 망 하 셨 습 니 다   \n\n   {s.markdown([0, 3])}{s.colors['R']}\"{random.choice(data.comments.defeatComment)}\"{s.markdown([0, 1])}{s.colors['R']}   ", Type="middle", inDistance=1, outDistance=1, AMLS=True, endLineBreak=True, LineType="bold"))
             print(s.colors['end'])
             time.sleep(2.5)
             Achievements = {
@@ -38,12 +39,13 @@ def gameChecker():
             for num, text in enumerate(Achievements):
                 print(f"{text} : {list(Achievements.values())[num]}")
                 time.sleep(0.2)
+            cursor.show()
             s.main = 0
 
         else:
             snd.play("clear")
             print(f"{s.colors['G']}{s.markdown(1)}")
-            print(t.TextBox(f"   지 배   성 공   \n\n   {s.markdown([0, 3])}{s.colors['G']}\"{random.choice(comments.victoryComment)}\"{s.markdown([0, 1])}{s.colors['G']}   ", Type="middle", inDistance=1, outDistance=1, AMLS=True, endLineBreak=True, LineType="bold"))
+            print(t.TextBox(f"   지 배   성 공   \n\n   {s.markdown([0, 3])}{s.colors['G']}\"{random.choice(data.comments.victoryComment)}\"{s.markdown([0, 1])}{s.colors['G']}   ", Type="middle", inDistance=1, outDistance=1, AMLS=True, endLineBreak=True, LineType="bold"))
             print(s.colors['end'])
             time.sleep(2)
 
@@ -62,10 +64,12 @@ mainSettings.init()
 grp.clear()
 p.set()
 
-s.jpsf = False
+mnl.addListener()
 while s.main == 1:
-    SN        = f"{s.colors['G']}지 상{s.colors['end']}" if s.stage == 0 else f"{s.colors['R']}{s.stage} 번 째   나 락{s.colors['end']}"
     grp.clear()
+    # SN        = f"{s.colors['G']}지 상{s.colors['end']}" if s.stage == 0 else f"{s.colors['R']}{s.stage} 번 째   나 락{s.colors['end']}"
+    if l.jpsf == 0: SN = "지금 꺼져있다고 개새끼들아"
+    else: SN = f"{s.colors['G']}지 상{s.colors['end']}" if s.stage == 0 else f"{s.colors['R']}{s.stage} 번 째   나 락{s.colors['end']}"
     s.Dungeon = dgm.DungeonMaker()
     options.showMap()
 
@@ -74,10 +78,10 @@ while s.main == 1:
     grp.showStage(f"{s.colors['R']}- {s.stage}{s.colors['end']}", stageName=SN)
 
     s.stage += 1
-    s.jpsf = True
+    l.jpsf = 1
     while q.quest() == 0:
         if s.hp <= 0 or s.hunger <= 0 or s.main != 1: break
-        if s.jpsf:
+        if l.jpsf == 1:
             playerChecker()
             dbf.write(grp.fieldPrint(s.Dungeon[s.Dy][s.Dx]['room'])); dbf.render()
             system.roomChecker.main()
