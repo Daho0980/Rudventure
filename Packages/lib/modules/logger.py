@@ -1,7 +1,7 @@
 import threading, os, time
-from   Packages.lib import data
+from   Packages.lib.data import status, lockers
 
-s, l = data.status, data.lockers
+s, l = status, lockers
 
 def clear(): os.system("clear" if os.name == "posix" else "cls")
 

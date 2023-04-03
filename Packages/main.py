@@ -3,8 +3,7 @@ import os
 import time
 import random
 from   Packages.lib                          import player, quests
-# from   Packages.lib.data                     import status, comments
-from   Packages.lib                          import data
+from   Packages.lib.data                     import status, comments, lockers
 from   Packages.lib.modules                  import makeNewListener, Textbox, logger
 from   Packages.lib.system                   import DungeonMaker, options, mainSettings
 from   Packages.lib.system.Secret.cursorType import cursor
@@ -12,7 +11,7 @@ from   Packages.lib.system.Secret.doubleBuffer      import DoubleBuffer
 from   Packages.lib.system.globalFunc        import osRelated, graphic, idRelated, entity, system, sound
 
 roomNames               = ["\033[31mStart\033[0m", "Normal Room", "\033[32mEvent Room\033[0m", "\033[33mTreasure Room\033[0m", "\033[34mExit\033[0m"]
-s, l                    = data.status, data.lockers
+s, c, l                    = status, comments, lockers
 p, dgm, mnl, t          = player.player, DungeonMaker, makeNewListener, Textbox
 osr, grp, idr, ent, snd = osRelated, graphic, idRelated, entity, sound
 q                       = quests
@@ -29,7 +28,7 @@ def gameChecker():
             s.killAll = True
             snd.play("defeat")
             print(f"{s.colors['R']}{s.markdown(1)}")
-            print(t.TextBox(f"   사 망 하 셨 습 니 다   \n\n   {s.markdown([0, 3])}{s.colors['R']}\"{random.choice(data.comments.defeatComment)}\"{s.markdown([0, 1])}{s.colors['R']}   ", Type="middle", inDistance=1, outDistance=1, AMLS=True, endLineBreak=True, LineType="bold"))
+            print(t.TextBox(f"   사 망 하 셨 습 니 다   \n\n   {s.markdown([0, 3])}{s.colors['R']}\"{random.choice(c.defeatComment)}\"{s.markdown([0, 1])}{s.colors['R']}   ", Type="middle", inDistance=1, outDistance=1, AMLS=True, endLineBreak=True, LineType="bold"))
             print(s.colors['end'])
             time.sleep(2.5)
             Achievements = {
@@ -45,7 +44,7 @@ def gameChecker():
         else:
             snd.play("clear")
             print(f"{s.colors['G']}{s.markdown(1)}")
-            print(t.TextBox(f"   지 배   성 공   \n\n   {s.markdown([0, 3])}{s.colors['G']}\"{random.choice(data.comments.victoryComment)}\"{s.markdown([0, 1])}{s.colors['G']}   ", Type="middle", inDistance=1, outDistance=1, AMLS=True, endLineBreak=True, LineType="bold"))
+            print(t.TextBox(f"   지 배   성 공   \n\n   {s.markdown([0, 3])}{s.colors['G']}\"{random.choice(c.victoryComment)}\"{s.markdown([0, 1])}{s.colors['G']}   ", Type="middle", inDistance=1, outDistance=1, AMLS=True, endLineBreak=True, LineType="bold"))
             print(s.colors['end'])
             time.sleep(2)
 

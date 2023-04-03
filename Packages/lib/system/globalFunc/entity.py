@@ -50,11 +50,11 @@ status.entities.append(Rname)
     def EntityInteraction():
         exec(f"""
 import time
-from   Packages.lib                import data
+from   Packages.lib.data           import status, lockers
 from   Packages.lib.modules.logger import addLog
 from   Packages.lib.system.globalFunc.system import xpSystem as xps
 
-s, l = data.status, data.lockers
+s, l = status, lockers
 
 while s.main == 1:
     if s.killAll == True: break

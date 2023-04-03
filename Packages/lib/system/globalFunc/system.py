@@ -6,12 +6,12 @@ Global Functions 중 System 옵션
 """
 
 import random
-from   Packages.lib                          import data
-from   Packages.lib.modules                 import logger, selector
+from   Packages.lib.data                     import status, lockers
+from   Packages.lib.modules                  import logger, selector
 from   Packages.lib.system.globalFunc.entity import addEntity
-from   Packages.lib.system.globalFunc.sound import play 
+from   Packages.lib.system.globalFunc.sound  import play 
 
-s, l = data.status, data.lockers
+s, l = status, lockers
 
 def placeRandomBlock(block:str, y:list, x:list, allowedBlocks:list):
     """
