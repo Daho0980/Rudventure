@@ -3,10 +3,11 @@
 
     ``selector`` : 모듈의 모든 기능을 담은 클래스
 """
-from Packages.lib.data                      import status as s
-from Packages.lib.system.Secret.doubleBuffer       import DoubleBuffer
-from Packages.lib.system.globalFunc.graphic import clear
-from Packages.lib.system.globalFunc.sound   import play
+from   Packages.lib.data                       import status       as s
+from   Packages.lib.system.Secret.doubleBuffer import DoubleBuffer
+from   Packages.lib.system.globalFunc          import system
+from   Packages.lib.system.globalFunc.graphic  import clear
+from   Packages.lib.system.globalFunc.sound    import play
 
 class selector:
     """
@@ -130,7 +131,7 @@ class selector:
 
             SNum, SNum1                          = 1, 0 # 가로, 세로 변환 정도값
             up, down, left, right                = ['w', 'W', 'ㅈ'], ['s', 'S', 'ㄴ'], ['a', 'A', 'ㅁ'], ['d', 'D', 'ㅇ']
-            Input                                = input(s.colors['end'])
+            Input                                = system.inp(s.colors['end'])
             arrow[nowSelectRow][nowSelectColumn] = ' '
 
             if Input in up: # sublist row값 감소

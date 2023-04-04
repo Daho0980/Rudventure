@@ -1,7 +1,7 @@
 import os, time, random
 from   Packages.lib.data              import status
 from   Packages.lib.modules           import logger, selector, Textbox
-from   Packages.lib.system.globalFunc import sound, graphic
+from   Packages.lib.system.globalFunc import sound, graphic, system
 
 s, t = status, Textbox
 snd, grp = sound, graphic
@@ -24,7 +24,7 @@ def init():
 
     while True:
         snd.play("select")
-        temporaryName = input(t.TextBox("   이름을 입력해주세요   ", Type="middle", outDistance=1, AMLS=True, endLineBreak=True)+f"\n>>> {s.colors['lY']}"); snd.play("select"); print(s.colors['end']); grp.clear()
+        temporaryName = system.inp(t.TextBox("   이름을 입력해주세요   ", Type="middle", outDistance=1, AMLS=True, endLineBreak=True)+f"\n>>> {s.colors['lY']}"); snd.play("select"); print(s.colors['end']); grp.clear()
         if len(temporaryName) == 0 or len(temporaryName.split()) == 0: selector.selector.Dropdown(t.TextBox(f"   이름이 {s.colors['R']}{s.markdown([3, 4])}없거나{s.colors['end']} {s.colors['R']}{s.markdown([3, 4])}공백 밖에{s.colors['end']} 없으면   \n말하기 곤란해지실게요", Type="middle", outDistance=1, AMLS=True, endLineBreak=True), ["네..."], [1,0,255,10], '@'); continue
         elif selector.selector.Dropdown(t.TextBox(f"{s.colors['lY']}   << {temporaryName} >>   {s.colors['end']}\n\n   이 이름이 맞습니까?   ", Type="middle", outDistance=1, AMLS=True, endLineBreak=True), ["네", "아니오"], [1,0,255,10], '@') == 2: continue
         break

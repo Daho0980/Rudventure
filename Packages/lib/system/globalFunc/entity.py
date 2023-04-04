@@ -41,8 +41,9 @@ def addEntity(entityType:int, initHp:int, Dy:int, Dx:int, y:list, x:list):
         a += 1
     nameSpace = {f"{Name}" : Name, "Rname" : Rname, "xpType" : xpType, "entityType" : entityType}
     exec(f"""
-from Packages.lib      import enemy
-from Packages.lib.data import status
+import time
+from   Packages.lib      import enemy
+from   Packages.lib.data import status
 {Name} = enemy.{classType[entityType]}(0, 0, 0, 0, 0, \"{Name}\", \"{icons[entityType]}\")
 {Name}.start({initHp}, {Dy}, {Dx}, {y}, {x})
 status.entities.append(Rname)
@@ -63,6 +64,7 @@ while s.main == 1:
             s.entities.remove(Rname)
             break
         {Name}.move()
+    else: time.sleep(1)
 s.Dungeon[{Name}.Dy][{Name}.Dx]['room'][{Name}.y][{Name}.x] = s.stepableBlocks[s.stepableBlocks.index({Name}.stepped)]
 if s.main == 1 and s.killAll == False: xps.getXP(xpType[entityType])
         """, nameSpace)

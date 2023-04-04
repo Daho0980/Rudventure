@@ -5,6 +5,7 @@ from   Packages.lib.system                     import DungeonMaker
 from   Packages.lib.system.Secret.rudConverter import converter
 from   Packages.lib.system.Secret.cursorType   import cursor
 from   Packages.lib.system.globalFunc.graphic  import clear
+from   Packages.lib.system.globalFunc.system   import inp
 from   Packages.lib.system.globalFunc.sound    import play
 
 s, l  = status, lockers
@@ -47,14 +48,9 @@ def menu():
 
     clear()
     l.jpsf = 0
-    time.sleep(0.1)
     play("smash")
-    what = 0
     while True:
-        if what == 0:
-            mainMenu = sc.Dropdown(f'{s.LOGO}\n        << 메뉴 >>', ['게임으로 돌아가기', '게임 종료', '게임 저장', 'Credits', '만들 때 사용한 프로그램', '소리 설정', '아이콘 설정'], [1,0,255,10], '@', frontTag="Enter를 한 번 눌러 주세요")
-            what = 1
-        elif what == 1: mainMenu = sc.Dropdown(f'{s.LOGO}\n        << 메뉴 >>', ['게임으로 돌아가기', '게임 종료', '게임 저장', 'Credits', '만들 때 사용한 프로그램', '소리 설정', '아이콘 설정'], [1,0,255,10], '@')
+        mainMenu = sc.Dropdown(f'{s.LOGO}\n        << 메뉴 >>', ['게임으로 돌아가기', '게임 종료', '게임 저장', 'Credits', '만들 때 사용한 프로그램', '소리 설정', '아이콘 설정'], [1,0,255,10], '@')
 
         if mainMenu == 1:
             l.jpsf = 1
@@ -67,7 +63,7 @@ def menu():
 
         elif mainMenu == 3:
             saveFile()
-            time.sleep(1); input("확인__")
+            time.sleep(1); inp("확인__")
 
         elif mainMenu == 4: sc.Dropdown('만든이:\n    다호\n\n도와준 이:\n    내 전두엽\n    내 전전두엽\n    사파리\n    내 눈\n    내 손\n    내 감각수용체\n    내 해마\n    내 등뼈\n    내 골반\n    내 손, 발목\n    내 책상\n\nSpecial Thanks:\n    레포\n    업로드\n    형\n    ChatGPT-3.5', ['돌아가기'], [1, 0, 255, 10], '@')
 
@@ -89,14 +85,12 @@ def menu():
                 if soundSet == 1: s.showStateDesign = 1 if s.showStateDesign == 2 else 2
                 else: break
             clear()
+    print(f"{s.markdown(3)}준비 중...{s.colors['end']}")
 
 def showMap():
     roomIcons = ['\033[31m§\033[0m', '•', '\033[32m*\033[0m', '\033[33m!\033[0m', '\033[34m/\033[0m']
 
     l.jpsf = 0
-    time.sleep(0.1)
-    play("smash")
-    
     sc.Dropdown(
         f"{Textbox.TextBox(dgm.gridMapReturn(s.Dungeon, blank=1), Type='middle', fillChar='^', AMLS=True, endLineBreak=True, LineType='double')}\n{roomIcons[0]} = start\n{roomIcons[1]} = basic room\n{roomIcons[2]} = event room\n{roomIcons[3]} = treasurebox room\n{roomIcons[4]} = exit", 
         ["확인__"], 

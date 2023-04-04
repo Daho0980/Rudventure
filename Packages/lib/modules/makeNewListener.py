@@ -1,6 +1,7 @@
 from pynput.keyboard                      import Key, Listener
 from Packages.lib                         import player
 from Packages.lib.data                    import status, lockers
+from Packages.lib.modules.logger          import addLog
 from Packages.lib.system                  import options
 from Packages.lib.system.globalFunc.sound import play
 
@@ -18,4 +19,4 @@ def addListener():
                 play("move_box")
                 s.showDungeonMap = 1 if s.showDungeonMap == 0 else 0
 
-    Listener(name="keyInput", on_press=key_press, on_release=key_release).start()
+    Listener(on_press=key_press, on_release=key_release).start()

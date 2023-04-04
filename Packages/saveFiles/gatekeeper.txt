@@ -1,1 +1,7 @@
-what
+saveFile 폴더의 문지기.
+
+만약 이 문지기가 없었다면 당신은 영영 saveFiles 폴더를 볼 수 {없었을} 것이다.
+
+이 파일에게 감사해라.
+
+_-* GateKeeper.TXT *-_

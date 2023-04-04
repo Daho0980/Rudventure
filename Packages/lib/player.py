@@ -9,10 +9,6 @@ from   Packages.lib.system.globalFunc.sound  import play
 S1, s, r = stages, status, rooms
 dfCrack  = 0
 
-def boxEvent():
-    if s.hp < s.Mhp: s.hp += random.randrange(1, 2)
-    s.hunger += 25
-
 class player:
     def set():
         s.hp = 10
@@ -28,6 +24,18 @@ class player:
         if s.df > 0: s.df -= 1
         else       : s.hp -= 1
         logger.addLog(f"{s.lightName}이(가) {s.markdown(1)}[ {block} ]{s.colors['end']} 에 의해 상처입었습니다 {s.colors['R']}(남은 체력 : {s.hp}){s.colors['end']} {s.colors['B']}(남은 방어력 : {s.df}){s.colors['end']}")
+
+    def boxEvent():
+        typeIndex = None
+        percent   = random.randrange(1, 101)
+
+        if percent > 0 and percent <= 45: typeIndex = "hunger"
+        elif percent > 45 and percent <= 70: typeIndex = "hp"
+        elif percent > 70 and percent <= 80: typeIndex = "def"
+        elif percent > 80 and percent <= 85: typeIndex = "atk"
+        else: typeIndex = "exp"
+
+        s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x] = s.orbs['type'][typeIndex][1]
         
     def orbEvent(Size, Type):
         sizeIndex = ["bigOne", "smallOne"].index(Size)
@@ -52,7 +60,8 @@ class player:
         exec(data[sizeIndex][typeIndex], var)
 
     def move(Dir, Int): 
-        enemies = [s.enemies["snippets"]["pain"], s.enemies["snippets"]["unrest"]]
+        enemies  = [s.enemies["snippets"]["pain"], s.enemies["snippets"]["unrest"]]
+        data     = s.Dungeon[s.Dy][s.Dx]
         roomGrid = s.Dungeon[s.Dy][s.Dx]['room']
 
         if s.df > 0: s.dfCrack = 0
@@ -87,9 +96,11 @@ class player:
             s.y, s.x   = bfy, bfx
             s.Dy, s.Dx = bfDy, bfDx
 
-        # elif s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x] == s.item:
-        #     boxEvent()
-        #     sound = "get_item"
+        elif s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x] == s.item:
+            player.boxEvent()
+            sound = "move_box"
+            s.y, s.x = bfy, bfx
+
         elif roomGrid[s.y][s.x] in s.orbs["size"]["smallOne"] or roomGrid[s.y][s.x] in s.orbs["size"]["bigOne"]:
             sound = "get_item"
             block = roomGrid[s.y][s.x]

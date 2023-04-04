@@ -31,5 +31,6 @@ def logChecker():
                     del s.onDisplay[s.onTime.index(0)]
                     del s.onTime[s.onTime.index(0)]
                 else: break
+        else: time.sleep(1)
 
 threading.Thread(target=logChecker, name="logger", daemon=True).start()

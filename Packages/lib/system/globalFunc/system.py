@@ -6,12 +6,18 @@ Global Functions 중 System 옵션
 """
 
 import random
+import sys
 from   Packages.lib.data                     import status, lockers
 from   Packages.lib.modules                  import logger, selector
 from   Packages.lib.system.globalFunc.entity import addEntity
 from   Packages.lib.system.globalFunc.sound  import play 
 
 s, l = status, lockers
+
+def inp(string):
+    print(string, end='')
+    Input = sys.stdin.readline(s.maxInputSize)
+    return Input[:-1] if Input.endswith('\n') else Input
 
 def placeRandomBlock(block:str, y:list, x:list, allowedBlocks:list):
     """
@@ -136,16 +142,40 @@ class roomChecker:
 
     def main():
         data = s.Dungeon[s.Dy][s.Dx]
-        if l.jpsf == 1:
-            if data['summonCount'] > 0 and s.roomLock == False:
-                logger.addLog(f"자, 즐길 시간이야 베이비{s.colors['R']}♥{s.colors['end']} {s.markdown(3)}(방문을 걸어잠그며){s.colors['end']}")
-                roomChecker.summonRandomMonster(data)
-                data['summonCount'] = 0
-                s.roomLock          = True
-                roomChecker.changeDoorPosBlock(s.wall, data)
+        if l.jpsf == 1 and data['interaction'] == False:
+            match data['roomType']:
+                case 1:
+                    if data['summonCount'] > 0:
+                        play("close_door")
+                        roomChecker.summonRandomMonster(data)
+                        data['summonCount'] = 0
+                        s.roomLock          = True
+                        roomChecker.changeDoorPosBlock(s.wall, data)
+                    elif len(s.entities) == 0 and s.roomLock == True:
+                        play("open_door")
+                        s.roomLock = False
+                        s.Dungeon[s.Dy][s.Dx]['interaction'] = True
+                        roomChecker.placeRandomOrbs()
+                        roomChecker.changeDoorPosBlock(s.R, data)
 
-            elif len(s.entities) == 0 and s.roomLock == True:
-                logger.addLog(f"아 노잼;; {s.markdown(3)}(방문을 열어주며){s.colors['end']}")
-                roomChecker.placeRandomOrbs()
-                s.roomLock = False
-                roomChecker.changeDoorPosBlock(s.R, data)
+                case 2:
+                    logger.addLog(f"(슬쩍) 아직 {s.colors['Y']}이벤트{s.colors['end']}는 {s.colors['R']}{s.markdown([1, 3])}안{s.colors['end']} 만들었답니다 ㅎㅎ;")
+                    s.Dungeon[s.Dy][s.Dx]['interaction'] = True
+
+                case 3:
+                    s.Dungeon[s.Dy][s.Dx]['room'][6][6] = s.item
+                    s.Dungeon[s.Dy][s.Dx]['interaction'] = True
+
+                case 4:
+                    if data['summonCount'] > 0:
+                        play("close_door")
+                        roomChecker.summonRandomMonster(data)
+                        data['summonCount'] = 0
+                        s.roomLock          = True
+                        s.Dungeon[s.Dy][s.Dx]['room'][6][6] = s.floor
+                    elif len(s.entities) == 0 and s.roomLock == True:
+                        play("open_door")
+                        roomChecker.placeRandomOrbs()
+                        s.roomLock = False
+                        s.Dungeon[s.Dy][s.Dx]['room'][6][6] = s.goal
+                        s.Dungeon[s.Dy][s.Dx]['interaction'] = True

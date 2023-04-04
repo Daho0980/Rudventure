@@ -118,10 +118,10 @@ enemies = {
 squishy        = [f"{colors['B']}{markdown(1)}O{colors['end']}", f"{colors['B']}{markdown(1)}o{colors['end']}"]
 wall           = '■'
 R              = '▤'
-item           = f"{colors['Y']}◘{colors['end']}"
+item           = f"{colors['Y']}ᢂ{colors['end']}"
 box            = '☒'
 boxMark        = f"{colors['R']}✘{colors['end']}"
-goal           = f'\033[31mF\033[0m'
+goal           = f"{colors['R']}F{colors['end']}"
 floor          = '.'
 fakeFloor      = '∙'
 # hp -> def -> atk -> hng -> exp
@@ -157,11 +157,12 @@ stepableBlocks = [floor, item, boxMark]
 stage     = 0
 
 # Background vars
-s        = ''
-room     = ""
-Dungeon  = []
-roomLock = False
-killAll = False
+s            = ''
+room         = ""
+Dungeon      = []
+roomLock     = False
+killAll      = False
+maxInputSize = 250
 
 TFP      = ""
 sound    = True

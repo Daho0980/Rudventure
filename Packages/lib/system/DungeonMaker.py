@@ -60,7 +60,7 @@ def gridMapReturn(grid:list, blank=0, center=False):
     blanks = " "*blank
     output = ""
 
-    if center == True   :
+    if center == True:
         DisplayMap = []
         for row in range(9):
             newRow = []
@@ -266,11 +266,12 @@ def initBranch(Map:list, y:int, x:int, rawPrint=False):
         if Map[y][x]["roomIcon"] in roomIcons: # 방 덮어쓰기 방지
             p = [[y-1 if y>0 else y, x], [y+1 if y<len(Map)-1 else y, x], [y, x-1 if x>0 else x], [y, x+1 if x<len(Map[0])-1 else x]]
             if None not in [Map[p[0][0]][p[0][1]]['roomType'], Map[p[1][0]][p[1][1]]['roomType'], Map[p[2][0]][p[2][1]]['roomType'], Map[p[3][0]][p[3][1]]['roomType']] or [y, x] in p:
-                Map[y][x] = {"roomIcon":roomIcons[4], "doorPos":Map[y][x]['doorPos'], "roomType":4, "isPlayerHere":False, "isPlayerVisited":2, "summonCount":1}
+                Map[y][x] = {"roomIcon":roomIcons[4], "doorPos":Map[y][x]['doorPos'], "roomType":4, "isPlayerHere":False, "isPlayerVisited":2, "summonCount":1, "interaction":False}
                 break
             getBack(bfx, bfy)
             continue
-        
+
+        if maxBranchLength - nowLength == 1: selectRoomKind = 4 # 출구 & 보스방
         selectRoomKind = random.randrange(1, 7) # 방 종류 설정
 
         if selectRoomKind == 2: # 이벤트 방
@@ -294,16 +295,15 @@ def initBranch(Map:list, y:int, x:int, rawPrint=False):
         elif percent > 50 and percent <= 95: size = random.randrange(5, 7)
         elif percent > 95                  : size = 7
 
-        if maxBranchLength - nowLength == 1: selectRoomKind = 4 # 출구 & 보스방
-
         # 방 데이터 정리
+        nowLength                                += 1
         Map[y][x]["roomIcon"]                     = roomIcons[selectRoomKind]
         Map[y][x]["roomType"]                     = selectRoomKind
         Map[y][x]["isPlayerVisited"]              = 2 if selectRoomKind == 4 else 0
         Map[y][x]["doorPos"][locationData[2]]     = 1
         Map[bfy][bfx]["doorPos"][locationData[3]] = 1
         Map[y][x]["summonCount"]                  = 1 if selectRoomKind == 4 else 0 if selectRoomKind in [2, 3] else size
-        nowLength                                += 1
+        if selectRoomKind == 4: Map[6][6] = '\033[31mF\033[0m'
 
         progress.append([y, x])
 
@@ -318,12 +318,23 @@ def DungeonMaker():
     print("맵 생성 중...")
     for i in range(9):
         output.append([])
-        for j in range(9): output[i].append({"room":[], "roomIcon":' ', "doorPos":{"U":0, "R":0, "D":0, "L":0}, "roomType":None, "isPlayerHere":False, "isPlayerVisited":0, "summonCount":0})
+        for j in range(9):
+            output[i].append({
+                "room":[],
+                "roomIcon":' ',
+                "doorPos":{"U":0, "R":0, "D":0, "L":0},
+                "roomType":None,
+                "isPlayerHere":False,
+                "isPlayerVisited":0,
+                "summonCount":0,
+                "interaction":False
+                })
 
     output[4][4]["roomIcon"]        = roomIcons[0]
     output[4][4]["roomType"]        = 0
     output[4][4]["isPlayerVisited"] = 2
     output[4][4]["isPlayerHere"]    = True
+    output[4][4]["interaction"]     = True
     
     print("시작점 생성 중")
     for i in [[4-1, 4], [4+1, 4], [4, 4-1], [4, 4+1]]:
