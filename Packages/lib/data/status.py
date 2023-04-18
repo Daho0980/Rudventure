@@ -162,6 +162,7 @@ room         = ""
 Dungeon      = []
 roomLock     = False
 killAll      = False
+deadReason   = None
 maxInputSize = 250
 
 TFP      = ""

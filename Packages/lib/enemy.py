@@ -49,6 +49,7 @@ class enemy:
                 addLog(f"{s.colors['B']}방어구{s.colors['end']}가 부서졌습니다!")
                 s.dfCrack = 1
         else: s.hp -= damage
+
         addLog(f"{s.lightName}이(가) {s.colors['R']}{self.name}{s.colors['end']}({self.icon}) 에 의해 {s.colors['R']}{damage}{s.colors['end']}만큼의 피해를 입었습니다!")
         play(sound)
         return

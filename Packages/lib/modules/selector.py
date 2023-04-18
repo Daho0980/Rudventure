@@ -46,7 +46,6 @@ class selector:
             `{subtitle:values}` <-- 이와 같이 나올 경우 각 key에 할당된 value값들만 모아둔 리스트, 무조건 기입해야 함\n
         `nowSelectColumn`, `nowSelectRow`(int) : 현재 타겟된 메뉴의 위치, 무조건 기입해야 함\n
         `tag`(str)                             : 상시로 메뉴 맨 아래에 생기는 문자열, 무조건 기입해야 함
-        `dbf`(class)                           : 셀렉터용 더블 버퍼
         """
         def positionOutput(subtitle, row, column):
             if row == len(subtitle)-1:
@@ -122,6 +121,7 @@ class selector:
         for i in range(len(subtitleKeys)):
             arrow.append([])
             for j in range(maxLine): arrow[i].append(' ')
+
         while True: # 어쩔반복
             arrow[nowSelectRow][nowSelectColumn] = f'\033[{arrowColor}m{icon}' # 화살표 위치 설정
             if nowSelectRow        < len(subtitleKeys)-1:               arrow[nowSelectRow+1][nowSelectColumn] = f"\033[0m " # 다음 가로줄이 존재할 때: 다음 가로줄의 nowSelectColumn번째 요소를 기본색, 상태로 되돌린다(색 전염 방지)

@@ -3,10 +3,17 @@ import os
 import time
 import random
 import readline
+from pathlib import Path
+try:
+    import playsound
+    from pynput.keyboard import Listener, Key
+except:
+    s = '/' if os.name == 'posix' else '\\'
+    exec(open(Path(f'Packages{s}lib{s}system{s}downloadModules.py').resolve(), encoding='utf8').read())
 from   Packages.lib                            import player, quests
 from   Packages.lib.data                       import status, comments, lockers
 from   Packages.lib.modules                    import makeNewListener, Textbox, logger
-from   Packages.lib.system                     import DungeonMaker, options, mainSettings
+from   Packages.lib.system                     import DungeonMaker, mainSettings
 from   Packages.lib.system.Secret.cursorType   import cursor
 from   Packages.lib.system.Secret.doubleBuffer import DoubleBuffer
 from   Packages.lib.system.globalFunc          import osRelated, graphic, idRelated, entity, system, sound
@@ -22,18 +29,33 @@ s.TFP                   = f"{os.getcwd()}{s.s}"
 dbf                     = DoubleBuffer()
 
 
+def deadReason():
+    if   s.hp <= 0: s.deadReason = "\033[31mhp\033[0m 부족"
+    elif s.hunger <= 0: s.deadReason = "\033[33m허기\033[0m 부족"
+
+def playerChecker():
+    if s.df > 0   : s.dfCrack = 0
+
+    if int((s.hp / s.Mhp) * 100) <= 30 and s.hpLow == False:
+        s.hpLow = True
+        snd.play(f"hp_low")
+        logger.addLog(f"{s.lightName} 님의 체력이 부족합니다! {s.colors['R']}(현재 체력 : {s.hp}){s.colors['end']}")
+    elif int((s.hp / s.Mhp) * 100) > 30: s.hpLow = False
+
 def gameChecker():
     if s.main == 1:
         grp.clear()
         l.jpsf = 0
         if s.hp <= 0 or s.hunger <= 0:
             s.killAll = True
+            comment = random.choice(c.defeatComment[s.deadReason])
             snd.play("defeat")
             print(f"{s.colors['R']}{s.markdown(1)}")
-            print(t.TextBox(f"   사 망 하 셨 습 니 다   \n\n   {s.markdown([0, 3])}{s.colors['R']}\"{random.choice(c.defeatComment)}\"{s.markdown([0, 1])}{s.colors['R']}   ", Type="middle", inDistance=1, outDistance=1, AMLS=True, endLineBreak=True, LineType="bold"))
-            print(s.colors['end'])
+            print(t.TextBox(f"   사 망 하 셨 습 니 다   \n\n   {s.markdown([0, 3])}{s.colors['R']}\"{comment}\"{s.markdown([0, 1])}{s.colors['R']}   ", Type="middle", inDistance=1, outDistance=1, AMLS=True, endLineBreak=True, LineType="bold"))
+            print(s.colors['end'], end='')
             time.sleep(2.5)
             Achievements = {
+                "사인"        : s.deadReason,
                 "내려간 깊이" : f"{s.colors['lY']}{s.stage}{s.colors['end']}",
                 "최대 레벨"   : f"{s.colors['lP']}{s.lvl}{s.colors['end']}"
             }
@@ -50,15 +72,6 @@ def gameChecker():
             print(s.colors['end'])
             time.sleep(2)
 
-def playerChecker():
-    if s.df > 0   : s.dfCrack = 0
-
-    if int((s.hp / s.Mhp) * 100) <= 30 and s.hpLow == False:
-        s.hpLow = True
-        snd.play(f"hp_low")
-        logger.addLog(f"{s.lightName} 님의 체력이 부족합니다! {s.colors['R']}(현재 체력 : {s.hp}){s.colors['end']}")
-    elif int((s.hp / s.Mhp) * 100) > 30: s.hpLow = False
-
 readline.set_history_length(100)
 cursor.hide()
 
@@ -66,6 +79,7 @@ mainSettings.init()
 grp.clear()
 p.set()
 
+# mnl.addListener()
 mnl.addListener()
 while s.main == 1:
     grp.clear()
@@ -86,4 +100,5 @@ while s.main == 1:
             system.roomChecker.main()
             if s.frame > 0: time.sleep(1/s.frame)
         else: time.sleep(1)
+    deadReason()
     gameChecker()

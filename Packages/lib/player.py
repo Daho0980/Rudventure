@@ -68,11 +68,24 @@ class player:
         bfy, bfx   = s.y, s.x
         bfDy, bfDx = s.Dy, s.Dx
 
+        Keys = {
+                "up"    : 259,
+                "right" : 261,
+                "down"  : 258,
+                "left"  : 260
+                }
+
+        if Dir == Keys["up"]      : s.y -= Int
+        elif Dir == Keys["down"]  : s.y += Int
+        elif Dir == Keys["left"]  : s.x -= Int
+        elif Dir == Keys["right"] : s.x += Int
+
         match Dir:
             case Key.up   : s.y -= Int
             case Key.down : s.y += Int
             case Key.left : s.x -= Int
             case Key.right: s.x += Int
+
         s.hunger -= 1
         sound     = "move"
 
