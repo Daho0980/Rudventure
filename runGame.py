@@ -1,8 +1,8 @@
 import os
-from pathlib import Path
+from   Packages.lib.data import status
 
 s = '/' if os.name == 'posix' else '\\'
-TFP = f"{Path.cwd()}{s}"
+status.TFP = str(os.path.abspath(f'Packages'))+s
 
-print(f"It called by {Path('runGame.py').resolve()}")
-exec(open(Path(f'Packages{s}main.py').resolve(), encoding='utf8').read())
+os.system("clear" if os.name == "posix" else "cls")
+exec(open(os.path.abspath(f'Packages{s}main.py'), encoding='utf8').read())

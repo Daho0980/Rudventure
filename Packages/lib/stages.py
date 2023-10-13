@@ -1,6 +1,7 @@
-import random, copy
-from   Packages.lib.data   import rooms, status
-from   Packages.lib        import player
+import copy
+import random
+from   Packages.lib                   import player
+from   Packages.lib.data              import rooms, status
 from   Packages.lib.system.globalFunc import entity, system
 
 player, p, r = status, player, rooms

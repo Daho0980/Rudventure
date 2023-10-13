@@ -26,6 +26,7 @@ def addEntity(entityType:int, initHp:int, Dy:int, Dx:int, y:list, x:list):
     kinds                = ["고통의_편린", "불안의_편린"]
     classType            = ["enemy", "observer"]
     xpType               = [3, 5]
+    atkType              = [1, 2]
     Name                 = kinds[entityType]
 
     icons = [
@@ -39,26 +40,33 @@ def addEntity(entityType:int, initHp:int, Dy:int, Dx:int, y:list, x:list):
             Rname = str(kinds[entityType] + f"_{a}")
             break
         a += 1
-    nameSpace = {f"{Name}" : Name, "Rname" : Rname, "xpType" : xpType, "entityType" : entityType}
+    nameSpace = {
+        f"{Name}"    : Name,
+        "Rname"      : Rname,
+        "xpType"     : xpType,
+        "entityType" : entityType
+    }
+
     exec(f"""
 import time
 from   Packages.lib      import enemy
 from   Packages.lib.data import status
-{Name} = enemy.{classType[entityType]}(0, 0, 0, 0, 0, \"{Name}\", \"{icons[entityType]}\")
-{Name}.start({initHp}, {Dy}, {Dx}, {y}, {x})
+{Name} = enemy.{classType[entityType]}(\"{Name}\", \"{icons[entityType]}\")
+{Name}.start({initHp}+((status.stage-1)*2), {atkType[entityType]}+(status.stage-1), {Dy}, {Dx}, {y}, {x})
 status.entities.append(Rname)
     """, nameSpace)
     def EntityInteraction():
         exec(f"""
 import time
-from   Packages.lib.data           import status, lockers
-from   Packages.lib.modules.logger import addLog
+from   Packages.lib.data                     import lockers, status
+from   Packages.lib.modules.logger           import addLog
 from   Packages.lib.system.globalFunc.system import xpSystem as xps
 
-s, l = status, lockers
+l, s = lockers, status
 
 while s.main == 1:
     if s.killAll == True: break
+
     if l.jpsf == 1:
         if {Name}.hp <= 0:
             s.entities.remove(Rname)
@@ -70,5 +78,6 @@ if s.main == 1 and s.killAll == False: xps.getXP(xpType[entityType])
         """, nameSpace)
         if s.main == 1 and s.killAll == False:
             play("monster_dead")
-            logger.addLog(f"{s.colors['R']}{Name}{s.colors['end']}이(가) 죽었습니다!")
+            logger.addLog(f"{s.cColors['fg']['F']}{Name}{s.cColors['end']}이(가) 죽었습니다!")
+            s.killCount += 1
     threading.Thread(target=EntityInteraction, name=Rname, daemon=True).start()

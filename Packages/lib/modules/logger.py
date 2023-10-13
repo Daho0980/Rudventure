@@ -1,12 +1,15 @@
-import threading, os, time
+import threading, time
 from   Packages.lib.data import status, lockers
 
 s, l = status, lockers
 
-def clear(): os.system("clear" if os.name == "posix" else "cls")
-
 def addLog(text, time=50):
+    """
+    게임 내 최하단에 출력되는 로그를 작성하는 함수
 
+        `text`(str) : 로그의 내용, 무조건 기입해야 함
+        `time`(int) : 로그가 표시될 시간, 1초는 10으로 계산함
+    """
     def add():
         nonlocal text
         s.onDisplay.append(text)
@@ -18,6 +21,8 @@ def addLog(text, time=50):
 
     if len(s.onDisplay) < 5   : add()
     elif len(s.onDisplay) >= 5: remove(); add()
+
+def clear(): s.onDisplay, s.onTime = [], []
 
 def logChecker():
     while s.main == 1:

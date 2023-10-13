@@ -1,6 +1,6 @@
+import os
 import base64
 import random
-import os
 from   Packages.lib.data import status as s
 
 def calcFormula():
@@ -94,10 +94,10 @@ class converter:
         try:
             PATH = f"{s.TFP}Packages{s.s}saveFiles"
             os.rename(f"{PATH}{s.s}{name}{beforeExt}", f"{PATH}{s.s}{name}{afterExt}")
-        except: print("파일 발견 실패")
+        except: print(f"\'{PATH}{s.s}{name}{beforeExt}\'(이)라는 경로는 존재하지 않습니다.")
         else  : print(f"파일 확장자 변환 완료 : \033[31m{name}{beforeExt}\033[0m -> \033[32m{name}{afterExt}\033[0m")
             
-    
 # example = converter.encode(["레포\n", "다호\n", "업로드\n"])
 # print(f"input : \n\n{example}")
 # print(f"output : \n\n{converter.decode(example)}")
+
