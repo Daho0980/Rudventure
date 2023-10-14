@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-import time
 import curses
-import random
+import time, random
 from   cusser                                  import Cusser
 from   Packages.lib                            import player,       quests
 from   Packages.lib.data                       import comments,     lockers,         status
