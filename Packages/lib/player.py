@@ -1,13 +1,12 @@
 import time
 import curses
 import random
-from   Packages.lib                          import stages
 from   Packages.lib.data                     import rooms, status
 from   Packages.lib.modules                  import logger
 from   Packages.lib.system.globalFunc.system import xpSystem
 from   Packages.lib.system.globalFunc.sound  import play
 
-S1, s, r = stages, status, rooms
+s, r = status, rooms
 dfCrack  = 0
 
 class player:
