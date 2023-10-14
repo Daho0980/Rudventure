@@ -37,8 +37,23 @@ def init(stdscr):
     snd.play("select"); stdscr.clear(); stdscr.refresh()
     stdscr.addstr(
         t.TextBox(
-            f"{s.cMarkdown(1)}게임 설명{s.cColors['end']}\nTextBox.Line\n\n↑, ←, ↓, →  -  화살표 키를 눌러 이동합니다.\n\n{s.p1}  -  당신입니다.\n{s.e}  -  방을 돌아다니는 몬스터입니다.\n{s.item}  -  아이템 상자입니다. 허기를 채워주고 체력을 1 또는 2를 회복시켜줍니다.\n{s.wall}  -  방의 기본 벽입니다. 벽에 부딪히면 방어력 또는 체력이 깎입니다.\n{s.floor}  -  빈 공간입니다. 자유롭게 드나들 수 있습니다.\n{s.goal}  -  다음 레벨로 이동하는 곳입니다. 도착 시 다음 레벨로 갈 수 있습니다.\n{s.R}  -  방을 드나들 수 있는 문입니다. 이동시 다른 방으로 갈 수 있습니다.\n\n   {s.cColors['fg']['R']}hp{s.cColors['end']}  -  현재 당신의 체력입니다. 스테이지를 깰 때 마다 확률적으로 1씩 회복되며, 최대 체력을 늘릴 수도 있습니다.   \n{s.cColors['fg']['B1']}def{s.cColors['end']}  -  현재 당신의 방어력입니다. 스테이지를 깰 때 마다 1씩 회복되며, 최대 방어력을 늘릴 수도 있습니다.\n{s.cColors['fg']['L']}atk{s.cColors['end']}  -  당신의 공격력입니다. 스테이지를 깰 때 마다 공격력을 늘릴 수 있습니다.\n{s.cColors['fg']['Y']}hunger{s.cColors['end']}  -  얼마나 움직일 수 있는지 알려줍니다. 아이템 상자를 통해 회복할 수 있습니다.",
-            Type="middle",
+            f"""{s.cMarkdown(1)}게임 설명{s.cColors['end']}
+TextBox.Line
+↑, ←, ↓, →  -  화살표 키를 눌러 이동합니다.
+
+{s.p1}  -  당신입니다.
+{s.e}  -  방을 돌아다니는 몬스터입니다.
+{s.item}  -  아이템 상자입니다. 상호작용 시 구슬 중 하나를 랜덤하게 떨굽니다.
+{s.wall}  -  방의 기본 벽입니다. 벽에 부딪히면 방어력 또는 체력이 깎입니다.
+{s.floor}  -  바닥입니다. 자유롭게 드나들 수 있습니다.
+{s.goal}  -  다음 레벨로 이동하는 곳입니다. 상호작용 시 다음 층으로 갈 수 있습니다.
+{s.R}  -  방을 드나들 수 있는 문입니다. 상호작용 시 다른 방으로 갈 수 있습니다.\n
+{s.cColors['fg']['R']}hp{s.cColors['end']}      -  체력이 얼마나 남았는지 알려줍니다. 체력 구슬({s.orbs['type']['hp'][0]}, {s.orbs['type']['hp'][1]})을 얻어 회복할 수 있습니다.
+{s.cColors['fg']['B1']}def{s.cColors['end']}     -  방어력이 얼마나 남았는지 알려줍니다. 방어력 구슬({s.orbs['type']['def'][0]}, {s.orbs['type']['def'][1]})을 얻어 회복할 수 있습니다.
+{s.cColors['fg']['L']}atk{s.cColors['end']}     -  공격력을 표시합니다. 공격력 구슬({s.orbs['type']['atk'][0]}, {s.orbs['type']['atk'][1]})을 얻어 강화할 수 있습니다.
+{s.cColors['fg']['Y']}hunger{s.cColors['end']}  -  허기가 얼마나 남았는지 알려줍니다. 허기 구슬({s.orbs['type']['hunger'][0]}, {s.orbs['type']['hunger'][1]})을 얻어 회복할 수 있습니다.
+{s.cColors['fg']['F']}curse{s.cColors['end']}   - 당신이 여태까지 받은 저주를 표시합니다. 저주 구슬({s.orbs['type']['exp'][0]}, {s.orbs['type']['exp'][1]})을 얻거나 몬스터를 처치하여 모을 수 있습니다.""",
+            Type="left",
             fillChar=" ",
             outDistance=1,
             AMLS=True,
