@@ -31,7 +31,7 @@ git clone https://github.com/Daho0980/Rudventure.git
 - [ ] 몬스터 종류 증가   
 - [ ] 세이브 제작   
 - [x] 인게임 로그   
-- [ ] 일시 정지 메뉴 제장   
+- [ ] 일시 정지 메뉴 제작   
 - [x] 절차적 생성 방식 맵 인게임 적용 (알고리즘 : DungeonMaker.py)   
 
 ㄱㅅ
