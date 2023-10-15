@@ -62,7 +62,7 @@ class selector:
                 else                             : newSubtitle[subListRow].append(subtitle[subListColumn]) # 세로 배열셋 내 옵션 새로 추가
         return newSubtitle
 
-    def returnDisplay(title, subtitle, arrow, Enter, maxLine, lineSpace, subtitleValues, nowSelectColumn, nowSelectRow, tag, frontTag):
+    def returnDisplay(stdscr, title, subtitle, arrow, Enter, maxLine, lineSpace, subtitleValues, nowSelectColumn, nowSelectRow, tag, frontTag):
         """
         `title`(str, list)                     : 메뉴바의 타이틀이 될 문자열, 리스트 형태로 기입 시 타이틀과 메뉴의 공백이 제거됨, 무조건 기입해야 함\n
         `subtitle`(list(1d))                   : 메뉴바의 메뉴가 될 리스트, 무조건 기입해야 함\n
@@ -104,16 +104,19 @@ class selector:
         row      = -1
         column   = 0
 
-        for i in range(maxLine):
+        for _ in range(maxLine):
             subtitleLine = ""
-            for j in range(len(subtitle)):
+            for _ in range(len(subtitle)):
                 row, column   = positionOutput(subtitle, row, column)
                 menuSpace = max(subtitleLen[row]) - subtitleLen[row][column]
                 subtitleLine += f"{arrow[row][column]} {subtitle[row][column]}{' '*menuSpace}{' '*lineSpace}"
             Display += f"{subtitleLine}\n"
+        y, x = map(lambda n: round(n/2), list(stdscr.getmaxyx()))
+        y    = y-round(len(list(map(lambda l: len(grp.escapeAnsi(l)), Display.split("\n"))))/2)
+        x    = x-round(max(list(map(lambda l: len(grp.escapeAnsi(l)), Display.split("\n"))))/2)
         if subtitleValues != []: Display += f"{s.cColors['fg']['G1']}\n{subtitleValues[(maxLine*nowSelectRow)+nowSelectColumn]}{s.cColors['end']}"
         Display += f"\n\n{s.cColors['fg']['G1']}{tag}{s.cColors['end']}\n\n"
-        return Display
+        return Display, y, x
 
     def system(stdscr, title, subtitle, color, icon, maxLine, lineSpace, tag, frontTag):
         stdscr = curses.initscr()
@@ -165,22 +168,26 @@ class selector:
             if nowSelectRow        < len(subtitleKeys)-1:               arrow[nowSelectRow+1][nowSelectColumn] = f"{s.cColors['end']} " # 다음 가로줄이 존재할 때: 다음 가로줄의 nowSelectColumn번째 요소를 기본색, 상태로 되돌린다(색 전염 방지)
             if nowSelectRow        > 0 and nowSelectColumn < maxLine-1: arrow[0][nowSelectColumn+1]            = f"{s.cColors['end']} " # 이전 가로줄이 존재하고 맨 아래쪽 줄이 아닐 때: 첫 가로줄의 아랫칸을 기본색, 상태로 되돌린다(색 전염 방지22)
             if nowSelectColumn + 1 < maxLine:                           arrow[nowSelectRow][nowSelectColumn+1] = f"{s.cColors['end']} " # 현재 위치 + 1이 subtitle 최대 개수보다 적을 때: 다음칸을 기본색, 상태로 되돌린다(색 전염 방지333)
-            # stdscr.addstr(selector.returnDisplay(title, subtitleKeys, arrow, Enter, maxLine, lineSpace, subtitleValues, nowSelectColumn, nowSelectRow, tag, frontTag))
+            display, y, x = selector.returnDisplay(
+                                            stdscr,
+                                            title,
+                                            subtitleKeys,
+                                            arrow,
+                                            Enter,
+                                            maxLine,
+                                            lineSpace,
+                                            subtitleValues,
+                                            nowSelectColumn,
+                                            nowSelectRow,
+                                            tag,
+                                            frontTag
+                                            )
+            
             grp.addstrMiddle(
                 stdscr,
-                selector.returnDisplay(
-                    title,
-                    subtitleKeys,
-                    arrow,
-                    Enter,
-                    maxLine,
-                    lineSpace,
-                    subtitleValues,
-                    nowSelectColumn,
-                    nowSelectRow,
-                    tag,
-                    frontTag
-                    )
+                display,
+                y=y,
+                x=x
                 )
             stdscr.refresh()
 
