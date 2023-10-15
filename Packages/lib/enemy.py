@@ -82,12 +82,11 @@ class enemy:
             
             bfx, bfy = self.x, self.y
             if self.hp > 0:
-                nms   = {'s':s, "nowDRP":nowDRP}
                 exPos = [
-                    eval(f"nowDRP['room'][{self.y-1}][{self.x}]", nms),
-                    eval(f"nowDRP['room'][{self.y+1}][{self.x}]", nms),
-                    eval(f"nowDRP['room'][{self.y}][{self.x-1}]", nms),
-                    eval(f"nowDRP['room'][{self.y}][{self.x+1}]", nms)
+                    nowDRP['room'][self.y-1][self.x],
+                    nowDRP['room'][self.y+1][self.x],
+                    nowDRP['room'][self.y][self.x-1],
+                    nowDRP['room'][self.y][self.x+1]
                 ]
 
                 if s.p1 in exPos:
