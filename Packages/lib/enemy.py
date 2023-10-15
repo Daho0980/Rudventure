@@ -90,10 +90,8 @@ class enemy:
                     eval(f"nowDRP['room'][{self.y}][{self.x+1}]", nms)
                 ]
 
-                exTen = ["self.y-=1", "self.y+=1", "self.x-=1", "self.x+=1"]
                 if s.p1 in exPos:
                     enemy.pDamage(self)
-                    exec(exTen[exPos.index(s.p1)])
                 else:
                     while 1:
                         if random.randrange(1,3000) == 1215: play(f"growl")
