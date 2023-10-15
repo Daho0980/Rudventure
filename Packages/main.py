@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os
 import curses
 import time, random
 from   cusser                                  import Cusser
@@ -84,8 +85,8 @@ def gameChecker(stdscr):
             play("smash")
             system.cinp(stdscr, "Enter를 눌러 윤회 끝내기__", echo=False, y=y+2, x=x)
             play("crack")
-            curses.endwin()
             s.main = 0
+            curses.endwin()
             exit()
 
         else:
