@@ -64,7 +64,7 @@ TextBox.Line
 
     nameChangeCount = 0
     reTryCount      = 0
-    while True:
+    while 1:
         snd.play("select")
         if nameChangeCount == 5:
             temporaryName = "이름도 못 정하는 멍청이"

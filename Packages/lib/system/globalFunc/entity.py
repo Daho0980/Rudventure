@@ -34,7 +34,7 @@ def addEntity(entityType:int, initHp:int, Dy:int, Dx:int, y:list, x:list):
         s.enemies["snippets"]["unrest"]
         ]
     a = 0
-    while True:
+    while 1:
         if Name + f"_{a}" not in s.entities:
             Name  = str(Name + f"_{a}")
             Rname = str(kinds[entityType] + f"_{a}")

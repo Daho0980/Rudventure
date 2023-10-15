@@ -31,7 +31,7 @@ def logChecker():
             if len(s.onTime) > 0:
                 for i in range(len(s.onTime)): s.onTime[i] = s.onTime[i]-1
                 
-            while True:
+            while 1:
                 if 0 in s.onTime:
                     del s.onDisplay[s.onTime.index(0)]
                     del s.onTime[s.onTime.index(0)]

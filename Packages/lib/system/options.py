@@ -146,7 +146,7 @@ def menu(stdscr):
     # stdscr.nodelay(False)
     l.jpsf = 0
     play("smash")
-    while True:
+    while 1:
         mainMenu = selector.main(f'{s.LOGO}\n        << 메뉴 >>',
                                 [
                                     "게임으로 돌아가기",
@@ -179,14 +179,14 @@ def menu(stdscr):
             selector.main(usedProgram, ['돌아가기'], [1, 0, 255, 10], '@')
         
         elif mainMenu == 6:
-            while True:
+            while 1:
                 soundSet = selector.main('소리 설정', [f'현재 소리 : {s.sound}', '', '돌아가기'], [1, 0, 255, 10], '@')
                 if soundSet == 1: s.sound = True if s.sound == False else False
                 else: break
             stdscr.refresh()
             
         elif mainMenu == 7:
-            while True:
+            while 1:
                 styles             = ["number", "ascii"]
                 showIconOptionTags = ["\'hp : 10\' 과 같은 형식으로 나타납니다.", "\'hp : [||||||||||]\' 과 같은 형식으로 나타납니다."]
                 soundSet           = selector.main('아이콘 설정',[f'현재 아이콘 : {styles[s.showStateDesign-1]}', '', '돌아가기'], [1, 0, 255, 10], '@', tag=f"\n    {showIconOptionTags[s.showStateDesign-1]}")

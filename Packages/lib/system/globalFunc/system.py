@@ -43,7 +43,7 @@ def placeRandomBlock(block:str, y:list, x:list, allowedBlocks:list):
 
     `disallowedBlocks`(list) : 블럭을 랜덤으로 설치 시 피해야 할 블럭 설정, 무조건 기입해야 함
     """
-    while True:
+    while 1:
         Ry, Rx = random.randrange(y[0], y[1]), random.randrange(x[0], x[1])
         if s.Dungeon[s.Dy][s.Dx]['room'][Ry][Rx] not in allowedBlocks: continue
         s.Dungeon[s.Dy][s.Dx]['room'][Ry][Rx] = block

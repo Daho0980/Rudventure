@@ -89,7 +89,7 @@ p.set()
 
 mnl.newAddListener()
 
-while s.main == 1:
+while s.main:
     SN        = f"{s.cColors['fg']['L']}지 상{s.cColors['end']}" if s.stage == 0 else f"{s.cColors['fg']['R']}{s.stage} 번 째   나 락{s.cColors['end']}"
     s.stage  += 1
     s.Dungeon = dgm.DungeonMaker()
@@ -99,9 +99,9 @@ while s.main == 1:
     grp.showStage(stdscr, f"{s.cColors['fg']['R']}- {s.stage}{s.cColors['end']}", stageName=SN)
 
     l.jpsf = 1
-    while q.quest() == 0:
+    while not q.quest():
         if s.hp <= 0 or s.hunger <= 0 or s.main != 1: break
-        if l.jpsf == 1:
+        if l.jpsf:
             stdscr.erase()
             playerChecker()
             grp.fieldPrint(stdscr, s.Dungeon[s.Dy][s.Dx]['room'])

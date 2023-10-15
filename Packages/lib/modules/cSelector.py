@@ -50,7 +50,7 @@ class selector:
         newSubtitle   = [] # 2차원 배열로 변환될 subtitle
         subListRow    = -1 # 가로
         subListColumn = -1 # 세로
-        while True:
+        while 1:
             if subListColumn >= len(subtitle)-1: break
             else:
                 newSubtitle.append([]) # 새로운 세로 배열셋 추가
@@ -143,7 +143,7 @@ class selector:
         elif isinstance(color, list): arrowColor = s.customColor(color[1], color[2], color[3], color[0]) # 세부 RGB 설정
         subtitleKeys = selector.Change2D(subtitleKeys, maxLine)
         a            = 0
-        while True:
+        while 1:
             if subtitleKeys[a] == '': # a번째 subtitle이 빈칸일 때
                 if a == len(subtitleKeys) - 1: # 근데 그게 마지막일 때
                     subtitleKeys = {'Why did you do...' : 'WHY...'} # 이스터에그 생성
@@ -158,7 +158,7 @@ class selector:
             arrow.append([])
             for j in range(maxLine): arrow[i].append(' ')
 
-        while True:
+        while 1:
             stdscr.clear(); stdscr.refresh()
             arrow[nowSelectRow][nowSelectColumn] = f'{arrowColor}{icon}' # 화살표 위치 설정
             if nowSelectRow        < len(subtitleKeys)-1:               arrow[nowSelectRow+1][nowSelectColumn] = f"{s.cColors['end']} " # 다음 가로줄이 존재할 때: 다음 가로줄의 nowSelectColumn번째 요소를 기본색, 상태로 되돌린다(색 전염 방지)
@@ -174,7 +174,7 @@ class selector:
 
             if key == curses.KEY_UP: # sublist column값 감소
                 if nowSelectColumn == 0 and nowSelectRow == 0: SNum, SNum1 = 0, 0
-                while True:
+                while 1:
                     if nowSelectColumn-SNum < 0 and nowSelectRow > 0:
                         nowSelectColumn = maxLine - 1
                         SNum                      = 0
@@ -196,7 +196,7 @@ class selector:
 
             elif key == curses.KEY_DOWN: # sublist column값 증가
                 if nowSelectColumn == maxLine-1 and nowSelectRow == len(subtitleKeys)-1: SNum, SNum1 = 0, 0
-                while True:
+                while 1:
                     if nowSelectColumn+SNum > maxLine-1: # 내렸을 때 maxLine-1보다 nowSelectColumn+SNum이 더 높을 때:
                         nowSelectColumn = 0
                         SNum            = 0
@@ -218,7 +218,7 @@ class selector:
 
             elif key == curses.KEY_LEFT: # row 값 감소
                 SNum1 = 1
-                while True:
+                while 1:
                     if nowSelectRow == 0: SNum1 = 0; break
                     if subtitleKeys[nowSelectRow-SNum1][nowSelectColumn] == '':
                         if nowSelectRow-SNum1 <= 0:
@@ -231,7 +231,7 @@ class selector:
 
             elif key == curses.KEY_RIGHT and nowSelectRow < len(subtitleKeys)-1: # row 값 증가
                 SNum1 = 1
-                while True:
+                while 1:
                     if nowSelectRow == len(subtitleKeys)-1: SNum1 = 0; break
                     if subtitleKeys[nowSelectRow+SNum1][nowSelectColumn] == '':
                         if nowSelectRow+SNum1 == len(subtitleKeys)-1:

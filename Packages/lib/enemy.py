@@ -30,7 +30,7 @@ class enemy:
         nowDRP           = s.Dungeon[self.Dy][self.Dx]
 
         if isinstance(y, list) and isinstance(x, list):
-            while True:
+            while 1:
                 sY  = random.randrange(1,len(nowDRP['room'])-1)
                 sX  = random.randrange(1,len(nowDRP['room'][0])-1)
                 if s.Dungeon[Dy][Dx]['room'][sY][sX] in [
@@ -95,7 +95,7 @@ class enemy:
                     enemy.pDamage(self)
                     exec(exTen[exPos.index(s.p1)])
                 else:
-                    while True:
+                    while 1:
                         if random.randrange(1,3000) == 1215: play(f"growl")
                         enemyMove = random.randrange(1,4)
                         Rx, Ry    = random.randrange(-1,2), random.randrange(-1,2)
@@ -158,7 +158,7 @@ class observer(enemy):
                         if self.y < s.y: a = 0
                         else           : a = 1
 
-                        while True:
+                        while 1:
                             if nowDRP['room'][eval(f"self.y{Moves1[a]}1")][self.x] == s.p1: enemy.pDamage(self)
                             if nowDRP['room'][eval(f"self.y{Moves1[a]}1")][self.x] not in canBreak: break
                             nowDRP['room'][self.y][self.x] = s.floor
@@ -170,7 +170,7 @@ class observer(enemy):
                         if self.x < s.x: a = 0
                         else           : a = 1
 
-                        while True:
+                        while 1:
                             if nowDRP['room'][self.y][eval(f"self.x{Moves1[a]}1")] == s.p1: enemy.pDamage(self)
                             if nowDRP['room'][self.y][eval(f"self.x{Moves1[a]}1")] not in canBreak: break
                             nowDRP['room'][self.y][self.x] = s.floor
