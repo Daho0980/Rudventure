@@ -194,17 +194,19 @@ class roomChecker:
 
                 case 3:
                     rewardP = random.randrange(1, 101)
+                    comment = ""
                     if rewardP > 30:
                         s.Dungeon[s.Dy][s.Dx]['room'][6][6] = s.item
-                        if commentP == True: logger.addLog(f"\"{random.choice(c.treasureRoomComment[0])}\"")
+                        if commentP: comment = random.choice(c.treasureRoomComment[0])
                     elif rewardP >= 10 and rewardP < 30:
                         for i in range(5, 8): s.Dungeon[s.Dy][s.Dx]['room'][i][i] = s.item
-                        if commentP == True: logger.addLog(f"\"{random.choice(c.treasureRoomComment[1])}\"")
+                        if commentP: comment = random.choice(c.treasureRoomComment[1])
                     else:
                         for i in range(5, 8): s.Dungeon[s.Dy][s.Dx]['room'][i][i] = s.item
                         s.Dungeon[s.Dy][s.Dx]['room'][5][7] = s.item
                         s.Dungeon[s.Dy][s.Dx]['room'][7][5] = s.item
-                        if commentP == True: logger.addLog(f"\"{random.choice(c.treasureRoomComment[2])}\"")
+                        if commentP: comment = random.choice(c.treasureRoomComment[2])
+                    if commentP: logger.addLog(f"{s.cColors['fg']['L']}\"{comment}\"{s.cColors['end']}")
                     s.Dungeon[s.Dy][s.Dx]['interaction'] = True
 
                 case 4:

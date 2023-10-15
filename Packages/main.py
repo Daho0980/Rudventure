@@ -40,7 +40,7 @@ def playerChecker():
     if s.hp <= int(s.Mhp*0.3) and s.hpLow == False:
         s.hpLow = True
         play(f"hp_low")
-        logger.addLog(f"\"{random.choice(c.lowHpComment)}\"")
+        logger.addLog(f"{s.cColors['fg']['L']}\"{random.choice(c.lowHpComment)}\"{s.cColors['end']}")
     elif int((s.hp / s.Mhp) * 100) > 30: s.hpLow = False
 
 def gameChecker(stdscr):
