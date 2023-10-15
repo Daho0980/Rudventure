@@ -75,7 +75,7 @@ class enemy:
             if self.hp > 0: addLog(f"{s.cColors['fg']['F']}{self.name}{s.cColors['end']}이(가) {s.cColors['fg']['L']}{s.atk}{s.cColors['end']}만큼의 피해를 입었습니다! {s.cColors['fg']['R']}(체력 : {self.hp}){s.cColors['end']}")
 
         if self.coolTime == 0:
-            self.coolTime = random.randrange(35, 181)
+            self.coolTime = random.randrange(60, 81)
             if self.stepped not in s.stepableBlocks: self.stepped = s.floor
             elif nowDRP['room'][self.y][self.x] in s.stepableBlocks and nowDRP['room'][self.y][self.x] not in [s.item, s.boxMark]:
                 self.stepped = s.stepableBlocks[s.stepableBlocks.index(nowDRP['room'][self.y][self.x])]
@@ -136,7 +136,7 @@ class observer(enemy):
             if self.hp > 0: addLog(f"{s.cColors['fg']['F']}{self.name}{s.cColors['end']}이(가) {s.cColors['fg']['L']}{s.atk}{s.cColors['end']}만큼의 피해를 입었습니다! {s.cColors['fg']['R']}(체력 : {self.hp}){s.cColors['end']}")
 
         if self.coolTime == 0:
-            self.coolTime = random.randrange(35, 51)
+            self.coolTime = random.randrange(40, 61)
             if self.stepped not in s.stepableBlocks: self.stepped = s.floor
             elif nowDRP['room'][self.y][self.x] in s.stepableBlocks and\
                 nowDRP['room'][self.y][self.x] not in [s.item, s.boxMark]:
