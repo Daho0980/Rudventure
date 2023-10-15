@@ -5,22 +5,34 @@ Global Functions 중 System 옵션
     ``upgradeStatus``    : 던전 클리어 시 나오는 스탯 업그레이드 창
 """
 
+import re
 import curses
 import random
-from   Packages.lib.data                     import comments,  lockers, status
-from   Packages.lib.modules                  import cSelector, logger
-from   Packages.lib.system.globalFunc.entity import addEntity
-from   Packages.lib.system.globalFunc.sound  import play
+from   Packages.lib.data                      import comments,  lockers, status
+from   Packages.lib.modules                   import cSelector, logger
+from   Packages.lib.system.globalFunc.graphic import escapeAnsi, addstrMiddle
+from   Packages.lib.system.globalFunc.entity  import addEntity
+from   Packages.lib.system.globalFunc.sound   import play
 
 c, l, s  = comments, lockers, status
 selector = cSelector.selector
 
-def cinp(stdscr, text="", end='', echo=True, cursor=False):
+def cinp(
+        stdscr,
+        text     ="",
+        end      ='',
+        echo     =True,
+        cursor   =False,
+        useMiddle=True,
+        y:int    =0,
+        x:int    =0
+    ):
     if echo   == True: curses.echo()
     if cursor == True: curses.curs_set(1)
 
     if not text.isspace():
-        stdscr.addstr(f"{text}{end}")
+        if useMiddle: addstrMiddle(stdscr, f"{text}{end}", x=x, y=y)
+        else:         stdscr.addstr(f"{text}{end}")
         stdscr.refresh()
     try:    Inp = stdscr.getstr().decode("utf-8")
     except: Inp = ""
@@ -28,7 +40,7 @@ def cinp(stdscr, text="", end='', echo=True, cursor=False):
     if echo   == True: curses.noecho()
     if cursor == True: curses.curs_set(0)
 
-    return Inp
+    return escapeAnsi(Inp)
 
 def placeRandomBlock(block:str, y:list, x:list, allowedBlocks:list):
     """

@@ -1,3 +1,4 @@
+import re
 import time
 import random
 from   Packages.lib.data                    import status
@@ -10,11 +11,20 @@ grp  = graphic
 
 def init(stdscr):
     play("smash")
-    stdscr.addstr("색이 잘 보이는지 확인해주세요:\n")
-    for i in list(s.cColors['bg'].keys())[:8]: stdscr.addstr(f"{s.cColors['bg'][i]}   ")
-    stdscr.addstr(f"{s.cColors['end']}\n")
-    for i in list(s.cColors["bg"].keys())[8:16]: stdscr.addstr(f"{s.cColors['bg'][i]}   ")
-    system.cinp(stdscr, f"{s.cColors['end']}\n\n{s.cColors['fg']['L']}@ 확인{s.cColors['end']}", echo=False)
+    a, b = [], []
+    for i in list(s.cColors['bg'].keys())[:8]: a.append(f"{s.cColors['bg'][i]}   ")
+    for i in list(s.cColors["bg"].keys())[8:16]: b.append(f"{s.cColors['bg'][i]}   ")
+
+    system.cinp(
+        stdscr,
+        "색이 잘 보이는지 확인해주세요:\n"+f"{s.cColors['end']}\n".join(
+            [
+                ''.join(a),
+                ''.join(b)
+                ]
+            )+f"{s.cColors['end']}\n\n{s.cColors['fg']['L']}@ 확인{s.cColors['end']}"
+        )
+    # system.cinp(stdscr, f"{s.cColors['end']}\n\n{s.cColors['fg']['L']}@ 확인{s.cColors['end']}", echo=False)
     
     play("select")
     stdscr.clear(); stdscr.refresh()
@@ -34,15 +44,22 @@ def init(stdscr):
         s.frame = [1, 30, 60, 0][selectFrame-1]; play("smash")
 
     play("crack")
-    stdscr.addstr(s.LOGO); stdscr.refresh()
+    # stdscr.addstr(s.LOGO); stdscr.refresh()
+    grp.addstrMiddle(stdscr, s.LOGO); stdscr.refresh()
 
     time.sleep(1.5)
     play("crack")
-    system.cinp(stdscr, f"      [ PRESS ENTER ]", echo=False)
+    system.cinp(
+        stdscr,
+        f"      [ PRESS ENTER ]",
+        echo=False,
+        useMiddle=False
+        )
 
     play("select")
     stdscr.clear(); stdscr.refresh()
-    stdscr.addstr(
+    grp.addstrMiddle(
+        stdscr, 
         t.TextBox(
             f"""{s.cMarkdown(1)}게임 설명{s.cColors['end']}
 TextBox.Line
@@ -65,9 +82,9 @@ TextBox.Line
             outDistance =1,
             AMLS        =True,
             endLineBreak=True
-            )
+            )+"[ PRESS ENTER ]"
         ); stdscr.refresh()
-    system.cinp(stdscr, "[ PRESS ENTER ]", echo=False); stdscr.clear(); stdscr.refresh()
+    system.cinp(stdscr, "", echo=False); stdscr.clear(); stdscr.refresh()
 
     nameChangeCount = 0
     reTryCount      = 0

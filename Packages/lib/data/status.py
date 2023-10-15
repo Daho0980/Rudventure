@@ -157,14 +157,14 @@ orbs = {
             f"{cColors['fg']['B1']}o{cColors['end']}",
             f"{cColors['fg']['L']}o{cColors['end']}",
             f"{cColors['fg']['Y']}o{cColors['end']}",
-            f"{cColors['fg']['F']}+{cColors['end']}"
+            f"{cColors['fg']['F']}÷{cColors['end']}"
         ],
         "bigOne" : [
             f"{cColors['fg']['R']}O{cColors['end']}",
             f"{cColors['fg']['B1']}O{cColors['end']}",
             f"{cColors['fg']['L']}O{cColors['end']}",
             f"{cColors['fg']['Y']}O{cColors['end']}",
-            f"{cColors['fg']['F']}÷{cColors['end']}"
+            f"{cColors['fg']['F']}+{cColors['end']}"
         ]
     },
     "type" : {

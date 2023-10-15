@@ -7,12 +7,31 @@ Global Functions 중 Graphic 옵션
     ``statusBar``           : status, maxStatus 매개변수를 주로 활용해 게이지 바를 만들어줌
     ``fieldPrint``          : 인게임 디스플레이 출력 함수
 """
-
-import math, os, time
+import re
+import math, time
 from   Packages.lib.data                    import status       as s
 from   Packages.lib.modules                 import Textbox
 from   Packages.lib.system                  import DungeonMaker as dgm
 from   Packages.lib.system.globalFunc.sound import play
+
+def escapeAnsi(line):
+    ansi_escape = re.compile(r'(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]')
+    return ansi_escape.sub('', line)
+
+def addstrMiddle(stdscr, string:str, y=0, x=0, returnEndyx=False):
+    lines = list(map(lambda l: len(escapeAnsi(l)), string.split("\n")))
+    buffer = ""
+    if y+x:
+        y, x = y, x
+    else:
+        y, x = map(lambda n: round(n/2), list(stdscr.getmaxyx()))
+        y, x = y-round(len(lines)/2), x-round(max(lines)/2)
+
+    for num, line in enumerate(string.split("\n")):
+        buffer += f"\033[{x};{y+num}H{line}"
+    stdscr.addstr(buffer)
+
+    if returnEndyx: return y+len(string.split("\n")), x
 
 def showStage(stdscr, stageNum:str, stageName:str, sound:str="smash"):
     """
@@ -21,10 +40,32 @@ def showStage(stdscr, stageNum:str, stageName:str, sound:str="smash"):
     `sound`(str)    : 스테이지 출력 시 같이 출력될 사운드, 기본적으로 `"smash"`로 설정되어 있음
     """
     play(sound)
-    stdscr.addstr(Textbox.TextBox(f"   S T A G E   {stageNum}   ", Type="middle", inDistance=1, outDistance=3, AMLS=True, endLineBreak=True, LineType="double")); stdscr.refresh()
+    addstrMiddle(
+        stdscr,
+        Textbox.TextBox(
+            f"   S T A G E   {stageNum}   ",
+            Type="middle",
+            inDistance=1,
+            outDistance=3,
+            AMLS=True, 
+            endLineBreak=True,
+            LineType="double"
+            )
+        ); stdscr.refresh()
     time.sleep(1.6)
     stdscr.clear(); stdscr.refresh(); play(sound)
-    stdscr.addstr(Textbox.TextBox(f"   S T A G E   {stageNum}   \n\n   {stageName}   ", Type="middle", inDistance=1, outDistance=3, AMLS=True, endLineBreak=True, LineType="double")); stdscr.refresh()
+    addstrMiddle(
+        stdscr,
+        Textbox.TextBox(
+            f"   S T A G E   {stageNum}   \n\n   {stageName}   ",
+            Type="middle",
+            inDistance=1,
+            outDistance=3,
+            AMLS=True,
+            endLineBreak=True,
+            LineType="double"
+            )
+        ); stdscr.refresh()
     time.sleep(1.6)
     stdscr.clear(); stdscr.refresh(); play(sound)
 
@@ -66,6 +107,7 @@ def fieldPrint(stdscr, grid:list):
         `grid`(list(2d)) : 맵의 그래픽 데이터가 포함됨, 무조건 기입해야 함
     """
     Display = ""
+    GFD = list(map(lambda x: ' '.join(x), grid))
 
     def asciiPrint():
         bars = [
@@ -78,8 +120,6 @@ def fieldPrint(stdscr, grid:list):
     
     if s.showDungeonMap == 1:
         dungeonMap = Textbox.TextBox(dgm.gridMapReturn(s.Dungeon, blank=1, center=True), Type='middle', fillChar='^', AMLS=True, endLineBreak=True, LineType='double')+"\n\n"
-        # for count, line in enumerate(dungeonMap):
-        #     Display.append(line+"\n" if count != len(dungeonMap)-1 else line+"\n\n")
         Display += dungeonMap
 
     match s.showStateDesign:
@@ -97,7 +137,11 @@ def fieldPrint(stdscr, grid:list):
                 space=5,
                 showComma=False
                 )
-    for i in range(len(grid)): Display += ' '.join(map(str, grid[i]))+"\n"
+    Display += "\n".join(GFD)+"\n"
+    y, x = map(lambda n: round(n/2), list(stdscr.getmaxyx()))
+    y    = y-round(len(list(map(lambda l: len(escapeAnsi(l)), Display.split("\n"))))/2)
+    x    = x-round(max(list(map(lambda l: len(escapeAnsi(l)), GFD)))/2)
+
     for i in s.onDisplay     : Display += f"{i}\n"
 
-    stdscr.addstr(Display)
+    addstrMiddle(stdscr, Display, y=y, x=x)

@@ -53,30 +53,56 @@ def gameChecker(stdscr):
             comment = random.choice(c.defeatComment[s.deadReason])
             play("defeat")
             stdscr.addstr(f"{s.cColors['fg']['R']}")
-            stdscr.addstr(t.TextBox(f"   사 망 하 셨 습 니 다   \n\n   \"{comment}\"   ", Type="middle", inDistance=1, outDistance=1, AMLS=True, endLineBreak=True, LineType="bold"))
+            y, x = grp.addstrMiddle(
+                stdscr,
+                t.TextBox(
+                    f"   사 망 하 셨 습 니 다   \n\n   \"{comment}\"   ",
+                    Type="middle",
+                    inDistance=1,
+                    outDistance=1,
+                    AMLS=True,
+                    endLineBreak=True,
+                    LineType="bold"
+                    ),
+                    returnEndyx=True
+                )
+            y -= 1
             stdscr.addstr(s.cColors['end']); stdscr.refresh()
             time.sleep(2.5)
             Achievements = {
                 "이름"             : s.lightName,
-                "사인"             : f"{s.deadReason}\n",
-                "내려간 깊이"      : f"{s.cColors['fg']['Y']}{s.stage}{s.cColors['end']}",
+                "사인"             : f"{s.deadReason}",
+                "내려간 깊이"      : f" {s.cColors['fg']['Y']}{s.stage}{s.cColors['end']}",
                 "최대 레벨"        : f"{s.cColors['fg']['F']}{s.lvl}{s.cColors['end']}",
                 "죽인 몬스터 횟수" : f"{s.cColors['fg']['R']}{s.killCount}{s.cColors['end']}"
             }
             for num, text in enumerate(Achievements):
-                stdscr.addstr(f"{text} : {list(Achievements.values())[num]}\n"); stdscr.refresh()
+                stdscr.addstr(f"\033[{x};{y}H{text} : {list(Achievements.values())[num]}\n"); stdscr.refresh()
                 play("smash")
                 time.sleep(0.2)
+                y += 2 if text == "사인" else 1
             play("smash")
-            system.cinp(stdscr, "\nEnter를 눌러 윤회 끝내기__", echo=False)
+            system.cinp(stdscr, "Enter를 눌러 윤회 끝내기__", echo=False, y=y+2, x=x)
             play("crack")
             curses.endwin()
             s.main = 0
+            exit()
 
         else:
             play("clear")
             stdscr.addstr(s.cColors['fg']['L'])
-            stdscr.addstr(t.TextBox(f"   지 배   성 공   \n\n   \"{random.choice(c.victoryComment)}\"   ", Type="middle", inDistance=1, outDistance=1, AMLS=True, endLineBreak=True, LineType="bold"))
+            grp.addstrMiddle(
+                stdscr,
+                t.TextBox(
+                    f"   지 배   성 공   \n\n   \"{random.choice(c.victoryComment)}\"   ",
+                    Type="middle",
+                    inDistance=1,
+                    outDistance=1,
+                    AMLS=True,
+                    endLineBreak=True,
+                    LineType="bold"
+                    )
+                )
             stdscr.addstr(s.cColors['end']); stdscr.refresh()
             time.sleep(2.5)
             stdscr.clear(); stdscr.refresh()
