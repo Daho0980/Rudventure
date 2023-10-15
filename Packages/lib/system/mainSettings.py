@@ -1,20 +1,22 @@
 import time
 import random
-from   Packages.lib.data              import status
-from   Packages.lib.modules           import cSelector, logger, Textbox
-from   Packages.lib.system.globalFunc import graphic,   sound,  system
+from   Packages.lib.data                    import status
+from   Packages.lib.modules                 import cSelector, logger, Textbox
+from   Packages.lib.system.globalFunc       import graphic,   system
+from   Packages.lib.system.globalFunc.sound import play
 
-s, t     = status,  Textbox
-grp, snd = graphic, sound
+s, t = status,  Textbox
+grp  = graphic
 
 def init(stdscr):
-    snd.play("smash")
+    play("smash")
     stdscr.addstr("색이 잘 보이는지 확인해주세요:\n")
-    for i in list(s.cColors['bg'].keys())[:8]: stdscr.addstr(f"{s.cColors['bg'][i]}   {s.cColors['end']}")
-    stdscr.addstr("\n")
-    for i in list(s.cColors["bg"].keys())[8:16]: stdscr.addstr(f"{s.cColors['bg'][i]}   {s.cColors['end']}")
-    system.cinp(stdscr, f"\n\n{s.cColors['fg']['L']}@ 확인{s.cColors['end']}", echo=False)
-    snd.play("select")
+    for i in list(s.cColors['bg'].keys())[:8]: stdscr.addstr(f"{s.cColors['bg'][i]}   ")
+    stdscr.addstr(f"{s.cColors['end']}\n")
+    for i in list(s.cColors["bg"].keys())[8:16]: stdscr.addstr(f"{s.cColors['bg'][i]}   ")
+    system.cinp(stdscr, f"{s.cColors['end']}\n\n{s.cColors['fg']['L']}@ 확인{s.cColors['end']}", echo=False)
+    
+    play("select")
     stdscr.clear(); stdscr.refresh()
     
     if s.frame == 0:
@@ -29,12 +31,17 @@ def init(stdscr):
             [1,0,255,10],
             '@'
         )
-        s.frame = [1, 30, 60, 0][selectFrame-1]; snd.play("smash")
-    snd.play("crack")
+        s.frame = [1, 30, 60, 0][selectFrame-1]; play("smash")
+
+    play("crack")
     stdscr.addstr(s.LOGO); stdscr.refresh()
-    time.sleep(1.5); snd.play("crack")
+
+    time.sleep(1.5)
+    play("crack")
     system.cinp(stdscr, f"      [ PRESS ENTER ]", echo=False)
-    snd.play("select"); stdscr.clear(); stdscr.refresh()
+
+    play("select")
+    stdscr.clear(); stdscr.refresh()
     stdscr.addstr(
         t.TextBox(
             f"""{s.cMarkdown(1)}게임 설명{s.cColors['end']}
@@ -53,10 +60,10 @@ TextBox.Line
 {s.cColors['fg']['L']}atk{s.cColors['end']}     -  공격력을 표시합니다. 공격력 구슬({s.orbs['type']['atk'][0]}, {s.orbs['type']['atk'][1]})을 얻어 강화할 수 있습니다.
 {s.cColors['fg']['Y']}hunger{s.cColors['end']}  -  허기가 얼마나 남았는지 알려줍니다. 허기 구슬({s.orbs['type']['hunger'][0]}, {s.orbs['type']['hunger'][1]})을 얻어 회복할 수 있습니다.
 {s.cColors['fg']['F']}curse{s.cColors['end']}   - 당신이 여태까지 받은 저주를 표시합니다. 저주 구슬({s.orbs['type']['exp'][0]}, {s.orbs['type']['exp'][1]})을 얻거나 몬스터를 처치하여 모을 수 있습니다.""",
-            Type="left",
-            fillChar=" ",
-            outDistance=1,
-            AMLS=True,
+            Type        ="left",
+            fillChar    =" ",
+            outDistance =1,
+            AMLS        =True,
             endLineBreak=True
             )
         ); stdscr.refresh()
@@ -65,15 +72,15 @@ TextBox.Line
     nameChangeCount = 0
     reTryCount      = 0
     while 1:
-        snd.play("select")
+        play("select")
         if nameChangeCount == 5:
             temporaryName = "이름도 못 정하는 멍청이"
             cSelector.selector.main(
                 t.TextBox(
                     f"   뇌 빼고 엔터만 치고 계신 것 같으니 특별히   \n{s.cColors['fg']['Y']}<< {temporaryName} >>{s.cColors['end']}\n(으)로 정해드리겠습니다. 어때요, 좋죠?",
-                    Type="middle",
-                    outDistance=1,
-                    AMLS=True,
+                    Type        ="middle",
+                    outDistance =1,
+                    AMLS        =True,
                     endLineBreak=True
                     ),
                 ["네", "네"],
@@ -81,15 +88,29 @@ TextBox.Line
                 '@'
             )
             break
-        temporaryName = system.cinp(stdscr, t.TextBox("   이름을 입력해주세요   ", Type="middle", outDistance=1, AMLS=True, endLineBreak=True)+f"\n>>>", end=f"{s.cColors['fg']['Y']} ", cursor=True); stdscr.addstr(s.cColors['end']); snd.play("select")
+
+        temporaryName = system.cinp(
+            stdscr,
+            t.TextBox(
+                "   이름을 입력해주세요   ",
+                Type        ="middle",
+                outDistance =1,
+                AMLS        =True,
+                endLineBreak=True
+                )+f"\n>>>",
+                end   =f"{s.cColors['fg']['Y']} ",
+                cursor=True
+            )
+        stdscr.addstr(s.cColors['end']); play("select")
         stdscr.clear(); stdscr.refresh()
+
         if len(temporaryName) == 0 or len(temporaryName.split()) == 0:
             cSelector.selector.main(
                 t.TextBox(
                     f"   이름이 {s.cColors['fg']['R']}{s.cMarkdown([2, 3])}없거나{s.cColors['end']} {s.cColors['fg']['R']}{s.cMarkdown([2, 3])}공백 밖에{s.cColors['end']} 없으면   \n말하기 곤란해지실게요",
-                    Type="middle",
-                    outDistance=1,
-                    AMLS=True,
+                    Type        ="middle",
+                    outDistance =1,
+                    AMLS        =True,
                     endLineBreak=True
                     ),
                 ["네..."],
@@ -102,18 +123,16 @@ TextBox.Line
         changeNameResolution = cSelector.selector.main(
             t.TextBox(
                 f"{s.cColors['fg']['Y']}   << {temporaryName} >>   {s.cColors['end']}\n\n   이 이름이 맞습니까?   ",
-                Type="middle",
-                outDistance=1,
-                AMLS=True, 
+                Type        ="middle",
+                outDistance =1,
+                AMLS        =True, 
                 endLineBreak=True
                 ),
             ["네", "아니오", "", "그냥 정해주세요..."] if reTryCount >= 3 else ["네", "아니오"],
             [1,0,255,10],
             '@'
         )
-        # if changeNameResolution == 2:
-        #     reTryName += 1
-        #     continue
+
         match changeNameResolution:
             case 1: break
             case 2: reTryCount += 1; continue
@@ -122,16 +141,16 @@ TextBox.Line
                 nameSuggestions = cSelector.selector.main(
                     t.TextBox(
                         f"   좋습니다. 그럼...   \n{s.cColors['fg']['Y']}   << {temporaryName} >>   {s.cColors['end']}\n은 어떠신가요?",
-                        Type="middle",
-                        outDistance=1,
-                        AMLS=True,
+                        Type        ="middle",
+                        outDistance =1,
+                        AMLS        =True,
                         endLineBreak=True
                         ),
                     ["네", "그냥 제가 할게요;"],
                     [1,0,255,10],
                     '@'
                 )
-                if nameSuggestions == 1: break
+                if nameSuggestions == 1:   break
                 elif nameSuggestions == 2: reTryCount += 1; continue
 
     s.name, s.lightName = temporaryName, f"{s.cColors['fg']['Y']}{temporaryName}{s.cColors['end']}"

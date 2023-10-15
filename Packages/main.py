@@ -6,7 +6,8 @@ from   Packages.lib                            import player,       quests
 from   Packages.lib.data                       import comments,     lockers,         status
 from   Packages.lib.modules                    import logger,       makeNewListener, Textbox
 from   Packages.lib.system                     import DungeonMaker, mainSettings
-from   Packages.lib.system.globalFunc          import entity,       graphic,         idRelated, osRelated, sound, system
+from   Packages.lib.system.globalFunc          import entity,       graphic,         idRelated, osRelated, system
+from   Packages.lib.system.globalFunc.sound    import play
 
 stdscr = curses.initscr()
 if not isinstance(stdscr, Cusser):
@@ -23,7 +24,7 @@ roomNames               = [
 
 c, s, l                 = comments,      status,  lockers
 p, t, dgm, mnl          = player.player, Textbox, DungeonMaker, makeNewListener
-ent, grp, idr, snd      = entity,        graphic, idRelated,    sound
+ent, grp, idr           = entity,        graphic, idRelated
 q                       = quests
 
 s.s                     = osRelated.slash()
@@ -38,7 +39,7 @@ def playerChecker():
 
     if s.hp <= int(s.Mhp*0.3) and s.hpLow == False:
         s.hpLow = True
-        snd.play(f"hp_low")
+        play(f"hp_low")
         logger.addLog(f"\"{random.choice(c.lowHpComment)}\"")
     elif int((s.hp / s.Mhp) * 100) > 30: s.hpLow = False
 
@@ -50,7 +51,7 @@ def gameChecker(stdscr):
             s.killAll = True
             stdscr.nodelay(False)
             comment = random.choice(c.defeatComment[s.deadReason])
-            snd.play("defeat")
+            play("defeat")
             stdscr.addstr(f"{s.cColors['fg']['R']}")
             stdscr.addstr(t.TextBox(f"   사 망 하 셨 습 니 다   \n\n   \"{comment}\"   ", Type="middle", inDistance=1, outDistance=1, AMLS=True, endLineBreak=True, LineType="bold"))
             stdscr.addstr(s.cColors['end']); stdscr.refresh()
@@ -64,16 +65,16 @@ def gameChecker(stdscr):
             }
             for num, text in enumerate(Achievements):
                 stdscr.addstr(f"{text} : {list(Achievements.values())[num]}\n"); stdscr.refresh()
-                snd.play("smash")
+                play("smash")
                 time.sleep(0.2)
-            snd.play("smash")
+            play("smash")
             system.cinp(stdscr, "\nEnter를 눌러 윤회 끝내기__", echo=False)
-            snd.play("crack")
+            play("crack")
             curses.endwin()
             s.main = 0
 
         else:
-            snd.play("clear")
+            play("clear")
             stdscr.addstr(s.cColors['fg']['L'])
             stdscr.addstr(t.TextBox(f"   지 배   성 공   \n\n   \"{random.choice(c.victoryComment)}\"   ", Type="middle", inDistance=1, outDistance=1, AMLS=True, endLineBreak=True, LineType="bold"))
             stdscr.addstr(s.cColors['end']); stdscr.refresh()
@@ -90,13 +91,18 @@ p.set()
 mnl.newAddListener()
 
 while s.main:
-    SN        = f"{s.cColors['fg']['L']}지 상{s.cColors['end']}" if s.stage == 0 else f"{s.cColors['fg']['R']}{s.stage} 번 째   나 락{s.cColors['end']}"
+    if not s.stage: SN = f"{s.cColors['fg']['L']}지 상{s.cColors['end']}"
+    else:           SN = f"{s.cColors['fg']['R']}{s.stage} 번 째   나 락{s.cColors['end']}"
     s.stage  += 1
     s.Dungeon = dgm.DungeonMaker()
 
     p.start(4, 4, 6, 6)
     system.roomChecker.placeRandomOrbs()
-    grp.showStage(stdscr, f"{s.cColors['fg']['R']}- {s.stage}{s.cColors['end']}", stageName=SN)
+    grp.showStage(
+        stdscr,
+        f"{s.cColors['fg']['R']}- {s.stage}{s.cColors['end']}",
+        stageName=SN
+        )
 
     l.jpsf = 1
     while not q.quest():
