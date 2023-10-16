@@ -20,16 +20,11 @@ def escapeAnsi(line):
 
 def addstrMiddle(stdscr, string:str, y=0, x=0, returnEndyx=False):
     lines = list(map(lambda l: len(escapeAnsi(l)), string.split("\n")))
-    buffer = ""
-    if y+x:
-        y, x = y, x
+    if y+x: y, x = y, x
     else:
         y, x = map(lambda n: round(n/2), list(stdscr.getmaxyx()))
         y, x = y-round(len(lines)/2), x-round(max(lines)/2)
-
-    for num, line in enumerate(string.split("\n")):
-        buffer += f"\033[{x};{y+num}H{line}"
-    stdscr.addstr(buffer)
+    stdscr.addstr(''.join([escc for line in zip([f"\033[{x};{_}H" for _ in range(y-1, y+(len(lines)))], string.split("\n")) for escc in line]))
 
     if returnEndyx: return y+len(string.split("\n")), x
 
