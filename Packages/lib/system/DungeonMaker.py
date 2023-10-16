@@ -174,16 +174,17 @@ def makeRoom(Map:list):
 
         `Map`(list(raw)) : `deleteBlankData`함수로 수정된 맵이 포함됨, 무조건 기입해야 함
     """
+    if not Map: return Map
+
     output = copy.deepcopy(Map)
 
     # 방 생성
     for row in range(len(output)):
         for column in range(len(output[row])):
             if len(output[row][column]) > 0:
-                baseMap   = copy.deepcopy(rooms.Room)
-                if output[row][column]['roomType'] == 4: baseMap[6][6] = '\033[31mF\033[0m'
-                RDP       = list(output[row][column]["doorPos"].values())
-                GRDP      = [[0, 6], [6, 12], [12, 6], [6, 0]]
+                baseMap = copy.deepcopy(rooms.Room)
+                RDP     = list(output[row][column]["doorPos"].values())
+                GRDP    = [[0, 6], [6, 12], [12, 6], [6, 0]]
 
                 for DIE in range(len(RDP)):
                     if RDP[DIE] == 1:
@@ -196,25 +197,27 @@ def makeRoom(Map:list):
     for row in range(len(output)):
         for column in range(len(output[row])):
             if len(output[row][column]) > 0:
-                DPG = {'U':[0, 6], 'R':[6, 12], 'D':[12, 6], 'L':[6, 0]}
+                if output[row][column] and output[row][column]["roomType"] == 4: continue
+
+                DPG        = {'U':[0, 6], 'R':[6, 12], 'D':[12, 6], 'L':[6, 0]}
                 p          = [[row-1 if row>0 else row, column], [row+1 if row<len(output)-1 else row, column], [row, column-1 if column>0 else column], [row, column+1 if column<len(output[0])-1 else column]]
                 dp         = [['U', 'D'], ['D', 'U'], ['L', 'R'], ['R', 'L']]
                 doorValues = list(output[row][column]['doorPos'].values())
                 grd        = [[DPG['U'], DPG['D']], [DPG['D'], DPG['U']], [DPG['L'], DPG['R']], [DPG['R'], DPG['L']]]
 
                 while [row, column] in p:
-                    del dp[p.index([row, column])]
+                    del dp        [p.index([row, column])]
                     del doorValues[p.index([row, column])]
-                    del grd[p.index([row, column])]
-                    del p[p.index([row, column])]
+                    del grd       [p.index([row, column])]
+                    del p         [p.index([row, column])]
                 while 1 in doorValues:
-                    del p[doorValues.index(1)]
-                    del dp[doorValues.index(1)]
-                    del grd[doorValues.index(1)]
+                    del p         [doorValues.index(1)]
+                    del dp        [doorValues.index(1)]
+                    del grd       [doorValues.index(1)]
                     del doorValues[doorValues.index(1)]
                 
                 for i in range(len(p)):
-                    if len(output[p[i][0]][p[i][1]]) > 0 and random.randrange(0, 3) == 1:
+                    if len(output[p[i][0]][p[i][1]]) > 0 and output[p[i][0]][p[i][1]]["roomType"] != 4 and not random.randrange(0, 3):
                         output[row][column]['doorPos'][dp[i][0]]                     = 1
                         output[p[i][0]][p[i][1]]['doorPos'][dp[i][1]]                = 1
 
@@ -232,6 +235,7 @@ def deleteBlankData(grid:list):
     
         `grid`(list(raw)) : `initBranch`함수로 생긴 맵 데이터가 포함됨, 무조건 기입해야 함
     """
+    if not grid: return grid
     # 비어있는 잉여 데이터 정리
     for row in range(len(grid)):
         for column in range(len(grid[row])): grid[row][column] = {} if grid[row][column]['roomType'] == None else grid[row][column]
@@ -288,7 +292,7 @@ def initBranch(Map:list, y:int, x:int, rawPrint=False, showAll=False):
                 Map[y][x] = {"roomIcon":roomIcons[4], "doorPos":Map[y][x]['doorPos'], "roomType":4, "isPlayerHere":False, "isPlayerVisited":2, "summonCount":1, "interaction":False}
                 break
             elif endCount >= 8:
-                Map[bfy][bfx] = {"roomIcon":roomIcons[4], "doorPos":Map[y][x]['doorPos'], "roomType":4, "isPlayerHere":False, "isPlayerVisited":2, "summonCount":1, "interaction":False}
+                Map = False
                 break
             getBack(bfx, bfy)
             endCount += 1
@@ -330,39 +334,39 @@ def initBranch(Map:list, y:int, x:int, rawPrint=False, showAll=False):
         Map[bfy][bfx]["doorPos"][locationData[3]] = 1
         Map[y][x]["summonCount"]                  = 1 if selectRoomKind == 4 else 0 if selectRoomKind in [2, 3] else size
 
-    if rawPrint == False : return GraphicMaker(Map)
+    if rawPrint == False and not Map: return GraphicMaker(Map)
     else                 : return Map
 
 def DungeonMaker(showAll=False):
     """
     `initBranch.Map`의 기본 틀을 제공하고, `initBranch`, `deleteBlankData`, `makeRoom`함수를 사용해 완벽하게 편집된 맵 데이터를 반환하는 함수
     """     
-    output = []
-    # 맵의 기본 틀 생성
-    for i in range(9):
-        output.append([])
-        for j in range(9):
-            output[i].append({
-                "room":[],
-                "roomIcon":' ',
-                "doorPos":{"U":0, "R":0, "D":0, "L":0},
-                "roomType":None,
-                "isPlayerHere":False,
-                "isPlayerVisited":0,
-                "summonCount":0,
-                "interaction":False
-                })
-
-    output[4][4]["roomIcon"]        = roomIcons[0]
-    output[4][4]["roomType"]        = 0
-    output[4][4]["isPlayerVisited"] = 2
-    output[4][4]["isPlayerHere"]    = True
-    output[4][4]["interaction"]     = True
     
-    # 시작점 생성
-    # for i in [[4-1, 4], [4+1, 4], [4, 4-1], [4, 4+1]]:
-    #     if len(output[i[0]][i[1]]) > 0 and output[i[0]][i[1]]['isPlayerVisited'] == 0: output[i[0]][i[1]]['isPlayerVisited'] = 1
-    output        = makeRoom(deleteBlankData(initBranch(output, 4, 4, rawPrint=True, showAll=showAll)))
+    while 1:
+        output = []
+        # 맵의 기본 틀 생성
+        for i in range(9):
+            output.append([])
+            for j in range(9):
+                output[i].append({
+                    "room":[],
+                    "roomIcon":' ',
+                    "doorPos":{"U":0, "R":0, "D":0, "L":0},
+                    "roomType":None,
+                    "isPlayerHere":False,
+                    "isPlayerVisited":0,
+                    "summonCount":0,
+                    "interaction":False
+                    })
+
+        output[4][4]["roomIcon"]        = roomIcons[0]
+        output[4][4]["roomType"]        = 0
+        output[4][4]["isPlayerVisited"] = 2
+        output[4][4]["isPlayerHere"]    = True
+        output[4][4]["interaction"]     = True
+
+        output        = makeRoom(deleteBlankData(initBranch(output, 4, 4, rawPrint=True, showAll=showAll)))
+        if output: break
     SR            = [[4-1, 4], [4, 4+1], [4+1, 4], [4, 4-1]]
     doorPositions = list(output[4][4]["doorPos"].values())
 
