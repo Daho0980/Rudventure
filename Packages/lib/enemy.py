@@ -92,6 +92,8 @@ class enemy:
                 ]
 
                 if s.p1 in exPos:
+                    nowDRP['room'][self.y][self.x] = f"{cc['fg']['R']}{self.icon}{cc['end']}"; time.sleep(0.1)
+                    nowDRP['room'][self.y][self.x] = self.icon
                     enemy.pDamage(self)
                 else:
                     while 1:
