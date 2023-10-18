@@ -8,23 +8,24 @@ from   Packages.lib.system.globalFunc.sound import play
 
 s, t = status,  Textbox
 grp  = graphic
+cc   = s.cColors
 
 def init(stdscr):
     play("smash")
     a, b = [], []
-    for i in list(s.cColors['bg'].keys())[:8]: a.append(f"{s.cColors['bg'][i]}   ")
-    for i in list(s.cColors["bg"].keys())[8:16]: b.append(f"{s.cColors['bg'][i]}   ")
+    for i in list(cc['bg'].keys())[:8]: a.append(f"{cc['bg'][i]}   ")
+    for i in list(cc["bg"].keys())[8:16]: b.append(f"{cc['bg'][i]}   ")
 
     system.cinp(
         stdscr,
-        "색이 잘 보이는지 확인해주세요:\n"+f"{s.cColors['end']}\n".join(
+        "색이 잘 보이는지 확인해주세요:\n"+f"{cc['end']}\n".join(
             [
                 ''.join(a),
                 ''.join(b)
                 ]
-            )+f"{s.cColors['end']}\n\n{s.cColors['fg']['L']}@ 확인{s.cColors['end']}"
+            )+f"{cc['end']}\n\n{cc['fg']['L']}@ 확인{cc['end']}"
         )
-    # system.cinp(stdscr, f"{s.cColors['end']}\n\n{s.cColors['fg']['L']}@ 확인{s.cColors['end']}", echo=False)
+    # system.cinp(stdscr, f"{cc['end']}\n\n{cc['fg']['L']}@ 확인{cc['end']}", echo=False)
     
     play("select")
     stdscr.clear(); stdscr.refresh()
@@ -61,7 +62,7 @@ def init(stdscr):
     grp.addstrMiddle(
         stdscr, 
         t.TextBox(
-            f"""{s.cMarkdown(1)}게임 설명{s.cColors['end']}
+            f"""{s.cMarkdown(1)}게임 설명{cc['end']}
 TextBox.Line
 ↑, ←, ↓, →  -  화살표 키를 눌러 이동합니다.
 
@@ -72,11 +73,11 @@ TextBox.Line
 {s.floor}  -  바닥입니다. 자유롭게 드나들 수 있습니다.
 {s.goal}  -  다음 레벨로 이동하는 곳입니다. 상호작용 시 다음 층으로 갈 수 있습니다.
 {s.R}  -  방을 드나들 수 있는 문입니다. 상호작용 시 다른 방으로 갈 수 있습니다.\n
-{s.cColors['fg']['R']}hp{s.cColors['end']}      -  체력이 얼마나 남았는지 알려줍니다. 체력 구슬({s.orbs['type']['hp'][0]}, {s.orbs['type']['hp'][1]})을 얻어 회복할 수 있습니다.
-{s.cColors['fg']['B1']}def{s.cColors['end']}     -  방어력이 얼마나 남았는지 알려줍니다. 방어력 구슬({s.orbs['type']['def'][0]}, {s.orbs['type']['def'][1]})을 얻어 회복할 수 있습니다.
-{s.cColors['fg']['L']}atk{s.cColors['end']}     -  공격력을 표시합니다. 공격력 구슬({s.orbs['type']['atk'][0]}, {s.orbs['type']['atk'][1]})을 얻어 강화할 수 있습니다.
-{s.cColors['fg']['Y']}hunger{s.cColors['end']}  -  허기가 얼마나 남았는지 알려줍니다. 허기 구슬({s.orbs['type']['hunger'][0]}, {s.orbs['type']['hunger'][1]})을 얻어 회복할 수 있습니다.
-{s.cColors['fg']['F']}curse{s.cColors['end']}   - 당신이 여태까지 받은 저주를 표시합니다. 저주 구슬({s.orbs['type']['exp'][0]}, {s.orbs['type']['exp'][1]})을 얻거나 몬스터를 처치하여 모을 수 있습니다.""",
+{cc['fg']['R']}hp{cc['end']}      -  체력이 얼마나 남았는지 알려줍니다. 체력 구슬({s.orbs['type']['hp'][0]}, {s.orbs['type']['hp'][1]})을 얻어 회복할 수 있습니다.
+{cc['fg']['B1']}def{cc['end']}     -  방어력이 얼마나 남았는지 알려줍니다. 방어력 구슬({s.orbs['type']['def'][0]}, {s.orbs['type']['def'][1]})을 얻어 회복할 수 있습니다.
+{cc['fg']['L']}atk{cc['end']}     -  공격력을 표시합니다. 공격력 구슬({s.orbs['type']['atk'][0]}, {s.orbs['type']['atk'][1]})을 얻어 강화할 수 있습니다.
+{cc['fg']['Y']}hunger{cc['end']}  -  허기가 얼마나 남았는지 알려줍니다. 허기 구슬({s.orbs['type']['hunger'][0]}, {s.orbs['type']['hunger'][1]})을 얻어 회복할 수 있습니다.
+{cc['fg']['F']}curse{cc['end']}   - 당신이 여태까지 받은 저주를 표시합니다. 저주 구슬({s.orbs['type']['exp'][0]}, {s.orbs['type']['exp'][1]})을 얻거나 몬스터를 처치하여 모을 수 있습니다.""",
             Type        ="left",
             fillChar    =" ",
             outDistance =1,
@@ -94,7 +95,7 @@ TextBox.Line
             temporaryName = "이름도 못 정하는 멍청이"
             cSelector.selector.main(
                 t.TextBox(
-                    f"   뇌 빼고 엔터만 치고 계신 것 같으니 특별히   \n{s.cColors['fg']['Y']}<< {temporaryName} >>{s.cColors['end']}\n(으)로 정해드리겠습니다. 어때요, 좋죠?",
+                    f"   뇌 빼고 엔터만 치고 계신 것 같으니 특별히   \n{cc['fg']['Y']}<< {temporaryName} >>{cc['end']}\n(으)로 정해드리겠습니다. 어때요, 좋죠?",
                     Type        ="middle",
                     outDistance =1,
                     AMLS        =True,
@@ -115,16 +116,16 @@ TextBox.Line
                 AMLS        =True,
                 endLineBreak=True
                 )+f"\n>>>",
-                end   =f"{s.cColors['fg']['Y']} ",
+                end   =f"{cc['fg']['Y']} ",
                 cursor=True
             )
-        stdscr.addstr(s.cColors['end']); play("select")
+        stdscr.addstr(cc['end']); play("select")
         stdscr.clear(); stdscr.refresh()
 
         if len(temporaryName) == 0 or len(temporaryName.split()) == 0:
             cSelector.selector.main(
                 t.TextBox(
-                    f"   이름이 {s.cColors['fg']['R']}{s.cMarkdown([2, 3])}없거나{s.cColors['end']} {s.cColors['fg']['R']}{s.cMarkdown([2, 3])}공백 밖에{s.cColors['end']} 없으면   \n말하기 곤란해지실게요",
+                    f"   이름이 {cc['fg']['R']}{s.cMarkdown([2, 3])}없거나{cc['end']} {cc['fg']['R']}{s.cMarkdown([2, 3])}공백 밖에{cc['end']} 없으면   \n말하기 곤란해지실게요",
                     Type        ="middle",
                     outDistance =1,
                     AMLS        =True,
@@ -139,7 +140,7 @@ TextBox.Line
 
         changeNameResolution = cSelector.selector.main(
             t.TextBox(
-                f"{s.cColors['fg']['Y']}   << {temporaryName} >>   {s.cColors['end']}\n\n   이 이름이 맞습니까?   ",
+                f"{cc['fg']['Y']}   << {temporaryName} >>   {cc['end']}\n\n   이 이름이 맞습니까?   ",
                 Type        ="middle",
                 outDistance =1,
                 AMLS        =True, 
@@ -157,7 +158,7 @@ TextBox.Line
                 temporaryName = f"선택장애 {reTryCount-2}호"
                 nameSuggestions = cSelector.selector.main(
                     t.TextBox(
-                        f"   좋습니다. 그럼...   \n{s.cColors['fg']['Y']}   << {temporaryName} >>   {s.cColors['end']}\n은 어떠신가요?",
+                        f"   좋습니다. 그럼...   \n{cc['fg']['Y']}   << {temporaryName} >>   {cc['end']}\n은 어떠신가요?",
                         Type        ="middle",
                         outDistance =1,
                         AMLS        =True,
@@ -170,9 +171,9 @@ TextBox.Line
                 if nameSuggestions == 1:   break
                 elif nameSuggestions == 2: reTryCount += 1; continue
 
-    s.name, s.lightName = temporaryName, f"{s.cColors['fg']['Y']}{temporaryName}{s.cColors['end']}"
+    s.name, s.lightName = temporaryName, f"{cc['fg']['Y']}{temporaryName}{cc['end']}"
     s.welcomeMessage = [f"나락에 오신 걸 환영합니다, {s.lightName}님.", 
-                        f"오실 때 {s.cColors['fg']['R']}{s.cMarkdown(1)}피자{s.cColors['end']}는 가져오셨죠? 장난입니다, {s.lightName}님.",
+                        f"오실 때 {cc['fg']['R']}{s.cMarkdown(1)}피자{cc['end']}는 가져오셨죠? 장난입니다, {s.lightName}님.",
                         f"기다리느라 목 빠지는 줄 알았습니다, {s.lightName}님."
                         ]
 

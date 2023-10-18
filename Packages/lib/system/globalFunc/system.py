@@ -16,6 +16,7 @@ from   Packages.lib.system.globalFunc.sound   import play
 
 c, l, s  = comments, lockers, status
 selector = cSelector.selector
+cc       = s.cColors
 
 def cinp(
         stdscr,
@@ -62,7 +63,7 @@ def placeRandomBlock(block:str, y:list, x:list, allowedBlocks:list):
         break
 
 # def upgradeStatus():
-#     print(f"{s.markdown([2, 3])}Enter를 한 번 눌러주세요{s.cColors['end']}")
+#     print(f"{s.markdown([2, 3])}Enter를 한 번 눌러주세요{cc['end']}")
 #     selectStat = selector.main("올릴 스탯을 선택해주세요", {"체력 증가":"체력의 최대치가 1 증가합니다.", "방어력 증가":"방어력의 최대치가 1 증가합니다.","공격력 증가":"공격력이 1 상승합니다."}, [1,0,255,10], '@')
 #     if selectStat == 1:
 #         s.Mhp += 1
@@ -87,7 +88,7 @@ class xpSystem:
         """
         while s.xp + count > s.Mxp:
             play("levelUp")
-            logger.addLog(f"{s.cColors['fg']['F']}저주가 한 층 더 깊어집니다...{s.cColors['end']}")
+            logger.addLog(f"{cc['fg']['F']}저주가 한 층 더 깊어집니다...{cc['end']}")
             s.lvl += 1
             s.Mxp += 3
             if count > s.xp: count -= s.xp
@@ -107,7 +108,7 @@ class xpSystem:
         while count > 0:
             if s.xp < count:
                 if s.lvl == 0:
-                    logger.addLog(f"{s.cColors['fg']['F']}저주{s.cColors['end']}가 부족합니다!")
+                    logger.addLog(f"{cc['fg']['F']}저주{cc['end']}가 부족합니다!")
                     s.xp, s.Mxp, s.lvl = bfxp, bfMxp, bfLvl
                     break
 
@@ -201,7 +202,7 @@ class roomChecker:
                         roomChecker.changeDoorPosBlock(s.R, data)
 
                 case 2:
-                    logger.addLog(f"(슬쩍) 아직 {s.cColors['fg']['L']}이벤트{s.cColors['end']}는 {s.cColors['fg']['R']}{s.cMarkdown([1, 2])}안{s.cColors['end']} 만들었답니다 ㅎㅎ;")
+                    logger.addLog(f"(슬쩍) 아직 {cc['fg']['L']}이벤트{cc['end']}는 {cc['fg']['R']}{s.cMarkdown([1, 2])}안{cc['end']} 만들었답니다 ㅎㅎ;")
                     s.Dungeon[s.Dy][s.Dx]['interaction'] = True
 
                 case 3:
@@ -218,7 +219,7 @@ class roomChecker:
                         s.Dungeon[s.Dy][s.Dx]['room'][5][7] = s.item
                         s.Dungeon[s.Dy][s.Dx]['room'][7][5] = s.item
                         if commentP: comment = random.choice(c.treasureRoomComment[2])
-                    if commentP: logger.addLog(f"{s.cColors['fg']['L']}\"{comment}\"{s.cColors['end']}")
+                    if commentP: logger.addLog(f"{cc['fg']['L']}\"{comment}\"{cc['end']}")
                     s.Dungeon[s.Dy][s.Dx]['interaction'] = True
 
                 case 4:

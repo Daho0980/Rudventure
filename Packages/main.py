@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import os
 import curses
 import time, random
 from   cusser                                  import Cusser
@@ -27,21 +26,17 @@ c, s, l                 = comments,      status,  lockers
 p, t, dgm, mnl          = player.player, Textbox, DungeonMaker, makeNewListener
 ent, grp, idr           = entity,        graphic, idRelated
 q                       = quests
+cc                      = s.cColors
 
 s.s                     = osRelated.slash()
 
-
-def deadReason():
-    if   s.hp     <= 0: s.deadReason = f"{s.cColors['fg']['R']}hp{s.cColors['end']} 부족"
-    elif s.hunger <= 0: s.deadReason = f"{s.cColors['fg']['Y']}허기{s.cColors['end']} 부족"
-
 def playerChecker():
-    if s.df > 0   : s.dfCrack = 0
+    if s.df > 0: s.dfCrack = 0
 
     if s.hp <= int(s.Mhp*0.3) and s.hpLow == False:
         s.hpLow = True
         play(f"hp_low")
-        logger.addLog(f"{s.cColors['fg']['L']}\"{random.choice(c.lowHpComment)}\"{s.cColors['end']}")
+        logger.addLog(f"{cc['fg']['L']}\"{random.choice(c.lowHpComment)}\"{cc['end']}")
     elif int((s.hp / s.Mhp) * 100) > 30: s.hpLow = False
 
 def gameChecker(stdscr):
@@ -51,9 +46,11 @@ def gameChecker(stdscr):
         if s.hp <= 0 or s.hunger <= 0:
             s.killAll = True
             stdscr.nodelay(False)
-            comment = random.choice(c.defeatComment[s.deadReason])
+            s.deadReason = f"{cc['fg']['R']}hp{cc['end']} 부족" if s.hp <= 0 else f"{cc['fg']['Y']}허기{cc['end']} 부족"
+            comment      = random.choice(c.defeatComment[s.deadReason])
+
             play("defeat")
-            stdscr.addstr(f"{s.cColors['fg']['R']}")
+            stdscr.addstr(f"{cc['fg']['R']}")
             y, x = grp.addstrMiddle(
                 stdscr,
                 t.TextBox(
@@ -68,14 +65,14 @@ def gameChecker(stdscr):
                     returnEndyx=True
                 )
             y -= 1
-            stdscr.addstr(s.cColors['end']); stdscr.refresh()
+            stdscr.addstr(cc['end']); stdscr.refresh()
             time.sleep(2.5)
             Achievements = {
                 "이름"             : s.lightName,
                 "사인"             : f"{s.deadReason}",
-                "내려간 깊이"      : f" {s.cColors['fg']['Y']}{s.stage}{s.cColors['end']}",
-                "최대 레벨"        : f"{s.cColors['fg']['F']}{s.lvl}{s.cColors['end']}",
-                "죽인 몬스터 횟수" : f"{s.cColors['fg']['R']}{s.killCount}{s.cColors['end']}"
+                "내려간 깊이"      : f" {cc['fg']['Y']}{s.stage}{cc['end']}",
+                "최대 레벨"        : f"{cc['fg']['F']}{s.lvl}{cc['end']}",
+                "죽인 몬스터 횟수" : f"{cc['fg']['R']}{s.killCount}{cc['end']}"
             }
             for num, text in enumerate(Achievements):
                 stdscr.addstr(f"\033[{x};{y}H{text} : {list(Achievements.values())[num]}\n"); stdscr.refresh()
@@ -91,7 +88,7 @@ def gameChecker(stdscr):
 
         else:
             play("clear")
-            stdscr.addstr(s.cColors['fg']['L'])
+            stdscr.addstr(cc['fg']['L'])
             grp.addstrMiddle(
                 stdscr,
                 t.TextBox(
@@ -104,9 +101,10 @@ def gameChecker(stdscr):
                     LineType="bold"
                     )
                 )
-            stdscr.addstr(s.cColors['end']); stdscr.refresh()
+            stdscr.addstr(cc['end']); stdscr.refresh()
             time.sleep(2.5)
             stdscr.clear(); stdscr.refresh()
+
 
 curses.noecho()
 curses.curs_set(0)
@@ -118,8 +116,8 @@ p.set()
 mnl.newAddListener()
 
 while s.main:
-    if not s.stage: SN = f"{s.cColors['fg']['L']}지 상{s.cColors['end']}"
-    else:           SN = f"{s.cColors['fg']['R']}{s.stage} 번 째   나 락{s.cColors['end']}"
+    if not s.stage: SN = f"{cc['fg']['L']}지 상{cc['end']}"
+    else:           SN = f"{cc['fg']['R']}{s.stage} 번 째   나 락{cc['end']}"
     s.stage  += 1
     s.Dungeon = dgm.DungeonMaker()
 
@@ -127,7 +125,7 @@ while s.main:
     system.roomChecker.placeRandomOrbs()
     grp.showStage(
         stdscr,
-        f"{s.cColors['fg']['R']}- {s.stage}{s.cColors['end']}",
+        f"{cc['fg']['R']}- {s.stage}{cc['end']}",
         stageName=SN
         )
 
@@ -143,5 +141,4 @@ while s.main:
             if s.frame > 0: time.sleep(1/s.frame)
         else: time.sleep(1)
     quickStarter = 0
-    deadReason()
     gameChecker(stdscr)

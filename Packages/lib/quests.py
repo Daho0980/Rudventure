@@ -1,7 +1,4 @@
-from Packages.lib.data import status
-
-s = status
-
+from Packages.lib.data import status as s
 
 def quest():
     output = 0

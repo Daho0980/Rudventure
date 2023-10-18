@@ -14,6 +14,8 @@ from   Packages.lib.modules                 import Textbox
 from   Packages.lib.system                  import DungeonMaker as dgm
 from   Packages.lib.system.globalFunc.sound import play
 
+cc = s.cColors
+
 def escapeAnsi(line):
     ansi_escape = re.compile(r'(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]')
     return ansi_escape.sub('', line)
@@ -76,7 +78,7 @@ def statusBar(
         status:int,
         statusName:str    ="",
         maxStatus:int     =0,
-        color:str         =s.cColors['fg']['R'],
+        color:str         =cc['fg']['R'],
         frontTag:str      ="",
         backTag:str       ="",
         space:int         =1,
@@ -91,7 +93,7 @@ def statusBar(
         `status`(int)                               : 현재 status\n
         `statusName`(str)                           : 게이지 바의 이름이 될 문자열\n
         `maxStatus`(int)                            : `status`의 최대치, 기본적으로 `0`으로 설정되어 있음\n
-        `color`(s.cColors['fg' 또는 'bg'][색('str')]: 현재 `status`의 색을 채워줄 매개변수, 기본적으로 `s.cColors['fg']['R']`로 설정되어 있음\n
+        `color`(cc['fg' 또는 'bg'][색('str')]: 현재 `status`의 색을 채워줄 매개변수, 기본적으로 `cc['fg']['R']`로 설정되어 있음\n
         `backTag`(str)                              : 게이지 바 끝에 붙는 꼬리표, 기본적으로 `""`로 설정되어 있음\n
         `frontTag`(str)                             : 게이지 바 끝에 붙는 꼬리표, 기본적으로 `""`로 설정되어 있음\n
         `space`(int)                                : 이름과 게이지 바 사이에 존재하는 공백, 기본적으로 `1`로 설정되어 있음\n
@@ -108,8 +110,8 @@ def statusBar(
     elif usePercentage == False:
         statusForDisplay = maxStatus if status > maxStatus else status
     
-    Display += ("|"*statusForDisplay + s.cColors['fg']['G1'] + "|"*(maxStatus-statusForDisplay) + f"{s.cColors['end']}]")
-    if status - maxStatus > 0: Display += f" {color}+{status-maxStatus}{s.cColors['end']}"
+    Display += ("|"*statusForDisplay + cc['fg']['G1'] + "|"*(maxStatus-statusForDisplay) + f"{cc['end']}]")
+    if status - maxStatus > 0: Display += f" {color}+{status-maxStatus}{cc['end']}"
     Display += f"{',' if len(backTag)>0 and showComma else ''} {backTag}\n"
     if end: Display += "\n"
 
@@ -141,20 +143,20 @@ def fieldPrint(stdscr, grid:list):
     # Status
     match s.showStateDesign:
         case 1:
-            Display += f"hp : {s.cColors['fg']['R']}{s.hp}/{s.Mhp}{s.cColors['end']} | def : {s.cColors['fg']['B1']}{s.df}/{s.Mdf}{s.cColors['end']}\n"
-            Display += f"hunger : {s.cColors['fg']['Y']}{(s.hunger/500)*100:0.0f}%{s.cColors['end']} | atk : {s.cColors['fg']['L']}{s.atk}{s.cColors['end']}\n\n"
+            Display += f"hp : {cc['fg']['R']}{s.hp}/{s.Mhp}{cc['end']} | def : {cc['fg']['B1']}{s.df}/{s.Mdf}{cc['end']}\n"
+            Display += f"hunger : {cc['fg']['Y']}{(s.hunger/500)*100:0.0f}%{cc['end']} | atk : {cc['fg']['L']}{s.atk}{cc['end']}\n\n"
         case 2:
             # hp => def => atk => hunger
             Display += ''.join([
                 statusBar(s.hp, statusName="hp", maxStatus=s.Mhp, space=5),
-                statusBar(s.df, statusName="def", maxStatus=s.Mdf, color=s.cColors['fg']['B1'], space=4),
-                statusBar(s.atk, statusName="atk", maxStatus=10, color=s.cColors['fg']['L'], space=4, showCell=False),
+                statusBar(s.df, statusName="def", maxStatus=s.Mdf, color=cc['fg']['B1'], space=4),
+                statusBar(s.atk, statusName="atk", maxStatus=10, color=cc['fg']['L'], space=4, showCell=False),
                 statusBar(
                     math.ceil(s.hunger/50),
                     statusName="hunger",
                     maxStatus=10,
-                    color=s.cColors['fg']['Y'],
-                    backTag=f"{s.cColors['fg']['Y']}{s.hunger}{s.cColors['end']}" if s.hunger <= 50 else f"{s.cColors['fg']['Y']}{round(s.hunger/5)}%{s.cColors['end']}",
+                    color=cc['fg']['Y'],
+                    backTag=f"{cc['fg']['Y']}{s.hunger}{cc['end']}" if s.hunger <= 50 else f"{cc['fg']['Y']}{round(s.hunger/5)}%{cc['end']}",
                     end=True
                     )
                 ])
@@ -162,9 +164,9 @@ def fieldPrint(stdscr, grid:list):
     Display += statusBar(
                 int((s.xp/s.Mxp)*10),
                 maxStatus=10,
-                color=s.cColors['fg']['F'],
-                frontTag= f"{s.cColors['fg']['F']}{s.lvl}{s.cColors['end']}",
-                backTag=f"{s.cColors['fg']['F']}{s.lvl+1}{s.cColors['end']}",
+                color=cc['fg']['F'],
+                frontTag= f"{cc['fg']['F']}{s.lvl}{cc['end']}",
+                backTag=f"{cc['fg']['F']}{s.lvl+1}{cc['end']}",
                 space=5,
                 showComma=False
                 )

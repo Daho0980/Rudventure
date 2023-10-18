@@ -6,6 +6,8 @@ from   Packages.lib.modules.logger          import addLog
 from   Packages.lib.system.globalFunc.sound import play
 
 s, p = status, player.player
+cc   = s.cColors
+
 class enemy:
     def __init__(self, name, icon):
         global entities
@@ -60,19 +62,19 @@ class enemy:
             if round(s.df) < 0             : s.df = 0
             if s.df == 0 and s.dfCrack <= 0:
                 sound     = f'crack'
-                addLog(f"{s.cColors['fg']['B1']}방어구{s.cColors['end']}가 부서졌습니다!")
+                addLog(f"{cc['fg']['B1']}방어구{cc['end']}가 부서졌습니다!")
                 s.dfCrack = 1
         else: s.hp -= self.atk
 
-        addLog(f"{s.lightName}이(가) {s.cColors['fg']['F']}{self.name}{s.cColors['end']}({self.icon}) 에 의해 {s.cColors['fg']['R']}{self.atk}{s.cColors['end']}만큼의 피해를 입었습니다!")
+        addLog(f"{s.lightName}이(가) {cc['fg']['F']}{self.name}{cc['end']}({self.icon}) 에 의해 {cc['fg']['R']}{self.atk}{cc['end']}만큼의 피해를 입었습니다!")
         play(sound)
         return
 
     def move(self):
         nowDRP = s.Dungeon[self.Dy][self.Dx]
-        if len(s.hitPos) > 0 and s.hitPos[0] == self.y and s.hitPos[1] == self.x:
+        if len(s.hitPos) > 0 and [self.y, self.x] in s.hitPos:
             self.hp -= s.atk
-            if self.hp > 0: addLog(f"{s.cColors['fg']['F']}{self.name}{s.cColors['end']}이(가) {s.cColors['fg']['L']}{s.atk}{s.cColors['end']}만큼의 피해를 입었습니다! {s.cColors['fg']['R']}(체력 : {self.hp}){s.cColors['end']}")
+            if self.hp > 0: addLog(f"{cc['fg']['F']}{self.name}{cc['end']}이(가) {cc['fg']['L']}{s.atk}{cc['end']}만큼의 피해를 입었습니다! {cc['fg']['R']}(체력 : {self.hp}){cc['end']}")
 
         if self.coolTime == 0:
             self.coolTime = random.randrange(60, 81)
@@ -128,12 +130,12 @@ class observer(enemy):
 
         def Targetted():
             for _ in range(2):
-                nowDRP['room'][self.y][self.x] = f"{s.cColors['fg']['R']}{self.icon}{s.cColors['end']}"; time.sleep(0.1)
+                nowDRP['room'][self.y][self.x] = f"{cc['fg']['R']}{self.icon}{cc['end']}"; time.sleep(0.1)
                 nowDRP['room'][self.y][self.x] = self.icon; time.sleep(0.1)
 
-        if len(s.hitPos) > 0 and s.hitPos[0] == self.y and s.hitPos[1] == self.x:
+        if len(s.hitPos) > 0 and [self.y, self.x] in s.hitPos:
             self.hp -= s.atk
-            if self.hp > 0: addLog(f"{s.cColors['fg']['F']}{self.name}{s.cColors['end']}이(가) {s.cColors['fg']['L']}{s.atk}{s.cColors['end']}만큼의 피해를 입었습니다! {s.cColors['fg']['R']}(체력 : {self.hp}){s.cColors['end']}")
+            if self.hp > 0: addLog(f"{cc['fg']['F']}{self.name}{cc['end']}이(가) {cc['fg']['L']}{s.atk}{cc['end']}만큼의 피해를 입었습니다! {cc['fg']['R']}(체력 : {self.hp}){cc['end']}")
 
         if self.coolTime == 0:
             self.coolTime = random.randrange(40, 61)

@@ -24,6 +24,7 @@ from   Packages.lib.system.globalFunc import graphic
 
 grp = graphic
 s   = status
+cc  = s.cColors
 
 Map       = []
 direction = {
@@ -33,11 +34,11 @@ direction = {
     'L' : 4
 }
 roomIcons = [
-    f"{s.cColors['fg']['R']}§{s.cColors['end']}",
+    f"{cc['fg']['R']}§{cc['end']}",
     "•",
-    f"{s.cColors['fg']['L']}*{s.cColors['end']}",
-    f"{s.cColors['fg']['Y']}!{s.cColors['end']}",
-    f"{s.cColors['fg']['B1']}/{s.cColors['end']}"
+    f"{cc['fg']['L']}*{cc['end']}",
+    f"{cc['fg']['Y']}!{cc['end']}",
+    f"{cc['fg']['B1']}/{cc['end']}"
     ]
 
 # ---------- Graphic section ----------
@@ -83,23 +84,23 @@ def gridMapReturn(grid:list, blank=0, center=False):
             for column in range(len(DisplayMap[row])):
                 FixY, FixX = row+toolY, column+toolX
                 if FixY >= 0 and FixY <= len(DisplayMap)-1 and FixX >= 0 and FixX <= len(DisplayMap[row])-1 and len(grid[row][column]) > 0:
-                    if row == s.Dy and column == s.Dx: DisplayMap[FixY][FixX] = f"{s.cColors['bg']['F']}{escapeAnsi(grid[s.Dy][s.Dx]['roomIcon'])}{s.cColors['end']}"
+                    if row == s.Dy and column == s.Dx: DisplayMap[FixY][FixX] = f"{cc['bg']['F']}{escapeAnsi(grid[s.Dy][s.Dx]['roomIcon'])}{cc['end']}"
                     else:
                         match grid[row][column]["isPlayerVisited"]:
                             case 0: DisplayMap[FixY][FixX] = ' '
-                            case 1: DisplayMap[FixY][FixX] = f"{s.cColors['fg']['F']}?{s.cColors['end']}"
+                            case 1: DisplayMap[FixY][FixX] = f"{cc['fg']['F']}?{cc['end']}"
                             case 2: DisplayMap[FixY][FixX] = grid[row][column]["roomIcon"]
 
     elif center == False:
         DisplayMap = GraphicMaker(grid)
 
-        DisplayMap[s.Dy][s.Dx] = f"{s.cColors['bg']['F']}{DisplayMap[s.Dy][s.Dx]}{s.cColors['end']}"
+        DisplayMap[s.Dy][s.Dx] = f"{cc['bg']['F']}{DisplayMap[s.Dy][s.Dx]}{cc['end']}"
         for row in range(len(DisplayMap)):
             for column in range(len(DisplayMap[row])):
                 if len(grid[row][column]) > 0:
                     match grid[row][column]["isPlayerVisited"]:
                         case 0: DisplayMap[row][column] = ' '
-                        case 1: DisplayMap[row][column] = f"{s.cColors['fg']['F']}?{s.cColors['end']}"
+                        case 1: DisplayMap[row][column] = f"{cc['fg']['F']}?{cc['end']}"
 
     for i in range(len(DisplayMap)):
         output += blanks+' '.join(map(str, DisplayMap[i]))+blanks+"\n" if i != len(DisplayMap)-1 else blanks+' '.join(map(str, DisplayMap[i]))+blanks

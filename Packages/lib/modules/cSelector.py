@@ -2,9 +2,11 @@
 
 import curses
 from   cusser                               import Cusser
-from   Packages.lib.data                    import status as s
+from   Packages.lib.data                    import status  as s
 from   Packages.lib.system.globalFunc       import graphic as grp
 from   Packages.lib.system.globalFunc.sound import play
+
+cc = s.cColors
 
 class selector:
     def main(title, subtitle={'Why did you do...' : 'WHY...'}, color=0, icon:str='>', maxLine="max", lineSpace:int=1, tag:str="", frontTag:str=""):
@@ -99,7 +101,7 @@ class selector:
 
         subtitleLen = lenConverter(subtitle)
         Display  = ""
-        Display += f"{s.cColors['fg']['G1']}{frontTag}{s.cColors['end']}\n"
+        Display += f"{cc['fg']['G1']}{frontTag}{cc['end']}\n"
         Display += f"{title[0] if isinstance(title, list) else title}{Enter}"
         row      = -1
         column   = 0
@@ -114,8 +116,8 @@ class selector:
         y, x = map(lambda n: round(n/2), list(stdscr.getmaxyx()))
         y    = y-round(len(list(map(lambda l: len(grp.escapeAnsi(l)), Display.split("\n"))))/2)
         x    = x-round(max(list(map(lambda l: len(grp.escapeAnsi(l)), Display.split("\n"))))/2)
-        if subtitleValues != []: Display += f"{s.cColors['fg']['G1']}\n{subtitleValues[(maxLine*nowSelectRow)+nowSelectColumn]}{s.cColors['end']}"
-        Display += f"\n\n{s.cColors['fg']['G1']}{tag}{s.cColors['end']}\n\n"
+        if subtitleValues != []: Display += f"{cc['fg']['G1']}\n{subtitleValues[(maxLine*nowSelectRow)+nowSelectColumn]}{cc['end']}"
+        Display += f"\n\n{cc['fg']['G1']}{tag}{cc['end']}\n\n"
         return Display, y, x
 
     def system(stdscr, title, subtitle, color, icon, maxLine, lineSpace, tag, frontTag):
@@ -165,9 +167,9 @@ class selector:
         while 1:
             stdscr.clear(); stdscr.refresh()
             arrow[nowSelectRow][nowSelectColumn] = f'{arrowColor}{icon}' # 화살표 위치 설정
-            if nowSelectRow        < len(subtitleKeys)-1:               arrow[nowSelectRow+1][nowSelectColumn] = f"{s.cColors['end']} " # 다음 가로줄이 존재할 때: 다음 가로줄의 nowSelectColumn번째 요소를 기본색, 상태로 되돌린다(색 전염 방지)
-            if nowSelectRow        > 0 and nowSelectColumn < maxLine-1: arrow[0][nowSelectColumn+1]            = f"{s.cColors['end']} " # 이전 가로줄이 존재하고 맨 아래쪽 줄이 아닐 때: 첫 가로줄의 아랫칸을 기본색, 상태로 되돌린다(색 전염 방지22)
-            if nowSelectColumn + 1 < maxLine:                           arrow[nowSelectRow][nowSelectColumn+1] = f"{s.cColors['end']} " # 현재 위치 + 1이 subtitle 최대 개수보다 적을 때: 다음칸을 기본색, 상태로 되돌린다(색 전염 방지333)
+            if nowSelectRow        < len(subtitleKeys)-1:               arrow[nowSelectRow+1][nowSelectColumn] = f"{cc['end']} " # 다음 가로줄이 존재할 때: 다음 가로줄의 nowSelectColumn번째 요소를 기본색, 상태로 되돌린다(색 전염 방지)
+            if nowSelectRow        > 0 and nowSelectColumn < maxLine-1: arrow[0][nowSelectColumn+1]            = f"{cc['end']} " # 이전 가로줄이 존재하고 맨 아래쪽 줄이 아닐 때: 첫 가로줄의 아랫칸을 기본색, 상태로 되돌린다(색 전염 방지22)
+            if nowSelectColumn + 1 < maxLine:                           arrow[nowSelectRow][nowSelectColumn+1] = f"{cc['end']} " # 현재 위치 + 1이 subtitle 최대 개수보다 적을 때: 다음칸을 기본색, 상태로 되돌린다(색 전염 방지333)
             display, y, x = selector.returnDisplay(
                                             stdscr,
                                             title,

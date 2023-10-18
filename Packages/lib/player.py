@@ -6,8 +6,8 @@ from   Packages.lib.modules                  import logger
 from   Packages.lib.system.globalFunc.system import xpSystem
 from   Packages.lib.system.globalFunc.sound  import play
 
-s, r = status, rooms
-dfCrack  = 0
+s, r     = status, rooms
+cc       = s.cColors
 
 class player:
     def set():
@@ -41,11 +41,11 @@ class player:
         sizeIndex = ["bigOne", "smallOne"].index(Size)
         typeIndex = ["hp", "def", "atk", "hunger", "exp"].index(Type)
         orbData   = [
-            [3, 1],
-            [3, 1],
-            [2, 1],
+            [3,   1],
+            [3,   1],
+            [2,   1],
             [50, 25],
-            [5, 1],
+            [5,   1]
         ]
 
         point = orbData[typeIndex][sizeIndex]
@@ -86,17 +86,17 @@ class player:
             if s.df <= 0 and s.dfCrack <= 0:
                 sound     = "crack"
                 s.dfCrack = 1
-                logger.addLog(f"{s.cColors['fg']['B1']}방어구{s.cColors['end']}가 부서졌습니다!")
+                logger.addLog(f"{cc['fg']['B1']}방어구{cc['end']}가 부서졌습니다!")
             else: sound = "Hit"
 
         elif roomGrid[s.y][s.x] in enemies:
             sound = "slash"
 
-            s.hitPos   = [eval(f"{s.y}"), eval(f"{s.x}")]
+            s.hitPos.append([s.y, s.x])
             time.sleep(0.01)
-            s.hitPos   = []
+            s.hitPos.remove([s.y, s.x])
 
-            s.y,  s.x  = bfy, bfx
+            s.y,  s.x  = bfy,  bfx
             s.Dy, s.Dx = bfDy, bfDx
 
         elif s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x] == s.item:
@@ -169,7 +169,7 @@ class player:
 
             s.y, s.x   = bfy, bfx
             s.Dy, s.Dx = bfDy, bfDx
-            logger.addLog(f"{s.lightName}이(가) {s.cColors['fg']['B1']}말랑이{s.cColors['end']}를 만졌습니다 (말랑)")
+            logger.addLog(f"{s.lightName}이(가) {cc['fg']['B1']}말랑이{cc['end']}를 만졌습니다 (말랑)")
 
         s.Dungeon[bfDy][bfDx]['room'][bfy][bfx] = s.floor
         s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x] = s.p1
