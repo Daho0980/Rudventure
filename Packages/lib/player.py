@@ -11,12 +11,13 @@ cc       = s.cColors
 
 class player:
     def set():
-        s.hp  = 10
-        s.Mhp = s.hp
-        s.df  = 5
-        s.Mdf = s.df
-        s.atk = 1
+        s.hp     = 10
+        s.Mhp    = s.hp
+        s.df     = 5
+        s.Mdf    = s.df
+        s.atk    = 1
         s.hunger = 500
+        s.Mxp    = 10
 
     def start(Dy, Dx, y, x):
         s.Dungeon[Dy][Dx]['room'][y][x] = s.p1
