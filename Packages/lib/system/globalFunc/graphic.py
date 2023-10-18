@@ -24,8 +24,16 @@ def addstrMiddle(stdscr, string:str, y=0, x=0, returnEndyx=False):
     else:
         y, x = map(lambda n: round(n/2), list(stdscr.getmaxyx()))
         y, x = y-round(len(lines)/2), x-round(max(lines)/2)
-    stdscr.addstr(''.join([escc for line in zip([f"\033[{x};{_}H" for _ in range(y-1, y+(len(lines)))], string.split("\n")) for escc in line]))
-
+    stdscr.addstr(
+        ''.join(
+            [
+                escc for line in zip(
+                    [f"\033[{x};{_}H" for _ in range(y-1, y+(len(lines)))],
+                    string.split("\n")
+                    ) for escc in line
+                ]
+            )
+        )
     if returnEndyx: return y+len(string.split("\n")), x
 
 def showStage(stdscr, stageNum:str, stageName:str, sound:str="smash"):
@@ -64,9 +72,21 @@ def showStage(stdscr, stageNum:str, stageName:str, sound:str="smash"):
     time.sleep(1.6)
     stdscr.clear(); stdscr.refresh(); play(sound)
 
-def statusBar(status:int, statusName:str="", maxStatus:int=0, color=s.cColors['fg']['R'], frontTag:str="", backTag:str="", space:int=1, end=False, showComma=True, usePercentage=False):
+def statusBar(
+        status:int,
+        statusName:str    ="",
+        maxStatus:int     =0,
+        color:str         =s.cColors['fg']['R'],
+        frontTag:str      ="",
+        backTag:str       ="",
+        space:int         =1,
+        end:bool          =False,
+        showComma:bool    =True,
+        usePercentage:bool=False, 
+        showCell:bool     =True
+    ):
     """
-    status, maxStatus 매개변수를 주로 활용해 게이지 바를 만들어줌\n
+    status, maxStatus 매개변수를 주로 활용해 게이지 바를 만들어줌\n\n
 
         `status`(int)                               : 현재 status\n
         `statusName`(str)                           : 게이지 바의 이름이 될 문자열\n
@@ -81,17 +101,17 @@ def statusBar(status:int, statusName:str="", maxStatus:int=0, color=s.cColors['f
     Display  = ""
     spaceLen = " "*space
     Display += f"{statusName} :{spaceLen}{frontTag} [{color}" if len(statusName) > 0 else f"{spaceLen}{frontTag} [{color}"
-    maxStatus = status if maxStatus == 0 else maxStatus
-    if usePercentage == True:
-        status = round((status/maxStatus)*10)
+    maxStatus = status if maxStatus == 0 or not showCell else maxStatus
+    if usePercentage:
+        status    = round((status/maxStatus)*10)
         maxStatus = 10
     elif usePercentage == False:
         statusForDisplay = maxStatus if status > maxStatus else status
     
     Display += ("|"*statusForDisplay + s.cColors['fg']['G1'] + "|"*(maxStatus-statusForDisplay) + f"{s.cColors['end']}]")
-    if status - maxStatus > 0: Display += f" +{color}{status-maxStatus}{s.cColors['end']}"
-    Display += f"{',' if len(backTag)>0 and showComma==True else ''} {backTag}\n"
-    if end == True: Display += "\n"
+    if status - maxStatus > 0: Display += f" {color}+{status-maxStatus}{s.cColors['end']}"
+    Display += f"{',' if len(backTag)>0 and showComma else ''} {backTag}\n"
+    if end: Display += "\n"
 
     return Display
 
@@ -103,26 +123,42 @@ def fieldPrint(stdscr, grid:list):
     """
     Display = ""
     GFD = list(map(lambda x: ' '.join(x), grid))
-
-    def asciiPrint():
-        bars = [
-            statusBar(s.hp, statusName="hp", maxStatus=s.Mhp, space=5),
-            statusBar(s.df, statusName="def", maxStatus=s.Mdf, color=s.cColors['fg']['B1'], space=4),
-            statusBar(math.ceil(s.hunger/50), statusName="hunger",  color=s.cColors['fg']['Y'], backTag=f"{s.cColors['fg']['Y']}{str(s.hunger)}{s.cColors['end']}" if s.hunger <= 50 else f"{s.cColors['fg']['Y']}{round(s.hunger/5)}%{s.cColors['end']}"),
-            statusBar(s.atk, statusName="atk", color=s.cColors['fg']['L'], space=4, end=True)
-        ]
-        return ''.join(bars)
     
-    if s.showDungeonMap == 1:
-        dungeonMap = Textbox.TextBox(dgm.gridMapReturn(s.Dungeon, blank=1, center=True), Type='middle', fillChar='^', AMLS=True, endLineBreak=True, LineType='double')+"\n\n"
-        Display += dungeonMap
+    # Map
+    if s.showDungeonMap:
+        Display += Textbox.TextBox(
+            dgm.gridMapReturn(
+                s.Dungeon,
+                blank =1,
+                center=True), 
+            Type        ='middle',
+            fillChar    ='^',
+            AMLS        =True,
+            endLineBreak=True,
+            LineType    ='double'
+            )+"\n\n"
 
+    # Status
     match s.showStateDesign:
         case 1:
             Display += f"hp : {s.cColors['fg']['R']}{s.hp}/{s.Mhp}{s.cColors['end']} | def : {s.cColors['fg']['B1']}{s.df}/{s.Mdf}{s.cColors['end']}\n"
             Display += f"hunger : {s.cColors['fg']['Y']}{(s.hunger/500)*100:0.0f}%{s.cColors['end']} | atk : {s.cColors['fg']['L']}{s.atk}{s.cColors['end']}\n\n"
-        case 2: Display += asciiPrint()
-        # XP point
+        case 2:
+            # hp => def => atk => hunger
+            Display += ''.join([
+                statusBar(s.hp, statusName="hp", maxStatus=s.Mhp, space=5),
+                statusBar(s.df, statusName="def", maxStatus=s.Mdf, color=s.cColors['fg']['B1'], space=4),
+                statusBar(s.atk, statusName="atk", maxStatus=10, color=s.cColors['fg']['L'], space=4, showCell=False),
+                statusBar(
+                    math.ceil(s.hunger/50),
+                    statusName="hunger",
+                    maxStatus=10,
+                    color=s.cColors['fg']['Y'],
+                    backTag=f"{s.cColors['fg']['Y']}{s.hunger}{s.cColors['end']}" if s.hunger <= 50 else f"{s.cColors['fg']['Y']}{round(s.hunger/5)}%{s.cColors['end']}",
+                    end=True
+                    )
+                ])
+    # Status/XP
     Display += statusBar(
                 int((s.xp/s.Mxp)*10),
                 maxStatus=10,
@@ -132,11 +168,11 @@ def fieldPrint(stdscr, grid:list):
                 space=5,
                 showComma=False
                 )
-    Display += "\n".join(GFD)+"\n"
+    Display += "\n".join(GFD)+"\n" # room display
     y, x = map(lambda n: round(n/2), list(stdscr.getmaxyx()))
-    y    = y-round(len(list(map(lambda l: len(escapeAnsi(l)), Display.split("\n"))))/2)
-    x    = x-round(max(list(map(lambda l: len(escapeAnsi(l)), GFD)))/2)
+    y   -= round(len(list(map(lambda l: len(escapeAnsi(l)), Display.split("\n"))))/2)
+    x   -= round(max(list(map(lambda l: len(escapeAnsi(l)), GFD)))/2)
 
-    for i in s.onDisplay     : Display += f"{i}\n"
+    Display += "\n".join(s.onDisplay)
 
     addstrMiddle(stdscr, Display, y=y, x=x)
