@@ -85,7 +85,7 @@ def statusBar(
         end:bool          =False,
         showComma:bool    =True,
         usePercentage:bool=False, 
-        showCell:bool     =True
+        showEmptyCell:bool=True
     ):
     """
     status, maxStatus 매개변수를 주로 활용해 게이지 바를 만들어줌\n\n
@@ -103,14 +103,14 @@ def statusBar(
     Display  = ""
     spaceLen = " "*space
     Display += f"{statusName} :{spaceLen}{frontTag} [{color}" if len(statusName) > 0 else f"{spaceLen}{frontTag} [{color}"
-    maxStatus = status if maxStatus == 0 or not showCell else maxStatus
+    maxStatus = status if maxStatus == 0 else maxStatus
     if usePercentage:
         status    = round((status/maxStatus)*10)
         maxStatus = 10
     elif usePercentage == False:
         statusForDisplay = maxStatus if status > maxStatus else status
     
-    Display += ("|"*statusForDisplay + cc['fg']['G1'] + "|"*(maxStatus-statusForDisplay) + f"{cc['end']}]")
+    Display += ('|'*statusForDisplay + cc['fg']['G1'] + '|'*((maxStatus-statusForDisplay) if showEmptyCell else 0) + f"{cc['end']}]")
     if status - maxStatus > 0: Display += f" {color}+{status-maxStatus}{cc['end']}"
     Display += f"{',' if len(backTag)>0 and showComma else ''} {backTag}\n"
     if end: Display += "\n"
@@ -150,7 +150,14 @@ def fieldPrint(stdscr, grid:list):
             Display += ''.join([
                 statusBar(s.hp, statusName="hp", maxStatus=s.Mhp, space=5),
                 statusBar(s.df, statusName="def", maxStatus=s.Mdf, color=cc['fg']['B1'], space=4),
-                statusBar(s.atk, statusName="atk", maxStatus=10, color=cc['fg']['L'], space=4, showCell=False),
+                statusBar(
+                    s.atk,
+                    statusName="atk",
+                    maxStatus=10,
+                    color=cc['fg']['L'],
+                    space=4,
+                    showEmptyCell=False
+                    ),
                 statusBar(
                     math.ceil(s.hunger/50),
                     statusName="hunger",
