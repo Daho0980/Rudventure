@@ -140,15 +140,17 @@ enemies = {
     }
 }
 
-squishy        = [f"{cColors['fg']['B1']}{cMarkdown(1)}O{cColors['end']}", f"{cColors['fg']['B1']}{cMarkdown(1)}o{cColors['end']}"]
-wall           = '■'
 R              = '▤'
-item           = f"{cColors['fg']['Y']}ᢂ{cColors['end']}"
 box            = '☒'
-boxMark        = f"{cColors['fg']['R']}✘{cColors['end']}"
 goal           = f"{cColors['fg']['R']}F{cColors['end']}"
-floor          = '.'
+item           = f"{cColors['fg']['Y']}ᢂ{cColors['end']}"
+wall           = '■'
+squishy        = [f"{cColors['fg']['B1']}{cMarkdown(1)}O{cColors['end']}", f"{cColors['fg']['B1']}{cMarkdown(1)}o{cColors['end']}"]
 fakeFloor      = '∙'
+
+boxMark        = f"{cColors['fg']['R']}✘{cColors['end']}"
+floor          = '.'
+
 # hp -> def -> atk -> hng -> exp
 orbs = {
     "size" : {
@@ -176,7 +178,32 @@ orbs = {
     }
 }
 
-stepableBlocks = [floor, item, boxMark]
+stepableBlocks     = [floor, item, boxMark]
+interactableBlocks = {
+    "canStepOn" : [
+        orbs['type']['hp'][0],
+        orbs['type']['hp'][1],
+        orbs['type']['def'][0],
+        orbs['type']['def'][1],
+        orbs['type']['atk'][0],
+        orbs['type']['atk'][1],
+        orbs['type']['hunger'][0],
+        orbs['type']['hunger'][1],
+        orbs['type']['exp'][0],
+        orbs['type']['exp'][1],
+        item,
+    ],
+    "cannotStepOn" : [
+        R,
+        box,
+        goal,
+        wall,
+        squishy,
+        fakeFloor,
+        enemies['snippets']['pain'],
+        enemies['snippets']['unrest']
+    ]
+}
 
 # Stage settings
 stage     = 0

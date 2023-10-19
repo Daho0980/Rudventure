@@ -64,7 +64,6 @@ class player:
 
     def move(Dir, Int): 
         enemies  = [s.enemies["snippets"]["pain"], s.enemies["snippets"]["unrest"]]
-        data     = s.Dungeon[s.Dy][s.Dx]
         roomGrid = s.Dungeon[s.Dy][s.Dx]['room']
 
         if s.df > 0: s.dfCrack = 0
@@ -96,7 +95,7 @@ class player:
             sound = "slash"
 
             s.hitPos.append([s.y, s.x])
-            time.sleep(0.01)
+            time.sleep(0.001)
             s.hitPos.remove([s.y, s.x])
 
             s.y,  s.x  = bfy,  bfx

@@ -72,12 +72,9 @@ class enemy:
 
     def move(self):
         nowDRP = s.Dungeon[self.Dy][self.Dx]
-        if len(s.hitPos) > 0 and [self.y, self.x] in s.hitPos:
-            self.hp -= s.atk
-            if self.hp > 0: addLog(f"{cc['fg']['F']}{self.name}{cc['end']}이(가) {cc['fg']['L']}{s.atk}{cc['end']}만큼의 피해를 입었습니다! {cc['fg']['R']}(체력 : {self.hp}){cc['end']}")
 
         if self.coolTime == 0:
-            self.coolTime = random.randrange(60, 81)
+            self.coolTime = random.randrange(60, 81)*10
             if self.stepped not in s.stepableBlocks: self.stepped = s.floor
             elif nowDRP['room'][self.y][self.x] in s.stepableBlocks and nowDRP['room'][self.y][self.x] not in [s.item, s.boxMark]:
                 self.stepped = s.stepableBlocks[s.stepableBlocks.index(nowDRP['room'][self.y][self.x])]
@@ -109,7 +106,7 @@ class enemy:
                                 if self.y + Ry > len(nowDRP['room'])-1: continue
                                 self.y += Ry
 
-                        if nowDRP['room'][self.y][self.x] not in s.stepableBlocks:
+                        if nowDRP['room'][self.y][self.x] in s.interactableBlocks['cannotStepOn']:
                             self.x, self.y = bfx, bfy
                             continue
 
@@ -119,7 +116,14 @@ class enemy:
                 s.Dungeon[self.Dy][self.Dx]['room'][self.y][self.x] = self.icon
         else:
             self.coolTime -= 1
-            time.sleep(0.01)
+            if len(s.hitPos) > 0 and [self.y, self.x] in s.hitPos:
+                self.hp -= s.atk
+                if self.hp > 0: addLog(f"{cc['fg']['F']}{self.name}{cc['end']}이(가) {cc['fg']['L']}{s.atk}{cc['end']}만큼의 피해를 입었습니다! {cc['fg']['R']}(체력 : {self.hp}){cc['end']}")
+
+            if self.hp > 0 and nowDRP['room'][self.y][self.x] in s.stepableBlocks+s.interactableBlocks['canStepOn']:
+                nowDRP['room'][self.y][self.x] = self.icon
+            elif self.hp <= 0: self.coolTime = 0
+            time.sleep(0.001)
 
 
 class observer(enemy):
@@ -135,12 +139,8 @@ class observer(enemy):
                 nowDRP['room'][self.y][self.x] = f"{cc['fg']['R']}{self.icon}{cc['end']}"; time.sleep(0.1)
                 nowDRP['room'][self.y][self.x] = self.icon; time.sleep(0.1)
 
-        if len(s.hitPos) > 0 and [self.y, self.x] in s.hitPos:
-            self.hp -= s.atk
-            if self.hp > 0: addLog(f"{cc['fg']['F']}{self.name}{cc['end']}이(가) {cc['fg']['L']}{s.atk}{cc['end']}만큼의 피해를 입었습니다! {cc['fg']['R']}(체력 : {self.hp}){cc['end']}")
-
         if self.coolTime == 0:
-            self.coolTime = random.randrange(40, 61)
+            self.coolTime = random.randrange(40, 61)*10
             if self.stepped not in s.stepableBlocks: self.stepped = s.floor
             elif nowDRP['room'][self.y][self.x] in s.stepableBlocks and\
                 nowDRP['room'][self.y][self.x] not in [s.item, s.boxMark]:
@@ -179,7 +179,7 @@ class observer(enemy):
                             time.sleep(0.1)
                 else:
                     bfx, bfy = self.x, self.y
-                    if random.randrange(1,3) == 1:
+                    if random.randrange(0,2):
                         if   self.x < s.x and nowDRP['room'][self.y][self.x+1] in s.stepableBlocks: self.x += 1
                         elif self.x > s.x and nowDRP['room'][self.y][self.x-1] in s.stepableBlocks: self.x -= 1
                     else:
@@ -189,5 +189,12 @@ class observer(enemy):
                     nowDRP['room'][self.y][self.x] = self.icon
         else:
             self.coolTime -= 1
-            time.sleep(0.01)
+            if len(s.hitPos) > 0 and [self.y, self.x] in s.hitPos:
+                self.hp -= s.atk
+                if self.hp > 0: addLog(f"{cc['fg']['F']}{self.name}{cc['end']}이(가) {cc['fg']['L']}{s.atk}{cc['end']}만큼의 피해를 입었습니다! {cc['fg']['R']}(체력 : {self.hp}){cc['end']}")
+            
+            if self.hp > 0 and nowDRP['room'][self.y][self.x] in s.stepableBlocks+s.interactableBlocks['canStepOn']:
+                nowDRP['room'][self.y][self.x] = self.icon
+            elif self.hp <= 0: self.coolTime = 0
+            time.sleep(0.001)
     
