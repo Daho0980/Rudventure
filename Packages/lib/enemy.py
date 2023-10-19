@@ -81,6 +81,12 @@ class enemy:
             
             bfx, bfy = self.x, self.y
             if self.hp > 0:
+                if random.randrange(1,3000) == 1215:
+                    play(f"growl")
+                    addLog(f"{cc['fg']['F']}{self.name}{cc['end']}({self.icon})이 울부짖습니다!")
+                    addLog(f"{cc['fg']['F']}{self.name}{cc['end']}({self.icon})의 공격력이 {cc['fg']['L']}1{cc['end']} 상승합니다.")
+                    self.atk += 1
+
                 exPos = [
                     nowDRP['room'][self.y-1][self.x],
                     nowDRP['room'][self.y+1][self.x],
@@ -94,7 +100,6 @@ class enemy:
                     enemy.pDamage(self)
                 else:
                     while 1:
-                        if random.randrange(1,3000) == 1215: play(f"growl")
                         enemyMove = random.randrange(1,4)
                         Rx, Ry    = random.randrange(-1,2), random.randrange(-1,2)
 
