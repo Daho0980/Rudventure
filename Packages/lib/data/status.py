@@ -142,12 +142,12 @@ enemies = {
 R              = '▤'
 box            = '☒'
 goal           = f"{cColors['fg']['R']}F{cColors['end']}"
-item           = f"{cColors['fg']['Y']}ᢂ{cColors['end']}"
+item           = f"{cColors['fg']['Y']}É{cColors['end']}"
 wall           = '■'
 squishy        = [f"{cColors['fg']['B1']}{cMarkdown(1)}O{cColors['end']}", f"{cColors['fg']['B1']}{cMarkdown(1)}o{cColors['end']}"]
 fakeFloor      = '∙'
 
-boxMark        = f"{cColors['fg']['R']}✘{cColors['end']}"
+boxMark        = f"{cColors['fg']['R']}X{cColors['end']}"
 floor          = '.'
 
 # hp -> def -> atk -> hng -> exp
