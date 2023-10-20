@@ -40,7 +40,7 @@ class enemy:
             if self.hp > 0:
                 msg = f"{cc['fg']['F']}{self.name}{cc['end']}이(가) {cc['fg']['L']}{dmg}{cc['end']}만큼의 피해를 입었습니다! {cc['fg']['R']}(체력 : {self.hp}){cc['end']}"
                 if not dmg:    msg = f"{cc['fg']['L']}공격{cc['end']}이 빗나갔습니다!"
-                elif crit: msg += f" {cc['fg']['L']}크리티컬!{cc['end']}"
+                elif crit: msg += f" {cc['fg']['L']}치명타!{cc['end']}"
                 addLog(msg)
                 if sound: play(sound)
 
