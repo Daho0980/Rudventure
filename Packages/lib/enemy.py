@@ -25,6 +25,25 @@ class enemy:
 
         self.icon     = icon
 
+    def damaged(self) -> None:
+
+        if len(s.hitPos) > 0 and [self.y, self.x] in s.hitPos:
+            rate             = random.randrange(1,101)
+            crit, dmg, sound = 0, s.atk, None
+            if rate <= s.critRate:
+                sound, crit = "crack", 1
+                dmg   = round(eval(f"(s.atk+(s.critDMG*0.1)){random.choice(['+', '-'])}(s.atk*(s.critDMG*0.005))"))
+            elif rate >= 90:
+                sound, dmg = "close_door", 0
+
+            self.hp -= dmg
+            if self.hp > 0:
+                msg = f"{cc['fg']['F']}{self.name}{cc['end']}이(가) {cc['fg']['L']}{dmg}{cc['end']}만큼의 피해를 입었습니다! {cc['fg']['R']}(체력 : {self.hp}){cc['end']}"
+                if not dmg:    msg = f"{cc['fg']['L']}공격{cc['end']}이 빗나갔습니다!"
+                elif crit: msg += f" {cc['fg']['L']}크리티컬!{cc['end']}"
+                addLog(msg)
+                if sound: play(sound)
+
     def start(self, sethp, setAtk, Dy, Dx, y, x):
         self.hp          = sethp
         self.atk         = setAtk
@@ -84,8 +103,8 @@ class enemy:
                 if random.randrange(1,3000) == 1215:
                     play(f"growl")
                     addLog(f"{cc['fg']['F']}{self.name}{cc['end']}({self.icon})이 울부짖습니다!")
-                    addLog(f"{cc['fg']['F']}{self.name}{cc['end']}({self.icon})의 공격력이 {cc['fg']['L']}1{cc['end']} 상승합니다.")
-                    self.atk += 1
+                    addLog(f"{cc['fg']['F']}{self.name}{cc['end']}({self.icon})의 공격력이 {cc['fg']['L']}{1+(round(s.stage/10))}{cc['end']} 상승합니다.")
+                    self.atk += 1+(round(s.stage/10))
 
                 exPos = [
                     nowDRP['room'][self.y-1][self.x],
@@ -121,9 +140,7 @@ class enemy:
                 s.Dungeon[self.Dy][self.Dx]['room'][self.y][self.x] = self.icon
         else:
             self.coolTime -= 1
-            if len(s.hitPos) > 0 and [self.y, self.x] in s.hitPos:
-                self.hp -= s.atk
-                if self.hp > 0: addLog(f"{cc['fg']['F']}{self.name}{cc['end']}이(가) {cc['fg']['L']}{s.atk}{cc['end']}만큼의 피해를 입었습니다! {cc['fg']['R']}(체력 : {self.hp}){cc['end']}")
+            enemy.damaged(self)
 
             if self.hp > 0 and nowDRP['room'][self.y][self.x] in s.stepableBlocks+s.interactableBlocks['canStepOn']:
                 nowDRP['room'][self.y][self.x] = self.icon
@@ -194,9 +211,7 @@ class observer(enemy):
                     nowDRP['room'][self.y][self.x] = self.icon
         else:
             self.coolTime -= 1
-            if len(s.hitPos) > 0 and [self.y, self.x] in s.hitPos:
-                self.hp -= s.atk
-                if self.hp > 0: addLog(f"{cc['fg']['F']}{self.name}{cc['end']}이(가) {cc['fg']['L']}{s.atk}{cc['end']}만큼의 피해를 입었습니다! {cc['fg']['R']}(체력 : {self.hp}){cc['end']}")
+            super().damaged()
             
             if self.hp > 0 and nowDRP['room'][self.y][self.x] in s.stepableBlocks+s.interactableBlocks['canStepOn']:
                 nowDRP['room'][self.y][self.x] = self.icon
