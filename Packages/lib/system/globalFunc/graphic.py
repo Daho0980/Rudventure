@@ -144,7 +144,7 @@ def fieldPrint(stdscr, grid:list):
     match s.showStateDesign:
         case 1:
             Display += f"hp : {cc['fg']['R']}{s.hp}/{s.Mhp}{cc['end']} | def : {cc['fg']['B1']}{s.df}/{s.Mdf}{cc['end']}\n"
-            Display += f"hunger : {cc['fg']['Y']}{(s.hunger/500)*100:0.0f}%{cc['end']} | atk : {cc['fg']['L']}{s.atk}{cc['end']}\n\n"
+            Display += f"hunger : {cc['fg']['Y']}{round(s.hunger/10)}%{cc['end']} | atk : {cc['fg']['L']}{s.atk}{cc['end']}\n\n"
         case 2:
             # hp => def => atk => hunger
             Display += ''.join([
@@ -159,11 +159,11 @@ def fieldPrint(stdscr, grid:list):
                     showEmptyCell=False
                     ),
                 statusBar(
-                    math.ceil(s.hunger/50),
+                    math.ceil(s.hunger/100),
                     statusName="hunger",
                     maxStatus=10,
                     color=cc['fg']['Y'],
-                    backTag=f"{cc['fg']['Y']}{s.hunger}{cc['end']}" if s.hunger <= 50 else f"{cc['fg']['Y']}{round(s.hunger/5)}%{cc['end']}",
+                    backTag=f"{cc['fg']['Y']}{s.hunger}{cc['end']}" if s.hunger <= 100 else f"{cc['fg']['Y']}{round(s.hunger/10)}%{cc['end']}",
                     end=True
                     )
                 ])

@@ -18,7 +18,7 @@ class player:
         s.atk      = 1
         s.critRate = 10
         s.critDMG  = 10
-        s.hunger   = 500
+        s.hunger   = 1000
         s.Mxp      = 10
 
     def start(Dy, Dx, y, x):
