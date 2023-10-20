@@ -160,18 +160,10 @@ class player:
                 case curses.KEY_RIGHT: cx = s.x + Int
 
             positions = [[cy, s.x], [s.y, cx]]
-            if roomGrid[positions[Type][0]][positions[Type][1]] in [s.wall, s.enemies["snippets"]["pain"], s.R, s.boss, s.box, s.fakeFloor, s.goal, s.squishy]:
+            if roomGrid[positions[Type][0]][positions[Type][1]] in [s.wall, s.enemies["snippets"]["pain"], s.R, s.box, s.fakeFloor, s.goal]:
                 s.y, s.x   = bfy, bfx
                 s.Dy, s.Dx = bfDy, bfDx
             else: s.Dungeon[s.Dy][s.Dx]['room'][positions[Type][0]][positions[Type][1]] = s.box
-
-        elif roomGrid[s.y][s.x] in s.squishy:
-            sound = "squish"
-            s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x] = s.squishy[0] if roomGrid[s.y][s.x] == s.squishy[1] else s.squishy[0]
-
-            s.y, s.x   = bfy, bfx
-            s.Dy, s.Dx = bfDy, bfDx
-            logger.addLog(f"{s.lightName}이(가) {cc['fg']['B1']}말랑이{cc['end']}를 만졌습니다 (말랑)")
 
         s.Dungeon[bfDy][bfDx]['room'][bfy][bfx] = s.floor
         s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x] = s.p1

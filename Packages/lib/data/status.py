@@ -131,7 +131,6 @@ welcomeMessage = []
 p1             = f"{customColor(0, 255, 10)}@{cColors['end']}" # 0, 255, 10
 p2             = "&"
 e              = '%'
-boss           = '#'
 
 enemies = {
     "snippets" : {
@@ -159,14 +158,14 @@ orbs = {
             f"{cColors['fg']['B1']}o{cColors['end']}",
             f"{cColors['fg']['L']}o{cColors['end']}",
             f"{cColors['fg']['Y']}o{cColors['end']}",
-            f"{cColors['fg']['F']}÷{cColors['end']}"
+            f"{cColors['fg']['F']}ø{cColors['end']}"
         ],
         "bigOne" : [
             f"{cColors['fg']['R']}O{cColors['end']}",
             f"{cColors['fg']['B1']}O{cColors['end']}",
             f"{cColors['fg']['L']}O{cColors['end']}",
             f"{cColors['fg']['Y']}O{cColors['end']}",
-            f"{cColors['fg']['F']}+{cColors['end']}"
+            f"{cColors['fg']['F']}Ø{cColors['end']}"
         ]
     },
     "type" : {
@@ -174,7 +173,7 @@ orbs = {
         "def"    : [f"{cColors['fg']['B1']}o{cColors['end']}", f"{cColors['fg']['B1']}O{cColors['end']}"],
         "atk"    : [f"{cColors['fg']['L']}o{cColors['end']}",  f"{cColors['fg']['L']}O{cColors['end']}"],
         "hunger" : [f"{cColors['fg']['Y']}o{cColors['end']}",  f"{cColors['fg']['Y']}O{cColors['end']}"],
-        "exp"    : [f"{cColors['fg']['F']}+{cColors['end']}",  f"{cColors['fg']['F']}÷{cColors['end']}"]
+        "exp"    : [f"{cColors['fg']['F']}ø{cColors['end']}",  f"{cColors['fg']['F']}Ø{cColors['end']}"]
     }
 }
 

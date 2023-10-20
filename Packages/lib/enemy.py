@@ -40,7 +40,7 @@ class enemy:
                     s.wall,
                     s.goal,
                     s.enemies["snippets"]["pain"],
-                    s.boss,
+                    s.enemies["snippets"]["unrest"],
                     s.item,
                     s.p1,
                     s.box,
