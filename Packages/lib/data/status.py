@@ -228,8 +228,9 @@ hitPos   = []
 option = False
 
 # Log system
-onDisplay = [] # max is 5
-onTime    = [] # max is 5
+maxStack  = 10
+onDisplay = []
+onTime    = []
 
 # In game print settings
 showStateDesign = 2 # normal = 1

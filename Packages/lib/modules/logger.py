@@ -19,8 +19,8 @@ def addLog(text, time=50):
         del s.onDisplay[0]
         del s.onTime[0]
 
-    if len(s.onDisplay) < 5   : add()
-    elif len(s.onDisplay) >= 5: remove(); add()
+    if len(s.onDisplay) < s.maxStack   : add()
+    elif len(s.onDisplay) >= s.maxStack: remove(); add()
 
 def clear(): s.onDisplay, s.onTime = [], []
 
