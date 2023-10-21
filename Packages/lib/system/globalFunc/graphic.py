@@ -121,11 +121,25 @@ def fieldPrint(stdscr, grid:list):
 
         `grid`(list(2d)) : 맵의 그래픽 데이터가 포함됨, 무조건 기입해야 함
     """
-    y, x = stdscr.getmaxyx()
+    y, x    = stdscr.getmaxyx()
     Display = ""
-    GFD = list(map(lambda x: ' '.join(x), grid))
+    GFD     = list(map(lambda x: ' '.join(x), grid))
     
-    # Map
+    # Status/XP
+    Display += statusBar(
+                int((s.xp/s.Mxp)*10),
+                maxStatus=10,
+                color=cc['fg']['F'],
+                frontTag= f"{cc['fg']['F']}{s.lvl}{cc['end']}",
+                backTag=f"{cc['fg']['F']}{s.lvl+1}{cc['end']}",
+                space=5,
+                showComma=False
+                )
+    # Stage
+    Display += "\n".join(GFD)+"\n" # room display
+    y   = round(y/2)-round(len(list(map(lambda l: len(escapeAnsi(l)), Display.split("\n"))))/2)
+    x   = round(x/2)-round(max(list(map(lambda l: len(escapeAnsi(l)), GFD)))/2)
+    addstrMiddle(stdscr, Display, y=y, x=x); Display = ""
 
     # Status
     match s.showStateDesign:
@@ -136,7 +150,6 @@ hunger : {cc['fg']['Y']}{round(s.hunger/10)}%{cc['end']} | atk : {cc['fg']['L']}
 
 """
         case 2:
-            # hp => def => atk => hunger
             Display += Textbox.TextBox(
                 ''.join([
                     statusBar(s.hp, statusName="hp", maxStatus=s.Mhp, space=5),
@@ -162,7 +175,8 @@ hunger : {cc['fg']['Y']}{round(s.hunger/10)}%{cc['end']} | atk : {cc['fg']['L']}
                 LineType    ='double'
             )
     stdscr.addstr(Display); Display = ""
-            
+
+    # Map
     if s.showDungeonMap:
         Display += Textbox.TextBox(
             dgm.gridMapReturn(
@@ -177,21 +191,7 @@ hunger : {cc['fg']['Y']}{round(s.hunger/10)}%{cc['end']} | atk : {cc['fg']['L']}
             )
     addstrMiddle(stdscr, Display, y=2, x=x-len(max(Display.split("\n")))); Display=""
 
-    # Status/XP
-    Display += statusBar(
-                int((s.xp/s.Mxp)*10),
-                maxStatus=10,
-                color=cc['fg']['F'],
-                frontTag= f"{cc['fg']['F']}{s.lvl}{cc['end']}",
-                backTag=f"{cc['fg']['F']}{s.lvl+1}{cc['end']}",
-                space=5,
-                showComma=False
-                )
-    Display += "\n".join(GFD)+"\n" # room display
-    y   = round(y/2)-round(len(list(map(lambda l: len(escapeAnsi(l)), Display.split("\n"))))/2)
-    x   = round(x/2)-round(max(list(map(lambda l: len(escapeAnsi(l)), GFD)))/2)
-    addstrMiddle(stdscr, Display, y=y, x=x); Display = ""
-
+    # Log
     Display += Textbox.TextBox(
         "\n".join(s.onDisplay),
         AMLS=True,
