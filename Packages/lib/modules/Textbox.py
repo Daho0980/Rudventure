@@ -23,6 +23,7 @@ def TextBox(Inp, Type="left", maxLine=100, fillChar=" ", inDistance=0, outDistan
         ``endLineBreak``(bool)                            : 개행 문자 여부, 기본적으로 `False`로 설정되어 있음\n
         ``LineType``(str["normal", "double", "bold"])     : 텍스트박스 테두리 종류 설정, 기본적으로 `"normal"`로 설정되어 있음\n
         """
+        if not len(Inp): Inp = "..."
         Display  = ""
 
         Line       = {

@@ -102,7 +102,7 @@ hunger       = 0
 xp           = 0
 Mxp          = 0
 lvl          = 0
-steppedBlock = '.'
+steppedBlock = ' '
 killCount    = 0
 
 # So MUCH useless but I cannot delete it because of in game systems. I'll delete it later.
@@ -141,7 +141,7 @@ enemies = {
     }
 }
 
-R              = '▤'
+R              = '.'
 box            = '☒'
 goal           = f"{cColors['fg']['R']}F{cColors['end']}"
 item           = f"{cColors['fg']['Y']}É{cColors['end']}"
@@ -150,7 +150,7 @@ squishy        = [f"{cColors['fg']['B1']}{cMarkdown(1)}O{cColors['end']}", f"{cC
 fakeFloor      = '∙'
 
 boxMark        = f"{cColors['fg']['R']}X{cColors['end']}"
-floor          = '.'
+floor          = ' '
 
 # hp -> def -> atk -> hng -> exp
 orbs = {

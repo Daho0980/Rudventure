@@ -149,8 +149,6 @@ class player:
                     s.Dungeon[roomPos[i][0]][roomPos[i][1]]['isPlayerVisited'] = 1
             s.Dungeon[s.Dy][s.Dx]['isPlayerHere'] = True
 
-        elif roomGrid[s.y][s.x] == ' ': s.hp, s.df = 0, 0
-
         elif roomGrid[s.y][s.x] == s.box:
             sound  = "move_box"
             cx, cy = 0, 0
