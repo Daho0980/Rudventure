@@ -138,6 +138,7 @@ TextBox.Line
             nameChangeCount += 1
             continue
 
+        if len(temporaryName) > 25: temporaryName = temporaryName[:25]+"..."
         changeNameResolution = cSelector.selector.main(
             t.TextBox(
                 f"{cc['fg']['Y']}   << {temporaryName} >>   {cc['end']}\n\n   이 이름이 맞습니까?   ",
