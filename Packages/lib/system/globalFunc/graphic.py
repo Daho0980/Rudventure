@@ -125,7 +125,23 @@ def fieldPrint(stdscr, grid:list):
     Display = ""
     GFD     = list(map(lambda x: ' '.join(x), grid))
     
-    # Status/XP
+
+    # Map
+    if s.showDungeonMap:
+        Display += Textbox.TextBox(
+            dgm.gridMapReturn(
+                s.Dungeon,
+                blank =1,
+                center=True), 
+            Type        ='middle',
+            fillChar    ='^',
+            AMLS        =True,
+            endLineBreak=True,
+            LineType    ='double'
+            )
+    addstrMiddle(stdscr, Display, y=2, x=x-len(max(Display.split("\n")))); Display=""
+
+    # Stage
     Display += statusBar(
                 int((s.xp/s.Mxp)*10),
                 maxStatus=10,
@@ -135,7 +151,6 @@ def fieldPrint(stdscr, grid:list):
                 space=5,
                 showComma=False
                 )
-    # Stage
     Display += "\n".join(GFD)+"\n" # room display
     y   = round(y/2)-round(len(list(map(lambda l: len(escapeAnsi(l)), Display.split("\n"))))/2)
     x   = round(x/2)-round(max(list(map(lambda l: len(escapeAnsi(l)), GFD)))/2)
@@ -174,22 +189,7 @@ hunger : {cc['fg']['Y']}{round(s.hunger/10)}%{cc['end']} | atk : {cc['fg']['L']}
                 AMLS        =True,
                 LineType    ='double'
             )
-    stdscr.addstr(Display); Display = ""
-
-    # Map
-    if s.showDungeonMap:
-        Display += Textbox.TextBox(
-            dgm.gridMapReturn(
-                s.Dungeon,
-                blank =1,
-                center=True), 
-            Type        ='middle',
-            fillChar    ='^',
-            AMLS        =True,
-            endLineBreak=True,
-            LineType    ='double'
-            )
-    addstrMiddle(stdscr, Display, y=2, x=x-len(max(Display.split("\n")))); Display=""
+    addstrMiddle(stdscr, Display, y=2, x=1); Display = ""
 
     # Log
     Display += Textbox.TextBox(
