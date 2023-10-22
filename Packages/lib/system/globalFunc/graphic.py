@@ -18,23 +18,25 @@ cc = s.cColors
 
 escapeAnsi = lambda line: re.compile(r'(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]').sub('', line)
 
-def addstrMiddle(stdscr, string:str, y=0, x=0, returnEndyx=False):
+def addstrMiddle(stdscr, string:str, y:int=0, x:int=0, returnEndyx:bool=False, returnStr:bool=False):
     lines = list(map(lambda l: len(escapeAnsi(l)), string.split("\n")))
     if y+x: y, x = y, x
     else:
         y, x = map(lambda n: round(n/2), list(stdscr.getmaxyx()))
         y, x = y-round(len(lines)/2), x-round(max(lines)/2)
-    stdscr.addstr(
-        ''.join(
-            [
-                escc for line in zip(
-                    [f"\033[{x};{_}H" for _ in range(y-1, y+(len(lines)))],
-                    string.split("\n")
-                    ) for escc in line
-                ]
-            )
+    output = ''.join(
+        [
+            escc for line in zip(
+                [f"\033[{x};{_}H" for _ in range(y-1, y+(len(lines)))],
+                string.split("\n")
+                ) for escc in line
+            ]
         )
-    if returnEndyx: return y+len(string.split("\n")), x
+    if not returnStr: stdscr.addstr(output)
+
+    if returnEndyx and returnStr:       return output, y+len(string.split("\n")), x
+    elif not returnEndyx and returnStr: return output
+    elif returnEndyx and not returnStr: return y+len(string.split("\n")), x
 
 def showStage(stdscr, stageNum:str, stageName:str, sound:str="smash"):
     """
@@ -123,12 +125,13 @@ def fieldPrint(stdscr, grid:list):
     """
     y, x    = stdscr.getmaxyx()
     Display = ""
+    buffer  = ""
     GFD     = list(map(lambda x: ' '.join(x), grid))
     
 
     # Map
     if s.showDungeonMap:
-        Display += Textbox.TextBox(
+        buffer = Textbox.TextBox(
             dgm.gridMapReturn(
                 s.Dungeon,
                 blank =1,
@@ -139,10 +142,10 @@ def fieldPrint(stdscr, grid:list):
             endLineBreak=True,
             LineType    ='double'
             )
-    addstrMiddle(stdscr, Display, y=2, x=x-len(max(Display.split("\n")))); Display=""
+        Display += addstrMiddle(stdscr, buffer, y=2, x=x-len(max(buffer.split("\n"))), returnStr=True)
 
     # Stage
-    Display += statusBar(
+    buffer = statusBar(
                 int((s.xp/s.Mxp)*10),
                 maxStatus=10,
                 color=cc['fg']['F'],
@@ -150,22 +153,25 @@ def fieldPrint(stdscr, grid:list):
                 backTag=f"{cc['fg']['F']}{s.lvl+1}{cc['end']}",
                 space=5,
                 showComma=False
-                )
-    Display += "\n".join(GFD)+"\n" # room display
-    y   = round(y/2)-round(len(list(map(lambda l: len(escapeAnsi(l)), Display.split("\n"))))/2)
-    x   = round(x/2)-round(max(list(map(lambda l: len(escapeAnsi(l)), GFD)))/2)
-    addstrMiddle(stdscr, Display, y=y, x=x); Display = ""
+                )+"\n".join(GFD)
+    Display += addstrMiddle(
+        stdscr,
+        buffer,
+        y=round(y/2)-round(len(list(map(lambda l: len(escapeAnsi(l)), buffer.split("\n"))))/2),
+        x=round(x/2)-round(max(list(map(lambda l: len(escapeAnsi(l)), GFD)))/2),
+        returnStr=True
+        )
 
     # Status
     match s.showStateDesign:
         case 1:
-            Display += f"""
+            buffer = f"""
 hp : {cc['fg']['R']}{s.hp}/{s.Mhp}{cc['end']} | def : {cc['fg']['B1']}{s.df}/{s.Mdf}{cc['end']}
 hunger : {cc['fg']['Y']}{round(s.hunger/10)}%{cc['end']} | atk : {cc['fg']['L']}{s.atk}{cc['end']}
 
 """
         case 2:
-            Display += Textbox.TextBox(
+            buffer = Textbox.TextBox(
                 ''.join([
                     statusBar(s.hp, statusName="hp", maxStatus=s.Mhp, space=5),
                     statusBar(s.df, statusName="def", maxStatus=s.Mdf, color=cc['fg']['B1'], space=4),
@@ -186,20 +192,22 @@ hunger : {cc['fg']['Y']}{round(s.hunger/10)}%{cc['end']} | atk : {cc['fg']['L']}
                         backTag=f"{cc['fg']['Y']}{s.hunger}{cc['end']}" if s.hunger <= 100 else f"{cc['fg']['Y']}{round(s.hunger/10)}%{cc['end']}",
                         )
                     ]),
-                AMLS        =True,
-                LineType    ='double'
+                AMLS     =True,
+                LineType ='double'
             )
-    addstrMiddle(stdscr, Display, y=2, x=1); Display = ""
+    Display += addstrMiddle(stdscr, buffer, y=2, x=1, returnStr=True)
 
     # Log
-    Display += Textbox.TextBox(
-        "\n".join(s.onDisplay),
-        AMLS=True,
-        LineType='double'
-    )
-    addstrMiddle(
+    Display += addstrMiddle(
         stdscr,
-        Display,
+        Textbox.TextBox(
+            "\n".join(s.onDisplay),
+            AMLS=True,
+            LineType='double'
+        ),
         y=list(stdscr.getmaxyx())[0]-(1 if not len(s.onDisplay) else len(s.onDisplay)),
-        x = 0
+        x = 0,
+        returnStr=True
     )
+
+    stdscr.addstr(Display)
