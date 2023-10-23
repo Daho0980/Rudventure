@@ -36,7 +36,7 @@ def addEntity(entityType:int, initHp:int, Dy:int, Dx:int, y:list, x:list):
     a = 0
     while 1:
         if Name + f"_{a}" not in s.entities:
-            Name  = str(Name + f"_{a}")
+            Name  = str(      Name + f"_{a}"       )
             Rname = str(kinds[entityType] + f"_{a}")
             break
         a += 1
@@ -76,8 +76,8 @@ while s.main == 1:
 s.Dungeon[{Name}.Dy][{Name}.Dx]['room'][{Name}.y][{Name}.x] = s.stepableBlocks[s.stepableBlocks.index({Name}.stepped)]
 if s.main == 1 and s.killAll == False: xps.getXP(xpType[entityType])
         """, nameSpace)
-        if s.main == 1 and s.killAll == False:
+        if s.main == 1 and not s.killAll:
             play("monster_dead")
-            logger.addLog(f"{s.cColors['fg']['F']}{Name}{s.cColors['end']}이(가) 죽었습니다!")
             s.killCount += 1
+            logger.addLog(f"{s.cColors['fg']['F']}{Name}{s.cColors['end']}이(가) 죽었습니다!")
     threading.Thread(target=EntityInteraction, name=Rname, daemon=True).start()

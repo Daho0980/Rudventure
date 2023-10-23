@@ -34,8 +34,8 @@ def TextBox(Inp, Type="left", maxLine=100, fillChar=" ", inDistance=0, outDistan
         Texts      = Inp.split("\n")
         FrontSpace = ""
         BackSpace  = ""
-        endLine    = "\n" if endLineBreak == True else ""
-        if AMLS == True:
+        endLine    = "\n" if endLineBreak else ""
+        if AMLS:
             maxLine = 0
             for i in Texts:
                 if maxLine < checkActualLen(escapeAnsi(i)): maxLine = checkActualLen(escapeAnsi(i))
@@ -55,6 +55,7 @@ def TextBox(Inp, Type="left", maxLine=100, fillChar=" ", inDistance=0, outDistan
                     FrontSpace = fillChar*int((maxLine-space)/2)
                     BackSpace  = fillChar*(int((maxLine-space)/2) if (maxLine-space)%2 == 0 else int((maxLine-space)/2)+1)
                 elif Type == "right" : FrontSpace = fillChar*(maxLine-space)
+                
                 Display += (Line[LineType][3][1]+FrontSpace)+Texts[i]+(BackSpace+Line[LineType][3][1])+"\n"
         Display += (Line[LineType][3][1]+fillChar*maxLine+Line[LineType][3][1]+"\n")*inDistance
         Display += Line[LineType][1][0]+Line[LineType][3][0]*(maxLine)+Line[LineType][1][1]+endLine

@@ -42,9 +42,7 @@ roomIcons = [
     ]
 
 # ---------- Graphic section ----------
-def escapeAnsi(line):
-    ansi_escape =re.compile(r'(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]')
-    return ansi_escape.sub('', line)
+escapeAnsi = lambda line: re.compile(r'(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]').sub('', line)
 
 def GraphicMaker(MapData:list):
     """
@@ -75,9 +73,7 @@ def gridMapReturn(grid:list, blank=0, center=False):
     if center == True:
         DisplayMap = []
         for row in range(9):
-            newRow = []
-            for column in range(9): newRow.append(" ")
-            DisplayMap.append(newRow)
+            DisplayMap.append([" "]*9)
         toolY, toolX = 4-s.Dy, 4-s.Dx
 
         for row in range(len(DisplayMap)):
@@ -102,8 +98,7 @@ def gridMapReturn(grid:list, blank=0, center=False):
                         case 0: DisplayMap[row][column] = ' '
                         case 1: DisplayMap[row][column] = f"{cc['fg']['F']}?{cc['end']}"
 
-    for i in range(len(DisplayMap)):
-        output += blanks+' '.join(map(str, DisplayMap[i]))+blanks+"\n" if i != len(DisplayMap)-1 else blanks+' '.join(map(str, DisplayMap[i]))+blanks
+    for i in range(len(DisplayMap)): output += blanks+' '.join(map(str, DisplayMap[i]))+blanks+"\n" if i != len(DisplayMap)-1 else blanks+' '.join(map(str, DisplayMap[i]))+blanks
 
     return output
 
@@ -219,14 +214,15 @@ def makeRoom(Map:list):
                 
                 for i in range(len(p)):
                     if len(output[p[i][0]][p[i][1]]) > 0 and output[p[i][0]][p[i][1]]["roomType"] != 4 and not random.randrange(0, 3):
-                        output[row][column]['doorPos'][dp[i][0]]                     = 1
-                        output[p[i][0]][p[i][1]]['doorPos'][dp[i][1]]                = 1
+                        output[row][column]['doorPos'][dp[i][0]]      = 1
+                        output[p[i][0]][p[i][1]]['doorPos'][dp[i][1]] = 1
 
-                        output[row][column]['room'][grd[i][0][0]][grd[i][0][1]]      = s.R
-                        if dp[i][0] in ['U', 'D']  : output[row][column]['room'][grd[i][0][0]][grd[i][0][1]-1], output[row][column]['room'][grd[i][0][0]][grd[i][0][1]+1] = s.R, s.R
+                        output[row][column]['room'][grd[i][0][0]][grd[i][0][1]] = s.R
+                        if   dp[i][0] in ['U', 'D']: output[row][column]['room'][grd[i][0][0]][grd[i][0][1]-1], output[row][column]['room'][grd[i][0][0]][grd[i][0][1]+1] = s.R, s.R
                         elif dp[i][0] in ['L', 'R']: output[row][column]['room'][grd[i][0][0]-1][grd[i][0][1]], output[row][column]['room'][grd[i][0][0]+1][grd[i][0][1]] = s.R, s.R
+
                         output[p[i][0]][p[i][1]]['room'][grd[i][1][0]][grd[i][1][1]] = s.R
-                        if dp[i][0] in ['U', 'D']  : output[p[i][0]][p[i][1]]['room'][grd[i][1][0]][grd[i][1][1]-1], output[p[i][0]][p[i][1]]['room'][grd[i][1][0]][grd[i][1][1]+1] = s.R, s.R
+                        if   dp[i][0] in ['U', 'D']: output[p[i][0]][p[i][1]]['room'][grd[i][1][0]][grd[i][1][1]-1], output[p[i][0]][p[i][1]]['room'][grd[i][1][0]][grd[i][1][1]+1] = s.R, s.R
                         elif dp[i][0] in ['L', 'R']: output[p[i][0]][p[i][1]]['room'][grd[i][1][0]-1][grd[i][1][1]], output[p[i][0]][p[i][1]]['room'][grd[i][1][0]+1][grd[i][1][1]] = s.R, s.R
     return output
 
@@ -266,13 +262,11 @@ def initBranch(Map:list, y:int, x:int, rawPrint=False, showAll=False):
         nonlocal y, x
         y, x = bfy, bfx
 
-    # 나무와 가지 알고리즘을 사용한 던전 생성
     endCount = 0
     while nowLength < maxBranchLength:
         bfy, bfx = y, x
-#                        | 0 | 1 | 2 |
 #         locationData = ['', 0, '']
-#          └─ 0:axis, 1:movement, 2:direction
+#                        └─> 0:axis, 1:movement, 2:direction
         locationData        = possibility[random.randrange(0,4)]
         coordinateNamespace = {'x':x, 'y':y}
         
@@ -284,13 +278,22 @@ def initBranch(Map:list, y:int, x:int, rawPrint=False, showAll=False):
             continue
         if Map[y][x]["roomIcon"] in roomIcons: # 방 덮어쓰기 방지
             p = [
-                [y-1 if y>0 else y, x],
-                [y+1 if y<len(Map)-1 else y, x],
-                [y, x-1 if x>0 else x],
-                [y, x+1 if x<len(Map[0])-1 else x]
+                [y-1    if y>0             else y, x],
+                [y+1    if y<len(Map)-1    else y, x],
+                [y, x-1 if x>0             else x   ],
+                [y, x+1 if x<len(Map[0])-1 else x   ]
                 ]
-            if None not in [Map[p[0][0]][p[0][1]]['roomType'], Map[p[1][0]][p[1][1]]['roomType'], Map[p[2][0]][p[2][1]]['roomType'], Map[p[3][0]][p[3][1]]['roomType']] or [y, x] in p:
-                Map[y][x] = {"roomIcon":roomIcons[4], "doorPos":Map[y][x]['doorPos'], "roomType":4, "isPlayerHere":False, "isPlayerVisited":2, "summonCount":1, "interaction":False}
+            if None not in [Map[p[0][0]][p[0][1]]['roomType'], Map[p[1][0]][p[1][1]]['roomType'], Map[p[2][0]][p[2][1]]['roomType'], Map[p[3][0]][p[3][1]]['roomType']] or\
+                [y, x] in p:
+                Map[y][x] = {
+                    "roomIcon"       :roomIcons[4],
+                    "doorPos"        :Map[y][x]['doorPos'],
+                    "roomType"       :4,
+                    "isPlayerHere"   :False,
+                    "isPlayerVisited":2,
+                    "summonCount"    :1,
+                    "interaction"    :False
+                    }
                 break
             elif endCount >= 8:
                 Map = False
@@ -307,13 +310,13 @@ def initBranch(Map:list, y:int, x:int, rawPrint=False, showAll=False):
 
         if selectRoomKind == 2: # 이벤트 방
             if nowEventRoomCount >= maxEventRoomCount: selectRoomKind = 1
-                # ^조건문 포함 텍스트 print(f"\033[32mEventroom\033[0m was changed in \033[31mnowLength:{nowLength} [{y}, {x}]\033[0m")
+                # f"\033[32mEventroom\033[0m was changed in \033[31mnowLength:{nowLength} [{y}, {x}]\033[0m"
             else: nowEventRoomCount += 1
 
         elif selectRoomKind in [3, 5]: # 보물 방
             selectRoomKind = 3
             if nowTreasureBoxRoomCount >= maxTreasureBoxRoomCount: selectRoomKind = 1
-                # ^조건문 포함 텍스트 print(f"\033[33mTreasureBoxroom\033[0m was changed in \033[31mnowLength:{nowLength} [{y}, {x}]\033[0m")
+                # f"\033[33mTreasureBoxroom\033[0m was changed in \033[31mnowLength:{nowLength} [{y}, {x}]\033[0m"
             else: nowTreasureBoxRoomCount += 1
 
         elif selectRoomKind != 4: selectRoomKind = 1
@@ -336,7 +339,7 @@ def initBranch(Map:list, y:int, x:int, rawPrint=False, showAll=False):
         Map[y][x]["summonCount"]                  = 1 if selectRoomKind == 4 else 0 if selectRoomKind in [2, 3] else size
 
     if rawPrint == False and not Map: return GraphicMaker(Map)
-    else                 : return Map
+    else:                             return Map
 
 def DungeonMaker(showAll=False):
     """

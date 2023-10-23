@@ -34,9 +34,9 @@ def addstrMiddle(stdscr, string:str, y:int=0, x:int=0, returnEndyx:bool=False, r
         )
     if not returnStr: stdscr.addstr(output)
 
-    if returnEndyx and returnStr:       return output, y+len(string.split("\n")), x
-    elif not returnEndyx and returnStr: return output
-    elif returnEndyx and not returnStr: return y+len(string.split("\n")), x
+    if       returnEndyx and     returnStr: return output, y+len(string.split("\n")), x
+    elif not returnEndyx and     returnStr: return output
+    elif     returnEndyx and not returnStr: return y+len(string.split("\n")), x
 
 def showStage(stdscr, stageNum:str, stageName:str, sound:str="smash"):
     """
@@ -58,7 +58,8 @@ def showStage(stdscr, stageNum:str, stageName:str, sound:str="smash"):
             )
         ); stdscr.refresh()
     time.sleep(1.6)
-    stdscr.clear(); stdscr.refresh(); play(sound)
+    stdscr.clear(); stdscr.refresh()
+    play(sound)
     addstrMiddle(
         stdscr,
         Textbox.TextBox(
@@ -72,7 +73,8 @@ def showStage(stdscr, stageNum:str, stageName:str, sound:str="smash"):
             )
         ); stdscr.refresh()
     time.sleep(1.6)
-    stdscr.clear(); stdscr.refresh(); play(sound)
+    stdscr.clear(); stdscr.refresh()
+    play(sound)
 
 def statusBar(
         status:int,
@@ -102,13 +104,13 @@ def statusBar(
     """
     Display  = ""
     spaceLen = " "*space
-    Display += f"{statusName} :{spaceLen}{frontTag} [{color}" if len(statusName) > 0 else f"{spaceLen}{frontTag} [{color}"
     maxStatus = status if maxStatus == 0 else maxStatus
+
+    Display += f"{statusName} :{spaceLen}{frontTag} [{color}" if len(statusName) > 0 else f"{spaceLen}{frontTag} [{color}"
     if usePercentage:
         status    = round((status/maxStatus)*10)
         maxStatus = 10
-    elif usePercentage == False:
-        statusForDisplay = maxStatus if status > maxStatus else status
+    elif not usePercentage: statusForDisplay = maxStatus if status > maxStatus else status
     
     Display += ('|'*statusForDisplay + cc['fg']['G1'] + '|'*((maxStatus-statusForDisplay) if showEmptyCell else 0) + f"{cc['end']}]")
     if status - maxStatus > 0: Display += f" {color}+{status-maxStatus}{cc['end']}"
@@ -148,10 +150,10 @@ def fieldPrint(stdscr, grid:list):
     buffer = statusBar(
                 int((s.xp/s.Mxp)*10),
                 maxStatus=10,
-                color=cc['fg']['F'],
-                frontTag= f"{cc['fg']['F']}{s.lvl}{cc['end']}",
-                backTag=f"{cc['fg']['F']}{s.lvl+1}{cc['end']}",
-                space=5,
+                color    =cc['fg']['F'],
+                frontTag = f"{cc['fg']['F']}{s.lvl}{cc['end']}",
+                backTag  =f"{cc['fg']['F']}{s.lvl+1}{cc['end']}",
+                space    =5,
                 showComma=False
                 )+"\n".join(GFD)
     Display += addstrMiddle(
@@ -205,9 +207,9 @@ hunger : {cc['fg']['Y']}{round(s.hunger/10)}%{cc['end']} | atk : {cc['fg']['L']}
             AMLS=True,
             LineType='double'
         ),
-        y=list(stdscr.getmaxyx())[0]-(1 if not len(s.onDisplay) else len(s.onDisplay)),
-        x = 0,
+        y        =list(stdscr.getmaxyx())[0]-(1 if not len(s.onDisplay) else len(s.onDisplay)),
+        x        =0,
         returnStr=True
     )
 
-    stdscr.addstr(Display)
+    stdscr.erase(); stdscr.addstr(Display)

@@ -87,12 +87,7 @@ class selector:
             return row, column
         
         def lenConverter(subtitle:list) -> list:
-            def checkLen(text) -> int:
-                total = 0
-                for letter in text:
-                    total += 2 if ord('가') <= ord(letter) <= ord('힣') else 1
-                return total
-            
+            checkLen = lambda text: sum(map(lambda letter: 2 if ord('가')<=ord(letter)<=ord('힣')else 1, text))
             output = []
             for i, row in enumerate(subtitle):
                 output.append([])
@@ -110,7 +105,7 @@ class selector:
             subtitleLine = ""
             for _ in range(len(subtitle)):
                 row, column   = positionOutput(subtitle, row, column)
-                menuSpace = max(subtitleLen[row]) - subtitleLen[row][column]
+                menuSpace     = max(subtitleLen[row]) - subtitleLen[row][column]
                 subtitleLine += f"{arrow[row][column]} {subtitle[row][column]}{' '*menuSpace}{' '*lineSpace}"
             Display += f"{subtitleLine}\n"
         y, x = map(lambda n: round(n/2), list(stdscr.getmaxyx()))
@@ -122,13 +117,12 @@ class selector:
 
     def system(stdscr, title, subtitle, color, icon, maxLine, lineSpace, tag, frontTag):
         stdscr = curses.initscr()
-        if not isinstance(stdscr, Cusser):
-            stdscr = Cusser(stdscr)
+        if not isinstance(stdscr, Cusser): stdscr = Cusser(stdscr)
 
         subtitleKeys   = []
         subtitleValues = []
         Enter          = '\n\n'
-        basicsColors         = {
+        basicColors   = {
             0 : '0', # end
             1 : '41', # red
             2 : '100' # grey
@@ -145,31 +139,28 @@ class selector:
         else:
             subtitleKeys = subtitle
         if   isinstance(title, list): Enter      = '\n' # title이 list면 title이랑 subtitle 사이의 공백 제거
-        if   isinstance(color, int):  arrowColor = f"\033[{basicsColors[color]}m" # 화살표 기본색 간단설정
+        if   isinstance(color, int ): arrowColor = f"\033[{basicColors[color]}m" # 화살표 기본색 간단설정
         elif isinstance(color, list): arrowColor = s.customColor(color[1], color[2], color[3], color[0]) # 세부 RGB 설정
         subtitleKeys = selector.Change2D(subtitleKeys, maxLine)
         a            = 0
         while 1:
             if subtitleKeys[a] == '': # a번째 subtitle이 빈칸일 때
                 if a == len(subtitleKeys) - 1: # 근데 그게 마지막일 때
-                    subtitleKeys = {'Why did you do...' : 'WHY...'} # 이스터에그 생성
-                    a            = 0
+                    subtitleKeys, a = {'Why did you do...' : 'WHY...'}, 0 # 이스터에그 생성
                     break
                 else: a += 1 # 아니면 올리기
             else: break
         nowSelectColumn = a # 현재 세로 위치 최초 설정
         nowSelectRow    = 0
         arrow           = [] # 아이콘이 존재할 리스트
-        for i in range(len(subtitleKeys)):
-            arrow.append([])
-            for j in range(maxLine): arrow[i].append(' ')
+        for _ in range(len(subtitleKeys)): arrow.append([' ']*maxLine)
 
         while 1:
             stdscr.clear(); stdscr.refresh()
             arrow[nowSelectRow][nowSelectColumn] = f'{arrowColor}{icon}' # 화살표 위치 설정
-            if nowSelectRow        < len(subtitleKeys)-1:               arrow[nowSelectRow+1][nowSelectColumn] = f"{cc['end']} " # 다음 가로줄이 존재할 때: 다음 가로줄의 nowSelectColumn번째 요소를 기본색, 상태로 되돌린다(색 전염 방지)
+            if nowSelectRow        < len(subtitleKeys)-1              : arrow[nowSelectRow+1][nowSelectColumn] = f"{cc['end']} " # 다음 가로줄이 존재할 때: 다음 가로줄의 nowSelectColumn번째 요소를 기본색, 상태로 되돌린다(색 전염 방지)
             if nowSelectRow        > 0 and nowSelectColumn < maxLine-1: arrow[0][nowSelectColumn+1]            = f"{cc['end']} " # 이전 가로줄이 존재하고 맨 아래쪽 줄이 아닐 때: 첫 가로줄의 아랫칸을 기본색, 상태로 되돌린다(색 전염 방지22)
-            if nowSelectColumn + 1 < maxLine:                           arrow[nowSelectRow][nowSelectColumn+1] = f"{cc['end']} " # 현재 위치 + 1이 subtitle 최대 개수보다 적을 때: 다음칸을 기본색, 상태로 되돌린다(색 전염 방지333)
+            if nowSelectColumn + 1 < maxLine                          : arrow[nowSelectRow][nowSelectColumn+1] = f"{cc['end']} " # 현재 위치 + 1이 subtitle 최대 개수보다 적을 때: 다음칸을 기본색, 상태로 되돌린다(색 전염 방지333)
             display, y, x = selector.returnDisplay(
                                             stdscr,
                                             title,

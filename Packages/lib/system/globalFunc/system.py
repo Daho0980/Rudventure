@@ -28,8 +28,8 @@ def cinp(
         y:int    =0,
         x:int    =0
     ):
-    if echo   == True: curses.echo()
-    if cursor == True: curses.curs_set(1)
+    if echo:   curses.echo()
+    if cursor: curses.curs_set(1)
 
     if not text.isspace():
         if useMiddle: addstrMiddle(stdscr, f"{text}{end}", x=x, y=y)
@@ -38,8 +38,8 @@ def cinp(
     try:    Inp = stdscr.getstr().decode("utf-8")
     except: Inp = ""
 
-    if echo   == True: curses.noecho()
-    if cursor == True: curses.curs_set(0)
+    if echo:   curses.noecho()
+    if cursor: curses.curs_set(0)
 
     return escapeAnsi(Inp)
 
@@ -59,8 +59,9 @@ def placeRandomBlock(block:str, y:list, x:list, allowedBlocks:list):
     while 1:
         Ry, Rx = random.randrange(y[0], y[1]), random.randrange(x[0], x[1])
         if s.Dungeon[s.Dy][s.Dx]['room'][Ry][Rx] not in allowedBlocks: continue
-        s.Dungeon[s.Dy][s.Dx]['room'][Ry][Rx] = block
         break
+        
+    s.Dungeon[s.Dy][s.Dx]['room'][Ry][Rx] = block
 
 # def upgradeStatus():
 #     print(f"{s.markdown([2, 3])}Enter를 한 번 눌러주세요{cc['end']}")
@@ -92,7 +93,7 @@ class xpSystem:
             s.lvl += 1
             s.Mxp += 3
             if count > s.xp: count -= s.xp
-            else: count -= (s.Mxp - s.xp)
+            else:            count -= (s.Mxp-s.xp)
             s.xp = 0
         s.xp += count
 
@@ -103,7 +104,6 @@ class xpSystem:
             `count`(int) : xp 감소율
         """
         bfxp, bfMxp, bfLvl = s.xp, s.Mxp, s.lvl
-        a = s.lvl
 
         while count > 0:
             if s.xp < count:
@@ -155,22 +155,22 @@ class roomChecker:
                 choiced[1],
                 Dy=s.Dy,
                 Dx=s.Dx,
-                y=[1, len(data['room'])-2],
-                x=[1, len(data['room'][0])-2]
+                y =[1, len(data['room'])-2   ],
+                x =[1, len(data['room'][0])-2]
                 )
     
     def placeRandomOrbs():
         roomGrid = s.Dungeon[s.Dy][s.Dx]['room']
-        for i in range(random.randrange(2, 6)):
+        for _ in range(random.randrange(2, 6)):
             sizeIndex = random.randrange(0, 2)
 
             typeIndex = None
-            percent = random.randrange(1, 101)
-            if   percent > 0  and percent <= 45: typeIndex = "hunger"
-            elif percent > 45 and percent <= 70: typeIndex = "hp"
-            elif percent > 70 and percent <= 80: typeIndex = "def"
-            elif percent > 80 and percent <= 85: typeIndex = "atk"
-            else                               : typeIndex = "exp"
+            rate = random.randrange(1, 101)
+            if   rate > 0  and rate <= 45: typeIndex = "hunger"
+            elif rate > 45 and rate <= 70: typeIndex = "hp"
+            elif rate > 70 and rate <= 80: typeIndex = "def"
+            elif rate > 80 and rate <= 85: typeIndex = "atk"
+            else                         : typeIndex = "exp"
 
             placeRandomBlock(
                 s.orbs['type'][typeIndex][sizeIndex],
@@ -182,7 +182,7 @@ class roomChecker:
     def main():
         data = s.Dungeon[s.Dy][s.Dx]
 
-        if l.jpsf == 1 and data['interaction'] == False:
+        if l.jpsf and data['interaction'] == False:
             commentP = True if random.randrange(1, 3) == 1 else False
             match data['roomType']:
                 case 1:
@@ -193,7 +193,7 @@ class roomChecker:
                         data['summonCount'] = 0
                         s.roomLock          = True
                         roomChecker.changeDoorPosBlock(s.wall, data)
-                    elif len(s.entities) == 0 and s.roomLock == True:
+                    elif len(s.entities) == 0 and s.roomLock:
                         play("open_door")
 
                         s.roomLock                           = False
@@ -208,6 +208,7 @@ class roomChecker:
                 case 3:
                     rewardP = random.randrange(1, 101)
                     comment = ""
+
                     if rewardP > 30:
                         s.Dungeon[s.Dy][s.Dx]['room'][6][6] = s.item
                         if commentP: comment = random.choice(c.treasureRoomComment[0])
@@ -231,11 +232,11 @@ class roomChecker:
                         data['summonCount'] = 0
                         s.roomLock          = True
                         roomChecker.changeDoorPosBlock(s.wall, data)
-                    elif len(s.entities) == 0 and s.roomLock == True:
+                    elif len(s.entities) == 0 and s.roomLock:
                         play("open_door")
 
                         s.roomLock = False
-                        s.Dungeon[s.Dy][s.Dx]['room'][6][6] = s.goal
+                        s.Dungeon[s.Dy][s.Dx]['room'][6][6]  = s.goal
                         s.Dungeon[s.Dy][s.Dx]['interaction'] = True
                         roomChecker.placeRandomOrbs()
                         roomChecker.changeDoorPosBlock(s.R, data)

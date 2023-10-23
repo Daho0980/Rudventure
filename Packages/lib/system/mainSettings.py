@@ -12,20 +12,14 @@ cc   = s.cColors
 
 def init(stdscr):
     play("smash")
-    a, b = [], []
-    for i in list(cc['bg'].keys())[:8]: a.append(f"{cc['bg'][i]}   ")
-    for i in list(cc["bg"].keys())[8:16]: b.append(f"{cc['bg'][i]}   ")
+    a, b = [f"{cc['bg'][i]}   " for i in list(cc['bg'].keys())[:8]], [f"{cc['bg'][i]}   " for i in list(cc["bg"].keys())[8:16]]
 
     system.cinp(
         stdscr,
         "색이 잘 보이는지 확인해주세요:\n"+f"{cc['end']}\n".join(
-            [
-                ''.join(a),
-                ''.join(b)
-                ]
+            [''.join(a), ''.join(b)]
             )+f"{cc['end']}\n\n{cc['fg']['L']}@ 확인{cc['end']}"
         )
-    # system.cinp(stdscr, f"{cc['end']}\n\n{cc['fg']['L']}@ 확인{cc['end']}", echo=False)
     
     play("select")
     stdscr.clear(); stdscr.refresh()
@@ -45,7 +39,6 @@ def init(stdscr):
         s.frame = [1, 30, 60, 0][selectFrame-1]; play("smash")
 
     play("crack")
-    # stdscr.addstr(s.LOGO); stdscr.refresh()
     grp.addstrMiddle(stdscr, s.LOGO); stdscr.refresh()
 
     time.sleep(1.5)
@@ -139,7 +132,8 @@ TextBox.Line
             continue
 
         if len(temporaryName) > 25: temporaryName = temporaryName[:25]+"..."
-        changeNameResolution = cSelector.selector.main(
+        
+        match cSelector.selector.main(
             t.TextBox(
                 f"{cc['fg']['Y']}   << {temporaryName} >>   {cc['end']}\n\n   이 이름이 맞습니까?   ",
                 Type        ="middle",
@@ -150,9 +144,7 @@ TextBox.Line
             ["네", "아니오", "", "그냥 정해주세요..."] if reTryCount >= 3 else ["네", "아니오"],
             [1,0,255,10],
             '@'
-        )
-
-        match changeNameResolution:
+        ):
             case 1: break
             case 2: reTryCount += 1; continue
             case 3:
@@ -169,11 +161,11 @@ TextBox.Line
                     [1,0,255,10],
                     '@'
                 )
-                if nameSuggestions == 1:   break
+                if   nameSuggestions == 1: break
                 elif nameSuggestions == 2: reTryCount += 1; continue
 
     s.name, s.lightName = temporaryName, f"{cc['fg']['Y']}{temporaryName}{cc['end']}"
-    s.welcomeMessage = [f"나락에 오신 걸 환영합니다, {s.lightName}님.", 
+    s.welcomeMessage    = [f"나락에 오신 걸 환영합니다, {s.lightName}님.", 
                         f"오실 때 {cc['fg']['R']}{s.cMarkdown(1)}피자{cc['end']}는 가져오셨죠? 장난입니다, {s.lightName}님.",
                         f"기다리느라 목 빠지는 줄 알았습니다, {s.lightName}님."
                         ]

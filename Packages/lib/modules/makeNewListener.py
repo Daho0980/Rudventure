@@ -11,8 +11,8 @@ l, s = lockers, status
 
 def newAddListener():
     def interactions(stdscr):
-        while s.main == 1:
-            if l.jpsf == 1:
+        while s.main:
+            if l.jpsf:
                 key = stdscr.getch()
                 
                 if   key in [curses.KEY_UP, curses.KEY_DOWN, curses.KEY_LEFT, curses.KEY_RIGHT]: p.move(key, 1)
@@ -22,6 +22,4 @@ def newAddListener():
                     s.showDungeonMap = 1 if s.showDungeonMap == 0 else 0
             else: time.sleep(1)
 
-    def listenerRunner(): curses.wrapper(interactions)
-
-    threading.Thread(name="keyListener",target=listenerRunner).start()
+    threading.Thread(name="keyListener",target=lambda: curses.wrapper(interactions)).start()

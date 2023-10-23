@@ -15,5 +15,11 @@ def play(File:str, raw:bool=False):
         `File`     : 사운드의 이름, 이름을 정확하게 하지 않으면 지랄발광을 할 수 있음, 무조건 기입해야 함, 또한 raw == True일 시 파일 위치 작성 가능\n
         `raw`      : 사운드 파일 위치를 직접 입력할지에 대한 여부, 기본적으로 `False`로 설정되어 있음
     """
-    def s1(): playsound.playsound(f"{s.TFP}sounds{s.s}{File}.wav" if raw == False else File)
-    if s.sound == True: threading.Thread(target=s1, name="sound", daemon=True).start()
+    if s.sound:
+        threading.Thread(
+            target=lambda: playsound.playsound(
+                f"{s.TFP}sounds{s.s}{File}.wav" if raw == False else File
+                ),
+            name  ="sound",
+            daemon=True
+            ).start()

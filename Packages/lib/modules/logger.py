@@ -13,11 +13,11 @@ def addLog(text, time=50):
     def add():
         nonlocal text
         s.onDisplay.append(text)
-        s.onTime.append(time)
+        s.onTime.append   (time)
 
     def remove():
         del s.onDisplay[0]
-        del s.onTime[0]
+        del s.onTime   [0]
 
     if len(s.onDisplay) < s.maxStack   : add()
     elif len(s.onDisplay) >= s.maxStack: remove(); add()
@@ -25,17 +25,13 @@ def addLog(text, time=50):
 def clear(): s.onDisplay, s.onTime = [], []
 
 def logChecker():
-    while s.main == 1:
-        if l.jpsf == 1:
+    while s.main:
+        if l.jpsf:
             time.sleep(0.1)
-            if len(s.onTime) > 0:
-                for i in range(len(s.onTime)): s.onTime[i] = s.onTime[i]-1
-                
-            while 1:
-                if 0 in s.onTime:
-                    del s.onDisplay[s.onTime.index(0)]
-                    del s.onTime[s.onTime.index(0)]
-                else: break
+            if len(s.onTime) > 0: s.onTime = list(map(lambda t: t-1, s.onTime))
+            while 0 in s.onTime:
+                del s.onDisplay[s.onTime.index(0)]
+                del s.onTime   [s.onTime.index(0)]
         else: time.sleep(1)
 
 threading.Thread(target=logChecker, name="logger", daemon=True).start()

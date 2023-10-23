@@ -10,8 +10,7 @@ from   Packages.lib.system.globalFunc          import entity,       graphic,    
 from   Packages.lib.system.globalFunc.sound    import play
 
 stdscr = curses.initscr()
-if not isinstance(stdscr, Cusser):
-    stdscr = Cusser(stdscr)
+if not isinstance(stdscr, Cusser): stdscr = Cusser(stdscr)
 
 quickStarter            = 0
 roomNames               = [
@@ -55,12 +54,12 @@ def gameChecker(stdscr):
                 stdscr,
                 t.TextBox(
                     f"   사 망 하 셨 습 니 다   \n\n   \"{comment}\"   ",
-                    Type="middle",
-                    inDistance=1,
-                    outDistance=1,
-                    AMLS=True,
+                    Type        ="middle",
+                    inDistance  =1,
+                    outDistance =1,
+                    AMLS        =True,
                     endLineBreak=True,
-                    LineType="bold"
+                    LineType    ="bold"
                     ),
                     returnEndyx=True
                 )
@@ -81,6 +80,7 @@ def gameChecker(stdscr):
                 y += 2 if text == "사인" else 1
             play("smash")
             system.cinp(stdscr, "Enter를 눌러 윤회 끝내기__", echo=False, y=y+2, x=x)
+
             play("crack")
             s.main = 0
             curses.endwin()
@@ -93,12 +93,12 @@ def gameChecker(stdscr):
                 stdscr,
                 t.TextBox(
                     f"   지 배   성 공   \n\n   \"{random.choice(c.victoryComment)}\"   ",
-                    Type="middle",
-                    inDistance=1,
-                    outDistance=1,
-                    AMLS=True,
+                    Type        ="middle",
+                    inDistance  =1,
+                    outDistance =1,
+                    AMLS        =True,
                     endLineBreak=True,
-                    LineType="bold"
+                    LineType    ="bold"
                     )
                 )
             stdscr.addstr(cc['end']); stdscr.refresh()
@@ -131,9 +131,8 @@ while s.main:
 
     l.jpsf = 1
     while not q.quest():
-        if s.hp <= 0 or s.hunger <= 0 or s.main != 1: break
+        if s.hp <= 0 or s.hunger <= 0 or not s.main: break
         if l.jpsf:
-            stdscr.erase()
             playerChecker()
             grp.fieldPrint(stdscr, s.Dungeon[s.Dy][s.Dx]['room'])
             if not quickStarter: stdscr.refresh(); quickStarter += 1
