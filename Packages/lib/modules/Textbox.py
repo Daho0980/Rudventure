@@ -1,17 +1,20 @@
 import unicodedata, re
 
-def escapeAnsi(line):
-    ansi_escape =re.compile(r'(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]')
-    return ansi_escape.sub('', line)
+escapeAnsi     = lambda line: re.compile(r'(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]').sub('', line)
+checkActualLen = lambda line: sum(map(lambda char: 2 if unicodedata.east_asian_width(char) in ['F','W'] else 1, line))
 
-def checkActualLen(line):
-    Len = 0
-    for i in line:
-        if unicodedata.east_asian_width(i) in ['F', 'W']: Len += 2
-        else                                            : Len += 1
-    return Len
-
-def TextBox(Inp, Type="left", maxLine=100, fillChar=" ", inDistance=0, outDistance=0, AMLS=False, endLineBreak=False, LineType="normal"):
+def TextBox(
+        Inp:str,
+        Type:str         ="left",
+        maxLine:int      =100,
+        fillChar:chr     =" ",
+        inDistance:int   =0,
+        outDistance:int  =0,
+        addWidth:int     =0,
+        AMLS:bool        =False,
+        endLineBreak:bool=False,
+        LineType:str     ="normal"
+        ):
         """
         ``Inp``(str)                                      : 텍스트박스 내용, 줄바꿈하려면 `\\n`을 사용해야 함\n
         ``Type``(str["left", "middle", "right"])          : 위치 설정, 기본적으로 `"left"`로 설정되어 있음\n
@@ -19,6 +22,7 @@ def TextBox(Inp, Type="left", maxLine=100, fillChar=" ", inDistance=0, outDistan
         ``fillChar``(char)                                : 박스 안을 채울 텍스트. 딱 한 개만 허용, 기본적으로 `" "`로 설정되어 있음\n
         ``inDistance``(int>=0)                            : 박스 안쪽 텍스트의 위, 아래 공백 크기 설정, 기본적으로 `0`으로 설정되어 있음\n
         ``outDistance``(int>=0)                           : 박스 바깥의 공백 크기 설정, 기본적으로 `0`으로 설정되어 있음\n
+        ``addWidth``(int>=0)                              : 텍스트 양 옆 거리 설정, 기본적으로 `0`으로 설정되어 있음\n
         ``AMLS``(bool)                                    : 가장 긴 텍스트의 길이에 맞게 설정할지에 대한 여부. 이미 maxLine을 설정했다면 신경쓰지 않는 게 좋음, 기본적으로 `False`로 설정되어 있음\n
         ``endLineBreak``(bool)                            : 개행 문자 여부, 기본적으로 `False`로 설정되어 있음\n
         ``LineType``(str["normal", "double", "bold"])     : 텍스트박스 테두리 종류 설정, 기본적으로 `"normal"`로 설정되어 있음\n
@@ -27,39 +31,34 @@ def TextBox(Inp, Type="left", maxLine=100, fillChar=" ", inDistance=0, outDistan
         Display  = ""
 
         Line       = {
-                    "normal":{0:["┌", "┐"], 1:["└", "┘"], 2:["├", "┤"], 3:["─", "│"]},
-                    "double":{0:["╔", "╗"], 1:["╚", "╝"], 2:["╠", "╣"], 3:["═", "║"]},
-                    "bold"  :{0:["┏", "┓"], 1:["┗", "┛"], 2:["┣", "┫"], 3:["━", "┃"]}
+                    "normal" : {0:["┌", "┐"], 1:["└", "┘"], 2:["├", "┤"], 3:["─", "│"]},
+                    "double" : {0:["╔", "╗"], 1:["╚", "╝"], 2:["╠", "╣"], 3:["═", "║"]},
+                    "bold"   : {0:["┏", "┓"], 1:["┗", "┛"], 2:["┣", "┫"], 3:["━", "┃"]}
                     }
-        Texts      = Inp.split("\n")
-        FrontSpace = ""
-        BackSpace  = ""
-        endLine    = "\n" if endLineBreak else ""
-        if AMLS:
-            maxLine = 0
-            for i in Texts:
-                if maxLine < checkActualLen(escapeAnsi(i)): maxLine = checkActualLen(escapeAnsi(i))
+        Texts                 = Inp.split("\n")
+        FrontSpace, BackSpace = "", ""
+        endLine               = "\n" if endLineBreak else ""
 
-        Display += "\n"*outDistance
-        Display += Line[LineType][0][0]+Line[LineType][3][0]*(maxLine)+Line[LineType][0][1]+"\n"
-        Display += (Line[LineType][3][1]+fillChar*maxLine+Line[LineType][3][1]+"\n")*inDistance
-        for i in range(len(Texts)):
-            space = 0
-            if Texts[i] == "TextBox.Line": Display += Line[LineType][2][0]+Line[LineType][3][0]*(maxLine)+Line[LineType][2][1]+"\n"
+        if AMLS: maxLine = max(map(lambda l: checkActualLen(escapeAnsi(l)), Texts))
+
+        Display += "\n"*outDistance+f"{Line[LineType][0][0]}{Line[LineType][3][0]*(maxLine+(addWidth*2 if Type=='middle'else addWidth))}{Line[LineType][0][1]}\n"+(f"{Line[LineType][3][1]}{fillChar*maxLine}{Line[LineType][3][1]}\n")*inDistance
+        for textLine in Texts:
+            space = checkActualLen(escapeAnsi(textLine))
+
+            if   textLine == "TextBox.Line": Display += f"{Line[LineType][2][0]}{Line[LineType][3][0]*(maxLine)}{Line[LineType][2][1]}\n"
+            elif textLine.startswith("TextBox.Middle_"):
+                space   -= len("TextBox.Middle_")
+                Display += f"{Line[LineType][3][1]}{fillChar*int((maxLine-space)/2)}{textLine.lstrip('TextBox.Middle_')}{fillChar*(int((maxLine-space)/2) if not (maxLine-space)%2 else int((maxLine-space)/2)+1)}{Line[LineType][3][1]}\n"
             else:
-                for j in range(len(escapeAnsi(Texts[i]))):
-                    if unicodedata.east_asian_width(escapeAnsi(Texts[i])[j]) in ['F', 'W']: space += 2
-                    else                                                                  : space += 1
-                if Type == "left"    : BackSpace = fillChar*(maxLine-space)
-                elif Type == "middle":
-                    FrontSpace = fillChar*int((maxLine-space)/2)
-                    BackSpace  = fillChar*(int((maxLine-space)/2) if (maxLine-space)%2 == 0 else int((maxLine-space)/2)+1)
-                elif Type == "right" : FrontSpace = fillChar*(maxLine-space)
+                match Type:
+                    case "left": BackSpace = fillChar*((maxLine-space)+addWidth)
+                    case "middle":
+                        FrontSpace = fillChar*(int((maxLine-space)/2)+addWidth)
+                        BackSpace  = fillChar*(int((maxLine-space)/2)+addWidth if not (maxLine-space)%2 else int((maxLine-space)/2)+1+addWidth)
+                    case "right": FrontSpace = fillChar*((maxLine-space)+addWidth)
                 
-                Display += (Line[LineType][3][1]+FrontSpace)+Texts[i]+(BackSpace+Line[LineType][3][1])+"\n"
-        Display += (Line[LineType][3][1]+fillChar*maxLine+Line[LineType][3][1]+"\n")*inDistance
-        Display += Line[LineType][1][0]+Line[LineType][3][0]*(maxLine)+Line[LineType][1][1]+endLine
-        Display += "\n"*outDistance
+                Display += f"{Line[LineType][3][1]}{FrontSpace}{textLine}{BackSpace}{Line[LineType][3][1]}\n"
+        Display += (f"{Line[LineType][3][1]}{fillChar*maxLine}{Line[LineType][3][1]}\n")*inDistance+f"{Line[LineType][1][0]}{Line[LineType][3][0]*(maxLine+(addWidth*2 if Type=='middle'else addWidth))}{Line[LineType][1][1]}{endLine}"+"\n"*outDistance
         return Display
 
 

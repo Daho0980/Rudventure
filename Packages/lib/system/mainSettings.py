@@ -46,7 +46,7 @@ def init(stdscr):
     system.cinp(
         stdscr,
         f"      [ PRESS ENTER ]",
-        echo=False,
+        echo     =False,
         useMiddle=False
         )
 
@@ -55,7 +55,7 @@ def init(stdscr):
     grp.addstrMiddle(
         stdscr, 
         t.TextBox(
-            f"""{s.cMarkdown(1)}게임 설명{cc['end']}
+            f"""TextBox.Middle_{s.cMarkdown(1)}게임 설명{cc['end']}
 TextBox.Line
 ↑, ←, ↓, →  -  화살표 키를 눌러 이동합니다.
 
@@ -88,11 +88,12 @@ TextBox.Line
             temporaryName = "이름도 못 정하는 멍청이"
             cSelector.selector.main(
                 t.TextBox(
-                    f"   뇌 빼고 엔터만 치고 계신 것 같으니 특별히   \n{cc['fg']['Y']}<< {temporaryName} >>{cc['end']}\n(으)로 정해드리겠습니다. 어때요, 좋죠?",
+                    f"뇌 빼고 엔터만 치고 계신 것 같으니 특별히\n{cc['fg']['Y']}<< {temporaryName} >>{cc['end']}\n(으)로 정해드리겠습니다. 어때요, 좋죠?",
                     Type        ="middle",
                     outDistance =1,
                     AMLS        =True,
-                    endLineBreak=True
+                    endLineBreak=True,
+                    addWidth    =3
                     ),
                 ["네", "네"],
                 [1,0,255,10],
@@ -103,11 +104,12 @@ TextBox.Line
         temporaryName = system.cinp(
             stdscr,
             t.TextBox(
-                "   이름을 입력해주세요   ",
+                "이름을 입력해주세요",
                 Type        ="middle",
                 outDistance =1,
                 AMLS        =True,
-                endLineBreak=True
+                endLineBreak=True,
+                addWidth    =3
                 )+f"\n>>>",
                 end   =f"{cc['fg']['Y']} ",
                 cursor=True
@@ -118,11 +120,12 @@ TextBox.Line
         if len(temporaryName) == 0 or len(temporaryName.split()) == 0:
             cSelector.selector.main(
                 t.TextBox(
-                    f"   이름이 {cc['fg']['R']}{s.cMarkdown([2, 3])}없거나{cc['end']} {cc['fg']['R']}{s.cMarkdown([2, 3])}공백 밖에{cc['end']} 없으면   \n말하기 곤란해지실게요",
+                    f"이름이 {cc['fg']['R']}{s.cMarkdown([2, 3])}없거나{cc['end']} {cc['fg']['R']}{s.cMarkdown([2, 3])}공백 밖에{cc['end']} 없으면\n말하기 곤란해지실게요",
                     Type        ="middle",
                     outDistance =1,
                     AMLS        =True,
-                    endLineBreak=True
+                    endLineBreak=True,
+                    addWidth    =3
                     ),
                 ["네..."],
                 [1,0,255,10],
@@ -135,11 +138,12 @@ TextBox.Line
         
         match cSelector.selector.main(
             t.TextBox(
-                f"{cc['fg']['Y']}   << {temporaryName} >>   {cc['end']}\n\n   이 이름이 맞습니까?   ",
+                f"{cc['fg']['Y']}<< {temporaryName} >>{cc['end']}\n\n이 이름이 맞습니까?",
                 Type        ="middle",
                 outDistance =1,
                 AMLS        =True, 
-                endLineBreak=True
+                endLineBreak=True,
+                addWidth    =3
                 ),
             ["네", "아니오", "", "그냥 정해주세요..."] if reTryCount >= 3 else ["네", "아니오"],
             [1,0,255,10],
@@ -151,11 +155,12 @@ TextBox.Line
                 temporaryName = f"선택장애 {reTryCount-2}호"
                 nameSuggestions = cSelector.selector.main(
                     t.TextBox(
-                        f"   좋습니다. 그럼...   \n{cc['fg']['Y']}   << {temporaryName} >>   {cc['end']}\n은 어떠신가요?",
+                        f"좋습니다. 그럼...\n{cc['fg']['Y']}<< {temporaryName} >>{cc['end']}\n은 어떠신가요?",
                         Type        ="middle",
                         outDistance =1,
                         AMLS        =True,
-                        endLineBreak=True
+                        endLineBreak=True,
+                        addWidth    =3
                         ),
                     ["네", "그냥 제가 할게요;"],
                     [1,0,255,10],
