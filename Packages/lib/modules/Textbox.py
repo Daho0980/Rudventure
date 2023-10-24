@@ -38,14 +38,15 @@ def TextBox(
         Texts                 = Inp.split("\n")
         FrontSpace, BackSpace = "", ""
         endLine               = "\n" if endLineBreak else ""
+        fullAddWidth          = addWidth*2 if Type=='middle'else addWidth
 
         if AMLS: maxLine = max(map(lambda l: checkActualLen(escapeAnsi(l)), Texts))
 
-        Display += "\n"*outDistance+f"{Line[LineType][0][0]}{Line[LineType][3][0]*(maxLine+(addWidth*2 if Type=='middle'else addWidth))}{Line[LineType][0][1]}\n"+(f"{Line[LineType][3][1]}{fillChar*maxLine}{Line[LineType][3][1]}\n")*inDistance
+        Display += "\n"*outDistance+f"{Line[LineType][0][0]}{Line[LineType][3][0]*(maxLine+fullAddWidth)}{Line[LineType][0][1]}\n"+(f"{Line[LineType][3][1]}{fillChar*maxLine}{Line[LineType][3][1]}\n")*inDistance
         for textLine in Texts:
             space = checkActualLen(escapeAnsi(textLine))
 
-            if   textLine == "TextBox.Line": Display += f"{Line[LineType][2][0]}{Line[LineType][3][0]*(maxLine)}{Line[LineType][2][1]}\n"
+            if   textLine == "TextBox.Line": Display += f"{Line[LineType][2][0]}{Line[LineType][3][0]*(maxLine+fullAddWidth)}{Line[LineType][2][1]}\n"
             elif textLine.startswith("TextBox.Middle_"):
                 space   -= len("TextBox.Middle_")
                 Display += f"{Line[LineType][3][1]}{fillChar*int((maxLine-space)/2)}{textLine.lstrip('TextBox.Middle_')}{fillChar*(int((maxLine-space)/2) if not (maxLine-space)%2 else int((maxLine-space)/2)+1)}{Line[LineType][3][1]}\n"
@@ -58,7 +59,7 @@ def TextBox(
                     case "right": FrontSpace = fillChar*((maxLine-space)+addWidth)
                 
                 Display += f"{Line[LineType][3][1]}{FrontSpace}{textLine}{BackSpace}{Line[LineType][3][1]}\n"
-        Display += (f"{Line[LineType][3][1]}{fillChar*maxLine}{Line[LineType][3][1]}\n")*inDistance+f"{Line[LineType][1][0]}{Line[LineType][3][0]*(maxLine+(addWidth*2 if Type=='middle'else addWidth))}{Line[LineType][1][1]}{endLine}"+"\n"*outDistance
+        Display += (f"{Line[LineType][3][1]}{fillChar*maxLine}{Line[LineType][3][1]}\n")*inDistance+f"{Line[LineType][1][0]}{Line[LineType][3][0]*(maxLine+fullAddWidth)}{Line[LineType][1][1]}{endLine}"+"\n"*outDistance
         return Display
 
 

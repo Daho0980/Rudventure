@@ -137,9 +137,8 @@ def fieldPrint(stdscr, grid:list):
             dgm.gridMapReturn(
                 s.Dungeon,
                 blank =1,
-                center=True), 
+                center=True),
             Type        ='middle',
-            fillChar    ='^',
             AMLS        =True,
             endLineBreak=True,
             LineType    ='double'
