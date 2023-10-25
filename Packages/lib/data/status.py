@@ -130,6 +130,35 @@ LOGO = f"""
 
 welcomeMessage = []
 
+ids = {
+    0 :  ' ',
+    1 :  '■',
+    2 :  '.',
+    3 :  ' ',
+    4 :  f"{cColors['fg']['Y']}É{cColors['end']}",
+    5 :  f"{cColors['fg']['R']}F{cColors['end']}",
+    6 :  '☒',
+    7 :  f"{cColors['fg']['R']}X{cColors['end']}",
+    8 :  f"{cColors['fg']['B1']}{cMarkdown(1)}O{cColors['end']}",
+    9 :  f"{cColors['fg']['B1']}{cMarkdown(1)}o{cColors['end']}",
+    10 : f"{cColors['fg']['R']}o{cColors['end']}",
+    11 : f"{cColors['fg']['B1']}o{cColors['end']}",
+    12 : f"{cColors['fg']['L']}o{cColors['end']}",
+    13 : f"{cColors['fg']['Y']}o{cColors['end']}",
+    14 : f"{cColors['fg']['F']}ø{cColors['end']}",
+    15 : f"{cColors['fg']['R']}O{cColors['end']}",
+    16 : f"{cColors['fg']['B1']}O{cColors['end']}",
+    17 : f"{cColors['fg']['L']}O{cColors['end']}",
+    18 : f"{cColors['fg']['Y']}O{cColors['end']}",
+    19 : f"{cColors['fg']['F']}Ø{cColors['end']}",
+
+    300 : f"{customColor(0, 255, 10)}@{cColors['end']}", # 0, 255, 10
+    301 : f"{customColor(0, 255, 10)}&{cColors['end']}", # 0, 255, 10
+
+    600 : '%',
+    601 : '#'
+}
+
 p1             = f"{customColor(0, 255, 10)}@{cColors['end']}" # 0, 255, 10
 p2             = "&"
 e              = '%'

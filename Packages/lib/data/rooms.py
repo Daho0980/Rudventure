@@ -145,4 +145,20 @@ Room = [
     ['■','■','■','■','■','■','■','■','■','■','■','■','■']
 ]
 
+Room1 = [
+    [{"block":'■', "id":1}]*13, 
+    [{"block":'■', "id":1},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":'■', "id":1}],
+    [{"block":'■', "id":1},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":'■', "id":1}],
+    [{"block":'■', "id":1},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":'■', "id":1}],
+    [{"block":'■', "id":1},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":'■', "id":1}],
+    [{"block":'■', "id":1},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":'■', "id":1}],
+    [{"block":'■', "id":1},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":'■', "id":1}],
+    [{"block":'■', "id":1},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":'■', "id":1}],
+    [{"block":'■', "id":1},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":'■', "id":1}],
+    [{"block":'■', "id":1},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":'■', "id":1}],
+    [{"block":'■', "id":1},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":'■', "id":1}],
+    [{"block":'■', "id":1},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":' ', "id":0},{"block":'■', "id":1}],
+    [{"block":'■', "id":1}]*13
+]
+
 # █ ▀
