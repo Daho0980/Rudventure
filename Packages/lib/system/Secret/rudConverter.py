@@ -7,7 +7,7 @@ def calcFormula():
     expressions = []
     nums        = []
 
-    for setFormula in range(9):
+    for _ in range(9):
         expressions.append('+' if random.randrange(0, 2) == 0 else '-')
         nums.append(random.randrange(1, 10))
 

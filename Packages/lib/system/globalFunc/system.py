@@ -5,7 +5,6 @@ Global Functions 중 System 옵션
     ``upgradeStatus``    : 던전 클리어 시 나오는 스탯 업그레이드 창
 """
 
-import re
 import curses
 import random
 from   Packages.lib.data                      import comments,  lockers, status
