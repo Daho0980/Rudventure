@@ -6,7 +6,7 @@ from   Packages.lib                            import player,       quests
 from   Packages.lib.data                       import comments,     lockers,         status
 from   Packages.lib.modules                    import logger,       makeNewListener, Textbox
 from   Packages.lib.system                     import DungeonMaker, mainSettings
-from   Packages.lib.system.globalFunc          import entity,       graphic,         idRelated, osRelated, system
+from   Packages.lib.system.globalFunc          import entity,       graphic,         idRelated, system
 from   Packages.lib.system.globalFunc.sound    import play
 
 stdscr = curses.initscr()
@@ -26,8 +26,6 @@ p, t, dgm, mnl          = player.player, Textbox, DungeonMaker, makeNewListener
 ent, grp, idr           = entity,        graphic, idRelated
 q                       = quests
 cc                      = s.cColors
-
-s.s                     = osRelated.slash()
 
 def playerChecker():
     if s.df > 0: s.dfCrack = 0
