@@ -10,6 +10,7 @@ Global Functions 중 Graphic 옵션
 import re
 import math, time
 from   Packages.lib.data                    import status       as s
+from   Packages.lib.data                    import lockers      as l
 from   Packages.lib.modules                 import Textbox
 from   Packages.lib.system                  import DungeonMaker as dgm
 from   Packages.lib.system.globalFunc.sound import play
@@ -159,7 +160,7 @@ def fieldPrint(stdscr, grid:list):
         stdscr,
         buffer,
         y=round(y/2)-round(len(list(map(lambda l: len(escapeAnsi(l)), buffer.split("\n"))))/2),
-        x=round(x/2)-round(max(list(map(lambda l: len(escapeAnsi(l)), GFD)))/2),
+        x=round(x/2)-(round(max(list(map(lambda l: len(escapeAnsi(l)), GFD)))/2)+1),
         returnStr=True
         )
 
@@ -210,5 +211,18 @@ hunger : {cc['fg']['Y']}{round(s.hunger/10)}%{cc['end']} | atk : {cc['fg']['L']}
         x        =0,
         returnStr=True
     )
+
+    if l.pause:
+        Display += addstrMiddle(
+            stdscr,
+            Textbox.TextBox(
+                f"\n{s.cMarkdown(1)}{cc['fg']['L']}P a u s e{cc['end']}\n",
+                Type    ="middle",
+                AMLS    =True,
+                LineType="double",
+                addWidth=10
+                ),
+            returnStr=True
+            )
 
     stdscr.erase(); stdscr.addstr(Display)

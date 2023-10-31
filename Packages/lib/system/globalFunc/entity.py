@@ -65,16 +65,16 @@ from   Packages.lib.system.globalFunc.system import xpSystem as xps
 l, s = lockers, status
 
 while s.main == 1:
-    if s.killAll == True: break
+    if s.killAll: break
 
-    if l.jpsf == 1:
+    if l.jpsf and not l.pause:
         if {Name}.hp <= 0:
             s.entities.remove(Rname)
             break
         {Name}.move()
-    else: time.sleep(1)
+    else: time.sleep(0.1)
 s.Dungeon[{Name}.Dy][{Name}.Dx]['room'][{Name}.y][{Name}.x] = s.stepableBlocks[s.stepableBlocks.index({Name}.stepped)]
-if s.main == 1 and s.killAll == False: xps.getXP(xpType[entityType])
+if s.main and not s.killAll: xps.getXP(xpType[entityType])
         """, nameSpace)
         if s.main == 1 and not s.killAll:
             play("monster_dead")

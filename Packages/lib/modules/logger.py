@@ -26,7 +26,7 @@ def clear(): s.onDisplay, s.onTime = [], []
 
 def logChecker():
     while s.main:
-        if l.jpsf:
+        if l.jpsf and not l.pause:
             time.sleep(0.1)
             if len(s.onTime) > 0: s.onTime = list(map(lambda t: t-1, s.onTime))
             while 0 in s.onTime:

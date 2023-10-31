@@ -3,7 +3,8 @@ import curses
 import threading
 from Packages.lib                         import player
 from Packages.lib.data                    import lockers, status
-from Packages.lib.system                  import options
+from Packages.lib.modules.logger          import addLog
+# from Packages.lib.system                  import options
 from Packages.lib.system.globalFunc.sound import play
 
 p    = player.player
@@ -15,11 +16,15 @@ def newAddListener():
             if l.jpsf:
                 key = stdscr.getch()
                 
-                if   key in [curses.KEY_UP, curses.KEY_DOWN, curses.KEY_LEFT, curses.KEY_RIGHT]: p.move(key, 1)
-                elif key == 113: curses.wrapper(options.menu)
-                elif key == 9:
+                if key in  [curses.KEY_UP, curses.KEY_DOWN, curses.KEY_LEFT, curses.KEY_RIGHT]\
+                   and not l.pause: p.move(key, 1)
+                # elif key == 113: curses.wrapper(options.menu)
+                elif key == 9 and not l.pause:
                     play("move_box")
-                    s.showDungeonMap = 1 if s.showDungeonMap == 0 else 0
+                    s.showDungeonMap = 1 if not s.showDungeonMap else 0
+                elif key == 32:
+                    play("move_box")
+                    l.pause = False if l.pause else True
             else: time.sleep(1)
 
     threading.Thread(name="keyListener",target=lambda: curses.wrapper(interactions)).start()

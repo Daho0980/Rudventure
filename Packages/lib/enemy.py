@@ -1,10 +1,11 @@
 import random, time
 from   Packages.lib                         import player
-from   Packages.lib.data                    import status
+from   Packages.lib.data                    import status, lockers
 from   Packages.lib.data.status             import entities
 from   Packages.lib.modules.logger          import addLog
 from   Packages.lib.system.globalFunc.sound import play
 
+l    = lockers
 s, p = status, player.player
 cc   = s.cColors
 
@@ -182,10 +183,11 @@ class observer(enemy):
                         else           : a = 1
 
                         while 1:
-                            if nowDRP['room'][eval(f"self.y{Moves1[a]}1")][self.x] == s.p1: enemy.pDamage(self)
-                            if nowDRP['room'][eval(f"self.y{Moves1[a]}1")][self.x] not in canBreak: break
-                            nowDRP['room'][self.y][self.x] = s.floor
-                            exec(f"self.y{Moves[a]}1"); nowDRP['room'][self.y][self.x] = self.icon
+                            if not l.pause:
+                                if nowDRP['room'][eval(f"self.y{Moves1[a]}1")][self.x] == s.p1: enemy.pDamage(self)
+                                if nowDRP['room'][eval(f"self.y{Moves1[a]}1")][self.x] not in canBreak: break
+                                nowDRP['room'][self.y][self.x] = s.floor
+                                exec(f"self.y{Moves[a]}1"); nowDRP['room'][self.y][self.x] = self.icon
                             time.sleep(0.1)
 
                     elif self.y == s.y:
@@ -194,10 +196,11 @@ class observer(enemy):
                         else           : a = 1
 
                         while 1:
-                            if nowDRP['room'][self.y][eval(f"self.x{Moves1[a]}1")] == s.p1: enemy.pDamage(self)
-                            if nowDRP['room'][self.y][eval(f"self.x{Moves1[a]}1")] not in canBreak: break
-                            nowDRP['room'][self.y][self.x] = s.floor
-                            exec(f"self.x{Moves[a]}1"); nowDRP['room'][self.y][self.x] = self.icon
+                            if not l.pause:
+                                if nowDRP['room'][self.y][eval(f"self.x{Moves1[a]}1")] == s.p1: enemy.pDamage(self)
+                                if nowDRP['room'][self.y][eval(f"self.x{Moves1[a]}1")] not in canBreak: break
+                                nowDRP['room'][self.y][self.x] = s.floor
+                                exec(f"self.x{Moves[a]}1"); nowDRP['room'][self.y][self.x] = self.icon
                             time.sleep(0.1)
                 else:
                     bfx, bfy = self.x, self.y
