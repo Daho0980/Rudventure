@@ -50,13 +50,13 @@ def showStage(stdscr, stageNum:str, stageName:str, sound:str="smash"):
     addstrMiddle(
         stdscr,
         Textbox.TextBox(
-            f"S T A G E   {stageNum}",
+            f"\nS T A G E   {stageNum}\n",
             Type        ="middle",
-            inDistance  =1,
             outDistance =3,
             AMLS        =True, 
             endLineBreak=True,
-            LineType    ="double"
+            LineType    ="double",
+            addWidth    =3
             )
         ); stdscr.refresh()
     time.sleep(1.6)
@@ -65,13 +65,13 @@ def showStage(stdscr, stageNum:str, stageName:str, sound:str="smash"):
     addstrMiddle(
         stdscr,
         Textbox.TextBox(
-            f"S T A G E   {stageNum}\n\n{stageName}",
+            f"\nS T A G E   {stageNum}\n\n{stageName}\n",
             Type        ="middle",
-            inDistance  =1,
             outDistance =3,
             AMLS        =True,
             endLineBreak=True,
-            LineType    ="double"
+            LineType    ="double",
+            addWidth    =3
             )
         ); stdscr.refresh()
     time.sleep(1.6)
