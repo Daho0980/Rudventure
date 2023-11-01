@@ -19,13 +19,13 @@ cc       = s.cColors
 
 def cinp(
         stdscr,
-        text     ="",
-        end      ='',
-        echo     =True,
-        cursor   =False,
-        useMiddle=True,
-        y:int    =0,
-        x:int    =0
+        text:str      ="",
+        end:str       ='',
+        echo:bool     =True,
+        cursor:bool   =False,
+        useMiddle:bool=True,
+        y:int         =0,
+        x:int         =0
     ):
     if echo:   curses.echo()
     if cursor: curses.curs_set(1)
@@ -127,12 +127,12 @@ class roomChecker:
         `isPlayerVisited`(int(0~2)) : 플레이어가 들린 곳 또는 갈 수 있는 곳을 표시함, 0은 밝혀지지 않음, 1은 밝힐 수 있음, 2는 이미 밝혀짐
         `summonCount`(int)          : 방에서 소환되는 최대 몬스터 수
     """
-    def changeDoorPosBlock(block, data):
+    def changeDoorPosBlock(block:chr, data:dict):
         DPG = {
-            'U' : [0, 6],
+            'U' : [0,  6],
             'R' : [6, 12],
             'D' : [12, 6],
-            'L' : [6, 0]
+            'L' : [6,  0]
             }
         
         for i in range(len(data['doorPos'])):
@@ -144,7 +144,7 @@ class roomChecker:
                 if   keys[i] in ['U','D']: s.Dungeon[s.Dy][s.Dx]['room'][DPY][DPX-1], s.Dungeon[s.Dy][s.Dx]['room'][DPY][DPX+1] = block, block
                 elif keys[i] in ['R','L']: s.Dungeon[s.Dy][s.Dx]['room'][DPY-1][DPX], s.Dungeon[s.Dy][s.Dx]['room'][DPY+1][DPX] = block, block
 
-    def summonRandomMonster(data):
+    def summonRandomMonster(data:dict):
         # type, hp
         monsterData = [[0, 4], [1, 10]]
         for i in range(data['summonCount']):
@@ -178,7 +178,7 @@ class roomChecker:
                 [s.floor]
                 )
 
-    def main():
+    def main() -> None:
         data = s.Dungeon[s.Dy][s.Dx]
 
         if l.jpsf and data['interaction'] == False:

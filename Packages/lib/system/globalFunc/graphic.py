@@ -9,6 +9,7 @@ Global Functions 중 Graphic 옵션
 """
 import re
 import math, time
+import random
 from   Packages.lib.data                    import status       as s
 from   Packages.lib.data                    import lockers      as l
 from   Packages.lib.modules                 import Textbox
@@ -21,10 +22,10 @@ escapeAnsi = lambda line: re.compile(r'(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]').sub('',
 
 def addstrMiddle(stdscr, string:str, y:int=0, x:int=0, returnEndyx:bool=False, returnStr:bool=False):
     lines = list(map(lambda l: len(escapeAnsi(l)), string.split("\n")))
-    if y+x: y, x = y, x
-    else:
-        y, x = map(lambda n: round(n/2), list(stdscr.getmaxyx()))
-        y, x = y-round(len(lines)/2), x-round(max(lines)/2)
+    y, x  = (y, x) if y+x else map(
+        lambda c:c[0]-round([len(lines)/2,max(lines)/2][c[1]]),
+        list(zip(map(lambda n: round(n/2), list(stdscr.getmaxyx())),[0,1]))
+        )
     output = ''.join(
         [
             escc for line in zip(
@@ -49,13 +50,13 @@ def showStage(stdscr, stageNum:str, stageName:str, sound:str="smash"):
     addstrMiddle(
         stdscr,
         Textbox.TextBox(
-            f"   S T A G E   {stageNum}   ",
-            Type="middle",
-            inDistance=1,
-            outDistance=3,
-            AMLS=True, 
+            f"S T A G E   {stageNum}",
+            Type        ="middle",
+            inDistance  =1,
+            outDistance =3,
+            AMLS        =True, 
             endLineBreak=True,
-            LineType="double"
+            LineType    ="double"
             )
         ); stdscr.refresh()
     time.sleep(1.6)
@@ -64,13 +65,13 @@ def showStage(stdscr, stageNum:str, stageName:str, sound:str="smash"):
     addstrMiddle(
         stdscr,
         Textbox.TextBox(
-            f"   S T A G E   {stageNum}   \n\n   {stageName}   ",
-            Type="middle",
-            inDistance=1,
-            outDistance=3,
-            AMLS=True,
+            f"S T A G E   {stageNum}\n\n{stageName}",
+            Type        ="middle",
+            inDistance  =1,
+            outDistance =3,
+            AMLS        =True,
             endLineBreak=True,
-            LineType="double"
+            LineType    ="double"
             )
         ); stdscr.refresh()
     time.sleep(1.6)
@@ -103,8 +104,8 @@ def statusBar(
         `end`(bool)                                 : 맨 끝에 \\n을 하나 더 추가해줌. 기본적으로 `True`로 설정되어 있음\n
         `showComma`(bool)                           : backTag가 붙을 때 쉼표를 보여줄지에 대한 여부, 기본적으로 `True`로 설정되어 있음
     """
-    Display  = ""
-    spaceLen = " "*space
+    Display   = ""
+    spaceLen  = " "*space
     maxStatus = status if maxStatus == 0 else maxStatus
 
     Display += f"{statusName} :{spaceLen}{frontTag} [{color}" if len(statusName) > 0 else f"{spaceLen}{frontTag} [{color}"
@@ -138,7 +139,8 @@ def fieldPrint(stdscr, grid:list):
             dgm.gridMapReturn(
                 s.Dungeon,
                 blank =1,
-                center=True),
+                center=True
+                ),
             Type        ='middle',
             AMLS        =True,
             endLineBreak=True,
@@ -179,19 +181,19 @@ hunger : {cc['fg']['Y']}{round(s.hunger/10)}%{cc['end']} | atk : {cc['fg']['L']}
                     statusBar(s.df, statusName="def", maxStatus=s.Mdf, color=cc['fg']['B1'], space=4),
                     statusBar(
                         s.atk,
-                        statusName="atk",
-                        maxStatus=10,
-                        color=cc['fg']['L'],
-                        space=4,
+                        statusName   ="atk",
+                        maxStatus    =10,
+                        color        =cc['fg']['L'],
+                        space        =4,
                         showEmptyCell=False
                         ),
                     statusBar(
                         math.ceil(s.hunger/100),
                         statusName="hunger",
-                        maxStatus=10,
-                        end=False,
-                        color=cc['fg']['Y'],
-                        backTag=f"{cc['fg']['Y']}{s.hunger}{cc['end']}" if s.hunger <= 100 else f"{cc['fg']['Y']}{round(s.hunger/10)}%{cc['end']}",
+                        maxStatus =10,
+                        end       =False,
+                        color     =cc['fg']['Y'],
+                        backTag   =f"{cc['fg']['Y']}{s.hunger}{cc['end']}" if s.hunger <= 100 else f"{cc['fg']['Y']}{round(s.hunger/10)}%{cc['end']}",
                         )
                     ]),
                 AMLS     =True,
@@ -204,7 +206,7 @@ hunger : {cc['fg']['Y']}{round(s.hunger/10)}%{cc['end']} | atk : {cc['fg']['L']}
         stdscr,
         Textbox.TextBox(
             "\n".join(s.onDisplay),
-            AMLS=True,
+            AMLS    =True,
             LineType='double'
         ),
         y        =list(stdscr.getmaxyx())[0]-(1 if not len(s.onDisplay) else len(s.onDisplay)),
@@ -216,7 +218,7 @@ hunger : {cc['fg']['Y']}{round(s.hunger/10)}%{cc['end']} | atk : {cc['fg']['L']}
         Display += addstrMiddle(
             stdscr,
             Textbox.TextBox(
-                f"\n{s.cMarkdown(1)}{cc['fg']['L']}P a u s e{cc['end']}\n",
+                s.jjol,
                 Type    ="middle",
                 AMLS    =True,
                 LineType="double",

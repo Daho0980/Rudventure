@@ -1,5 +1,6 @@
 import time
 import curses
+import random
 import threading
 from Packages.lib                         import player
 from Packages.lib.data                    import lockers, status
@@ -9,6 +10,7 @@ from Packages.lib.system.globalFunc.sound import play
 
 p    = player.player
 l, s = lockers, status
+cc   = s.cColors
 
 def newAddListener():
     def interactions(stdscr):
@@ -24,6 +26,7 @@ def newAddListener():
                     s.showDungeonMap = 1 if not s.showDungeonMap else 0
                 elif key == 32:
                     play("move_box")
+                    s.jjol  = f"\n{s.cMarkdown(1)}{cc['fg']['R']}쫄 ?   ㅋ{cc['end']}\n" if random.randrange(0, 30001)==1215 else f"\n{s.cMarkdown(1)}{cc['fg']['L']}P a u s e{cc['end']}\n"
                     l.pause = False if l.pause else True
             else: time.sleep(1)
 
