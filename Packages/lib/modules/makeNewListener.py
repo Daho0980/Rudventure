@@ -18,13 +18,15 @@ def newAddListener():
             if l.jpsf:
                 key = stdscr.getch()
                 
-                if key in  [curses.KEY_UP, curses.KEY_DOWN, curses.KEY_LEFT, curses.KEY_RIGHT]\
-                   and not l.pause: p.move(key, 1)
-                # elif key == 113: curses.wrapper(options.menu)
-                elif key == 9 and not l.pause:
-                    play("move_box")
-                    s.showDungeonMap = 1 if not s.showDungeonMap else 0
-                elif key == 32:
+                if not l.pause:
+                    if key in  [curses.KEY_UP, curses.KEY_DOWN, curses.KEY_LEFT, curses.KEY_RIGHT]:
+                        p.move(key, 1)
+                    # elif key == 113: curses.wrapper(options.menu)
+                    elif key == 9:
+                        play("move_box")
+                        s.showDungeonMap = 1 if not s.showDungeonMap else 0
+                        
+                if key == 32:
                     play("move_box")
                     s.jjol  = f"\n{s.cMarkdown(1)}{cc['fg']['R']}쫄 ?   ㅋ{cc['end']}\n" if random.randrange(0, 30001)==1215 else f"\n{s.cMarkdown(1)}{cc['fg']['L']}P a u s e{cc['end']}\n"
                     l.pause = False if l.pause else True
