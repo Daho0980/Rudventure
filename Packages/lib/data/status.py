@@ -208,31 +208,24 @@ orbs = {
     }
 }
 
-stepableBlocks     = [floor, item, boxMark]
+orbIds = {
+    "size" : {
+        "smallOne" : [10, 11, 12, 13, 14],
+        "bigOne"   : [15, 16, 17, 18, 19]
+    },
+    "type" : {
+        "hp"     : [10, 15],
+        "def"    : [11, 16],
+        "atk"    : [12, 17],
+        "hunger" : [13, 18],
+        "exp"    : [14, 19]
+    }
+}
+
+stepableBlocks     = [0, 4, 7]
 interactableBlocks = {
-    "canStepOn" : [
-        orbs['type']['hp'][0],
-        orbs['type']['hp'][1],
-        orbs['type']['def'][0],
-        orbs['type']['def'][1],
-        orbs['type']['atk'][0],
-        orbs['type']['atk'][1],
-        orbs['type']['hunger'][0],
-        orbs['type']['hunger'][1],
-        orbs['type']['exp'][0],
-        orbs['type']['exp'][1],
-        item,
-    ],
-    "cannotStepOn" : [
-        R,
-        box,
-        goal,
-        wall,
-        squishy,
-        fakeFloor,
-        enemies['snippets']['pain'],
-        enemies['snippets']['unrest']
-    ]
+    "canStepOn"    : [4, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
+    "cannotStepOn" : [1, 2, 3, 5, 6, 600, 601]
 }
 
 # Stage settings

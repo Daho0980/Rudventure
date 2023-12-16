@@ -13,13 +13,6 @@ stdscr = curses.initscr()
 if not isinstance(stdscr, Cusser): stdscr = Cusser(stdscr)
 
 quickStarter            = 0
-roomNames               = [
-    "\033[31mStart\033[0m",
-    "Normal Room",
-    "\033[32mEvent Room\033[0m",
-    "\033[33mTreasure Room\033[0m",
-    "\033[34mExit\033[0m"
-    ]
 
 c, s, l                 = comments,      status,  lockers
 p, t, dgm, mnl          = player.player, Textbox, DungeonMaker, makeNewListener
@@ -121,6 +114,7 @@ while s.main:
 
     p.start(4, 4, 6, 6)
     system.roomChecker.placeRandomOrbs()
+    # stdscr.addstr("flag - 1"); stdscr.refresh()
     grp.showStage(
         stdscr,
         f"{cc['fg']['R']}- {s.stage}{cc['end']}",

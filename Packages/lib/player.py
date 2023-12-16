@@ -22,7 +22,7 @@ class player:
         s.Mxp      = 10
 
     def start(Dy, Dx, y, x):
-        s.Dungeon[Dy][Dx]['room'][y][x] = s.p1
+        s.Dungeon[Dy][Dx]['room'][y][x] = {"block":s.ids[300], "id":300}
         s.Dy, s.Dx, s.y, s.x            = Dy, Dx, y, x
 
     def damage(block="?"):
@@ -31,7 +31,6 @@ class player:
         logger.addLog(f"{s.lightName}이(가) [ {block} ] 에 의해 상처입었습니다")
 
     def itemEvent():
-        typeIndex = None
         percent   = random.randrange(1, 101)
 
         if   percent > 0  and percent <= 45: typeIndex = "hunger"
@@ -40,11 +39,11 @@ class player:
         elif percent > 80 and percent <= 85: typeIndex = "atk"
         else: typeIndex = "exp"
 
-        s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x] = s.orbs['type'][typeIndex][1]
+        orbId = s.orbIds["type"][typeIndex][random.randrange(0, 2)]
+
+        s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x] = {"block" : s.ids[orbId], "id" : orbId}
         
     def orbEvent(Size, Type):
-        sizeIndex = ["bigOne", "smallOne"].index(Size)
-        typeIndex = ["hp", "def", "atk", "hunger", "exp"].index(Type)
         orbData   = [
             [3,   1],
             [3,   1],
@@ -53,8 +52,8 @@ class player:
             [5,   1]
         ]
 
-        point = orbData[typeIndex][sizeIndex]
-        match typeIndex:
+        point = orbData[Type][Size]
+        match Type:
             case 0: s.hp = s.Mhp if s.hp+point > s.Mhp else s.hp+point
             case 1: s.df = s.Mdf if s.df+point > s.Mdf else s.df+point
 
@@ -65,7 +64,7 @@ class player:
 
 
     def move(Dir, Int): 
-        enemies  = [s.enemies["snippets"]["pain"], s.enemies["snippets"]["unrest"]]
+        enemies  = [600, 601]
         roomGrid = s.Dungeon[s.Dy][s.Dx]['room']
 
         if s.df > 0: s.dfCrack = 0
@@ -81,8 +80,8 @@ class player:
         s.hunger -= 1
         sound     = "move"
 
-        if roomGrid[s.y][s.x] in [s.wall, s.fakeFloor]:
-            player.damage(roomGrid[s.y][s.x])
+        if roomGrid[s.y][s.x]["id"] in [1, 3]:
+            player.damage(roomGrid[s.y][s.x]["block"])
 
             s.y, s.x   = bfy, bfx
             s.Dy, s.Dx = bfDy, bfDx
@@ -93,7 +92,7 @@ class player:
                 logger.addLog(f"{cc['fg']['B1']}방어구{cc['end']}가 부서졌습니다!")
             else: sound = "Hit"
 
-        elif roomGrid[s.y][s.x] in enemies:
+        elif roomGrid[s.y][s.x]["id"] in enemies:
             sound = "slash"
 
             s.hitPos.append([s.y, s.x])
@@ -103,27 +102,33 @@ class player:
             s.y,  s.x  = bfy,  bfx
             s.Dy, s.Dx = bfDy, bfDx
 
-        elif s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x] == s.item:
+        elif s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x]["id"] == 4:
             sound = "move_box"
             player.itemEvent()
             s.y, s.x = bfy, bfx
 
-        elif roomGrid[s.y][s.x] in s.orbs["size"]["smallOne"] or roomGrid[s.y][s.x] in s.orbs["size"]["bigOne"]:
+        elif roomGrid[s.y][s.x]["id"] in s.orbIds["size"]["smallOne"] or roomGrid[s.y][s.x]["id"] in s.orbIds["size"]["bigOne"]:
             sound = "get_item"
-            block = roomGrid[s.y][s.x]
-            sizeK, typeK = ["bigOne", "smallOne"], ["hp", "def", "atk", "hunger", "exp"]
+            orbId = roomGrid[s.y][s.x]["id"]
             sizeD, typeD = None, None
+            sizeD = 0 if orbId in s.orbIds["size"]["bigOne"] else 1
+            match orbId:
+                case _ if orbId in s.orbIds["type"]["hp"]:     typeD = 0
+                case _ if orbId in s.orbIds["type"]["def"]:    typeD = 1
+                case _ if orbId in s.orbIds["type"]["atk"]:    typeD = 2
+                case _ if orbId in s.orbIds["type"]["hunger"]: typeD = 3
+                case _ if orbId in s.orbIds["type"]["exp"]:    typeD = 4
 
-            for i in sizeK:
-                if block in s.orbs['size'][i]:
-                    sizeD = i
-                    for j in typeK:
-                        if block in s.orbs['type'][j]: typeD = j; break
-                    break
+            # for i in sizeK:
+            #     if block in s.orbs['size'][i]:
+            #         sizeD = i
+            #         for j in typeK:
+            #             if block in s.orbs['type'][j]: typeD = j; break
+            #         break
             player.orbEvent(sizeD, typeD)
 
-        elif roomGrid[s.y][s.x] == s.R:
-            s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x] = s.R
+        elif roomGrid[s.y][s.x]["id"] == 2:
+            s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x]["id"] = 2
             sound = "open"
             pos   = [bfy-s.y, bfx-s.x]
             # ┏>|y, x| : U to D   D to U  L to R   R to L
@@ -149,7 +154,7 @@ class player:
                     s.Dungeon[roomPos[i][0]][roomPos[i][1]]['isPlayerVisited'] = 1
             s.Dungeon[s.Dy][s.Dx]['isPlayerHere'] = True
 
-        elif roomGrid[s.y][s.x] == s.box:
+        elif roomGrid[s.y][s.x]["id"] == 6:
             sound  = "move_box"
             cx, cy = 0, 0
             Type   = 1 if Dir in [curses.KEY_LEFT, curses.KEY_RIGHT] else 0
@@ -160,11 +165,11 @@ class player:
                 case curses.KEY_RIGHT: cx = s.x + Int
 
             positions = [[cy, s.x], [s.y, cx]]
-            if roomGrid[positions[Type][0]][positions[Type][1]] in [s.wall, s.enemies["snippets"]["pain"], s.R, s.box, s.fakeFloor, s.goal]:
+            if roomGrid[positions[Type][0]][positions[Type][1]]["id"] in [1, 600, 601, 2, 6, 3, 5]:
                 s.y, s.x   = bfy, bfx
                 s.Dy, s.Dx = bfDy, bfDx
-            else: s.Dungeon[s.Dy][s.Dx]['room'][positions[Type][0]][positions[Type][1]] = s.box
+            else: s.Dungeon[s.Dy][s.Dx]['room'][positions[Type][0]][positions[Type][1]] = {"block" : s.ids[6], "id" : 6}
 
-        s.Dungeon[bfDy][bfDx]['room'][bfy][bfx] = s.floor
-        s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x] = s.p1
+        s.Dungeon[bfDy][bfDx]['room'][bfy][bfx] = {"block" : s.ids[0], "id" : 0}
+        s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x] = {"block":s.ids[300], "id":300}
         play(sound)

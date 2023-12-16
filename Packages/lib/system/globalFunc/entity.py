@@ -25,14 +25,12 @@ def addEntity(entityType:int, initHp:int, Dy:int, Dx:int, y:list, x:list):
     """
     kinds                = ["고통의_편린", "불안의_편린"]
     classType            = ["enemy", "observer"]
+    idType               = [600, 601]
     xpType               = [3, 5]
     atkType              = [1, 2]
     Name                 = kinds[entityType]
 
-    icons = [
-        s.enemies["snippets"]["pain"],
-        s.enemies["snippets"]["unrest"]
-        ]
+    icons = [s.ids[600], s.ids[601]]
     a = 0
     while 1:
         if Name + f"_{a}" not in s.entities:
@@ -51,7 +49,7 @@ def addEntity(entityType:int, initHp:int, Dy:int, Dx:int, y:list, x:list):
 import time
 from   Packages.lib      import enemy
 from   Packages.lib.data import status
-{Name} = enemy.{classType[entityType]}(\"{Name}\", \"{icons[entityType]}\")
+{Name} = enemy.{classType[entityType]}(\"{Name}\", \"{icons[entityType]}\", {idType[entityType]})
 {Name}.start({initHp}+((status.stage-1)*2), {atkType[entityType]}+(status.stage-1), {Dy}, {Dx}, {y}, {x})
 status.entities.append(Rname)
     """, nameSpace)
@@ -73,7 +71,7 @@ while s.main == 1:
             break
         {Name}.move()
     else: time.sleep(0.1)
-s.Dungeon[{Name}.Dy][{Name}.Dx]['room'][{Name}.y][{Name}.x] = s.stepableBlocks[s.stepableBlocks.index({Name}.stepped)]
+s.Dungeon[{Name}.Dy][{Name}.Dx]['room'][{Name}.y][{Name}.x] = {{"block" : s.ids[{Name}.stepped], "id" : {Name}.stepped}}
 if s.main and not s.killAll: xps.getXP(xpType[entityType])
         """, nameSpace)
         if s.main == 1 and not s.killAll:

@@ -130,7 +130,7 @@ def fieldPrint(stdscr, grid:list):
     y, x    = stdscr.getmaxyx()
     Display = ""
     buffer  = ""
-    GFD     = list(map(lambda x: ' '.join(x), grid))
+    GFD     = list(map(lambda x: ' '.join(map(lambda d: d["block"], x)), grid))
     
 
     # Map
@@ -149,15 +149,7 @@ def fieldPrint(stdscr, grid:list):
         Display += addstrMiddle(stdscr, buffer, y=2, x=x-len(max(buffer.split("\n"))), returnStr=True)
 
     # Stage
-    buffer = statusBar(
-                int((s.xp/s.Mxp)*10),
-                maxStatus=10,
-                color    =cc['fg']['F'],
-                frontTag = f"{cc['fg']['F']}{s.lvl}{cc['end']}",
-                backTag  =f"{cc['fg']['F']}{s.lvl+1}{cc['end']}",
-                space    =5,
-                showComma=False
-                )+"\n".join(GFD)
+    buffer = "\n".join(GFD)
     Display += addstrMiddle(
         stdscr,
         buffer,
@@ -191,9 +183,19 @@ hunger : {cc['fg']['Y']}{round(s.hunger/10)}%{cc['end']} | atk : {cc['fg']['L']}
                         math.ceil(s.hunger/100),
                         statusName="hunger",
                         maxStatus =10,
-                        end       =False,
+                        # end       =False,
                         color     =cc['fg']['Y'],
                         backTag   =f"{cc['fg']['Y']}{s.hunger}{cc['end']}" if s.hunger <= 100 else f"{cc['fg']['Y']}{round(s.hunger/10)}%{cc['end']}",
+                        ),
+                    "TextBox.Line\nTextBox.Middle_"+statusBar(
+                        int((s.xp/s.Mxp)*10),
+                        maxStatus=10,
+                        end      =False, # test code
+                        color    =cc['fg']['F'],
+                        frontTag =f"{cc['fg']['F']}{s.lvl}{cc['end']}",
+                        backTag  =f"{cc['fg']['F']}{s.lvl+1}{cc['end']}",
+                        space    =0, # normal = 5
+                        showComma=False
                         )
                     ]),
                 AMLS     =True,

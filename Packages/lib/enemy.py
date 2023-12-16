@@ -10,7 +10,7 @@ s, p = status, player.player
 cc   = s.cColors
 
 class enemy:
-    def __init__(self, name, icon):
+    def __init__(self, name, icon, ID):
         global entities
 
         self.name     = name
@@ -25,6 +25,7 @@ class enemy:
         self.stepped  = 0
 
         self.icon     = icon
+        self.id       = ID
 
     def damaged(self) -> None:
 
@@ -55,17 +56,7 @@ class enemy:
             while 1:
                 sY  = random.randrange(1,len(nowDRP['room'])-1)
                 sX  = random.randrange(1,len(nowDRP['room'][0])-1)
-                if s.Dungeon[Dy][Dx]['room'][sY][sX] in [
-                    s.R,
-                    s.wall,
-                    s.goal,
-                    s.enemies["snippets"]["pain"],
-                    s.enemies["snippets"]["unrest"],
-                    s.item,
-                    s.p1,
-                    s.box,
-                    s.boxMark
-                    ]:
+                if s.Dungeon[Dy][Dx]['room'][sY][sX]["id"] in [2, 1, 5, 600, 601, 4, 300, 6, 7]:
                     continue
                 else:
                     self.x, self.y = sX, sY
@@ -95,9 +86,9 @@ class enemy:
 
         if self.coolTime == 0:
             self.coolTime = random.randrange(60, 81)*10
-            if self.stepped not in s.stepableBlocks: self.stepped = s.floor
-            elif nowDRP['room'][self.y][self.x] in s.stepableBlocks and nowDRP['room'][self.y][self.x] not in [s.item, s.boxMark]:
-                self.stepped = s.stepableBlocks[s.stepableBlocks.index(nowDRP['room'][self.y][self.x])]
+            if self.stepped not in s.stepableBlocks: self.stepped = 0
+            elif nowDRP['room'][self.y][self.x]["id"] in s.stepableBlocks and nowDRP['room'][self.y][self.x]["id"] not in [4, 7]:
+                self.stepped = nowDRP['room'][self.y][self.x]["id"]
             
             bfx, bfy = self.x, self.y
             if self.hp > 0:
@@ -108,49 +99,47 @@ class enemy:
                     self.atk += 1+(round(s.stage/10))
 
                 exPos = [
-                    nowDRP['room'][self.y-1][self.x],
-                    nowDRP['room'][self.y+1][self.x],
-                    nowDRP['room'][self.y][self.x-1],
-                    nowDRP['room'][self.y][self.x+1]
+                    nowDRP['room'][self.y-1][self.x]["id"],
+                    nowDRP['room'][self.y+1][self.x]["id"],
+                    nowDRP['room'][self.y][self.x-1]["id"],
+                    nowDRP['room'][self.y][self.x+1]["id"]
                 ]
 
-                if s.p1 in exPos:
-                    nowDRP['room'][self.y][self.x] = f"{cc['fg']['R']}{self.icon}{cc['end']}"; time.sleep(0.1)
-                    nowDRP['room'][self.y][self.x] = self.icon
+                if 300 in exPos:
+                    nowDRP['room'][self.y][self.x] = {"block" : f"{cc['fg']['R']}{self.icon}{cc['end']}", "id" : self.id}; time.sleep(0.1)
+                    nowDRP['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id}
                     enemy.pDamage(self)
                 else:
                     while 1:
-                        enemyMove = random.randrange(1,4)
-                        Rx, Ry    = random.randrange(-1,2), random.randrange(-1,2)
+                        moveTo = random.randrange(-1,2)
 
-                        match enemyMove:
-                            case 1:
-                                if self.x + Rx > len(nowDRP['room'][self.y])-1: continue
-                                self.x += Rx
-                            case 2:
-                                if self.y + Ry > len(nowDRP['room'])-1: continue
-                                self.y += Ry
+                        if random.randrange(0,2):
+                            if self.x + moveTo > len(nowDRP['room'][self.y])-1: continue
+                            self.x += moveTo
+                        else:
+                            if self.y + moveTo > len(nowDRP['room'])-1: continue
+                            self.y += moveTo
 
-                        if nowDRP['room'][self.y][self.x] in s.interactableBlocks['cannotStepOn']:
+                        if nowDRP['room'][self.y][self.x]["id"] in s.interactableBlocks['cannotStepOn']:
                             self.x, self.y = bfx, bfy
                             continue
 
-                        if nowDRP['room'][self.y][self.x] == s.p1: enemy.pDamage(self)
+                        if nowDRP['room'][self.y][self.x]["id"] == 300: enemy.pDamage(self)
                         break
-                s.Dungeon[self.Dy][self.Dx]['room'][bfy][bfx]       = s.stepableBlocks[s.stepableBlocks.index(self.stepped)]
-                s.Dungeon[self.Dy][self.Dx]['room'][self.y][self.x] = self.icon
+                s.Dungeon[self.Dy][self.Dx]['room'][bfy][bfx]       = {"block" : s.ids[self.stepped], "id" : self.stepped}
+                s.Dungeon[self.Dy][self.Dx]['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id}
         else:
             self.coolTime -= 1
             enemy.damaged(self)
 
             if self.hp > 0 and nowDRP['room'][self.y][self.x] in s.stepableBlocks+s.interactableBlocks['canStepOn']:
-                nowDRP['room'][self.y][self.x] = self.icon
+                nowDRP['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id}
             elif self.hp <= 0: self.coolTime = 0
             time.sleep(0.001)
 
 
 class observer(enemy):
-    def __init__(self, name, icon): super().__init__(name, icon)
+    def __init__(self, name, icon, ID): super().__init__(name, icon, ID)
 
     def start(self, sethp, setAtk, Dy, Dx, y, x): super().start(sethp, setAtk, Dy, Dx, y, x)
 
@@ -159,20 +148,19 @@ class observer(enemy):
 
         def Targetted():
             for _ in range(2):
-                nowDRP['room'][self.y][self.x] = f"{cc['fg']['R']}{self.icon}{cc['end']}"; time.sleep(0.1)
-                nowDRP['room'][self.y][self.x] = self.icon; time.sleep(0.1)
+                nowDRP['room'][self.y][self.x] = {"block" : f"{cc['fg']['R']}{self.icon}{cc['end']}", "id" : self.id}; time.sleep(0.1)
+                nowDRP['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id}; time.sleep(0.1)
 
         if self.coolTime == 0:
             self.coolTime = random.randrange(40, 61)*10
-            if self.stepped not in s.stepableBlocks: self.stepped = s.floor
-            elif nowDRP['room'][self.y][self.x] in s.stepableBlocks and\
-                nowDRP['room'][self.y][self.x] not in [s.item, s.boxMark]:
-                self.stepped = s.stepableBlocks[s.stepableBlocks.index(nowDRP['room'][self.y][self.x])]
+            if self.stepped not in s.stepableBlocks: self.stepped = 0
+            elif nowDRP['room'][self.y][self.x]["id"] in s.stepableBlocks and nowDRP['room'][self.y][self.x]["id"] not in [4, 7]:
+                self.stepped = nowDRP['room'][self.y][self.x]["id"]
 
             bfx, bfy = self.x, self.y
             if self.hp > 0:
                 Moves, Moves1 = ["+=", "-="], ["+", "-"]
-                canBreak      = [s.item, s.floor]
+                canBreak      = [4, 0]
                 a             = 0
 
                 if self.Dy == s.Dy and self.Dx == s.Dx and (self.x == s.x or self.y == s.y):
@@ -184,10 +172,10 @@ class observer(enemy):
 
                         while 1:
                             if not l.pause:
-                                if nowDRP['room'][eval(f"self.y{Moves1[a]}1")][self.x] == s.p1: enemy.pDamage(self)
-                                if nowDRP['room'][eval(f"self.y{Moves1[a]}1")][self.x] not in canBreak: break
-                                nowDRP['room'][self.y][self.x] = s.floor
-                                exec(f"self.y{Moves[a]}1"); nowDRP['room'][self.y][self.x] = self.icon
+                                if nowDRP['room'][eval(f"self.y{Moves1[a]}1")][self.x]["id"] == 300: enemy.pDamage(self)
+                                if nowDRP['room'][eval(f"self.y{Moves1[a]}1")][self.x]["id"] not in canBreak: break
+                                nowDRP['room'][self.y][self.x] = {"block" : s.ids[0], "id" : 0}
+                                exec(f"self.y{Moves[a]}1"); nowDRP['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id}
                             time.sleep(0.1)
 
                     elif self.y == s.y:
@@ -197,27 +185,29 @@ class observer(enemy):
 
                         while 1:
                             if not l.pause:
-                                if nowDRP['room'][self.y][eval(f"self.x{Moves1[a]}1")] == s.p1: enemy.pDamage(self)
-                                if nowDRP['room'][self.y][eval(f"self.x{Moves1[a]}1")] not in canBreak: break
-                                nowDRP['room'][self.y][self.x] = s.floor
-                                exec(f"self.x{Moves[a]}1"); nowDRP['room'][self.y][self.x] = self.icon
+                                if nowDRP['room'][self.y][eval(f"self.x{Moves1[a]}1")]["id"] == 300: enemy.pDamage(self)
+                                if nowDRP['room'][self.y][eval(f"self.x{Moves1[a]}1")]["id"] not in canBreak: break
+                                nowDRP['room'][self.y][self.x] = {"block" : s.ids[0], "id" : 0}
+                                exec(f"self.x{Moves[a]}1"); nowDRP['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id}
                             time.sleep(0.1)
                 else:
                     bfx, bfy = self.x, self.y
                     if random.randrange(0,2):
-                        if   self.x < s.x and nowDRP['room'][self.y][self.x+1] in s.stepableBlocks: self.x += 1
-                        elif self.x > s.x and nowDRP['room'][self.y][self.x-1] in s.stepableBlocks: self.x -= 1
+                        self.x += 1 if self.x<s.x and nowDRP['room'][self.y][self.x+1]["id"] in s.stepableBlocks\
+                            else -1 if self.x>s.x and nowDRP['room'][self.y][self.x-1]["id"] in s.stepableBlocks\
+                            else  0
                     else:
-                        if   self.y < s.y and nowDRP['room'][self.y+1][self.x] in s.stepableBlocks: self.y += 1
-                        elif self.y > s.y and nowDRP['room'][self.y-1][self.x] in s.stepableBlocks: self.y -= 1
-                    nowDRP['room'][bfy][bfx]       = s.floor
-                    nowDRP['room'][self.y][self.x] = self.icon
+                        self.y += 1 if self.y<s.y and nowDRP['room'][self.y+1][self.x]["id"] in s.stepableBlocks\
+                            else -1 if self.y>s.y and nowDRP['room'][self.y-1][self.x]["id"] in s.stepableBlocks\
+                            else  0
+                    nowDRP['room'][bfy][bfx]       = {"block" : s.ids[0], "id" : 0}
+                    nowDRP['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id}
         else:
             self.coolTime -= 1
             super().damaged()
             
             if self.hp > 0 and nowDRP['room'][self.y][self.x] in s.stepableBlocks+s.interactableBlocks['canStepOn']:
-                nowDRP['room'][self.y][self.x] = self.icon
+                nowDRP['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id}
             elif self.hp <= 0: self.coolTime = 0
             time.sleep(0.001)
     

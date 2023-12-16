@@ -178,15 +178,17 @@ def makeRoom(Map:list):
     for row in range(len(output)):
         for column in range(len(output[row])):
             if len(output[row][column]) > 0:
-                baseMap = copy.deepcopy(rooms.Room)
+                baseMap = copy.deepcopy(rooms.Room1)
                 RDP     = list(output[row][column]["doorPos"].values())
                 GRDP    = [[0, 6], [6, 12], [12, 6], [6, 0]]
 
                 for DIE in range(len(RDP)):
                     if RDP[DIE] == 1:
-                        baseMap[GRDP[DIE][0]][GRDP[DIE][1]] = s.R
-                        if DIE in [0, 2]  : baseMap[GRDP[DIE][0]][GRDP[DIE][1]-1], baseMap[GRDP[DIE][0]][GRDP[DIE][1]+1] = s.R, s.R
-                        elif DIE in [1, 3]: baseMap[GRDP[DIE][0]-1][GRDP[DIE][1]], baseMap[GRDP[DIE][0]+1][GRDP[DIE][1]] = s.R, s.R
+                        baseMap[GRDP[DIE][0]][GRDP[DIE][1]] = {"block":s.ids[2], "id":2}
+                        if DIE in [0, 2]:
+                            baseMap[GRDP[DIE][0]][GRDP[DIE][1]-1], baseMap[GRDP[DIE][0]][GRDP[DIE][1]+1] = {"block":s.ids[2], "id":2}, {"block":s.ids[2], "id":2}
+                        elif DIE in [1, 3]:
+                            baseMap[GRDP[DIE][0]-1][GRDP[DIE][1]], baseMap[GRDP[DIE][0]+1][GRDP[DIE][1]] = {"block":s.ids[2], "id":2}, {"block":s.ids[2], "id":2}
 
                 output[row][column]["room"] = baseMap
 
@@ -217,13 +219,17 @@ def makeRoom(Map:list):
                         output[row][column]['doorPos'][dp[i][0]]      = 1
                         output[p[i][0]][p[i][1]]['doorPos'][dp[i][1]] = 1
 
-                        output[row][column]['room'][grd[i][0][0]][grd[i][0][1]] = s.R
-                        if   dp[i][0] in ['U', 'D']: output[row][column]['room'][grd[i][0][0]][grd[i][0][1]-1], output[row][column]['room'][grd[i][0][0]][grd[i][0][1]+1] = s.R, s.R
-                        elif dp[i][0] in ['L', 'R']: output[row][column]['room'][grd[i][0][0]-1][grd[i][0][1]], output[row][column]['room'][grd[i][0][0]+1][grd[i][0][1]] = s.R, s.R
+                        output[row][column]['room'][grd[i][0][0]][grd[i][0][1]] = {"block":s.ids[2], "id":2}
+                        if dp[i][0] in ['U', 'D']:
+                            output[row][column]['room'][grd[i][0][0]][grd[i][0][1]-1], output[row][column]['room'][grd[i][0][0]][grd[i][0][1]+1] = {"block":s.ids[2], "id":2}, {"block":s.ids[2], "id":2}
+                        elif dp[i][0] in ['L', 'R']:
+                            output[row][column]['room'][grd[i][0][0]-1][grd[i][0][1]], output[row][column]['room'][grd[i][0][0]+1][grd[i][0][1]] = {"block":s.ids[2], "id":2}, {"block":s.ids[2], "id":2}
 
-                        output[p[i][0]][p[i][1]]['room'][grd[i][1][0]][grd[i][1][1]] = s.R
-                        if   dp[i][0] in ['U', 'D']: output[p[i][0]][p[i][1]]['room'][grd[i][1][0]][grd[i][1][1]-1], output[p[i][0]][p[i][1]]['room'][grd[i][1][0]][grd[i][1][1]+1] = s.R, s.R
-                        elif dp[i][0] in ['L', 'R']: output[p[i][0]][p[i][1]]['room'][grd[i][1][0]-1][grd[i][1][1]], output[p[i][0]][p[i][1]]['room'][grd[i][1][0]+1][grd[i][1][1]] = s.R, s.R
+                        output[p[i][0]][p[i][1]]['room'][grd[i][1][0]][grd[i][1][1]] = {"block":s.ids[2], "id":2}
+                        if dp[i][0] in ['U', 'D']:
+                            output[p[i][0]][p[i][1]]['room'][grd[i][1][0]][grd[i][1][1]-1], output[p[i][0]][p[i][1]]['room'][grd[i][1][0]][grd[i][1][1]+1] = {"block":s.ids[2], "id":2}, {"block":s.ids[2], "id":2}
+                        elif dp[i][0] in ['L', 'R']:
+                            output[p[i][0]][p[i][1]]['room'][grd[i][1][0]-1][grd[i][1][1]], output[p[i][0]][p[i][1]]['room'][grd[i][1][0]+1][grd[i][1][1]] = {"block":s.ids[2], "id":2}, {"block":s.ids[2], "id":2}
     return output
 
 def deleteBlankData(grid:list):
@@ -235,7 +241,8 @@ def deleteBlankData(grid:list):
     if not grid: return grid
     # 비어있는 잉여 데이터 정리
     for row in range(len(grid)):
-        for column in range(len(grid[row])): grid[row][column] = {} if grid[row][column]['roomType'] == None else grid[row][column]
+        for column in range(len(grid[row])):
+            grid[row][column] = {} if grid[row][column]['roomType'] == None else grid[row][column]
 
     return grid
 
@@ -338,8 +345,8 @@ def initBranch(Map:list, y:int, x:int, rawPrint=False, showAll=False):
         Map[bfy][bfx]["doorPos"][locationData[3]] = 1
         Map[y][x]["summonCount"]                  = 1 if selectRoomKind == 4 else 0 if selectRoomKind in [2, 3] else size
 
-    if rawPrint == False and not Map: return GraphicMaker(Map)
-    else:                             return Map
+    if rawPrint == False and Map: return GraphicMaker(Map)
+    else:                         return Map
 
 def DungeonMaker(showAll=False):
     """
