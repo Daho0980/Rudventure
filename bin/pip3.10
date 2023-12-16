@@ -1,4 +1,4 @@
-#!/Users/macboogi/Desktop/Rudventure/bin/python3
+#!/Users/macboogi/Desktop/Rudventure/bin/python3.10
 # -*- coding: utf-8 -*-
 import re
 import sys
