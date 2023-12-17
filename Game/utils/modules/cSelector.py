@@ -2,9 +2,9 @@
 
 import curses
 from   cusser                               import Cusser
-from   Packages.lib.data                    import status  as s
-from   Packages.lib.system.globalFunc       import graphic as grp
-from   Packages.lib.system.globalFunc.sound import play
+from   Assets.data                    import status  as s
+from   Game.utils       import graphic as grp
+from   Game.utils.sound import play
 
 cc = s.cColors
 

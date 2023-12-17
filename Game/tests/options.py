@@ -1,11 +1,11 @@
 import json
 import time
-from   Packages.lib.data                       import status, lockers
-from   Packages.lib.modules                    import cSelector
-from   Packages.lib.system                     import DungeonMaker
-from   Packages.lib.system.Secret.rudConverter import converter
-from   Packages.lib.system.globalFunc.system   import cinp
-from   Packages.lib.system.globalFunc.sound    import play
+from   Assets.data                       import status, lockers
+from   Game.utils.modules                    import cSelector
+from   Game.utils.advanced                     import DungeonMaker
+from   Game.tests.Secret.rudConverter import converter
+from   Game.utils.system   import cinp
+from   Game.utils.sound    import play
 
 s, l     = status, lockers
 selector = cSelector.selector
@@ -62,12 +62,6 @@ def saveFile(stdscr):
         "y",
         "bfy",
         "steppedBlock",
-        "btnX",
-        "btnY",
-        "btn1X",
-        "btn1Y",
-        "goalX",
-        "goalY",
         "main",
         "LOGO",
         "p1",

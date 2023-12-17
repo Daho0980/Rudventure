@@ -1,7 +1,7 @@
 import os
 import base64
 import random
-from   Packages.lib.data import status as s
+from   Assets.data import status as s
 
 def calcFormula():
     expressions = []

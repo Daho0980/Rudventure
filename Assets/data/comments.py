@@ -1,4 +1,4 @@
-from Packages.lib.data.status import cColors as cc
+from Assets.data.status import cColors as cc
 
 lowHpComment = [
         "게임은 이제 시작이다.",

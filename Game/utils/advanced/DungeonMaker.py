@@ -19,8 +19,8 @@
 import re
 import copy
 import random
-from   Packages.lib.data              import rooms, status
-from   Packages.lib.system.globalFunc import graphic
+from   Assets.data              import rooms, status
+from   Game.utils import graphic
 
 grp = graphic
 s   = status

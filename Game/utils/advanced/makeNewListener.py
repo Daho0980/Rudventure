@@ -2,11 +2,10 @@ import time
 import curses
 import random
 import threading
-from Packages.lib                         import player
-from Packages.lib.data                    import lockers, status
-from Packages.lib.modules.logger          import addLog
+from Game.entities                         import player
+from Assets.data                    import lockers, status
 # from Packages.lib.system                  import options
-from Packages.lib.system.globalFunc.sound import play
+from Game.utils.sound import play
 
 p    = player.player
 l, s = lockers, status

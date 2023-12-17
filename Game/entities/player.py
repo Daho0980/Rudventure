@@ -1,10 +1,10 @@
 import time
 import curses
 import random
-from   Packages.lib.data                     import rooms, status
-from   Packages.lib.modules                  import logger
-from   Packages.lib.system.globalFunc.system import xpSystem
-from   Packages.lib.system.globalFunc.sound  import play
+from   Assets.data                     import rooms, status
+from   Game.core.system                  import logger
+from   Game.utils.system import xpSystem
+from   Game.utils.sound  import play
 
 s, r     = status, rooms
 cc       = s.cColors

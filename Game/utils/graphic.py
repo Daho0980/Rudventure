@@ -10,11 +10,11 @@ Global Functions 중 Graphic 옵션
 import re
 import math, time
 import random
-from   Packages.lib.data                    import status       as s
-from   Packages.lib.data                    import lockers      as l
-from   Packages.lib.modules                 import Textbox
-from   Packages.lib.system                  import DungeonMaker as dgm
-from   Packages.lib.system.globalFunc.sound import play
+from   Assets.data                    import status       as s
+from   Assets.data                    import lockers      as l
+from   Game.utils.modules                 import Textbox
+from   Game.utils.advanced                  import DungeonMaker as dgm
+from   Game.utils.sound import play
 
 cc = s.cColors
 

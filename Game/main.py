@@ -2,12 +2,15 @@
 import curses
 import time, random
 from   cusser                                  import Cusser
-from   Packages.lib                            import player,       quests
-from   Packages.lib.data                       import comments,     lockers,         status
-from   Packages.lib.modules                    import logger,       makeNewListener, Textbox
-from   Packages.lib.system                     import DungeonMaker, mainSettings
-from   Packages.lib.system.globalFunc          import entity,       graphic,         idRelated, system
-from   Packages.lib.system.globalFunc.sound    import play
+from   Game.entities                     import player
+from   Game.core.system                  import quests
+from   Assets.data                       import comments,     lockers,         status
+from   Game.utils.modules                    import Textbox
+from Game.core.system                          import logger
+from   Game.scenes                             import mainSettings
+from   Game.utils.advanced                     import DungeonMaker, makeNewListener
+from   Game.utils          import entity,       graphic,         idRelated, system
+from   Game.utils.sound    import play
 
 stdscr = curses.initscr()
 if not isinstance(stdscr, Cusser): stdscr = Cusser(stdscr)

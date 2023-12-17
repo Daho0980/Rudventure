@@ -105,16 +105,6 @@ lvl          = 0
 steppedBlock = ' '
 killCount    = 0
 
-# So MUCH useless but I cannot delete it because of in game systems. I'll delete it later.
-btnX  = 0
-btnY  = 0
-btn1X = 0
-btn1Y = 0
-
-# Goal position
-goalX = 0
-goalY = 0
-
 # Power
 main = 1
 

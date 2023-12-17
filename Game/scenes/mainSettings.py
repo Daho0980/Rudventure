@@ -1,9 +1,10 @@
 import time
 import random
-from   Packages.lib.data                    import status
-from   Packages.lib.modules                 import cSelector, logger, Textbox
-from   Packages.lib.system.globalFunc       import graphic,   system
-from   Packages.lib.system.globalFunc.sound import play
+from   Assets.data                    import status
+from   Game.utils.modules                 import cSelector, Textbox
+from Game.core.system   import logger
+from   Game.utils       import graphic,   system
+from   Game.utils.sound import play
 
 s, t = status,  Textbox
 grp  = graphic

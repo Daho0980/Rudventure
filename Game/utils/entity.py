@@ -5,9 +5,9 @@ Global Functions 중 Entity 옵션
 """
 
 import threading
-from   Packages.lib.data                    import status as s
-from   Packages.lib.modules                 import logger
-from   Packages.lib.system.globalFunc.sound import play
+from   Assets.data                          import status as s
+from   Game.core.system                 import logger
+from   Game.utils.sound import play
 
 def addEntity(entityType:int, initHp:int, Dy:int, Dx:int, y:list, x:list):
     """
@@ -47,8 +47,8 @@ def addEntity(entityType:int, initHp:int, Dy:int, Dx:int, y:list, x:list):
 
     exec(f"""
 import time
-from   Packages.lib      import enemy
-from   Packages.lib.data import status
+from   Game.entities      import enemy
+from   Assets.data import status
 {Name} = enemy.{classType[entityType]}(\"{Name}\", \"{icons[entityType]}\", {idType[entityType]})
 {Name}.start({initHp}+((status.stage-1)*2), {atkType[entityType]}+(status.stage-1), {Dy}, {Dx}, {y}, {x})
 status.entities.append(Rname)
@@ -56,9 +56,9 @@ status.entities.append(Rname)
     def EntityInteraction():
         exec(f"""
 import time
-from   Packages.lib.data                     import lockers, status
-from   Packages.lib.modules.logger           import addLog
-from   Packages.lib.system.globalFunc.system import xpSystem as xps
+from   Assets.data                     import lockers, status
+from   Game.core.system.logger           import addLog
+from   Game.utils.system import xpSystem as xps
 
 l, s = lockers, status
 
