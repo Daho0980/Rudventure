@@ -9,14 +9,14 @@ Global Functions 중 Graphic 옵션
 """
 import re
 import math, time
-import random
-from   Assets.data                    import status       as s
-from   Assets.data                    import lockers      as l
-from   Game.utils.modules                 import Textbox
-from   Game.utils.advanced                  import DungeonMaker as dgm
-from   Game.utils.sound import play
+from   Assets.data         import status
+from   Assets.data         import lockers
+from   Game.utils.modules  import Textbox
+from   Game.utils.advanced import DungeonMaker as dgm
+from   Game.utils.sound    import play
 
-cc = s.cColors
+s, l = status, lockers
+cc   = s.cColors
 
 escapeAnsi = lambda line: re.compile(r'(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]').sub('', line)
 

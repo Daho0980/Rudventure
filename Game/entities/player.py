@@ -1,8 +1,8 @@
 import time
 import curses
 import random
-from   Assets.data                     import rooms, status
-from   Game.core.system                  import logger
+from   Assets.data       import rooms, status
+from   Game.core.system  import logger
 from   Game.utils.system import xpSystem
 from   Game.utils.sound  import play
 

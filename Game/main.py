@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 import curses
 import time, random
-from   cusser                                  import Cusser
-from   Game.entities                     import player
-from   Game.core.system                  import quests
-from   Assets.data                       import comments,     lockers,         status
-from   Game.utils.modules                    import Textbox
-from Game.core.system                          import logger
-from   Game.scenes                             import mainSettings
-from   Game.utils.advanced                     import DungeonMaker, makeNewListener
-from   Game.utils          import entity,       graphic,         idRelated, system
+from   cusser              import Cusser
+from   Assets.data         import comments, lockers, status
+from   Game.entities       import player
+from   Game.core.system    import quests
+from   Game.core.system    import logger
+from   Game.scenes         import mainSettings
+from   Game.utils          import entity,       graphic,        idRelated, system
+from   Game.utils.advanced import DungeonMaker, makeNewListener
+from   Game.utils.modules  import Textbox
 from   Game.utils.sound    import play
 
 stdscr = curses.initscr()

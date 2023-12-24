@@ -7,14 +7,14 @@ Global Functions 중 System 옵션
 
 import curses
 import random
-from   Assets.data                      import comments,  lockers, status
-from   Game.utils.modules                   import cSelector
+from   Assets.data        import comments, lockers, status
 from   Game.core.system   import logger
-from   Game.utils.graphic import escapeAnsi, addstrMiddle
+from   Game.utils.modules import cSelector
 from   Game.utils.entity  import addEntity
+from   Game.utils.graphic import escapeAnsi, addstrMiddle
 from   Game.utils.sound   import play
 
-c, l, s  = comments, lockers, status
+c, l, s  = comments,          lockers, status
 selector = cSelector.selector
 cc       = s.cColors
 

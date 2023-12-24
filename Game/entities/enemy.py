@@ -1,9 +1,9 @@
 import random, time
-from   Game.entities                         import player
-from   Assets.data                    import status, lockers
-from   Assets.data.status             import entities
-from   Game.core.system.logger          import addLog
-from   Game.utils.sound import play
+from   Game.core.system.logger import addLog
+from   Assets.data             import status, lockers
+from   Assets.data.status      import entities
+from   Game.entities           import player
+from   Game.utils.sound        import play
 
 l    = lockers
 s, p = status, player.player
