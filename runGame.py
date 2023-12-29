@@ -1,3 +1,4 @@
+#!/usr/bin/env python3.10
 import os
 from   Assets.data import status as s
 

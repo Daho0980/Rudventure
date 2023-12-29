@@ -31,7 +31,6 @@ class player:
         dr = random.choice([
             "과다출혈",
             "피로 과다",
-            "딴짓",
             "졸도",
             "자살",
             "우울증"

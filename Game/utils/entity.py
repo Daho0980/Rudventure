@@ -46,18 +46,16 @@ def addEntity(entityType:int, initHp:int, Dy:int, Dx:int, y:list, x:list):
     }
 
     exec(f"""
-import time
-from   Game.entities      import enemy
-from   Assets.data import status
+from   Game.entities import enemy
+from   Assets.data   import status as s
 {Name} = enemy.{classType[entityType]}(\"{Name}\", \"{icons[entityType]}\", {idType[entityType]})
-{Name}.start({initHp}+((status.stage-1)*2), {atkType[entityType]}+(status.stage-1), {Dy}, {Dx}, {y}, {x})
-status.entities.append(Rname)
+{Name}.start({initHp}+((s.stage-1)*2), {atkType[entityType]}+(s.stage-1), {Dy}, {Dx}, {y}, {x})
+s.entities.append(Rname)
     """, nameSpace)
     def EntityInteraction():
         exec(f"""
 import time
 from   Assets.data                     import lockers, status
-from   Game.core.system.logger           import addLog
 from   Game.utils.system import xpSystem as xps
 
 l, s = lockers, status
