@@ -169,7 +169,7 @@ TextBox.Line
                 if   nameSuggestions == 1: break
                 elif nameSuggestions == 2: reTryCount += 1; continue
 
-    s.name, s.lightName = temporaryName, f"{cc['fg']['Y']}{temporaryName}{cc['end']}"
+    s.name, s.lightName = temporaryName, f"{cc['fg']['L']}{temporaryName}{cc['end']}"
     s.welcomeMessage    = [f"나락에 오신 걸 환영합니다, {s.lightName}님.", 
                         f"오실 때 {cc['fg']['R']}{s.cMarkdown(1)}피자{cc['end']}는 가져오셨죠? 장난입니다, {s.lightName}님.",
                         f"기다리느라 목 빠지는 줄 알았습니다, {s.lightName}님."

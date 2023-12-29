@@ -228,6 +228,7 @@ Dungeon      = []
 roomLock     = False
 killAll      = False
 deadReason   = None
+DROD         = [None, '']
 maxInputSize = 250
 jjol         = f"\n{cMarkdown(1)}{cColors['fg']['L']}P a u s e{cColors['end']}\n"
 

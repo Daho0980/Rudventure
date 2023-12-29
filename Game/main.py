@@ -59,13 +59,14 @@ def gameChecker(stdscr):
                 )
             y -= 1
             stdscr.addstr(cc['end']); stdscr.refresh()
-            time.sleep(2.5)
+            import Game.core.system.deathLogWriter
+            time.sleep(1)
             Achievements = {
                 "이름"             : s.lightName,
-                "사인"             : f"{s.deadReason}",
-                "내려간 깊이"      : f" {cc['fg']['Y']}{s.stage}{cc['end']}",
-                "최대 레벨"        : f"{cc['fg']['F']}{s.lvl}{cc['end']}",
-                "죽인 몬스터 횟수" : f"{cc['fg']['R']}{s.killCount}{cc['end']}"
+                "사인"             : f"{s.DROD[0]}",
+                "내려간 층"        : f" {cc['fg']['Y']}{s.stage}{cc['end']}",
+                "죽인 편린의 수"   : f"{cc['fg']['R']}{s.killCount}{cc['end']}",
+                "받은 저주의 강도" : f"{cc['fg']['F']}{s.lvl}{cc['end']}"
             }
             for num, text in enumerate(Achievements):
                 stdscr.addstr(f"\033[{x};{y}H{text} : {list(Achievements.values())[num]}\n"); stdscr.refresh()

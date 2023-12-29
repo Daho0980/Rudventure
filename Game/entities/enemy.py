@@ -69,6 +69,7 @@ class enemy:
         sound = f'enemy_Hit'
         if s.df > 0:
             s.df -= self.atk
+            s.DROD = [f"{s.cColors['fg']['F']}{self.name}{s.cColors['end']}", 'F']
             if s.df < 0                    : s.hp += s.df
             if round(s.df) < 0             : s.df = 0
             if s.df == 0 and s.dfCrack <= 0:

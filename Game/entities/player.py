@@ -28,6 +28,15 @@ class player:
     def damage(block="?"):
         if s.df > 0: s.df -= 1
         else       : s.hp -= 1
+        dr = random.choice([
+            "과다출혈",
+            "피로 과다",
+            "딴짓",
+            "졸도",
+            "자살",
+            "우울증"
+        ])
+        s.DROD = [f"{s.cColors['fg']['R']}{dr}{s.cColors['end']}", 'R']
         logger.addLog(f"{s.lightName}이(가) [ {block} ] 에 의해 상처입었습니다")
 
     def itemEvent():
