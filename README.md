@@ -21,13 +21,13 @@ git clone https://github.com/Daho0980/Rudventure.git
 
 ## TODO   
 - [x] curses 기반으로 겁나게 뜯어고치기   
-    - curses에서 색을 다채롭게 넣는 게 엄청 귀찮고 어렵기 때문에 ansi escape code를 이해할 수 있는 모듈(cusser) 사용   
+    - 순수 curses에서 색을 다채롭게 넣는 게 엄청 귀찮고 어렵기 때문에 ansi escape code를 이해할 수 있는 모듈(cusser) 사용   
 - [ ] npc 추가   
 - [x] 가상환경 생성   
 - [x] 각각 엔티티 마다 개별 스레드 적용   
 - [ ] ~~나를 위한~~ 위치 확인 편리화를 위한 ID 적용   
 - [ ] 더 많은 몬스터들   
-- [ ] 디버그 모드 제작   
+- [x] 디버그 모드 제작   
 - [ ] 던전 데이터 구성 방식 변경   
 - [ ] 메뉴 제작   
 - [ ] 세이브 제작   
