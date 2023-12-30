@@ -4,8 +4,7 @@ import time, random
 from   cusser              import Cusser
 from   Assets.data         import comments, lockers, status
 from   Game.entities       import player
-from   Game.core.system    import quests
-from   Game.core.system    import logger
+from   Game.core.system    import quests,      logger
 from   Game.scenes         import mainSettings
 from   Game.utils          import entity,       graphic,        idRelated, system
 from   Game.utils.advanced import DungeonMaker, makeNewListener

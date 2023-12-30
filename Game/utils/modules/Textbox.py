@@ -13,6 +13,7 @@ def TextBox(
         addWidth:int     =0,
         AMLS:bool        =False,
         endLineBreak:bool=False,
+        returnSizeyx:bool=False,
         LineType:str     ="normal"
         ):
         """
@@ -60,7 +61,9 @@ def TextBox(
                 
                 Display += f"{Line[LineType][3][1]}{FrontSpace}{textLine}{BackSpace}{Line[LineType][3][1]}\n"
         Display += (f"{Line[LineType][3][1]}{fillChar*maxLine}{Line[LineType][3][1]}\n")*inDistance+f"{Line[LineType][1][0]}{Line[LineType][3][0]*(maxLine+fullAddWidth)}{Line[LineType][1][1]}{endLine}"+"\n"*outDistance
-        return Display
+        splitedDisplay = Display.split("\n")
+        if returnSizeyx: return len(Display.split("\n"))-((outDistance*2)+2), maxLine+2, Display
+        else:            return Display
 
 
 # How to use:

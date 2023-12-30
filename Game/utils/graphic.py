@@ -8,6 +8,7 @@ Global Functions 중 Graphic 옵션
     ``fieldPrint``          : 인게임 디스플레이 출력 함수
 """
 import re
+import sys
 import math, time
 from   Assets.data         import status
 from   Assets.data         import lockers
@@ -216,11 +217,29 @@ hunger : {cc['fg']['Y']}{round(s.hunger/10)}%{cc['end']} | atk : {cc['fg']['L']}
         returnStr=True
     )
 
+    if s.debugScreen:
+        y, x = stdscr.getmaxyx()
+        by, bx, buffer = Textbox.TextBox(
+                f"""Python version : {cc['fg']['L']}{sys.version}{cc['end']}
+Window size : {cc['fg']['L']}{stdscr.getmaxyx()}{cc['end']}""",
+                Type        ="right",
+                AMLS        =True,
+                LineType    ="bold",
+                returnSizeyx=True
+            )
+        Display += addstrMiddle(
+            stdscr,
+            buffer,
+            y        =y-by,
+            x        =x-bx,
+            returnStr=True
+        )
+
     if l.pause:
         Display += addstrMiddle(
             stdscr,
             Textbox.TextBox(
-                s.jjol,
+                s.pauseText,
                 Type    ="middle",
                 AMLS    =True,
                 LineType="double",

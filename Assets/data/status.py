@@ -222,17 +222,18 @@ interactableBlocks = {
 stage     = 0
 
 # Background vars
-s            = ''
+s   = ''
+TFP = ""
+
 room         = ""
 Dungeon      = []
 roomLock     = False
 killAll      = False
 deadReason   = None
 DROD         = [None, '']
-maxInputSize = 250
-jjol         = f"\n{cMarkdown(1)}{cColors['fg']['L']}P a u s e{cColors['end']}\n"
+pauseText    = f"\n{cMarkdown(1)}{cColors['fg']['L']}P a u s e{cColors['end']}\n"
+debugScreen  = False
 
-TFP      = ""
 sound    = True
 
 entities = []
@@ -246,7 +247,7 @@ maxStack  = 10
 onDisplay = []
 onTime    = []
 
-# In game print settings
+# InGame print settings
 showStateDesign = 2 # normal = 1
 frame           = 0
 showDungeonMap  = 0 # normal = 0
