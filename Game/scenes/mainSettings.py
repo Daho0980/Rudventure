@@ -34,7 +34,8 @@ def init(stdscr):
                 "MAX"             : "최대한 빠르게 새로고침합니다. 화면이 [심하게] 깜빡거릴 수 있습니다."
             },
             [1,0,255,10],
-            '@'
+            '@',
+            maxLine=2
         )
         s.frame = [1, 30, 60, 0][selectFrame-1]; play("smash")
 

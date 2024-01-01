@@ -9,7 +9,19 @@ from   Game.utils.sound import play
 cc = s.cColors
 
 class selector:
-    def main(title, subtitle={'Why did you do...' : 'WHY...'}, color=0, icon:str='>', maxLine="max", lineSpace:int=1, tag:str="", frontTag:str=""):
+    def main(
+            title,
+            subtitle        ={'Why did you do...' : 'WHY...'},
+            color            =0,
+            icon:str        ='>',
+            maxLine:int     ="max",
+            lineSpace:int   =1,
+            tag:str         ="",
+            frontTag:str    ="",
+            moveCursorSound ="select",
+            blockCursorSound="open",
+            endSelectorSound="get_item"
+            ):
         """
         `title`(str, list)                     : 메뉴바의 타이틀이 될 문자열, 리스트 형태로 기입 시 타이틀과 메뉴의 공백이 제거됨. 무조건 기입해야 함\n
         `stdscr`(func)                         : 해당 모듈 외부에 있는 stdscr 사용 시 기입하는 매개변수, 기본적으로 빈 문자열로 지정되어 있음\n
@@ -43,7 +55,19 @@ class selector:
             ```
         """
 
-        return curses.wrapper(selector.system, title, subtitle, color, icon, maxLine, lineSpace, tag, frontTag)
+        return curses.wrapper(selector.system,
+                              title,
+                              subtitle,
+                              color,
+                              icon,
+                              maxLine,
+                              lineSpace,
+                              tag,
+                              frontTag,
+                              moveCursorSound,
+                              blockCursorSound,
+                              endSelectorSound
+                              )
 
     def Change2D(subtitle, maxLine): # 1차원 subtitle을 2차원으로 재배열
         """
@@ -64,7 +88,20 @@ class selector:
                 else                             : newSubtitle[subListRow].append(subtitle[subListColumn]) # 세로 배열셋 내 옵션 새로 추가
         return newSubtitle
 
-    def returnDisplay(stdscr, title, subtitle, arrow, Enter, maxLine, lineSpace, subtitleValues, nowSelectColumn, nowSelectRow, tag, frontTag):
+    def returnDisplay(
+            stdscr,
+            title,
+            subtitle,
+            arrow,
+            Enter,
+            maxLine,
+            lineSpace,
+            subtitleValues,
+            nowSelectColumn,
+            nowSelectRow,
+            tag,
+            frontTag
+            ):
         """
         `title`(str, list)                     : 메뉴바의 타이틀이 될 문자열, 리스트 형태로 기입 시 타이틀과 메뉴의 공백이 제거됨, 무조건 기입해야 함\n
         `subtitle`(list(1d))                   : 메뉴바의 메뉴가 될 리스트, 무조건 기입해야 함\n
@@ -115,7 +152,20 @@ class selector:
         Display += f"\n\n{cc['fg']['G1']}{tag}{cc['end']}\n\n"
         return Display, y, x
 
-    def system(stdscr, title, subtitle, color, icon, maxLine, lineSpace, tag, frontTag):
+    def system(
+            stdscr,
+            title,
+            subtitle,
+            color,
+            icon,
+            maxLine,
+            lineSpace,
+            tag,
+            frontTag,
+            moveCursorSound,
+            blockCursorSound,
+            endSelectorSound
+            ):
         stdscr = curses.initscr()
         if not isinstance(stdscr, Cusser): stdscr = Cusser(stdscr)
 
@@ -176,31 +226,29 @@ class selector:
                                             frontTag
                                             )
             
-            grp.addstrMiddle(
-                stdscr,
-                display,
-                y=y,
-                x=x
-                )
+            grp.addstrMiddle(stdscr, display, y=y, x=x)
             stdscr.refresh()
 
-            menuSound                            = "select"
+            menuSound                            = moveCursorSound
             SNum, SNum1                          = 1, 0 # 세로, 가로 변환 정도값
             arrow[nowSelectRow][nowSelectColumn] = ' '
             key                                  = stdscr.getch()
 
             if key == curses.KEY_UP: # sublist column값 감소
-                if nowSelectColumn == 0 and nowSelectRow == 0: SNum, SNum1 = 0, 0
                 while 1:
+                    if nowSelectColumn == 0 and nowSelectRow == 0:
+                        SNum, SNum1 = 0, 0
+                        menuSound   = blockCursorSound
+                        break
                     if nowSelectColumn-SNum < 0 and nowSelectRow > 0:
                         nowSelectColumn = maxLine - 1
                         SNum                      = 0
                         nowSelectRow             -= 1
                     if subtitleKeys[nowSelectRow - SNum1][nowSelectColumn - SNum] == '':
-                        if nowSelectColumn - SNum < 0:
-                            if nowSelectRow - SNum1 < 0:
+                        if nowSelectColumn - SNum+1 < 0:
+                            if nowSelectRow - SNum1+1 < 0:
                                 SNum, SNum1 = 0, 0
-                                menuSound   = "open"
+                                menuSound   = blockCursorSound
                                 break
                             else:
                                 SNum   = 0
@@ -209,11 +257,14 @@ class selector:
                     else: break
                 nowSelectRow    -= SNum1
                 nowSelectColumn -= SNum
-                play("select")
+                play(menuSound)
 
             elif key == curses.KEY_DOWN: # sublist column값 증가
-                if nowSelectColumn == maxLine-1 and nowSelectRow == len(subtitleKeys)-1: SNum, SNum1 = 0, 0
                 while 1:
+                    if nowSelectColumn == maxLine-1 and nowSelectRow == len(subtitleKeys)-1:
+                        SNum, SNum1 = 0, 0
+                        menuSound   = blockCursorSound
+                        break
                     if nowSelectColumn+SNum > maxLine-1: # 내렸을 때 maxLine-1보다 nowSelectColumn+SNum이 더 높을 때:
                         nowSelectColumn = 0
                         SNum            = 0
@@ -222,7 +273,7 @@ class selector:
                         if nowSelectColumn + SNum+1 > maxLine-1: # 근데 행이 올라가면 끝나?
                             if nowSelectRow + SNum1+1 > len(subtitleKeys)-1: # 근데 열도 올라가면 끝나??
                                 SNum, SNum1 = 0, 0
-                                menuSound   = "open"
+                                menuSound   = blockCursorSound
                                 break
                             else:
                                 SNum   = 0
@@ -236,31 +287,38 @@ class selector:
             elif key == curses.KEY_LEFT: # row 값 감소
                 SNum1 = 1
                 while 1:
-                    if nowSelectRow == 0: SNum1 = 0; break
+                    if nowSelectRow == 0:
+                        SNum1     = 0
+                        menuSound = blockCursorSound
+                        break
                     if subtitleKeys[nowSelectRow-SNum1][nowSelectColumn] == '':
                         if nowSelectRow-SNum1 <= 0:
-                            SNum1  = 0; menuSound = "open"
+                            SNum1     = 0
+                            menuSound = blockCursorSound
                             break
                         else: SNum1 += 1
                     else: break
                 nowSelectRow -= SNum1
                 play(menuSound)
 
-            elif key == curses.KEY_RIGHT and nowSelectRow < len(subtitleKeys)-1: # row 값 증가
+            elif key == curses.KEY_RIGHT: # row 값 증가
                 SNum1 = 1
                 while 1:
-                    if nowSelectRow == len(subtitleKeys)-1: SNum1 = 0; break
+                    if nowSelectRow == len(subtitleKeys)-1:
+                        SNum1     = 0
+                        menuSound = blockCursorSound
+                        break
                     if subtitleKeys[nowSelectRow+SNum1][nowSelectColumn] == '':
-                        if nowSelectRow+SNum1 == len(subtitleKeys)-1:
-                            SNum1 = 0
-                            menuSound = "open"
+                        if nowSelectRow+SNum1 >= len(subtitleKeys)-1:
+                            SNum1     = 0
+                            menuSound = blockCursorSound
                             break
-                        else: SNum += 1
+                        else: SNum1 += 1
                     else: break
                 nowSelectRow += SNum1
                 play(menuSound)
 
-            elif key == 10: play("get_item"); break # enter
+            elif key == 10: play(endSelectorSound); break # enter
         stdscr.clear(); stdscr.refresh() # 최종
         blankD = 0 # 공백 개수 변수 선언
         for i in range(0, nowSelectRow+1): # 처음부터 현재 위치까지 존재하는 공백 개수 확인
