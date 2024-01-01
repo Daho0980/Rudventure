@@ -8,7 +8,7 @@ from   Game.core.system    import quests,      logger
 from   Game.scenes         import mainSettings
 from   Game.utils          import entity,       graphic,        idRelated, system
 from   Game.utils.advanced import DungeonMaker, makeNewListener
-from   Game.utils.modules  import Textbox
+from   Game.utils.modules  import Textbox, cSelector
 from   Game.utils.sound    import play
 
 stdscr = curses.initscr()
@@ -54,6 +54,7 @@ def gameChecker(stdscr):
                     endLineBreak=True,
                     LineType    ="bold"
                     ),
+                    addOnCoordinate=[-5, 0],
                     returnEndyx=True
                 )
             y -= 1
@@ -63,7 +64,7 @@ def gameChecker(stdscr):
             Achievements = {
                 "이름"             : s.lightName,
                 "사인"             : f"{s.DROD[0]}",
-                "내려간 층"        : f" {cc['fg']['Y']}{s.stage}{cc['end']}",
+                "내려간 층"        : f"{cc['fg']['Y']}{s.stage}{cc['end']}",
                 "죽인 편린의 수"   : f"{cc['fg']['R']}{s.killCount}{cc['end']}",
                 "받은 저주의 강도" : f"{cc['fg']['F']}{s.lvl}{cc['end']}"
             }
@@ -73,12 +74,35 @@ def gameChecker(stdscr):
                 time.sleep(0.2)
                 y += 2 if text == "사인" else 1
             play("smash")
-            system.cinp(stdscr, "Enter를 눌러 윤회 끝내기__", echo=False, y=y+2, x=x)
+            the_choice = cSelector.selector.main(
+                cc['fg']['R']+t.TextBox(
+                    f"   사 망 하 셨 습 니 다   \n\n   \"{comment}\"   ",
+                    Type        ="middle",
+                    inDistance  =1,
+                    outDistance =1,
+                    AMLS        =True,
+                    endLineBreak=True,
+                    LineType    ="bold"
+                    )+cc['end']+
+                f"""
+이름 : {s.lightName}
+사인 : {s.DROD[0]}
+
+내려간 층 : {cc['fg']['Y']}{s.stage}{cc['end']}
+죽인 편린의 수 : {cc['fg']['R']}{s.killCount}{cc['end']}
+받은 저주의 강도 : {cc['fg']['F']}{s.lvl}{cc['end']}
+""",
+                ["윤회 끝내기", "살육을 계속 즐기기"],
+                [1,0,255,10],
+                '@'
+                )
+            # system.cinp(stdscr, "Enter를 눌러 윤회 끝내기__", echo=False, y=y+2, x=x)
+
 
             play("crack")
             s.main = 0
             curses.endwin()
-            exit()
+            exit(0 if the_choice-1 else 1)
 
         else:
             play("clear")

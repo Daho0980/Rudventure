@@ -21,12 +21,21 @@ cc   = s.cColors
 
 escapeAnsi = lambda line: re.compile(r'(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]').sub('', line)
 
-def addstrMiddle(stdscr, string:str, y:int=0, x:int=0, returnEndyx:bool=False, returnStr:bool=False):
+def addstrMiddle(
+        stdscr,
+        string:str,
+        y:int               =0,
+        x:int               =0,
+        addOnCoordinate:list=[0,0],
+        returnEndyx:bool    =False,
+        returnStr:bool      =False
+        ):
     lines = list(map(lambda l: len(escapeAnsi(l)), string.split("\n")))
     y, x  = (y, x) if y+x else map(
         lambda c:c[0]-round([len(lines)/2,max(lines)/2][c[1]]),
         list(zip(map(lambda n: round(n/2), list(stdscr.getmaxyx())),[0,1]))
         )
+    y, x = y+addOnCoordinate[0], x+addOnCoordinate[1]
     output = ''.join(
         [
             escc for line in zip(

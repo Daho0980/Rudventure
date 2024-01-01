@@ -5,8 +5,13 @@ cd     "$(cd "$(dirname "$0")" && pwd -P)" || exit
 source "bin/activate"
 
 while true; do
-    if ! python3 runGame.py; then
-        echo "에러가 발생했습니다. 프로그램을 종료합니다."
+    python3 runGame.py
+    errorCode=$?
+
+    if [ $errorCode -eq 1 ]; then
+        printf "에러 코드 %s : 'Assets.data.status.main'을 찾을 수 없습니다.\n프로그램을 종료합니다.", $errorCode
+        break
+    elif [ $errorCode -gt 1 ]; then
         break
     fi
 done
