@@ -5,7 +5,7 @@ from   cusser              import Cusser
 from   Assets.data         import comments, lockers, status
 from   Game.entities       import player
 from   Game.core.system    import quests,      logger
-from   Game.scenes         import mainSettings
+from   Game.scenes         import mainSettings, mainMenu
 from   Game.utils          import entity,       graphic,        idRelated, system
 from   Game.utils.advanced import DungeonMaker, makeNewListener
 from   Game.utils.modules  import Textbox, cSelector
@@ -96,8 +96,6 @@ def gameChecker(stdscr):
                 [1,0,255,10],
                 '@'
                 )
-            # system.cinp(stdscr, "Enter를 눌러 윤회 끝내기__", echo=False, y=y+2, x=x)
-
 
             play("crack")
             s.main = 0
@@ -127,7 +125,8 @@ def gameChecker(stdscr):
 curses.noecho()
 curses.curs_set(0)
 
-mainSettings.init(stdscr)
+mainMenu.main(stdscr)
+mainSettings.main(stdscr)
 stdscr.nodelay(True)
 p.set()
 

@@ -234,7 +234,14 @@ DROD         = [None, '']
 pauseText    = f"\n{cMarkdown(1)}{cColors['fg']['L']}P a u s e{cColors['end']}\n"
 debugScreen  = False
 
-sound    = True
+allSound    = True
+sound = {
+    "hostileMob"  : True,
+    "friendlyMob" : True,
+    "interaction" : True,
+    "system"      : True,
+    "player"      : True
+}
 
 entities = []
 hitPos   = []

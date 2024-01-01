@@ -180,4 +180,4 @@ class player:
 
         s.Dungeon[bfDy][bfDx]['room'][bfy][bfx] = {"block" : s.ids[0], "id" : 0}
         s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x] = {"block":s.ids[300], "id":300}
-        play(sound)
+        play(sound, 'player')

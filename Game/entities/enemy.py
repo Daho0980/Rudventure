@@ -44,7 +44,7 @@ class enemy:
                 if not dmg:    msg = f"{cc['fg']['L']}공격{cc['end']}이 빗나갔습니다!"
                 elif crit: msg += f" {cc['fg']['L']}치명타!{cc['end']}"
                 addLog(msg)
-                if sound: play(sound)
+                if sound: play(sound, 'interaction')
 
     def start(self, sethp, setAtk, Dy, Dx, y, x):
         self.hp          = sethp
@@ -79,7 +79,7 @@ class enemy:
         else: s.hp -= self.atk
 
         addLog(f"{s.lightName}이(가) {cc['fg']['F']}{self.name}{cc['end']}({self.icon}) 에 의해 {cc['fg']['R']}{self.atk}{cc['end']}만큼의 피해를 입었습니다!")
-        play(sound)
+        play(sound, 'player')
         return
 
     def move(self):
@@ -94,7 +94,7 @@ class enemy:
             bfx, bfy = self.x, self.y
             if self.hp > 0:
                 if random.randrange(1,3000) == 1215:
-                    play(f"growl")
+                    play(f"growl", 'hostileMob')
                     addLog(f"{cc['fg']['F']}{self.name}{cc['end']}({self.icon})이 울부짖습니다!")
                     addLog(f"{cc['fg']['F']}{self.name}{cc['end']}({self.icon})의 공격력이 {cc['fg']['L']}{1+(round(s.stage/10))}{cc['end']} 상승합니다.")
                     self.atk += 1+(round(s.stage/10))
@@ -165,7 +165,7 @@ class observer(enemy):
                 a             = 0
 
                 if self.Dy == s.Dy and self.Dx == s.Dx and (self.x == s.x or self.y == s.y):
-                    play(f"TargetLocked")
+                    play(f"TargetLocked", 'hostileMob')
                     if self.x == s.x:
                         Targetted()
                         if self.y < s.y: a = 0

@@ -73,7 +73,7 @@ s.Dungeon[{Name}.Dy][{Name}.Dx]['room'][{Name}.y][{Name}.x] = {{"block" : s.ids[
 if s.main and not s.killAll: xps.getXP(xpType[entityType])
         """, nameSpace)
         if s.main == 1 and not s.killAll:
-            play("monster_dead")
+            play("monster_dead", 'hostileMob')
             s.killCount += 1
             logger.addLog(f"{s.cColors['fg']['F']}{Name}{s.cColors['end']}이(가) 죽었습니다!")
     threading.Thread(target=EntityInteraction, name=Rname, daemon=True).start()

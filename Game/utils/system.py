@@ -88,7 +88,7 @@ class xpSystem:
             `count`(int) : xp 증가율
         """
         while s.xp + count > s.Mxp:
-            play("levelUp")
+            play("levelUp", 'interaction')
             logger.addLog(f"{cc['fg']['F']}저주가 한 층 더 깊어집니다...{cc['end']}")
             s.lvl += 1
             s.Mxp += 3
@@ -190,14 +190,14 @@ class roomChecker:
             match data['roomType']:
                 case 1:
                     if data['summonCount'] > 0:
-                        play("close_door")
+                        play("close_door", 'interaction')
                         roomChecker.summonRandomMonster(data)
 
                         data['summonCount'] = 0
                         s.roomLock          = True
                         roomChecker.changeDoorPosBlock(1, data)
                     elif len(s.entities) == 0 and s.roomLock:
-                        play("open_door")
+                        play("open_door", 'interaction')
 
                         s.roomLock                           = False
                         s.Dungeon[s.Dy][s.Dx]['interaction'] = True
@@ -228,7 +228,7 @@ class roomChecker:
 
                 case 4:
                     if data['summonCount'] > 0:
-                        play("close_door")
+                        play("close_door", 'interaction')
                         roomChecker.summonRandomMonster(data)
 
                         s.Dungeon[s.Dy][s.Dx]['room'][6][6] = {"block" : s.ids[0], "id" : 0}
@@ -236,7 +236,7 @@ class roomChecker:
                         s.roomLock          = True
                         roomChecker.changeDoorPosBlock(1, data)
                     elif len(s.entities) == 0 and s.roomLock:
-                        play("open_door")
+                        play("open_door", 'interaction')
 
                         s.roomLock = False
                         s.Dungeon[s.Dy][s.Dx]['room'][6][6]  = {"block" : s.ids[5], "id" : 5}
