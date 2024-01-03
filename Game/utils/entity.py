@@ -23,22 +23,23 @@ def addEntity(entityType:int, initHp:int, Dy:int, Dx:int, y:list, x:list):
         `x`(list)         : 적이 소환될 x값, 리스트 형태로 `[방 x 최솟값, 방 x 최댓값]`과 같이 기입해도 되지만,
             특정 위치에 소환하려면 `int`형식으로 기입해야됨
     """
-    kinds                = ["고통의_편린", "불안의_편린"]
-    classType            = ["enemy", "observer"]
-    idType               = [600, 601]
-    xpType               = [3, 5]
-    atkType              = [1, 2]
-    Name                 = kinds[entityType]
+    kinds:list[str]      = ["고통의_편린", "불안의_편린"]
+    classType:list[str]  = ["enemy", "observer"]
+    idType:list[int]     = [600, 601]
+    xpType:list[int]     = [3, 5]
+    atkType:list[int]    = [1, 2]
+    Name:str             = kinds[entityType]
+    Rname:str            = ""
 
-    icons = [s.ids[600], s.ids[601]]
-    a = 0
+    icons:list[str] = [s.ids[600], s.ids[601]]
+    a:int           = 0
     while 1:
         if Name + f"_{a}" not in s.entities:
             Name  = str(      Name + f"_{a}"       )
             Rname = str(kinds[entityType] + f"_{a}")
             break
         a += 1
-    nameSpace = {
+    nameSpace:dict[str,str|int|list] = {
         f"{Name}"    : Name,
         "Rname"      : Rname,
         "xpType"     : xpType,
@@ -52,7 +53,7 @@ from   Assets.data   import status as s
 {Name}.start({initHp}+((s.stage-1)*2), {atkType[entityType]}+(s.stage-1), {Dy}, {Dx}, {y}, {x})
 s.entities.append(Rname)
     """, nameSpace)
-    def EntityInteraction():
+    def EntityInteraction() -> None:
         exec(f"""
 import time
 from   Assets.data                     import lockers, status

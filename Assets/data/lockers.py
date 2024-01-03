@@ -1,3 +1,3 @@
-jpsf   = False
-yctuoh = False
-pause  = False
+jpsf:bool   = False
+yctuoh:bool = False
+pause:bool  = False

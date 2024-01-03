@@ -4,9 +4,10 @@ import time, random
 from   cusser              import Cusser
 from   Assets.data         import comments, lockers, status
 from   Game.entities       import player
-from   Game.core.system    import quests,      logger
+from   Game.core.system    import quests, logger
 from   Game.scenes         import mainSettings, mainMenu
-from   Game.utils          import entity,       graphic,        idRelated, system
+from   Game.utils          import entity, graphic, idRelated
+from   Game.utils.system   import roomChecker
 from   Game.utils.advanced import DungeonMaker, makeNewListener
 from   Game.utils.modules  import Textbox, cSelector
 from   Game.utils.sound    import play
@@ -17,7 +18,7 @@ if not isinstance(stdscr, Cusser): stdscr = Cusser(stdscr)
 quickStarter            = 0
 
 c, s, l                 = comments,      status,  lockers
-p, t, dgm, mnl          = player.player, Textbox, DungeonMaker, makeNewListener
+p, t, dgm, mnl          = player, Textbox, DungeonMaker, makeNewListener
 ent, grp, idr           = entity,        graphic, idRelated
 q                       = quests
 cc                      = s.cColors
@@ -57,7 +58,7 @@ def gameChecker(stdscr):
                     addOnCoordinate=[-5, 0],
                     returnEndyx=True
                 )
-            y -= 1
+            y -= 1 # type: ignore
             stdscr.addstr(cc['end']); stdscr.refresh()
             import Game.core.system.deathLogWriter
             time.sleep(1)
@@ -74,7 +75,7 @@ def gameChecker(stdscr):
                 time.sleep(0.2)
                 y += 2 if text == "사인" else 1
             play("smash")
-            the_choice = cSelector.selector.main(
+            the_choice = cSelector.main(
                 cc['fg']['R']+t.TextBox(
                     f"   사 망 하 셨 습 니 다   \n\n   \"{comment}\"   ",
                     Type        ="middle",
@@ -139,7 +140,7 @@ while s.main:
     s.Dungeon = dgm.DungeonMaker()
 
     p.start(4, 4, 6, 6)
-    system.roomChecker.placeRandomOrbs()
+    roomChecker.placeRandomOrbs()
     # stdscr.addstr("flag - 1"); stdscr.refresh()
     grp.showStage(
         stdscr,
@@ -154,7 +155,7 @@ while s.main:
             playerChecker()
             grp.fieldPrint(stdscr, s.Dungeon[s.Dy][s.Dx]['room'])
             if not quickStarter: stdscr.refresh(); quickStarter += 1
-            system.roomChecker.main()
+            roomChecker.main()
             if s.frame > 0: time.sleep(1/s.frame)
         else: time.sleep(1)
     quickStarter = 0

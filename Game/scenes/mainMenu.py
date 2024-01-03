@@ -1,15 +1,15 @@
 import curses
-from   Assets.data                  import status as s
-from   Game.utils.sound             import play
-from   Game.utils.modules.cSelector import selector
+from   Assets.data                  import status     as s
 from   Game.scenes                  import checkColor
+from   Game.utils.modules           import cSelector  as clc
+from   Game.utils.sound             import play
 
 def main(stdscr):
     checkColor.main(stdscr)
     play("smash")
     while 1:
-        mainMenu = selector.main(
-            f"{s.LOGO}",
+        mainMenu:int = clc.main(
+            s.LOGO,
             {
                 "나락 입장" : "건투를 빕니다.",
                 "설정..."   : "게임에 관련된 설정을 합니다.",
@@ -25,7 +25,7 @@ def main(stdscr):
         elif mainMenu == 2:
             play("smash")
             while 1:
-                mainSettings = selector.main(
+                mainSettings = clc.main(
                     "<< 설정 >>",
                     {
                         "소리" : "소리와 관련된 설정을 합니다.",
@@ -39,7 +39,7 @@ def main(stdscr):
                     case 1:
                         play("smash")
                         while 1:
-                            soundSettings = selector.main(
+                            soundSettings = clc.main(
                                 "<< 소리 >>",
                                 [
                                     f"모든 소리 : {s.allSound}",
@@ -66,7 +66,7 @@ def main(stdscr):
                     case 2: break
             
         elif mainMenu == 3:
-            selector.main("제작중", ["화긴"], [1,0,255,10], '@')
+            clc.main("제작중", ["화긴"], [1,0,255,10], '@')
 
         elif mainMenu == 4:
             s.main = 0

@@ -37,7 +37,7 @@ def IDDecryption(ID:str):
         `ID`(str) : `IDIncryption`으로 만들어진 좌표 데이터가 포함됨, 무조건 기입해야 함
     """
     if ID.startswith("Rud"):
-        output = ID.split('.')
+        output:list = ID.split('.')
         del output[0]
 
         for i in range(len(output)):

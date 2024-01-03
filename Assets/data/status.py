@@ -1,5 +1,5 @@
 # Colors
-cColors = {
+cColors:dict = {
     "fg" : {
         "B" :   "\033[;38;5;0m",
         "M" :   "\033[;38;5;1m",
@@ -39,18 +39,20 @@ cColors = {
     "end" : "\033[0m"
 }
 
-def customColor(R, G, B, Type=1):
-    """
-    `R, G, B`(int): RGB값을 정함\n
-    `Type`(int) : 어떤 색을 변경할 지 정함\n
-        - `1` : 글자 색 변경\n
-        - `2` : 배경 색 변경\n
-    """
-    return f'\033[{38 if Type == 1 else 48};2;{R};{G};{B}m'
+# def customColor(R, G, B, Type=1):
+#     """
+#     `R, G, B`(int): RGB값을 정함\n
+#     `Type`(int) : 어떤 색을 변경할 지 정함\n
+#         - `1` : 글자 색 변경\n
+#         - `2` : 배경 색 변경\n
+#     """
+#     return f'\033[{38 if Type == 1 else 48};2;{R};{G};{B}m'
+
+customColor = lambda R,G,B,T=1: f"\033[{[0,38,48][T]};2;{R};{G};{B}m"
 
 #  ┏━━━━ Wait, you're not a color >:(
 # v
-def cMarkdown(Type=0):
+def cMarkdown(Type:(list[int]|int)=0) -> str:
     """
     list 형식으로 여러개 쓸 수 있음
 
@@ -77,50 +79,50 @@ def cMarkdown(Type=0):
 
 
 # status
-name         = ""
-lightName    = ""
+name:str         = ""
+lightName:str    = ""
 
-Dy           = 0
-bfDy         = 0
-Dx           = 0
-bfDx         = 0
-x            = 0
-bfx          = 0
-y            = 0
-bfy          = 0
+Dy:int           = 0
+bfDy:int         = 0
+Dx:int           = 0
+bfDx:int         = 0
+x:int            = 0
+bfx:int          = 0
+y:int            = 0
+bfy:int          = 0
 
-hp           = 0
-Mhp          = 0
-hpLow        = False
-df           = 0
-Mdf          = 0
-dfCrack      = 0
-atk          = 0
-critRate     = 0
-critDMG      = 0
-hunger       = 0
-xp           = 0
-Mxp          = 0
-lvl          = 0
-steppedBlock = ' '
-killCount    = 0
+hp:int           = 0
+Mhp:int          = 0
+hpLow:bool       = False
+df:int           = 0
+Mdf:int          = 0
+dfCrack:int      = 0
+atk:int          = 0
+critRate:int     = 0
+critDMG:int      = 0
+hunger:int       = 0
+xp:int           = 0
+Mxp:int          = 0
+lvl:int          = 0
+steppedBlock:str = ' '
+killCount:int    = 0
 
 # Power
-main = 1
+main:int = 1
 
 # Texts and icons
-LOGO = f"""
+LOGO:str = f"""
   _   
  /_/     _/   _  _ _/_    _ _ 
-/ \ /_//_/ |//_\'/ //  /_// /_\'
+/ \\ /_//_/ |//_\'/ //  /_// /_\'
 
   {cColors['fg']['R']}.-  .-..  .--.  ....  .-{cColors['end']}
 
 """
 
-welcomeMessage = []
+welcomeMessage:list = []
 
-ids = {
+ids:dict = {
     0 :  ' ',
     1 :  '■',
     2 :  '.',
@@ -149,56 +151,7 @@ ids = {
     601 : '#'
 }
 
-p1             = f"{customColor(0, 255, 10)}@{cColors['end']}" # 0, 255, 10
-p2             = "&"
-e              = '%'
-
-enemies = {
-    "snippets" : {
-        "pain"   : '%',
-        "unrest" : '#'
-    }
-}
-
-R              = '.'
-box            = '☒'
-goal           = f"{cColors['fg']['R']}F{cColors['end']}"
-item           = f"{cColors['fg']['Y']}É{cColors['end']}"
-wall           = '■'
-squishy        = [f"{cColors['fg']['B1']}{cMarkdown(1)}O{cColors['end']}", f"{cColors['fg']['B1']}{cMarkdown(1)}o{cColors['end']}"]
-fakeFloor      = '∙'
-
-boxMark        = f"{cColors['fg']['R']}X{cColors['end']}"
-floor          = ' '
-
-# hp -> def -> atk -> hng -> exp
-orbs = {
-    "size" : {
-        "smallOne" : [
-            f"{cColors['fg']['R']}o{cColors['end']}",
-            f"{cColors['fg']['B1']}o{cColors['end']}",
-            f"{cColors['fg']['L']}o{cColors['end']}",
-            f"{cColors['fg']['Y']}o{cColors['end']}",
-            f"{cColors['fg']['F']}ø{cColors['end']}"
-        ],
-        "bigOne" : [
-            f"{cColors['fg']['R']}O{cColors['end']}",
-            f"{cColors['fg']['B1']}O{cColors['end']}",
-            f"{cColors['fg']['L']}O{cColors['end']}",
-            f"{cColors['fg']['Y']}O{cColors['end']}",
-            f"{cColors['fg']['F']}Ø{cColors['end']}"
-        ]
-    },
-    "type" : {
-        "hp"     : [f"{cColors['fg']['R']}o{cColors['end']}",  f"{cColors['fg']['R']}O{cColors['end']}"],
-        "def"    : [f"{cColors['fg']['B1']}o{cColors['end']}", f"{cColors['fg']['B1']}O{cColors['end']}"],
-        "atk"    : [f"{cColors['fg']['L']}o{cColors['end']}",  f"{cColors['fg']['L']}O{cColors['end']}"],
-        "hunger" : [f"{cColors['fg']['Y']}o{cColors['end']}",  f"{cColors['fg']['Y']}O{cColors['end']}"],
-        "exp"    : [f"{cColors['fg']['F']}ø{cColors['end']}",  f"{cColors['fg']['F']}Ø{cColors['end']}"]
-    }
-}
-
-orbIds = {
+orbIds:dict = {
     "size" : {
         "smallOne" : [10, 11, 12, 13, 14],
         "bigOne"   : [15, 16, 17, 18, 19]
@@ -212,30 +165,29 @@ orbIds = {
     }
 }
 
-stepableBlocks     = [0, 4, 7]
-interactableBlocks = {
+stepableBlocks:list     = [0, 4, 7]
+interactableBlocks:dict = {
     "canStepOn"    : [4, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
     "cannotStepOn" : [1, 2, 3, 5, 6, 600, 601]
 }
 
 # Stage settings
-stage     = 0
+stage:int     = 0
 
 # Background vars
-s   = ''
-TFP = ""
+s:str   = ''
+TFP:str = ""
 
-room         = ""
-Dungeon      = []
-roomLock     = False
-killAll      = False
-deadReason   = None
-DROD         = [None, '']
-pauseText    = f"\n{cMarkdown(1)}{cColors['fg']['L']}P a u s e{cColors['end']}\n"
-debugScreen  = False
+Dungeon:list     = []
+roomLock:bool    = False
+killAll:bool     = False
+deadReason       = None
+DROD:list        = [None, '']
+pauseText:str    = f"\n{cMarkdown(1)}{cColors['fg']['L']}P a u s e{cColors['end']}\n"
+debugScreen:bool = False
 
-allSound    = True
-sound = {
+allSound:bool = True
+sound:dict    = {
     "hostileMob"  : True,
     "friendlyMob" : True,
     "interaction" : True,
@@ -243,18 +195,18 @@ sound = {
     "player"      : True
 }
 
-entities = []
-hitPos   = []
+entities:list = []
+hitPos:list   = []
 
 # Option available
-option = False
+option:bool = False
 
 # Log system
-maxStack  = 10
-onDisplay = []
-onTime    = []
+maxStack:int   = 10
+onDisplay:list = []
+onTime:list    = []
 
 # InGame print settings
-showStateDesign = 2 # normal = 1
-frame           = 0
-showDungeonMap  = 0 # normal = 0
+showStateDesign:int = 2 # normal = 1
+frame:int           = 0
+showDungeonMap:int  = 0 # normal = 0

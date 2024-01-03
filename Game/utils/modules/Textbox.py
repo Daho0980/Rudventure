@@ -7,7 +7,7 @@ def TextBox(
         Inp:str,
         Type:str         ="left",
         maxLine:int      =100,
-        fillChar:chr     =" ",
+        fillChar:str     =" ",
         inDistance:int   =0,
         outDistance:int  =0,
         addWidth:int     =0,
@@ -15,7 +15,7 @@ def TextBox(
         endLineBreak:bool=False,
         returnSizeyx:bool=False,
         LineType:str     ="normal"
-        ):
+        ) -> str:
         """
         ``Inp``(str)                                      : 텍스트박스 내용, 줄바꿈하려면 `\\n`을 사용해야 함\n
         ``Type``(str["left", "middle", "right"])          : 위치 설정, 기본적으로 `"left"`로 설정되어 있음\n
@@ -61,8 +61,7 @@ def TextBox(
                 
                 Display += f"{Line[LineType][3][1]}{FrontSpace}{textLine}{BackSpace}{Line[LineType][3][1]}\n"
         Display += (f"{Line[LineType][3][1]}{fillChar*maxLine}{Line[LineType][3][1]}\n")*inDistance+f"{Line[LineType][1][0]}{Line[LineType][3][0]*(maxLine+fullAddWidth)}{Line[LineType][1][1]}{endLine}"+"\n"*outDistance
-        splitedDisplay = Display.split("\n")
-        if returnSizeyx: return len(Display.split("\n"))-((outDistance*2)+2), maxLine+2, Display
+        if returnSizeyx: return len(Display.split("\n"))-((outDistance*2)+2), maxLine+2, Display # type: ignore
         else:            return Display
 
 

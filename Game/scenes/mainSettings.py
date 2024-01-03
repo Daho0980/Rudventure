@@ -2,7 +2,7 @@ import time
 import random
 from   Assets.data        import status as s
 from   Game.core.system   import logger
-from   Game.utils         import graphic,   system
+from   Game.utils         import graphic, system
 from   Game.utils.modules import cSelector, Textbox
 from   Game.utils.sound   import play
 
@@ -13,7 +13,7 @@ cc   = s.cColors
 def main(stdscr):
     play("smash")
     if s.frame == 0:
-        selectFrame = cSelector.selector.main(
+        selectFrame = cSelector.main(
             f"{s.LOGO}를 시작하기 전에, 프레임을 설정해주세요",
             {
                 "1프레임"         : "정말로요...?",
@@ -56,13 +56,14 @@ def main(stdscr):
 #         ); stdscr.refresh()
 #     system.cinp(stdscr, "", echo=False); stdscr.clear(); stdscr.refresh()
 
-    nameChangeCount = 0
-    reTryCount      = 0
+    nameChangeCount:int = 0
+    reTryCount:int      = 0
+    temporaryName:str   = ""
     while 1:
         play("select")
         if nameChangeCount == 5:
             temporaryName = "이름도 못 정하는 멍청이"
-            cSelector.selector.main(
+            cSelector.main(
                 t.TextBox(
                     f"뇌 빼고 엔터만 치고 계신 것 같으니 특별히\n{cc['fg']['Y']}<< {temporaryName} >>{cc['end']}\n(으)로 정해드리겠습니다. 어때요, 좋죠?",
                     Type        ="middle",
@@ -94,7 +95,7 @@ def main(stdscr):
         stdscr.clear(); stdscr.refresh()
 
         if len(temporaryName) == 0 or len(temporaryName.split()) == 0:
-            cSelector.selector.main(
+            cSelector.main(
                 t.TextBox(
                     f"이름이 {cc['fg']['R']}{s.cMarkdown([2, 3])}없거나{cc['end']} {cc['fg']['R']}{s.cMarkdown([2, 3])}공백 밖에{cc['end']} 없으면\n말하기 곤란해지실게요",
                     Type        ="middle",
@@ -112,7 +113,7 @@ def main(stdscr):
 
         if len(temporaryName) > 25: temporaryName = temporaryName[:25]+"..."
         
-        match cSelector.selector.main(
+        match cSelector.main(
             t.TextBox(
                 f"{cc['fg']['Y']}<< {temporaryName} >>{cc['end']}\n\n이 이름이 맞습니까?",
                 Type        ="middle",
@@ -129,7 +130,7 @@ def main(stdscr):
             case 2: reTryCount += 1; continue
             case 3:
                 temporaryName = f"선택장애 {reTryCount-2}호"
-                nameSuggestions = cSelector.selector.main(
+                nameSuggestions = cSelector.main(
                     t.TextBox(
                         f"좋습니다. 그럼...\n{cc['fg']['Y']}<< {temporaryName} >>{cc['end']}\n은 어떠신가요?",
                         Type        ="middle",

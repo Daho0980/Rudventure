@@ -2,7 +2,7 @@ from Assets.data.status import cColors as cc
 from Game.utils         import system
 from Game.utils.sound   import play
 
-def main(stdscr):
+def main(stdscr) -> None:
     play("smash")
     a, b = [f"{cc['bg'][i]}   " for i in list(cc['bg'].keys())[:8]], [f"{cc['bg'][i]}   " for i in list(cc["bg"].keys())[8:16]]
 

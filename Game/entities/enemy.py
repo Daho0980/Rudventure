@@ -2,15 +2,14 @@ import random, time
 from   Game.core.system.logger import addLog
 from   Assets.data             import status, lockers
 from   Assets.data.status      import entities
-from   Game.entities           import player
 from   Game.utils.sound        import play
 
 l    = lockers
-s, p = status, player.player
+s = status
 cc   = s.cColors
 
 class enemy:
-    def __init__(self, name, icon, ID):
+    def __init__(self, name:str, icon:str, ID:int) -> None:
         global entities
 
         self.name     = name
@@ -28,9 +27,8 @@ class enemy:
         self.id       = ID
 
     def damaged(self) -> None:
-
         if len(s.hitPos) > 0 and [self.y, self.x] in s.hitPos:
-            rate             = random.randrange(1,101)
+            rate:int         = random.randrange(1,101)
             crit, dmg, sound = 0, s.atk, None
             if rate <= s.critRate:
                 sound, crit = "crack", 1
@@ -46,11 +44,11 @@ class enemy:
                 addLog(msg)
                 if sound: play(sound, 'interaction')
 
-    def start(self, sethp, setAtk, Dy, Dx, y, x):
-        self.hp          = sethp
-        self.atk         = setAtk
-        self.Dy, self.Dx = Dy, Dx
-        nowDRP           = s.Dungeon[self.Dy][self.Dx]
+    def start(self, sethp:int, setAtk:int, Dy:int, Dx:int, y:int, x:int) -> None:
+        self.hp:int       = sethp
+        self.atk:int      = setAtk
+        self.Dy, self.Dx  = Dy, Dx
+        nowDRP:dict       = s.Dungeon[self.Dy][self.Dx]
 
         if isinstance(y, list) and isinstance(x, list):
             while 1:
@@ -65,8 +63,8 @@ class enemy:
             self.Dy, self.Dx = Dy, Dx
             self.y, self.x   = y, x
 
-    def pDamage(self):
-        sound = f'enemy_Hit'
+    def pDamage(self) -> None:
+        sound:str = f'enemy_Hit'
         if s.df > 0:
             s.df -= self.atk
             s.DROD = [f"{s.cColors['fg']['F']}{self.name}{s.cColors['end']}", 'F']
@@ -80,10 +78,9 @@ class enemy:
 
         addLog(f"{s.lightName}이(가) {cc['fg']['F']}{self.name}{cc['end']}({self.icon}) 에 의해 {cc['fg']['R']}{self.atk}{cc['end']}만큼의 피해를 입었습니다!")
         play(sound, 'player')
-        return
 
-    def move(self):
-        nowDRP = s.Dungeon[self.Dy][self.Dx]
+    def move(self) -> None:
+        nowDRP:dict = s.Dungeon[self.Dy][self.Dx]
 
         if self.coolTime == 0:
             self.coolTime = random.randrange(60, 81)*10
@@ -112,7 +109,7 @@ class enemy:
                     enemy.pDamage(self)
                 else:
                     while 1:
-                        moveTo = random.randrange(-1,2)
+                        moveTo:int = random.randrange(-1,2)
 
                         if random.randrange(0,2):
                             if self.x + moveTo > len(nowDRP['room'][self.y])-1: continue
@@ -142,12 +139,12 @@ class enemy:
 class observer(enemy):
     def __init__(self, name, icon, ID): super().__init__(name, icon, ID)
 
-    def start(self, sethp, setAtk, Dy, Dx, y, x): super().start(sethp, setAtk, Dy, Dx, y, x)
+    def start(self, sethp:int, setAtk:int, Dy:int, Dx:int, y:int, x:int) -> None: super().start(sethp, setAtk, Dy, Dx, y, x)
 
-    def move(self):
+    def move(self) -> None:
         nowDRP = s.Dungeon[self.Dy][self.Dx]
 
-        def Targetted():
+        def Targetted() -> None:
             for _ in range(2):
                 nowDRP['room'][self.y][self.x] = {"block" : f"{cc['fg']['R']}{self.icon}{cc['end']}", "id" : self.id}; time.sleep(0.1)
                 nowDRP['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id}; time.sleep(0.1)
@@ -161,8 +158,8 @@ class observer(enemy):
             bfx, bfy = self.x, self.y
             if self.hp > 0:
                 Moves, Moves1 = ["+=", "-="], ["+", "-"]
-                canBreak      = [4, 0]
-                a             = 0
+                canBreak:list = [4, 0]
+                a:int         = 0
 
                 if self.Dy == s.Dy and self.Dx == s.Dx and (self.x == s.x or self.y == s.y):
                     play(f"TargetLocked", 'hostileMob')

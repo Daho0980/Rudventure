@@ -3,7 +3,7 @@ from   Assets.data     import status, lockers
 
 s, l = status, lockers
 
-def addLog(text, time=50):
+def addLog(text, time=50) -> None:
     """
     게임 내 최하단에 출력되는 로그를 작성하는 함수
 
@@ -22,9 +22,9 @@ def addLog(text, time=50):
     if len(s.onDisplay) < s.maxStack   : add()
     elif len(s.onDisplay) >= s.maxStack: remove(); add()
 
-def clear(): s.onDisplay, s.onTime = [], []
+def clear() -> None: s.onDisplay, s.onTime = [], []
 
-def logChecker():
+def logChecker() -> None:
     while s.main:
         if l.jpsf and not l.pause:
             time.sleep(0.1)

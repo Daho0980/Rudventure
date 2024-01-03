@@ -24,19 +24,19 @@ escapeAnsi = lambda line: re.compile(r'(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]').sub('',
 def addstrMiddle(
         stdscr,
         string:str,
-        y:int               =0,
-        x:int               =0,
-        addOnCoordinate:list=[0,0],
-        returnEndyx:bool    =False,
-        returnStr:bool      =False
-        ):
-    lines = list(map(lambda l: len(escapeAnsi(l)), string.split("\n")))
+        y:int                    =0,
+        x:int                    =0,
+        addOnCoordinate:list[int]=[0,0],
+        returnEndyx:bool         =False,
+        returnStr:bool           =False
+        ) -> str: # type: ignore
+    lines:list[int] = list(map(lambda l: len(escapeAnsi(l)), string.split("\n")))
     y, x  = (y, x) if y+x else map(
         lambda c:c[0]-round([len(lines)/2,max(lines)/2][c[1]]),
         list(zip(map(lambda n: round(n/2), list(stdscr.getmaxyx())),[0,1]))
         )
     y, x = y+addOnCoordinate[0], x+addOnCoordinate[1]
-    output = ''.join(
+    output:str = ''.join(
         [
             escc for line in zip(
                 [f"\033[{x};{_}H" for _ in range(y-1, y+(len(lines)))],
@@ -46,9 +46,9 @@ def addstrMiddle(
         )
     if not returnStr: stdscr.addstr(output)
 
-    if       returnEndyx and     returnStr: return output, y+len(string.split("\n")), x
+    if       returnEndyx and     returnStr: return output, y+len(string.split("\n")), x # type: ignore
     elif not returnEndyx and     returnStr: return output
-    elif     returnEndyx and not returnStr: return y+len(string.split("\n")), x
+    elif     returnEndyx and not returnStr: return y+len(string.split("\n")), x # type: ignore
 
 def showStage(stdscr, stageNum:str, stageName:str, sound:str="smash"):
     """
@@ -114,9 +114,11 @@ def statusBar(
         `end`(bool)                                 : 맨 끝에 \\n을 하나 더 추가해줌. 기본적으로 `True`로 설정되어 있음\n
         `showComma`(bool)                           : backTag가 붙을 때 쉼표를 보여줄지에 대한 여부, 기본적으로 `True`로 설정되어 있음
     """
-    Display   = ""
-    spaceLen  = " "*space
     maxStatus = status if maxStatus == 0 else maxStatus
+
+    Display:str          = ""
+    spaceLen:str         = " "*space
+    statusForDisplay:int = 0
 
     Display += f"{statusName} :{spaceLen}{frontTag} [{color}" if len(statusName) > 0 else f"{spaceLen}{frontTag} [{color}"
     if usePercentage:

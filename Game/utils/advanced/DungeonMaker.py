@@ -59,7 +59,7 @@ def GraphicMaker(MapData:list):
 
     return grid
 
-def gridMapReturn(grid:list, blank=0, center=False):
+def gridMapReturn(grid:list, blank:int=0, center:bool=False):
     """
     `GraphicMaker`함수로 그래픽만 남은 맵이나 맵 데이터로 맵의 세부 데이터를 추가하는 함수
     
@@ -178,9 +178,9 @@ def makeRoom(Map:list):
     for row in range(len(output)):
         for column in range(len(output[row])):
             if len(output[row][column]) > 0:
-                baseMap = copy.deepcopy(rooms.Room1)
-                RDP     = list(output[row][column]["doorPos"].values())
-                GRDP    = [[0, 6], [6, 12], [12, 6], [6, 0]]
+                baseMap = copy.deepcopy(rooms.Room)
+                RDP:list[int]        = list(output[row][column]["doorPos"].values())
+                GRDP:list[list[int]] = [[0, 6], [6, 12], [12, 6], [6, 0]]
 
                 for DIE in range(len(RDP)):
                     if RDP[DIE] == 1:
@@ -246,7 +246,7 @@ def deleteBlankData(grid:list):
 
     return grid
 
-def initBranch(Map:list, y:int, x:int, rawPrint=False, showAll=False):
+def initBranch(Map:list, y:int, x:int, rawPrint:bool=False, showAll:bool=False):
     """
     처음으로 맵 데이터를 작성하고 기초를 다지는 함수, 이 프로그램의 핵심 알고리즘이 포함됨
     
@@ -265,7 +265,7 @@ def initBranch(Map:list, y:int, x:int, rawPrint=False, showAll=False):
     bfx, bfy                                         = 0, 0
     possibility                                      = [['y', 1, 'U', 'D'], ['y', -1, 'D', 'U'], ['x', 1, 'L', 'R'], ['x', -1, 'R', 'L']]
 
-    def getBack(bfx, bfy):
+    def getBack(bfx:int, bfy:int):
         nonlocal y, x
         y, x = bfy, bfx
 
@@ -276,6 +276,7 @@ def initBranch(Map:list, y:int, x:int, rawPrint=False, showAll=False):
 #                        └─> 0:axis, 1:movement, 2:direction
         locationData        = possibility[random.randrange(0,4)]
         coordinateNamespace = {'x':x, 'y':y}
+        selectRoomKind      = 0
         
         exec(f"{locationData[0]}+={locationData[1]}", coordinateNamespace)
         x, y = coordinateNamespace['x'], coordinateNamespace['y']
@@ -303,8 +304,7 @@ def initBranch(Map:list, y:int, x:int, rawPrint=False, showAll=False):
                     }
                 break
             elif endCount >= 8:
-                Map = False
-                break
+                Map = []; break
             getBack(bfx, bfy)
             endCount += 1
             continue
@@ -352,7 +352,8 @@ def DungeonMaker(showAll=False):
     """
     `initBranch.Map`의 기본 틀을 제공하고, `initBranch`, `deleteBlankData`, `makeRoom`함수를 사용해 완벽하게 편집된 맵 데이터를 반환하는 함수
     """     
-    
+    output = []
+
     while 1:
         output = []
         # 맵의 기본 틀 생성

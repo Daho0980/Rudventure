@@ -1,10 +1,10 @@
 import re
 import random
-from   PIL         import Image,   ImageDraw, ImageFont
+from   PIL         import Image, ImageDraw, ImageFont
 from   datetime    import datetime
-from   Assets.data import status                        as s
+from   Assets.data import status                      as s
 
-ftColors = {
+ftColors:dict = {
         "B" :   (0,0,0),
         "M" :   (116,19,13),
         "G" :   (56,125,33),
@@ -31,7 +31,7 @@ font  = ImageFont.truetype(f"{s.TFP}Assets{s.s}fonts{s.s}DungGeunMo.ttf", 20)
 
 escapeAnsi = lambda line: re.compile(r'(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]').sub('', line)
 
-def textObfuscator(text, r=1):
+def textObfuscator(text, r=1) -> str:
     output = ""
 
     for _ in range(r):
@@ -39,7 +39,7 @@ def textObfuscator(text, r=1):
       for char in text:
           randomScale = random.randrange(-5, 6)
           if ord(char)<=randomScale:
-              if randomScale<=0: randomScale*-1
+              if randomScale<=0: randomScale*=-1
               else: continue
           line += chr(ord(char)+randomScale)
       output += f"\n{line}"
@@ -50,7 +50,7 @@ random.seed(sum(map(lambda char: ord(char), s.name))+s.stage-s.killCount+(s.lvl*
 
 
 
-text = f"""
+text:str = f"""
            ╔════════════════════════╗
       ╔════║ 나락에서 편히 잠드소서 ║════╗
      ╔╝    ╚════════════════════════╝    ╚╗
@@ -65,8 +65,8 @@ text = f"""
      죽인 편린의 수 :
      받은 저주의 강도 :
 """
-curse = "Qupldeði hijaįo katwaįzΩjim-halað hijaði jizok qil, qupldeði qilði liubeź Qoliði Qupldeði ceq, kobidði Qupldeði edvitł"
-noize = f"{curse}{textObfuscator(curse, r=7)}"
+curse:str = "Qupldeði hijaįo katwaįzΩjim-halað hijaði jizok qil, qupldeði qilði liubeź Qoliði Qupldeði ceq, kobidði Qupldeði edvitł"
+noize:str = f"{curse}{textObfuscator(curse, r=7)}"
 
 draw.text((80, 182), text, font=font, fill=(214, 222, 235)) # text
 draw.text((200, 350), s.name, font=font, fill=ftColors['L']) # name

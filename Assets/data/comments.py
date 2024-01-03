@@ -1,6 +1,6 @@
 from Assets.data.status import cColors as cc
 
-lowHpComment = [
+lowHpComment:list = [
         "게임은 이제 시작이다.",
         "이 정도면... 버틸 수 있어.",
         "이까짓 상처로는 내 앞길을 막아설 수 없다.",
@@ -15,7 +15,7 @@ lowHpComment = [
         "퐁 당 퐁 당   돌 을   던 지 자"
 ]
 
-treasureRoomComment = {
+treasureRoomComment:dict = {
         0 : [
                 "이런.. 여기서마저 운이 없을 줄이야.",
                 "뭔가 조촐하군.",
@@ -33,7 +33,7 @@ treasureRoomComment = {
         ]
 }
 
-defeatComment = {
+defeatComment:dict = {
         f"{cc['fg']['R']}hp{cc['end']} 부족" : [
                 "아아...",
                 "이건 아니야.",
@@ -55,7 +55,7 @@ defeatComment = {
         ]
 }
 
-victoryComment = [
+victoryComment:list = [
                 "나쁘지 않군.",
                 "그래 이거야..",
                 "또 같은 게 반복되겠군. 내려가고 또 내려가고...",
