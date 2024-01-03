@@ -14,7 +14,7 @@ def cinp(
         useMiddle:bool=True,
         y:int         =0,
         x:int         =0
-    ):
+    ) -> str:
     if echo:   curses.echo()
     if cursor: curses.curs_set(1)
 

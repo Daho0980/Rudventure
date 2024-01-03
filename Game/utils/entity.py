@@ -9,7 +9,7 @@ from   Assets.data      import status as s
 from   Game.core.system import logger
 from   Game.utils.sound import play
 
-def addEntity(entityType:int, initHp:int, Dy:int, Dx:int, y:list, x:list):
+def addEntity(entityType:int, initHp:int, Dy:int, Dx:int, y:list, x:list) -> None:
     """
     모든 엔티티(적)을 소환할 수 있는 함수
 

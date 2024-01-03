@@ -348,7 +348,7 @@ def initBranch(Map:list, y:int, x:int, rawPrint:bool=False, showAll:bool=False):
     if rawPrint == False and Map: return GraphicMaker(Map)
     else:                         return Map
 
-def DungeonMaker(showAll=False):
+def DungeonMaker(showAll=False) -> list:
     """
     `initBranch.Map`의 기본 틀을 제공하고, `initBranch`, `deleteBlankData`, `makeRoom`함수를 사용해 완벽하게 편집된 맵 데이터를 반환하는 함수
     """     

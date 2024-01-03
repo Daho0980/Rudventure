@@ -4,7 +4,7 @@ from   Game.scenes                  import checkColor
 from   Game.utils.modules           import cSelector  as clc
 from   Game.utils.sound             import play
 
-def main(stdscr):
+def main(stdscr) -> None:
     checkColor.main(stdscr)
     play("smash")
     while 1:

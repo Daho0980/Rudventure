@@ -11,7 +11,7 @@ selector = cSelector
 cc       = s.cColors
 
 def changeDoorPosBlock(ID:int, data:dict) -> None:
-    DPG = {
+    DPG:dict[str,list[int]] = {
         'U' : [0,  6],
         'R' : [6, 12],
         'D' : [12, 6],

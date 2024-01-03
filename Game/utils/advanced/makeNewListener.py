@@ -12,7 +12,7 @@ p    = player
 l, s = lockers, status
 cc   = s.cColors
 
-def newAddListener():
+def newAddListener() -> None:
     def interactions(stdscr):
         while s.main:
             if l.jpsf:

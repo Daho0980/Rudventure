@@ -10,7 +10,7 @@ t    = Textbox
 grp  = graphic
 cc   = s.cColors
 
-def main(stdscr):
+def main(stdscr) -> None:
     play("smash")
     if s.frame == 0:
         selectFrame = cSelector.main(

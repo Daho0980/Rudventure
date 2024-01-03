@@ -20,7 +20,7 @@ def main(
         moveCursorSound:str               ="select",
         blockCursorSound:str              ="open",
         endSelectorSound:str              ="get_item"
-        ):
+        ) -> int:
     """
     `title`(str, list)                     : 메뉴바의 타이틀이 될 문자열, 리스트 형태로 기입 시 타이틀과 메뉴의 공백이 제거됨. 무조건 기입해야 함\n
     `stdscr`(func)                         : 해당 모듈 외부에 있는 stdscr 사용 시 기입하는 매개변수, 기본적으로 빈 문자열로 지정되어 있음\n
