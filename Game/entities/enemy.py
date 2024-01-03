@@ -1,7 +1,8 @@
 import random, time
-from   Game.core.system.logger import addLog
 from   Assets.data             import status, lockers
 from   Assets.data.status      import entities
+from   Game.core.system.logger import addLog
+from   Game.entities.player    import event
 from   Game.utils.sound        import play
 
 l    = lockers
@@ -42,7 +43,7 @@ class enemy:
                 if not dmg:    msg = f"{cc['fg']['L']}공격{cc['end']}이 빗나갔습니다!"
                 elif crit: msg += f" {cc['fg']['L']}치명타!{cc['end']}"
                 addLog(msg)
-                if sound: play(sound, 'interaction')
+                if sound: play(sound, 'player')
 
     def start(self, sethp:int, setAtk:int, Dy:int, Dx:int, y:int, x:int) -> None:
         self.hp:int       = sethp
@@ -64,6 +65,7 @@ class enemy:
             self.y, self.x   = y, x
 
     def pDamage(self) -> None:
+        event.hitted()
         sound:str = f'enemy_Hit'
         if s.df > 0:
             s.df -= self.atk

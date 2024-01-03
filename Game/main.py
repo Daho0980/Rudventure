@@ -6,7 +6,8 @@ from   Assets.data         import comments, lockers, status
 from   Game.entities       import player
 from   Game.core.system    import quests, logger
 from   Game.scenes         import mainSettings, mainMenu
-from   Game.utils          import entity, graphic, idRelated
+from   Game.entities       import entity
+from   Game.utils          import graphic, idRelated
 from   Game.utils.system   import roomChecker
 from   Game.utils.advanced import DungeonMaker, makeNewListener
 from   Game.utils.modules  import Textbox, cSelector
