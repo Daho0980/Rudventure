@@ -11,11 +11,11 @@ s, r     = status, rooms
 cc       = s.cColors
 
 def set() -> None:
-    s.hp       = 100
+    s.hp       = 10
     s.Mhp      = s.hp
-    s.df       = 125
+    s.df       = 5
     s.Mdf      = s.df
-    s.atk      = 50
+    s.atk      = 1
     s.critRate = 10
     s.critDMG  = 10
     s.hunger   = 1000
