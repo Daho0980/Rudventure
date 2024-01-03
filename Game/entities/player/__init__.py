@@ -86,6 +86,10 @@ def move(Dir, Int:int) -> None:
     s.hunger -= 1
     sound:str = "move"
 
+    if roomGrid[ty][tx]["id"] == -1:
+        sound = ""
+        ty, tx = bfy, bfx
+
     if roomGrid[ty][tx]["id"] in [1, 3]:
         damage(roomGrid[ty][tx]["block"])
 

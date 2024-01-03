@@ -2,6 +2,7 @@ import random, time
 from   Assets.data             import status, lockers
 from   Assets.data.status      import entities
 from   Game.core.system.logger import addLog
+from   Game.entities.enemy     import event as eEvent
 from   Game.entities.player    import event
 from   Game.utils.sound        import play
 
@@ -40,8 +41,9 @@ class enemy:
             self.hp -= dmg
             if self.hp > 0:
                 msg = f"{cc['fg']['F']}{self.name}{cc['end']}이(가) {cc['fg']['L']}{dmg}{cc['end']}만큼의 피해를 입었습니다! {cc['fg']['R']}(체력 : {self.hp}){cc['end']}"
-                if not dmg:    msg = f"{cc['fg']['L']}공격{cc['end']}이 빗나갔습니다!"
+                if not dmg: msg = f"{cc['fg']['L']}공격{cc['end']}이 빗나갔습니다!"
                 elif crit: msg += f" {cc['fg']['L']}치명타!{cc['end']}"
+                if dmg: eEvent.hitted(self.y, self.x, self.icon, self.id)
                 addLog(msg)
                 if sound: play(sound, 'player')
 
@@ -93,10 +95,13 @@ class enemy:
             bfx, bfy = self.x, self.y
             if self.hp > 0:
                 if random.randrange(1,3000) == 1215:
+                    self.atk += 1+(round(s.stage/10))
                     play(f"growl", 'hostileMob')
                     addLog(f"{cc['fg']['F']}{self.name}{cc['end']}({self.icon})이 울부짖습니다!")
                     addLog(f"{cc['fg']['F']}{self.name}{cc['end']}({self.icon})의 공격력이 {cc['fg']['L']}{1+(round(s.stage/10))}{cc['end']} 상승합니다.")
-                    self.atk += 1+(round(s.stage/10))
+                    for _ in range(3):
+                        nowDRP['room'][self.y][self.x] = {"block" : f"{cc['fg']['F']}{self.icon}{cc['end']}", "id" : self.id}; time.sleep(0.1)
+                        nowDRP['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id}; time.sleep(0.1)
 
                 exPos = [
                     nowDRP['room'][self.y-1][self.x]["id"],
@@ -106,7 +111,7 @@ class enemy:
                 ]
 
                 if 300 in exPos:
-                    nowDRP['room'][self.y][self.x] = {"block" : f"{cc['fg']['R']}{self.icon}{cc['end']}", "id" : self.id}; time.sleep(0.1)
+                    nowDRP['room'][self.y][self.x] = {"block" : f"{cc['fg']['F']}{self.icon}{cc['end']}", "id" : self.id}; time.sleep(0.1)
                     nowDRP['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id}
                     enemy.pDamage(self)
                 else:
@@ -148,7 +153,7 @@ class observer(enemy):
 
         def Targetted() -> None:
             for _ in range(2):
-                nowDRP['room'][self.y][self.x] = {"block" : f"{cc['fg']['R']}{self.icon}{cc['end']}", "id" : self.id}; time.sleep(0.1)
+                nowDRP['room'][self.y][self.x] = {"block" : f"{cc['fg']['F']}{self.icon}{cc['end']}", "id" : self.id}; time.sleep(0.1)
                 nowDRP['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id}; time.sleep(0.1)
 
         if self.coolTime == 0:

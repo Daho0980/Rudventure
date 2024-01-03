@@ -21,7 +21,7 @@ def play(File:str, kind:str='system'):
                         system\n
                         player
     """
-    if s.allSound and s.sound[kind]:
+    if s.allSound and s.sound[kind] and File:
         threading.Thread(
             target=lambda: playsound.playsound(
                 f"{s.TFP}Assets{s.s}sounds{s.s}{File}.wav"

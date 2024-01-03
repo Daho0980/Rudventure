@@ -123,6 +123,7 @@ LOGO:str = f"""
 welcomeMessage:list = []
 
 ids:dict = {
+    -1 : ' ',
     0 :  ' ',
     1 :  '■',
     2 :  '.',

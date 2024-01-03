@@ -47,9 +47,9 @@ def addEntity(entityType:int, initHp:int, Dy:int, Dx:int, y:list, x:list) -> Non
     }
 
     exec(f"""
-from   Game.entities import enemy
-from   Assets.data   import status as s
-{Name} = enemy.{classType[entityType]}(\"{Name}\", \"{icons[entityType]}\", {idType[entityType]})
+from   Game.entities.enemy import mobs
+from   Assets.data         import status as s
+{Name} = mobs.{classType[entityType]}(\"{Name}\", \"{icons[entityType]}\", {idType[entityType]})
 {Name}.start({initHp}+((s.stage-1)*2), {atkType[entityType]}+(s.stage-1), {Dy}, {Dx}, {y}, {x})
 s.entities.append(Rname)
     """, nameSpace)
