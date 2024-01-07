@@ -169,7 +169,7 @@ orbIds:dict = {
 stepableBlocks:list     = [0, 4, 7]
 interactableBlocks:dict = {
     "canStepOn"    : [4, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
-    "cannotStepOn" : [1, 2, 3, 5, 6, 600, 601]
+    "cannotStepOn" : [-1, 1, 2, 3, 5, 6, 600, 601]
 }
 
 # Stage settings

@@ -61,6 +61,7 @@ class enemy:
                     continue
                 else:
                     self.x, self.y = sX, sY
+                    eEvent.spawn(self.y, self.x, self.icon)
                     break
         else:
             self.Dy, self.Dx = Dy, Dx
@@ -111,7 +112,7 @@ class enemy:
                 ]
 
                 if 300 in exPos:
-                    nowDRP['room'][self.y][self.x] = {"block" : f"{cc['fg']['F']}{self.icon}{cc['end']}", "id" : self.id}; time.sleep(0.1)
+                    nowDRP['room'][self.y][self.x] = {"block" : f"{cc['fg']['F']}{self.icon}{cc['end']}", "id" : -1}; time.sleep(0.1)
                     nowDRP['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id}
                     enemy.pDamage(self)
                 else:
@@ -153,8 +154,8 @@ class observer(enemy):
 
         def Targetted() -> None:
             for _ in range(2):
-                nowDRP['room'][self.y][self.x] = {"block" : f"{cc['fg']['F']}{self.icon}{cc['end']}", "id" : self.id}; time.sleep(0.1)
-                nowDRP['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id}; time.sleep(0.1)
+                nowDRP['room'][self.y][self.x] = {"block" : f"{cc['fg']['F']}{self.icon}{cc['end']}", "id" : -1}; time.sleep(0.07)
+                nowDRP['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id}; time.sleep(0.07)
 
         if self.coolTime == 0:
             self.coolTime = random.randrange(40, 61)*10

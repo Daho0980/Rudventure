@@ -13,7 +13,7 @@ def hitted() -> None:
 
             s.ids[300] = f"{cc['fg']['R']}{character}{cc['end']}"
             s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x]['block'] = s.ids[300]
-            time.sleep(0.1)
+            time.sleep(0.03)
             s.ids[300] = icon[:]
             s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x]['block'] = s.ids[300]
 

@@ -142,7 +142,6 @@ while s.main:
 
     p.start(4, 4, 6, 6)
     roomChecker.placeRandomOrbs()
-    # stdscr.addstr("flag - 1"); stdscr.refresh()
     grp.showStage(
         stdscr,
         f"{cc['fg']['R']}- {s.stage}{cc['end']}",

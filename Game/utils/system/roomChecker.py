@@ -1,4 +1,4 @@
-import random
+import threading, random, time
 from   Assets.data          import comments, lockers, status
 from   Game.core.system     import logger
 from   Game.utils.modules   import cSelector
@@ -29,17 +29,24 @@ def changeDoorPosBlock(ID:int, data:dict) -> None:
 
 def summonRandomMonster(data:dict) -> None:
     # type, hp
-    monsterData = [[0, 4], [1, 10]]
-    for i in range(data['summonCount']):
-        choiced = random.choice(monsterData)
-        addEntity(
-            choiced[0],
-            choiced[1],
-            Dy=s.Dy,
-            Dx=s.Dx,
-            y =[1, len(data['room'])-2   ],
-            x =[1, len(data['room'][0])-2]
-            )
+    def event() -> None:
+        nonlocal data
+
+        count = data['summonCount']
+        s.Dungeon[s.Dy][s.Dx]['summonCount'] = 0
+        monsterData = [[0, 4], [1, 10]]
+        for _ in range(count):
+            choiced = random.choice(monsterData)
+            addEntity(
+                choiced[0],
+                choiced[1],
+                Dy=s.Dy,
+                Dx=s.Dx,
+                y =[1, len(data['room'])-2   ],
+                x =[1, len(data['room'][0])-2],
+                useRoomLock=True if _==count-1 else False
+                )
+    threading.Thread(target=event, daemon=True).start()
     
 def placeRandomOrbs() -> None:
     # hp -> def -> atk -> hng -> exp
@@ -101,13 +108,11 @@ def main() -> None:
                     play("close_door", 'interaction')
                     summonRandomMonster(data)
 
-                    data['summonCount'] = 0
-                    s.roomLock          = True
                     changeDoorPosBlock(1, data)
                 elif len(s.entities) == 0 and s.roomLock:
                     play("open_door", 'interaction')
 
-                    s.roomLock                           = False
+                    s.roomLock = False
                     s.Dungeon[s.Dy][s.Dx]['interaction'] = True
                     placeRandomOrbs()
                     changeDoorPosBlock(2, data)
@@ -140,8 +145,6 @@ def main() -> None:
                     summonRandomMonster(data)
 
                     s.Dungeon[s.Dy][s.Dx]['room'][6][6] = {"block" : s.ids[0], "id" : 0}
-                    data['summonCount'] = 0
-                    s.roomLock          = True
                     changeDoorPosBlock(1, data)
                 elif len(s.entities) == 0 and s.roomLock:
                     play("open_door", 'interaction')

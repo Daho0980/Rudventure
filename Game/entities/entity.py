@@ -4,12 +4,20 @@ Global Functions 중 Entity 옵션
     ``addEntity`` : 모든 엔티티(적)을 소환할 수 있는 함수
 """
 
-import threading
+import threading, time
 from   Assets.data      import status as s
 from   Game.core.system import logger
 from   Game.utils.sound import play
 
-def addEntity(entityType:int, initHp:int, Dy:int, Dx:int, y:list, x:list) -> None:
+def addEntity(
+        entityType:int,
+        initHp:int,
+        Dy:int,
+        Dx:int,
+        y:list,
+        x:list,
+        useRoomLock:bool=False
+        ) -> None:
     """
     모든 엔티티(적)을 소환할 수 있는 함수
 
@@ -40,26 +48,30 @@ def addEntity(entityType:int, initHp:int, Dy:int, Dx:int, y:list, x:list) -> Non
             break
         a += 1
     nameSpace:dict[str,str|int|list] = {
-        f"{Name}"    : Name,
-        "Rname"      : Rname,
-        "xpType"     : xpType,
-        "entityType" : entityType
+        f"{Name}"     : Name,
+        "Rname"       : Rname,
+        "xpType"      : xpType,
+        "entityType"  : entityType,
+        "useRoomLock" : useRoomLock
     }
-
-    exec(f"""
-from   Game.entities.enemy import mobs
-from   Assets.data         import status as s
-{Name} = mobs.{classType[entityType]}(\"{Name}\", \"{icons[entityType]}\", {idType[entityType]})
-{Name}.start({initHp}+((s.stage-1)*2), {atkType[entityType]}+(s.stage-1), {Dy}, {Dx}, {y}, {x})
+    exec("""
+from Assets.data import status as s
+         
 s.entities.append(Rname)
-    """, nameSpace)
+""", nameSpace)
+
     def EntityInteraction() -> None:
         exec(f"""
 import time
-from   Assets.data                     import lockers, status
-from   Game.utils.system import xpSystem as xps
+from   Assets.data         import lockers, status
+from   Game.entities.enemy import mobs
+from   Game.utils.system   import xpSystem        as xps
 
 l, s = lockers, status
+             
+{Name} = mobs.{classType[entityType]}(\"{Name}\", \"{icons[entityType]}\", {idType[entityType]})
+{Name}.start({initHp}+((s.stage-1)*2), {atkType[entityType]}+(s.stage-1), {Dy}, {Dx}, {y}, {x})
+if useRoomLock: s.roomLock = True
 
 while s.main == 1:
     if s.killAll: break
@@ -74,7 +86,8 @@ s.Dungeon[{Name}.Dy][{Name}.Dx]['room'][{Name}.y][{Name}.x] = {{"block" : s.ids[
 if s.main and not s.killAll: xps.getXP(xpType[entityType])
         """, nameSpace)
         if s.main == 1 and not s.killAll:
-            play("monster_dead", 'hostileMob')
+            play("monster_dead", 'player')
             s.killCount += 1
             logger.addLog(f"{s.cColors['fg']['F']}{Name}{s.cColors['end']}이(가) 죽었습니다!")
     threading.Thread(target=EntityInteraction, name=Rname, daemon=True).start()
+    time.sleep(0.2)
