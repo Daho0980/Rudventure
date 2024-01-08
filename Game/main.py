@@ -18,9 +18,9 @@ if not isinstance(stdscr, Cusser): stdscr = Cusser(stdscr)
 
 quickStarter            = 0
 
-c, s, l                 = comments,      status,  lockers
+c, s, l                 = comments, status, lockers
 p, t, dgm, mnl          = player, Textbox, DungeonMaker, makeNewListener
-ent, grp, idr           = entity,        graphic, idRelated
+ent, grp, idr           = entity, graphic, idRelated
 q                       = quests
 cc                      = s.cColors
 
