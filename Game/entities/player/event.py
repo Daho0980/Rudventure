@@ -1,7 +1,9 @@
 import time
 import threading
-from   Assets.data        import status as s
+
+from   Assets.data        import status    as s
 from   Game.utils.graphic import escapeAnsi
+
 
 cc = s.cColors
 

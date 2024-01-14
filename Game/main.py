@@ -1,26 +1,25 @@
 # -*- coding: utf-8 -*-
 import curses
 import time, random
-from   cusser              import Cusser
+from   cusser      import Cusser
+
 from   Assets.data         import comments, lockers, status
-from   Game.entities       import player
 from   Game.core.system    import quests, logger
+from   Game.entities       import entity, player
 from   Game.scenes         import mainSettings, mainMenu
-from   Game.entities       import entity
-from   Game.utils          import graphic, idRelated
-from   Game.utils.system   import roomChecker
+from   Game.utils          import graphic
 from   Game.utils.advanced import DungeonMaker, makeNewListener
 from   Game.utils.modules  import Textbox, cSelector
+from   Game.utils.system   import roomChecker
 from   Game.utils.sound    import play
 
-stdscr = curses.initscr()
-if not isinstance(stdscr, Cusser): stdscr = Cusser(stdscr)
+
+stdscr = Cusser(curses.initscr())
 
 quickStarter            = 0
-
 c, s, l                 = comments, status, lockers
 p, t, dgm, mnl          = player, Textbox, DungeonMaker, makeNewListener
-ent, grp, idr           = entity, graphic, idRelated
+ent, grp                = entity, graphic
 q                       = quests
 cc                      = s.cColors
 
@@ -39,15 +38,13 @@ def gameChecker(stdscr):
         l.jpsf = 0
         if s.hp <= 0 or s.hunger <= 0:
             s.killAll = True
+            comment   = random.choice(c.defeatComment[f"{cc['fg']['R']}hp{cc['end']} 부족" if s.hp <= 0 else f"{cc['fg']['Y']}허기{cc['end']} 부족"])
             stdscr.nodelay(False)
-            s.deadReason = f"{cc['fg']['R']}hp{cc['end']} 부족" if s.hp <= 0 else f"{cc['fg']['Y']}허기{cc['end']} 부족"
-            comment      = random.choice(c.defeatComment[s.deadReason])
 
             play("defeat")
-            stdscr.addstr(f"{cc['fg']['R']}")
             y, x = grp.addstrMiddle(
                 stdscr,
-                t.TextBox(
+                cc['fg']['R']+t.TextBox(
                     f"   사 망 하 셨 습 니 다   \n\n   \"{comment}\"   ",
                     Type        ="middle",
                     inDistance  =1,
@@ -55,28 +52,30 @@ def gameChecker(stdscr):
                     AMLS        =True,
                     endLineBreak=True,
                     LineType    ="bold"
-                    ),
+                    )+cc['end'],
                     addOnCoordinate=[-5, 0],
                     returnEndyx=True
                 )
             y -= 1 # type: ignore
-            stdscr.addstr(cc['end']); stdscr.refresh()
+            stdscr.refresh()
             import Game.core.system.deathLogWriter
+
             time.sleep(1)
-            Achievements = {
-                "이름"             : s.lightName,
-                "사인"             : f"{s.DROD[0]}",
-                "내려간 층"        : f"{cc['fg']['Y']}{s.stage}{cc['end']}",
-                "죽인 편린의 수"   : f"{cc['fg']['R']}{s.killCount}{cc['end']}",
-                "받은 저주의 강도" : f"{cc['fg']['F']}{s.lvl}{cc['end']}"
+            achievements = {
+                "이름"             : [s.lightName,                                0],
+                "사인"             : [f"{s.DROD[0]}",                             1],
+                "내려간 층"        : [f"{cc['fg']['Y']}{s.stage}{cc['end']}",     0],
+                "죽인 편린의 수"   : [f"{cc['fg']['R']}{s.killCount}{cc['end']}", 0],
+                "받은 저주의 강도" : [f"{cc['fg']['F']}{s.lvl}{cc['end']}",       0]
             }
-            for num, text in enumerate(Achievements):
-                stdscr.addstr(f"\033[{x};{y}H{text} : {list(Achievements.values())[num]}\n"); stdscr.refresh()
+            achievementsValues:list[list[str|int]] = list(achievements.values())
+            for num, text in enumerate(achievements):
+                stdscr.addstr(f"\033[{x};{y}H{text} : {achievementsValues[num][0]}\n"); stdscr.refresh()
                 play("smash")
                 time.sleep(0.2)
-                y += 2 if text == "사인" else 1
+                y += (1+achievementsValues[num][1]) # type: ignore
             play("smash")
-            the_choice = cSelector.main(
+            the_choice:int = cSelector.main(
                 cc['fg']['R']+t.TextBox(
                     f"   사 망 하 셨 습 니 다   \n\n   \"{comment}\"   ",
                     Type        ="middle",
@@ -106,10 +105,9 @@ def gameChecker(stdscr):
 
         else:
             play("clear")
-            stdscr.addstr(cc['fg']['L'])
             grp.addstrMiddle(
                 stdscr,
-                t.TextBox(
+                cc['fg']['L']+t.TextBox(
                     f"   지 배   성 공   \n\n   \"{random.choice(c.victoryComment)}\"   ",
                     Type        ="middle",
                     inDistance  =1,
@@ -117,9 +115,8 @@ def gameChecker(stdscr):
                     AMLS        =True,
                     endLineBreak=True,
                     LineType    ="bold"
-                    )
-                )
-            stdscr.addstr(cc['end']); stdscr.refresh()
+                    )+cc['end']
+                ); stdscr.refresh()
             time.sleep(2.5)
             stdscr.clear(); stdscr.refresh()
 
@@ -130,18 +127,19 @@ curses.curs_set(0)
 mainMenu.main(stdscr)
 mainSettings.main(stdscr)
 stdscr.nodelay(True)
-p.set()
 
+p.set()
 mnl.newAddListener()
 
 while s.main:
-    if not s.stage: SN = f"{cc['fg']['L']}지 상{cc['end']}"
-    else:           SN = f"{cc['fg']['R']}{s.stage} 번 째   나 락{cc['end']}"
-    s.stage  += 1
     s.Dungeon = dgm.DungeonMaker()
 
     p.start(4, 4, 6, 6)
     roomChecker.placeRandomOrbs()
+
+    SN:str    = f"{cc['fg']['L']}지 상{cc['end']}" if not s.stage else f"{cc['fg']['R']}{s.stage} 번 째   나 락{cc['end']}"
+    s.stage  += 1
+
     grp.showStage(
         stdscr,
         f"{cc['fg']['R']}- {s.stage}{cc['end']}",
@@ -154,9 +152,8 @@ while s.main:
         if l.jpsf:
             playerChecker()
             grp.fieldPrint(stdscr, s.Dungeon[s.Dy][s.Dx]['room'])
-            if not quickStarter: stdscr.refresh(); quickStarter += 1
+            if not quickStarter: stdscr.refresh(); quickStarter = 1
             roomChecker.main()
-            if s.frame > 0: time.sleep(1/s.frame)
+            time.sleep(1/s.frame)
         else: time.sleep(1)
-    quickStarter = 0
-    gameChecker(stdscr)
+    gameChecker(stdscr); quickStarter = 0

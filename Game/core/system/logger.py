@@ -1,5 +1,7 @@
 import threading, time
-from   Assets.data     import status, lockers
+
+from Assets.data import status, lockers
+
 
 s, l = status, lockers
 

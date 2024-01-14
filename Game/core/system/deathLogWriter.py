@@ -1,8 +1,10 @@
 import re
 import random
-from   PIL         import Image, ImageDraw, ImageFont
-from   datetime    import datetime
-from   Assets.data import status                      as s
+from   PIL      import Image, ImageDraw, ImageFont
+from   datetime import datetime
+
+from   Assets.data import status as s
+
 
 ftColors:dict = {
         "B" :   (0,0,0),

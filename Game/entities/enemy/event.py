@@ -1,7 +1,9 @@
 import time
+
 from   Assets.data        import status     as s
-from   Game.utils.sound   import play
 from   Game.utils.graphic import escapeAnsi
+from   Game.utils.sound   import play
+
 
 cc = s.cColors
 

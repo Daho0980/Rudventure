@@ -6,7 +6,9 @@ Global Functions 중 Sound 옵션
 
 import threading
 import playsound
+
 from   Assets.data import status as s
+
 
 def play(File:str, kind:str='system'):
     """
@@ -23,9 +25,7 @@ def play(File:str, kind:str='system'):
     """
     if s.allSound and s.sound[kind] and File:
         threading.Thread(
-            target=lambda: playsound.playsound(
-                f"{s.TFP}Assets{s.s}sounds{s.s}{File}.wav"
-                ),
+            target=lambda: playsound.playsound(f"{s.TFP}Assets{s.s}sounds{s.s}{File}.wav"),
             name  ="sound",
             daemon=True
             ).start()

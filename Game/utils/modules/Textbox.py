@@ -1,5 +1,6 @@
 import unicodedata, re
 
+
 escapeAnsi     = lambda line: re.compile(r'(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]').sub('', line)
 checkActualLen = lambda line: sum(map(lambda char: 2 if unicodedata.east_asian_width(char) in ['F','W'] else 1, line))
 

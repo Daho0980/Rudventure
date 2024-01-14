@@ -1,8 +1,10 @@
 import curses
+
 from   Assets.data                  import status     as s
 from   Game.scenes                  import checkColor
 from   Game.utils.modules           import cSelector  as clc
 from   Game.utils.sound             import play
+
 
 def main(stdscr) -> None:
     checkColor.main(stdscr)

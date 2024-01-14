@@ -178,11 +178,11 @@ stage:int     = 0
 # Background vars
 s:str   = ''
 TFP:str = ""
+pythonVersion = __import__("sys").version
 
 Dungeon:list     = []
 roomLock:bool    = False
 killAll:bool     = False
-deadReason       = None
 DROD:list        = [None, '']
 pauseText:str    = f"\n{cMarkdown(1)}{cColors['fg']['L']}P a u s e{cColors['end']}\n"
 debugScreen:bool = False

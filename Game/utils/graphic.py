@@ -8,13 +8,13 @@ Global Functions 중 Graphic 옵션
     ``fieldPrint``          : 인게임 디스플레이 출력 함수
 """
 import re
-import sys
 import math, time
-from   Assets.data         import status
-from   Assets.data         import lockers
+
+from   Assets.data         import status, lockers
+from   Game.utils.advanced import DungeonMaker   as dgm
 from   Game.utils.modules  import Textbox
-from   Game.utils.advanced import DungeonMaker as dgm
 from   Game.utils.sound    import play
+
 
 s, l = status, lockers
 cc   = s.cColors
@@ -70,7 +70,8 @@ def showStage(stdscr, stageNum:str, stageName:str, sound:str="smash"):
             )
         ); stdscr.refresh()
     time.sleep(1.6)
-    stdscr.clear(); stdscr.refresh()
+    stdscr.clear()
+
     play(sound)
     addstrMiddle(
         stdscr,
@@ -102,19 +103,21 @@ def statusBar(
         showEmptyCell:bool=True,
     ):
     """
-    status, maxStatus 매개변수를 주로 활용해 게이지 바를 만들어줌\n\n
+    게이지 바를 생성하는 함수\n\n
 
-        `status`(int)                               : 현재 status\n
-        `statusName`(str)                           : 게이지 바의 이름이 될 문자열\n
-        `maxStatus`(int)                            : `status`의 최대치, 기본적으로 `0`으로 설정되어 있음\n
-        `color`(cc['fg' 또는 'bg'][색('str')]: 현재 `status`의 색을 채워줄 매개변수, 기본적으로 `cc['fg']['R']`로 설정되어 있음\n
-        `backTag`(str)                              : 게이지 바 끝에 붙는 꼬리표, 기본적으로 `""`로 설정되어 있음\n
-        `frontTag`(str)                             : 게이지 바 끝에 붙는 꼬리표, 기본적으로 `""`로 설정되어 있음\n
-        `space`(int)                                : 이름과 게이지 바 사이에 존재하는 공백, 기본적으로 `1`로 설정되어 있음\n
-        `end`(bool)                                 : 맨 끝에 \\n을 하나 더 추가해줌. 기본적으로 `True`로 설정되어 있음\n
-        `showComma`(bool)                           : backTag가 붙을 때 쉼표를 보여줄지에 대한 여부, 기본적으로 `True`로 설정되어 있음
+        `status`       : 게이지 바에 표시할 스탯\n
+        `statusName`   : 게이지 바의 이름이 될 문자열\n
+        `maxStatus`    : `status`의 최대치, 기본적으로 `0`으로 설정되어 있음\n
+        `color`        : 현재 `status`의 색을 채워줄 매개변수, 기본적으로 `cc['fg']['R']`로 설정되어 있음\n
+        `backTag`      : 게이지 바 끝에 붙는 꼬리표, 기본적으로 `""`로 설정되어 있음\n
+        `frontTag`     : 게이지 바 끝에 붙는 꼬리표, 기본적으로 `""`로 설정되어 있음\n
+        `space`        : 이름과 게이지 바 사이에 존재하는 공백, 기본적으로 `1`로 설정되어 있음\n
+        `end`          : 맨 끝에 \\n을 하나 더 추가해줌. 기본적으로 `True`로 설정되어 있음\n
+        `showComma`    : backTag가 붙을 때 쉼표를 보여줄지에 대한 여부, 기본적으로 `True`로 설정되어 있음\n
+        `usePrecentage`: 퍼센테이지를 표시함. 기본적으로 `False`로 설정되어 있음\n
+        `showEmptyCell`: 게이지 바 내 비어있는 셀을 출력할지에 대한 여부, 기본적으로 `True`로 설정되어 있음
     """
-    maxStatus = status if maxStatus == 0 else maxStatus
+    maxStatus = status if not maxStatus else maxStatus
 
     Display:str          = ""
     spaceLen:str         = " "*space
@@ -126,23 +129,22 @@ def statusBar(
         maxStatus = 10
     elif not usePercentage: statusForDisplay = maxStatus if status > maxStatus else status
     
-    Display += ('|'*statusForDisplay + cc['fg']['G1'] + '|'*((maxStatus-statusForDisplay) if showEmptyCell else 0) + f"{cc['end']}]")
+    Display += ('|'*statusForDisplay+cc['fg']['G1']+'|'*((maxStatus-statusForDisplay) if showEmptyCell else 0)+f"{cc['end']}]")
     if status - maxStatus > 0: Display += f" {color}+{status-maxStatus}{cc['end']}"
-    Display += f"{',' if len(backTag)>0 and showComma else ''} {backTag}"
-    if end: Display += "\n"
+    Display += f"{',' if len(backTag)>0 and showComma else ''} {backTag}"+("\n"if end else "")
 
     return Display
 
 def fieldPrint(stdscr, grid:list):
     """
-    인게임 디스플레이 출력 함수
+    인게임 필드 출력 함수
 
-        `grid`(list(2d)) : 맵의 그래픽 데이터가 포함됨, 무조건 기입해야 함
+        `grid`(list(2d)) : 맵의 그래픽 데이터가 포함됨.
     """
-    y, x    = stdscr.getmaxyx()
-    Display = ""
-    buffer  = ""
-    GFD     = list(map(lambda x: ' '.join(map(lambda d: d["block"], x)), grid))
+    y, x        = stdscr.getmaxyx()
+    Display:str = ""
+    buffer:str  = ""
+    GFD:list    = list(map(lambda x: ' '.join(map(lambda d: d["block"], x)), grid))
     
 
     # Map
@@ -161,7 +163,7 @@ def fieldPrint(stdscr, grid:list):
         Display += addstrMiddle(stdscr, buffer, y=2, x=x-len(max(buffer.split("\n"))), returnStr=True)
 
     # Stage
-    buffer = "\n".join(GFD)
+    buffer   = "\n".join(GFD)
     Display += addstrMiddle(
         stdscr,
         buffer,
@@ -191,6 +193,7 @@ hunger : {cc['fg']['Y']}{round(s.hunger/10)}%{cc['end']} | atk : {cc['fg']['L']}
                         space        =4,
                         showEmptyCell=False
                         ),
+
                     statusBar(
                         math.ceil(s.hunger/100),
                         statusName="hunger",
@@ -199,6 +202,7 @@ hunger : {cc['fg']['Y']}{round(s.hunger/10)}%{cc['end']} | atk : {cc['fg']['L']}
                         color     =cc['fg']['Y'],
                         backTag   =f"{cc['fg']['Y']}{s.hunger}{cc['end']}" if s.hunger <= 100 else f"{cc['fg']['Y']}{round(s.hunger/10)}%{cc['end']}",
                         ),
+
                     "TextBox.Line\nTextBox.Middle_"+statusBar(
                         int((s.xp/s.Mxp)*10),
                         maxStatus=10,
@@ -229,9 +233,9 @@ hunger : {cc['fg']['Y']}{round(s.hunger/10)}%{cc['end']} | atk : {cc['fg']['L']}
     )
 
     if s.debugScreen:
-        y, x = stdscr.getmaxyx()
+        y, x           = stdscr.getmaxyx()
         by, bx, buffer = Textbox.TextBox(
-                f"""Python version : {cc['fg']['L']}{sys.version}{cc['end']}
+                f"""Python version : {cc['fg']['L']}{s.pythonVersion}{cc['end']}
 Window size : {cc['fg']['L']}{stdscr.getmaxyx()}{cc['end']}""",
                 Type        ="right",
                 AMLS        =True,
