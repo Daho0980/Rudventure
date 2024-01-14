@@ -26,7 +26,9 @@ def main(stdscr) -> None:
             '@',
             maxLine=2
         )
-        s.frame = [1, 30, 60, 0][selectFrame-1]; play("smash")
+        s.frame = [1, 30, 60, 0][selectFrame-1]
+        s.frame = 1/s.frame if not s.frame else 0
+        play("smash")
 
     stdscr.clear()
 #     grp.addstrMiddle(

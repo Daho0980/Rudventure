@@ -154,6 +154,6 @@ while s.main:
             grp.fieldPrint(stdscr, s.Dungeon[s.Dy][s.Dx]['room'])
             if not quickStarter: stdscr.refresh(); quickStarter = 1
             roomChecker.main()
-            time.sleep(1/s.frame)
+            time.sleep(s.frame)
         else: time.sleep(1)
     gameChecker(stdscr); quickStarter = 0
