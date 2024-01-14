@@ -5,4 +5,4 @@ dungeonTest.py
 venv
 /lib/python3.10/site-packages/pip/
 /lib/python3.10/site-packages/pip-23.0.1.dist-info
-tests/
+tests
