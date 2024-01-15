@@ -32,6 +32,7 @@ draw  = ImageDraw.Draw(image)
 font  = ImageFont.truetype(f"{s.TFP}Assets{s.s}fonts{s.s}DungGeunMo.ttf", 20)
 
 escapeAnsi = lambda line: re.compile(r'(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]').sub('', line)
+stringInserter = lambda ol, il, index: ol[:index]+il+ol[index:]
 
 def textObfuscator(text, r=1) -> str:
     output = ""
@@ -47,6 +48,16 @@ def textObfuscator(text, r=1) -> str:
       output += f"\n{line}"
       
     return output[:-2]
+
+def textBlankGenerator(text):
+    output = ""
+
+    for line in text.split("\n"):
+        index = set(sorted([random.randrange(1, len(line)) for _ in range(10)]))
+        for i in index: line = stringInserter(line, ' '*random.randrange(2, 6), i)
+        output += line+"\n"
+    
+    return output
 
 random.seed(sum(map(lambda char: ord(char), s.name))+s.stage-s.killCount+(s.lvl*4)/int(datetime.now().strftime('%Y%m%d%H%M%S')))
 
@@ -67,8 +78,10 @@ text:str = f"""
      죽인 편린의 수 :
      받은 저주의 강도 :
 """
-curse:str = "Qupldeði hijaįo katwaįzΩjim-halað hijaði jizok qil, qupldeði qilði liubeź Qoliði Qupldeði ceq, kobidði Qupldeði edvitł"
-noize:str = f"{curse}{textObfuscator(curse, r=7)}"
+curse:str   = "Qupldeði hijaįo katwaįzΩjim-halað hijaði jizok qil, qupldeði qilði liubeź Qoliði Qupldeði ceq, kobidði Qupldeði edvitł"
+noize:str   = textBlankGenerator(f"{curse}{textObfuscator(curse, r=9)}")
+line:str    = "━"*100
+maxPosx:int = (len(max(noize.split("\n")))*20)-1300
 
 draw.text((80, 182), text, font=font, fill=(214, 222, 235)) # text
 draw.text((200, 350), s.name, font=font, fill=ftColors['L']) # name
@@ -77,8 +90,11 @@ draw.text((250, 413), str(s.stage-1), font=font, fill=ftColors['Y']) # deadReaso
 draw.text((300, 434), str(s.killCount), font=font, fill=ftColors['R']) # killCount
 draw.text((320, 455), str(s.lvl), font=font, fill=ftColors['F']) # level
 
-draw.text((0, 615), noize, font=font, fill=(214, 222, 235)) # downside bar
-draw.text((0, -88), noize, font=font, fill=(214, 222, 235))# upside bar
+draw.text((-random.randrange(1, maxPosx), 595), noize, font=font, fill=(214, 222, 235)) # downside bar
+draw.text((-random.randrange(1, maxPosx), -108), noize, font=font, fill=(214, 222, 235))# upside bar
+draw.text((0, 100), line, font=font, fill=(214, 222, 235)) # downside line
+draw.text((0, 575), line, font=font, fill=(214, 222, 235))# upside line
+
 
 # 이미지 저장
 image.save(f"DeathLog/{datetime.now().strftime('%Y%m%d%H%M')}_{s.name}.png")
