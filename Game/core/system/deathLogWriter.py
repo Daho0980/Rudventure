@@ -70,7 +70,6 @@ text:str = f"""
 curse:str   = "Qupldeði hijaįo katwaįzΩjim-halað hijaði jizok qil, qupldeði qilði liubeź Qoliði Qupldeði ceq, kobidði Qupldeði edvitł"
 noize:str   = f"{curse}{textObfuscator(curse, r=9)}"
 line:str    = "━"*100
-maxPosx:int = (len(max(noize.split("\n")))*20)-1300
 
 draw.text((80, 182), text, font=font, fill=(214, 222, 235)) # text
 draw.text((200, 350), s.name, font=font, fill=ftColors['L']) # name
@@ -79,8 +78,8 @@ draw.text((250, 413), str(s.stage-1), font=font, fill=ftColors['Y']) # deadReaso
 draw.text((300, 434), str(s.killCount), font=font, fill=ftColors['R']) # killCount
 draw.text((320, 455), str(s.lvl), font=font, fill=ftColors['F']) # level
 
-draw.text((-random.randrange(1, maxPosx), 595), noize, font=font, fill=(214, 222, 235)) # downside bar
-draw.text((-random.randrange(1, maxPosx), -108), noize, font=font, fill=(214, 222, 235))# upside bar
+draw.text((0, 595), noize, font=font, fill=(214, 222, 235)) # downside bar
+draw.text((0, -108), noize, font=font, fill=(214, 222, 235))# upside bar
 draw.text((0, 100), line, font=font, fill=(214, 222, 235)) # downside line
 draw.text((0, 575), line, font=font, fill=(214, 222, 235))# upside line
 
