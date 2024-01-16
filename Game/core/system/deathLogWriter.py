@@ -49,18 +49,7 @@ def textObfuscator(text, r=1) -> str:
       
     return output[:-2]
 
-def textBlankGenerator(text):
-    output = ""
-
-    for line in text.split("\n"):
-        index = set(sorted([random.randrange(1, len(line)) for _ in range(10)]))
-        for i in index: line = stringInserter(line, ' '*random.randrange(2, 6), i)
-        output += line+"\n"
-    
-    return output
-
 random.seed(sum(map(lambda char: ord(char), s.name))+s.stage-s.killCount+(s.lvl*4)/int(datetime.now().strftime('%Y%m%d%H%M%S')))
-
 
 
 text:str = f"""
@@ -79,7 +68,7 @@ text:str = f"""
      받은 저주의 강도 :
 """
 curse:str   = "Qupldeði hijaįo katwaįzΩjim-halað hijaði jizok qil, qupldeði qilði liubeź Qoliði Qupldeði ceq, kobidði Qupldeði edvitł"
-noize:str   = textBlankGenerator(f"{curse}{textObfuscator(curse, r=9)}")
+noize:str   = f"{curse}{textObfuscator(curse, r=9)}"
 line:str    = "━"*100
 maxPosx:int = (len(max(noize.split("\n")))*20)-1300
 

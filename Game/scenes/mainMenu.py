@@ -1,12 +1,14 @@
 import curses
 
 from   Assets.data                  import status     as s
+from   Game.core.system             import configs
 from   Game.scenes                  import checkColor
 from   Game.utils.modules           import cSelector  as clc
 from   Game.utils.sound             import play
 
 
 def main(stdscr) -> None:
+    configs.load()
     checkColor.main(stdscr)
     play("smash")
     while 1:
@@ -65,6 +67,8 @@ def main(stdscr) -> None:
                                 case 5: s.sound['system']      = False if s.sound['system']      else True
                                 case 6: s.sound['player']      = False if s.sound['player']      else True
                                 case 7: break
+                            
+                            configs.save()
                     case 2: break
             
         elif mainMenu == 3:

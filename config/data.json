@@ -1,0 +1,10 @@
+{
+    "allSound": true,
+    "sound": {
+        "hostileMob": true,
+        "friendlyMob": true,
+        "interaction": true,
+        "system": true,
+        "player": true
+    }
+}
