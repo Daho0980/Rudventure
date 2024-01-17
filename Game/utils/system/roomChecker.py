@@ -111,7 +111,7 @@ def main() -> None:
                     summonRandomMonster(data)
 
                     changeDoorPosBlock(1, data)
-                elif len(s.entities) == 0 and s.roomLock:
+                elif not s.entities and s.roomLock:
                     play("open_door", 'interaction')
 
                     s.roomLock = False
@@ -148,7 +148,7 @@ def main() -> None:
 
                     s.Dungeon[s.Dy][s.Dx]['room'][6][6] = {"block" : s.ids[0], "id" : 0}
                     changeDoorPosBlock(1, data)
-                elif len(s.entities) == 0 and s.roomLock:
+                elif not s.entities and s.roomLock:
                     play("open_door", 'interaction')
 
                     s.roomLock = False

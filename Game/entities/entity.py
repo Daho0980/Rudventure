@@ -33,34 +33,23 @@ def addEntity(
         `x`(list)         : 적이 소환될 x값, 리스트 형태로 `[방 x 최솟값, 방 x 최댓값]`과 같이 기입해도 되지만,
             특정 위치에 소환하려면 `int`형식으로 기입해야됨
     """
-    kinds:list[str]      = ["고통의_편린", "불안의_편린"]
+    kinds:list[str]      = ["고통의 편린", "불안의 편린"]
     classType:list[str]  = ["enemy", "observer"]
     idType:list[int]     = [600, 601]
     xpType:list[int]     = [3, 5]
     atkType:list[int]    = [1, 2]
-    Name:str             = kinds[entityType]
-    Rname:str            = ""
+    icons:list[str]      = [s.ids[600], s.ids[601]]
 
-    icons:list[str] = [s.ids[600], s.ids[601]]
+    name:str             = kinds[entityType]
+    valuableName         = classType[entityType]
+
     a:int           = 0
-    while 1:
-        if Name + f"_{a}" not in s.entities:
-            Name  = str(      Name + f"_{a}"       )
-            Rname = str(kinds[entityType] + f"_{a}")
-            break
-        a += 1
-    nameSpace:dict[str,str|int|list] = {
-        f"{Name}"     : Name,
-        "Rname"       : Rname,
-        "xpType"      : xpType,
-        "entityType"  : entityType,
-        "useRoomLock" : useRoomLock
-    }
-    exec("""
+
+    exec(f"""
 from Assets.data import status as s
          
-s.entities.append(Rname)
-""", nameSpace)
+s.entities += 1
+""")
 
     def EntityInteraction() -> None:
         exec(f"""
@@ -71,25 +60,25 @@ from   Game.utils.system   import xpSystem        as xps
 
 l, s = lockers, status
              
-{Name} = mobs.{classType[entityType]}(\"{Name}\", \"{icons[entityType]}\", {idType[entityType]})
-{Name}.start({initHp}+((s.stage-1)*2), {atkType[entityType]}+(s.stage-1), {Dy}, {Dx}, {y}, {x})
-if useRoomLock: s.roomLock = True
+{valuableName} = mobs.{classType[entityType]}(\"{name}\", \"{icons[entityType]}\", {idType[entityType]})
+{valuableName}.start({initHp}+((s.stage-1)*2), {atkType[entityType]}+(s.stage-1), {Dy}, {Dx}, {y}, {x})
+if {useRoomLock}: s.roomLock = True
 
 while s.main == 1:
     if s.killAll: break
 
     if l.jpsf and not l.pause:
-        if {Name}.hp <= 0:
-            s.entities.remove(Rname)
+        if {valuableName}.hp <= 0:
+            s.entities -= 1
             break
-        {Name}.move()
+        {valuableName}.move()
     else: time.sleep(0.1)
-s.Dungeon[{Name}.Dy][{Name}.Dx]['room'][{Name}.y][{Name}.x] = {{"block" : s.ids[{Name}.stepped], "id" : {Name}.stepped}}
-if s.main and not s.killAll: xps.getXP(xpType[entityType])
-        """, nameSpace)
+s.Dungeon[{valuableName}.Dy][{valuableName}.Dx]['room'][{valuableName}.y][{valuableName}.x] = {{"block" : s.ids[{valuableName}.stepped], "id" : {valuableName}.stepped}}
+if s.main and not s.killAll: xps.getXP({xpType[entityType]})
+        """)
         if s.main == 1 and not s.killAll:
             play("monster_dead", 'player')
             s.killCount += 1
-            logger.addLog(f"{s.cColors['fg']['F']}{Name}{s.cColors['end']}이(가) 죽었습니다!")
-    threading.Thread(target=EntityInteraction, name=Rname, daemon=True).start()
+            logger.addLog(f"{s.cColors['fg']['F']}{name}{s.cColors['end']}이(가) 죽었습니다!")
+    threading.Thread(target=EntityInteraction, name=name, daemon=True).start()
     time.sleep(0.2)

@@ -120,9 +120,9 @@ LOGO:str = f"""
 
 """
 
-welcomeMessage:list = []
+welcomeMessage:list[str] = []
 
-ids:dict = {
+ids:dict[int,str] = {
     -1 : ' ',
     0 :  ' ',
     1 :  '■',
@@ -152,7 +152,7 @@ ids:dict = {
     601 : '#'
 }
 
-orbIds:dict = {
+orbIds:dict[str,dict[str,list[int]]] = {
     "size" : {
         "smallOne" : [10, 11, 12, 13, 14],
         "bigOne"   : [15, 16, 17, 18, 19]
@@ -166,8 +166,8 @@ orbIds:dict = {
     }
 }
 
-stepableBlocks:list     = [0, 4, 7]
-interactableBlocks:dict = {
+stepableBlocks:list[int]               = [0, 4, 7]
+interactableBlocks:dict[str,list[int]] = {
     "canStepOn"    : [4, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
     "cannotStepOn" : [-1, 1, 2, 3, 5, 6, 600, 601]
 }
@@ -187,8 +187,8 @@ DROD:list        = [None, '']
 pauseText:str    = f"\n{cMarkdown(1)}{cColors['fg']['L']}P a u s e{cColors['end']}\n"
 debugScreen:bool = False
 
-allSound:bool = True
-sound:dict    = {
+allSound:bool        = True
+sound:dict[str,bool] = {
     "hostileMob"  : True,
     "friendlyMob" : True,
     "interaction" : True,
@@ -196,16 +196,16 @@ sound:dict    = {
     "player"      : True
 }
 
-entities:list = []
+entities:int = 0
 hitPos:list   = []
 
 # Option available
 option:bool = False
 
 # Log system
-maxStack:int   = 10
-onDisplay:list = []
-onTime:list    = []
+maxStack:int        = 10
+onDisplay:list[str] = []
+onTime:list[int]    = []
 
 # InGame print settings
 showStateDesign:int = 2 # normal = 1

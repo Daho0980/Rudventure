@@ -38,7 +38,7 @@ def gameChecker(stdscr):
         l.jpsf = 0
         if s.hp <= 0 or s.hunger <= 0:
             s.killAll = True
-            comment   = random.choice(c.defeatComment[f"{cc['fg']['R']}hp{cc['end']} 부족" if s.hp <= 0 else f"{cc['fg']['Y']}허기{cc['end']} 부족"])
+            comment   = random.choice(c.defeatComment[f"hp 부족" if s.hp <= 0 else f"허기 부족"])
             stdscr.nodelay(False)
 
             play("defeat")
@@ -137,14 +137,11 @@ while s.main:
     p.start(4, 4, 6, 6)
     roomChecker.placeRandomOrbs()
 
-    SN:str    = f"{cc['fg']['L']}지 상{cc['end']}" if not s.stage else f"{cc['fg']['R']}{s.stage} 번 째   나 락{cc['end']}"
-    s.stage  += 1
-
     grp.showStage(
         stdscr,
         f"{cc['fg']['R']}- {s.stage}{cc['end']}",
-        stageName=SN
-        )
+        stageName=f"{cc['fg']['R']}지 하   - {s.stage}   층{cc['end']}"
+        ); s.stage  += 1
 
     l.jpsf = 1
     while not q.quest():

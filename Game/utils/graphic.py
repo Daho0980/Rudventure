@@ -94,6 +94,8 @@ def statusBar(
         statusName:str    ="",
         maxStatus:int     =0,
         color:str         =cc['fg']['R'],
+        emptyCellColor:str=cc['fg']['G1'],
+        barType:str       ="Normal",
         frontTag:str      ="",
         backTag:str       ="",
         space:int         =1,
@@ -117,19 +119,26 @@ def statusBar(
         `usePrecentage`: 퍼센테이지를 표시함. 기본적으로 `False`로 설정되어 있음\n
         `showEmptyCell`: 게이지 바 내 비어있는 셀을 출력할지에 대한 여부, 기본적으로 `True`로 설정되어 있음
     """
+    barTypes:dict[str,list[str]] = {
+        "Normal"     : ["[", "]"],
+        "Cursed"     : ["<", ">"],
+        "OverCursed" : ["{", "}"],
+        "Curved"     : ["(", ")"]
+    }
+
     maxStatus = status if not maxStatus else maxStatus
 
     Display:str          = ""
     spaceLen:str         = " "*space
     statusForDisplay:int = 0
 
-    Display += f"{statusName} :{spaceLen}{frontTag} [{color}" if len(statusName) > 0 else f"{spaceLen}{frontTag} [{color}"
+    Display += f"{statusName} :{spaceLen}{frontTag} {barTypes[barType][0]}{color}" if len(statusName) > 0 else f"{spaceLen}{frontTag} {barTypes[barType][0]}{color}"
     if usePercentage:
         status    = round((status/maxStatus)*10)
         maxStatus = 10
     elif not usePercentage: statusForDisplay = maxStatus if status > maxStatus else status
     
-    Display += ('|'*statusForDisplay+cc['fg']['G1']+'|'*((maxStatus-statusForDisplay) if showEmptyCell else 0)+f"{cc['end']}]")
+    Display += ('|'*statusForDisplay+emptyCellColor+'|'*((maxStatus-statusForDisplay) if showEmptyCell else 0)+f"{cc['end']}{barTypes[barType][1]}")
     if status - maxStatus > 0: Display += f" {color}+{status-maxStatus}{cc['end']}"
     Display += f"{',' if len(backTag)>0 and showComma else ''} {backTag}"+("\n"if end else "")
 
@@ -208,6 +217,7 @@ hunger : {cc['fg']['Y']}{round(s.hunger/10)}%{cc['end']} | atk : {cc['fg']['L']}
                         maxStatus=10,
                         end      =False, # test code
                         color    =cc['fg']['F'],
+                        barType  ="Cursed",
                         frontTag =f"{cc['fg']['F']}{s.lvl}{cc['end']}",
                         backTag  =f"{cc['fg']['F']}{s.lvl+1}{cc['end']}",
                         space    =0, # normal = 5
@@ -236,7 +246,9 @@ hunger : {cc['fg']['Y']}{round(s.hunger/10)}%{cc['end']} | atk : {cc['fg']['L']}
         y, x           = stdscr.getmaxyx()
         by, bx, buffer = Textbox.TextBox(
                 f"""Python version : {cc['fg']['L']}{s.pythonVersion}{cc['end']}
-Window size : {cc['fg']['L']}{stdscr.getmaxyx()}{cc['end']}""",
+Window size : {cc['fg']['L']}{stdscr.getmaxyx()}{cc['end']}
+Dx : {cc['fg']['L']}{s.Dx}{cc['end']}, Dy : {cc['fg']['L']}{s.Dy}{cc['end']}, x : {cc['fg']['L']}{s.x}{cc['end']}, y : {cc['fg']['L']}{s.y}{cc['end']}
+Number of entities : {cc['fg']['L']}{s.entities}{cc['end']}""",
                 Type        ="right",
                 AMLS        =True,
                 LineType    ="bold",
