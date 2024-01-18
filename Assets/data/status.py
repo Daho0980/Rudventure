@@ -178,7 +178,7 @@ stage:int     = 0
 # Background vars
 s:str   = ''
 TFP:str = ""
-pythonVersion = __import__("sys").version
+pythonVersion = __import__("sys").version_info
 
 Dungeon:list     = []
 roomLock:bool    = False

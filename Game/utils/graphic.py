@@ -245,7 +245,7 @@ hunger : {cc['fg']['Y']}{round(s.hunger/10)}%{cc['end']} | atk : {cc['fg']['L']}
     if s.debugScreen:
         y, x           = stdscr.getmaxyx()
         by, bx, buffer = Textbox.TextBox(
-                f"""Python version : {cc['fg']['L']}{s.pythonVersion}{cc['end']}
+                f"""Python version : {cc['fg']['L']}{s.pythonVersion.major}.{s.pythonVersion.minor}.{s.pythonVersion.micro}{cc['end']}
 Window size : {cc['fg']['L']}{stdscr.getmaxyx()}{cc['end']}
 Dx : {cc['fg']['L']}{s.Dx}{cc['end']}, Dy : {cc['fg']['L']}{s.Dy}{cc['end']}, x : {cc['fg']['L']}{s.x}{cc['end']}, y : {cc['fg']['L']}{s.y}{cc['end']}
 Number of entities : {cc['fg']['L']}{s.entities}{cc['end']}""",
