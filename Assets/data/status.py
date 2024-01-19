@@ -188,12 +188,15 @@ pauseText:str    = f"\n{cMarkdown(1)}{cColors['fg']['L']}P a u s e{cColors['end'
 debugScreen:bool = False
 
 allSound:bool        = True
-sound:dict[str,bool] = {
+sound:dict[str,bool|int] = {
     "hostileMob"  : True,
     "friendlyMob" : True,
     "interaction" : True,
     "system"      : True,
-    "player"      : True
+    "player"      : True,
+
+    "stack"    : 0,
+    "maxStack" : 256
 }
 
 entities:int = 0

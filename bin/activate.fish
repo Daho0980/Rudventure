@@ -33,7 +33,7 @@ end
 # Unset irrelevant variables.
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV "/Users/macboogi/Desktop/Rudventure"
+set -gx VIRTUAL_ENV "$(cd "$(dirname "$0")" && pwd -P)"
 
 set -gx _OLD_VIRTUAL_PATH $PATH
 set -gx PATH "$VIRTUAL_ENV/bin" $PATH

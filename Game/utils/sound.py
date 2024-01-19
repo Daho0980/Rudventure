@@ -23,9 +23,14 @@ def play(File:str, kind:str='system'):
                         system\n
                         player
     """
-    if s.allSound and s.sound[kind] and File:
+    if s.allSound and s.sound[kind] and s.sound["stack"] < s.sound["maxStack"] and File:
+        def ps():
+            s.sound["stack"] += 1
+            playsound.playsound(f"{s.TFP}Assets{s.s}sounds{s.s}{File}.wav")
+            s.sound["stack"] -= 1
+            
         threading.Thread(
-            target=lambda: playsound.playsound(f"{s.TFP}Assets{s.s}sounds{s.s}{File}.wav"),
+            target=ps,
             name  ="sound",
             daemon=True
             ).start()

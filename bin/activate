@@ -38,7 +38,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="/Users/macboogi/Desktop/Rudventure"
+VIRTUAL_ENV="$(cd "$(dirname "$0")" && pwd -P)"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"
