@@ -8,8 +8,7 @@
 ## 플레이 방법   
 ### Mac   
 ```
-cd desktop
-git clone https://github.com/Daho0980/Rudventure.git
+cd desktop; git clone https://github.com/Daho0980/Rudventure.git
 ```
 을(를) 입력 후 'run_for_mac.command'를 클릭하여 실행   
 
