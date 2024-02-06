@@ -1,11 +1,12 @@
 import random, time
 import curses
+from   playsound   import playsound as play
 
 from   Assets.data          import rooms, status
 from   Game.core.system     import logger
 from   Game.entities.player import event
 from   Game.utils.system    import xpSystem
-from   Game.utils.sound     import play
+# from   Game.utils.sound     import play
 
 
 s, r     = status, rooms

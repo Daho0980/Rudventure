@@ -1,6 +1,8 @@
+from playsound import playsound as play
+
 from   Assets.data        import status
 from   Game.core.system   import logger
-from   Game.utils.sound   import play
+# from   Game.utils.sound   import play
 
 
 s  = status

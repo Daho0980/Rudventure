@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import curses
 import time, random
+from   playsound   import playsound as play
 from   cusser      import Cusser
 
 from   Assets.data         import comments, lockers, status
@@ -11,7 +12,7 @@ from   Game.utils          import graphic
 from   Game.utils.advanced import DungeonMaker, makeNewListener
 from   Game.utils.modules  import Textbox, cSelector
 from   Game.utils.system   import roomChecker
-from   Game.utils.sound    import play
+# from   Game.utils.sound    import play
 
 
 stdscr = Cusser(curses.initscr())
@@ -30,7 +31,7 @@ def playerChecker():
         s.hpLow = True
         play(f"hp_low")
         logger.addLog(f"{cc['fg']['L']}\"{random.choice(c.lowHpComment)}\"{cc['end']}")
-    elif int((s.hp / s.Mhp) * 100) > 30: s.hpLow = False
+    elif int((s.hp / s.Mhp) * 10) > 3: s.hpLow = False
 
 def gameChecker(stdscr):
     if s.main == 1:

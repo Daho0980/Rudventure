@@ -85,4 +85,4 @@ draw.text((0, 575), line, font=font, fill=(214, 222, 235))# upside line
 
 
 # 이미지 저장
-image.save(f"DeathLog/{datetime.now().strftime('%Y%m%d%H%M')}_{s.name}.png")
+image.save(f"DeathLog{s.s}{datetime.now().strftime('%Y%m%d%H%M')}_{s.name}.png")

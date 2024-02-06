@@ -10,11 +10,12 @@ Global Functions 중 Graphic 옵션
 import re
 import math, time
 import psutil
+from   playsound import playsound as play
 
 from   Assets.data         import status, lockers
 from   Game.utils.advanced import DungeonMaker   as dgm
 from   Game.utils.modules  import Textbox
-from   Game.utils.sound    import play
+# from   Game.utils.sound    import play
 
 s, l = status, lockers
 cc   = s.cColors
@@ -247,10 +248,9 @@ hunger : {cc['fg']['Y']}{round(s.hunger/10)}%{cc['end']} | atk : {cc['fg']['L']}
         by, bx, buffer = Textbox.TextBox(
                 f"""Python version : {s.pythonVersion.major}.{s.pythonVersion.minor}.{s.pythonVersion.micro}
 Window size : {stdscr.getmaxyx()}
-Memory usage : {psutil.Process().memory_info().rss/2**20: 10.5f} MB
+Memory usage : {psutil.Process().memory_info().rss/2**20: .5f} MB
 Number of threads : {psutil.Process().num_threads()}
 
-sound : {s.sound['stack']}/{s.sound['maxStack']}
 Dx : {s.Dx}, Dy : {s.Dy}, x : {s.x}, y : {s.y}
 Number of entities : {s.entities}""",
                 Type        ="right",

@@ -193,10 +193,7 @@ sound:dict[str,bool|int] = {
     "friendlyMob" : True,
     "interaction" : True,
     "system"      : True,
-    "player"      : True,
-
-    "stack"    : 0,
-    "maxStack" : 256
+    "player"      : True
 }
 
 entities:int = 0

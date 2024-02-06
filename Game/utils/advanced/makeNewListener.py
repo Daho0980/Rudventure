@@ -1,11 +1,12 @@
 import curses
 import random, time
 import threading
+from   playsound import playsound as play
 
 from   Assets.data             import lockers, status
 from   Game.core.system.logger import addLog
 from   Game.entities           import player
-from   Game.utils.sound        import play
+# from   Game.utils.sound        import play
 # from Packages.lib.system                  import options
 
 
@@ -33,7 +34,6 @@ def newAddListener() -> None:
                         
                 if key == 32:
                     play("move_box")
-                    s.pauseText = f"\n{s.cMarkdown([1])}{cc['fg']['R']}쫄 ?   ㅋ{cc['end']}\n" if random.randrange(0, 3001)==1215 else f"\n{s.cMarkdown([1])}{cc['fg']['L']}P a u s e{cc['end']}\n"
                     l.pause     = False if l.pause else True
             else: time.sleep(1)
 

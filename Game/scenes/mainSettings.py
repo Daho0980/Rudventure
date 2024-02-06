@@ -1,10 +1,11 @@
 import random
+from   playsound import playsound as play
 
 from   Assets.data        import status as s
 from   Game.core.system   import logger
 from   Game.utils         import graphic, system
 from   Game.utils.modules import cSelector, Textbox
-from   Game.utils.sound   import play
+# from   Game.utils.sound   import play
 
 
 t    = Textbox

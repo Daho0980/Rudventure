@@ -5,10 +5,11 @@ Global Functions 중 Entity 옵션
 """
 
 import threading, time
+from   playsound      import playsound as play
 
 from   Assets.data      import status as s
 from   Game.core.system import logger
-from   Game.utils.sound import play
+# from   Game.utils.sound import play
 
 
 def addEntity(
@@ -43,13 +44,7 @@ def addEntity(
     name:str             = kinds[entityType]
     valuableName         = classType[entityType]
 
-    a:int           = 0
-
-    exec(f"""
-from Assets.data import status as s
-         
-s.entities += 1
-""")
+    s.entities += 1
 
     def EntityInteraction() -> None:
         exec(f"""
