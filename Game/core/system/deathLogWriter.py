@@ -3,20 +3,20 @@ import random
 from   PIL      import Image, ImageDraw, ImageFont
 from   datetime import datetime
 
-from   Assets.data import status as s
+from Assets.data import status as s
 
 
 ftColors:dict = {
-        "B" :   (0,0,0),
-        "M" :   (116,19,13),
-        "G" :   (56,125,33),
-        "O" :   (127,127,38),
-        "N" :   (0,0,122),
-        "P" :   (116,19,123),
-        "T" :   (56,125,126),
-        "S" :   (185,185,185),
-        "G1" :  (127,127,127),
-        "R" :   (234,51,35),
+        "B" :  (0,0,0),
+        "M" :  (116,19,13),
+        "G" :  (56,125,33),
+        "O" :  (127,127,38),
+        "N" :  (0,0,122),
+        "P" :  (116,19,123),
+        "T" :  (56,125,126),
+        "S" :  (185,185,185),
+        "G1" : (127,127,127),
+        "R" :  (234,51,35),
         "L" :  (117,251,76),
         "Y" :  (255,255,85),
         "B1" : (0,0,245),
@@ -31,7 +31,7 @@ image = Image.new("RGB", (x, y), (0, 0, 0))
 draw  = ImageDraw.Draw(image)
 font  = ImageFont.truetype(f"{s.TFP}Assets{s.s}fonts{s.s}DungGeunMo.ttf", 20)
 
-escapeAnsi = lambda line: re.compile(r'(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]').sub('', line)
+escapeAnsi     = lambda line: re.compile(r'(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]').sub('', line)
 stringInserter = lambda ol, il, index: ol[:index]+il+ol[index:]
 
 def textObfuscator(text, r=1) -> str:
@@ -43,7 +43,7 @@ def textObfuscator(text, r=1) -> str:
           randomScale = random.randrange(-5, 6)
           if ord(char)<=randomScale:
               if randomScale<=0: randomScale*=-1
-              else: continue
+              else:              continue
           line += chr(ord(char)+randomScale)
       output += f"\n{line}"
       
@@ -67,9 +67,9 @@ text:str = f"""
      죽인 편린의 수 :
      받은 저주의 강도 :
 """
-curse:str   = "Qupldeði hijaįo katwaįzΩjim-halað hijaði jizok qil, qupldeði qilði liubeź Qoliði Qupldeði ceq, kobidði Qupldeði edvitł"
-noize:str   = f"{curse}{textObfuscator(curse, r=9)}"
-line:str    = "━"*100
+curse:str = "Qupldeði hijaįo katwaįzΩjim-halað hijaði jizok qil, qupldeði qilði liubeź Qoliði Qupldeði ceq, kobidði Qupldeði edvitł"
+noize:str = f"{curse}{textObfuscator(curse, r=9)}"
+line:str  = "━"*100
 
 draw.text((80, 182), text, font=font, fill=(214, 222, 235)) # text
 draw.text((200, 350), s.name, font=font, fill=ftColors['L']) # name

@@ -1,18 +1,18 @@
 import curses
-import random, time
+import time
 import threading
 from   playsound import playsound as play
 
-from   Assets.data             import lockers, status
-from   Game.core.system.logger import addLog
-from   Game.entities           import player
+from Assets.data             import lockers, status
+from Assets.data.color       import cColors as cc
+from Game.core.system.logger import addLog
+from Game.entities           import player
 # from   Game.utils.sound        import play
 # from Packages.lib.system                  import options
 
 
 p    = player
 l, s = lockers, status
-cc   = s.cColors
 
 def newAddListener() -> None:
     def interactions(stdscr):
@@ -34,6 +34,7 @@ def newAddListener() -> None:
                         
                 if key == 32:
                     play("move_box")
+                    s.pauseText = f"\n{s.cMarkdown(1)}{cc['fg']['L']}P a u s e{cc['end']}\n"
                     l.pause     = False if l.pause else True
             else: time.sleep(1)
 

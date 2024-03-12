@@ -3,15 +3,15 @@ from   playsound   import playsound as play
 
 from   Assets.data             import status, lockers
 from   Assets.data.status      import entities
+from   Assets.data.color       import cColors        as cc
 from   Game.core.system.logger import addLog
 from   Game.entities.enemy     import event          as eEvent
 from   Game.entities.player    import event
 # from   Game.utils.sound        import play
 
 
-l    = lockers
-s = status
-cc   = s.cColors
+l  = lockers
+s  = status
 
 class enemy:
     def __init__(self, name:str, icon:str, ID:int) -> None:
@@ -75,7 +75,7 @@ class enemy:
         sound:str = f'enemy_Hit'
         if s.df > 0:
             s.df -= self.atk
-            s.DROD = [f"{s.cColors['fg']['F']}{self.name}{s.cColors['end']}", 'F']
+            s.DROD = [f"{cc['fg']['F']}{self.name}{cc['end']}", 'F']
             if s.df < 0                    : s.hp += s.df
             if round(s.df) < 0             : s.df = 0
             if s.df == 0 and s.dfCrack <= 0:

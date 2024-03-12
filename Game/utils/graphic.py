@@ -12,13 +12,13 @@ import math, time
 import psutil
 from   playsound import playsound as play
 
-from   Assets.data         import status, lockers
-from   Game.utils.advanced import DungeonMaker   as dgm
-from   Game.utils.modules  import Textbox
+from Assets.data         import status, lockers
+from Assets.data.color   import cColors        as cc
+from Game.utils.advanced import DungeonMaker   as dgm
+from Game.utils.modules  import Textbox
 # from   Game.utils.sound    import play
 
 s, l = status, lockers
-cc   = s.cColors
 
 escapeAnsi = lambda line: re.compile(r'(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]').sub('', line)
 
@@ -32,9 +32,9 @@ def addstrMiddle(
         returnStr:bool           =False
         ) -> str: # type: ignore
     lines:list[int] = list(map(lambda l: len(escapeAnsi(l)), string.split("\n")))
-    y, x  = (y, x) if y+x else map(
+    y, x = (y,x)if y+x else map(
         lambda c:c[0]-round([len(lines)/2,max(lines)/2][c[1]]),
-        list(zip(map(lambda n: round(n/2), list(stdscr.getmaxyx())),[0,1]))
+        list(zip(map(lambda n:round(n/2),list(stdscr.getmaxyx())),[0,1]))
         )
     y, x = y+addOnCoordinate[0], x+addOnCoordinate[1]
     output:str = ''.join(
@@ -94,8 +94,8 @@ def statusBar(
         status:int,
         statusName:str    ="",
         maxStatus:int     =0,
-        color:str         =cc['fg']['R'],
-        emptyCellColor:str=cc['fg']['G1'],
+        color:str         ="",
+        emptyCellColor:str="",
         barType:str       ="Normal",
         frontTag:str      ="",
         backTag:str       ="",
@@ -120,6 +120,9 @@ def statusBar(
         `usePrecentage`: 퍼센테이지를 표시함. 기본적으로 `False`로 설정되어 있음\n
         `showEmptyCell`: 게이지 바 내 비어있는 셀을 출력할지에 대한 여부, 기본적으로 `True`로 설정되어 있음
     """
+    color          = cc['fg']['R']  if not color          else color
+    emptyCellColor = cc['fg']['G1'] if not emptyCellColor else emptyCellColor
+
     barTypes:dict[str,list[str]] = {
         "Normal"     : ["[", "]"],
         "Cursed"     : ["<", ">"],
@@ -147,7 +150,7 @@ def statusBar(
 
 def fieldPrint(stdscr, grid:list):
     """
-    인게임 필드 출력 함수
+    메인 디스플레이 출력 함수
 
         `grid`(list(2d)) : 맵의 그래픽 데이터가 포함됨.
     """
@@ -235,8 +238,9 @@ hunger : {cc['fg']['Y']}{round(s.hunger/10)}%{cc['end']} | atk : {cc['fg']['L']}
         stdscr,
         Textbox.TextBox(
             "\n".join(s.onDisplay),
-            AMLS    =True,
-            LineType='double'
+            AMLS           =True,
+            LineType       ='double',
+            alwaysReturnBox=False
         ),
         y        =list(stdscr.getmaxyx())[0]-(1 if not len(s.onDisplay) else len(s.onDisplay)),
         x        =0,

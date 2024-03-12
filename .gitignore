@@ -8,4 +8,5 @@ venv
 tests
 dispatch
 xpc
-
+.gitignore
+.git/

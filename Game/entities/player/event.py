@@ -1,11 +1,10 @@
 import time
 import threading
 
-from   Assets.data        import status    as s
-from   Game.utils.graphic import escapeAnsi
+from Assets.data        import status    as s
+from Assets.data.color  import cColors   as cc
+from Game.utils.graphic import escapeAnsi
 
-
-cc = s.cColors
 
 def hitted() -> None:
     def event() -> None:

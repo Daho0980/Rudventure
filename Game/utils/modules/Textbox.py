@@ -6,32 +6,36 @@ checkActualLen = lambda line: sum(map(lambda char: 2 if unicodedata.east_asian_w
 
 def TextBox(
         Inp:str,
-        Type:str         ="left",
-        maxLine:int      =100,
-        fillChar:str     =" ",
-        inDistance:int   =0,
-        outDistance:int  =0,
-        addWidth:int     =0,
-        AMLS:bool        =False,
-        endLineBreak:bool=False,
-        returnSizeyx:bool=False,
-        LineType:str     ="normal"
+        Type:str             ="left",
+        maxLine:int          =100,
+        fillChar:str         =" ",
+        inDistance:int       =0,
+        outDistance:int      =0,
+        addWidth:int         =0,
+        AMLS:bool            =False,
+        endLineBreak:bool    =False,
+        returnSizeyx:bool    =False,
+        LineType:str         ="normal",
+        alwaysReturnBox:bool =True
         ) -> str:
         """
-        ``Inp``(str)                                      : 텍스트박스 내용, 줄바꿈하려면 `\\n`을 사용해야 함\n
-        ``Type``(str["left", "middle", "right"])          : 위치 설정, 기본적으로 `"left"`로 설정되어 있음\n
-        ``maxLine``(int)                                  : 최대 박스 길이 설정. AMLS를 True로 할거라면 그냥 신경쓰지 않는 게 좋음, 기본적으로 `100`으로 설정되어 있음\n
-        ``fillChar``(char)                                : 박스 안을 채울 텍스트. 딱 한 개만 허용, 기본적으로 `" "`로 설정되어 있음\n
-        ``inDistance``(int>=0)                            : 박스 안쪽 텍스트의 위, 아래 공백 크기 설정, 기본적으로 `0`으로 설정되어 있음\n
-        ``outDistance``(int>=0)                           : 박스 바깥의 공백 크기 설정, 기본적으로 `0`으로 설정되어 있음\n
-        ``addWidth``(int>=0)                              : 텍스트 양 옆 거리 설정, 기본적으로 `0`으로 설정되어 있음\n
-        ``AMLS``(bool)                                    : 가장 긴 텍스트의 길이에 맞게 설정할지에 대한 여부. 이미 maxLine을 설정했다면 신경쓰지 않는 게 좋음, 기본적으로 `False`로 설정되어 있음\n
-        ``endLineBreak``(bool)                            : 개행 문자 여부, 기본적으로 `False`로 설정되어 있음\n
-        ``LineType``(str["normal", "double", "bold"])     : 텍스트박스 테두리 종류 설정, 기본적으로 `"normal"`로 설정되어 있음\n
+        ``Inp``(str)                                  : 텍스트박스 내용, 줄바꿈하려면 `\\n`을 사용해야 함\n
+        ``Type``(str["left", "middle", "right"])      : 위치 설정, 기본적으로 `"left"`로 설정되어 있음\n
+        ``maxLine``(int)                              : 최대 박스 길이 설정. AMLS를 True로 할거라면 그냥 신경쓰지 않는 게 좋음, 기본적으로 `100`으로 설정되어 있음\n
+        ``fillChar``(char)                            : 박스 안을 채울 텍스트. 딱 한 개만 허용, 기본적으로 `" "`로 설정되어 있음\n
+        ``inDistance``(int>=0)                        : 박스 안쪽 텍스트의 위, 아래 공백 크기 설정, 기본적으로 `0`으로 설정되어 있음\n
+        ``outDistance``(int>=0)                       : 박스 바깥의 공백 크기 설정, 기본적으로 `0`으로 설정되어 있음\n
+        ``addWidth``(int>=0)                          : 텍스트 양 옆 거리 설정, 기본적으로 `0`으로 설정되어 있음\n
+        ``AMLS``(bool)                                : 가장 긴 텍스트의 길이에 맞게 설정할지에 대한 여부. 이미 maxLine을 설정했다면 신경쓰지 않는 게 좋음, 기본적으로 `False`로 설정되어 있음\n
+        ``endLineBreak``(bool)                        : 개행 문자 여부, 기본적으로 `False`로 설정되어 있음\n
+        ``returnSizeyx``(bool)                        : 박스와 함께 오른쪽 아래 위치 추가 반환 여부, 기본적올 `False`로 설정되어 있음\n
+        ``LineType``(str["normal", "double", "bold"]) : 텍스트박스 테두리 종류 설정, 기본적으로 `"normal"`로 설정되어 있음\n
+        ``alwaysReturnBox``(bool)                     : 빈 문자열 입력 시 무조건적인 박스 반환 여부, 기본적으로 `True`로 설정되어 있음
         """
-        if not len(Inp): Inp = "..."
-        Display  = ""
+        if not len(Inp) and alwaysReturnBox:       Inp = "..."
+        elif not len(Inp) and not alwaysReturnBox: return ""
 
+        Display    = ""
         Line       = {
                     "normal" : {0:["┌", "┐"], 1:["└", "┘"], 2:["├", "┤"], 3:["─", "│"]},
                     "double" : {0:["╔", "╗"], 1:["╚", "╝"], 2:["╠", "╣"], 3:["═", "║"]},

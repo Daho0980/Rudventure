@@ -7,8 +7,9 @@ Global Functions 중 Entity 옵션
 import threading, time
 from   playsound      import playsound as play
 
-from   Assets.data      import status as s
-from   Game.core.system import logger
+from Assets.data       import status as s
+from Assets.data.color import cColors as cc
+from Game.core.system  import logger
 # from   Game.utils.sound import play
 
 
@@ -68,12 +69,12 @@ while s.main == 1:
             break
         {valuableName}.move()
     else: time.sleep(0.1)
-s.Dungeon[{valuableName}.Dy][{valuableName}.Dx]['room'][{valuableName}.y][{valuableName}.x] = {{"block" : s.ids[{valuableName}.stepped], "id" : {valuableName}.stepped}}
+if s.main ==1 and not s.killAll: s.Dungeon[{valuableName}.Dy][{valuableName}.Dx]['room'][{valuableName}.y][{valuableName}.x] = {{"block" : f\"{cc['fg']['G1']}{{{valuableName}.icon}}{cc['end']}\", "id" : 0}}
 if s.main and not s.killAll: xps.getXP({xpType[entityType]})
         """)
         if s.main == 1 and not s.killAll:
             play("monster_dead", 'player')
             s.killCount += 1
-            logger.addLog(f"{s.cColors['fg']['F']}{name}{s.cColors['end']}이(가) 죽었습니다!")
+            logger.addLog(f"{cc['fg']['F']}{name}{cc['end']}이(가) 죽었습니다!")
     threading.Thread(target=EntityInteraction, name=name, daemon=True).start()
     time.sleep(0.2)

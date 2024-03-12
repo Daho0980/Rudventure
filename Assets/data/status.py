@@ -1,43 +1,6 @@
-# Colors
-cColors:dict = {
-    "fg" : {
-        "B" :   "\033[;38;5;0m",
-        "M" :   "\033[;38;5;1m",
-        "G" :   "\033[;38;5;2m",
-        "O" :   "\033[;38;5;3m",
-        "N" :   "\033[;38;5;4m",
-        "P" :   "\033[;38;5;5m",
-        "T" :   "\033[;38;5;6m",
-        "S" :   "\033[;38;5;7m",
-        "G1" :  "\033[;38;5;8m",
-        "R" :   "\033[;38;5;9m",
-        "L" :  "\033[;38;5;10m",
-        "Y" :  "\033[;38;5;11m",
-        "B1" : "\033[;38;5;12m",
-        "F" :  "\033[;38;5;13m",
-        "A" :  "\033[;38;5;14m",
-        "W" :  "\033[;38;5;15m"
-    },
-    "bg" : {
-        "B" :   "\033[;48;5;0m",
-        "M" :   "\033[;48;5;1m",
-        "G" :   "\033[;48;5;2m",
-        "O" :   "\033[;48;5;3m",
-        "N" :   "\033[;48;5;4m",
-        "P" :   "\033[;48;5;5m",
-        "T" :   "\033[;48;5;6m",
-        "S" :   "\033[;48;5;7m",
-        "G1" :  "\033[;48;5;8m",
-        "R" :   "\033[;48;5;9m",
-        "L" :  "\033[;48;5;10m",
-        "Y" :  "\033[;48;5;11m",
-        "B1" : "\033[;48;5;12m",
-        "F" :  "\033[;48;5;13m",
-        "A" :  "\033[;48;5;14m",
-        "W" :  "\033[;48;5;15m",
-    },
-    "end" : "\033[0m"
-}
+from Assets.data.color import cColors, customColor
+
+_cc = cColors
 
 # def customColor(R, G, B, Type=1):
 #     """
@@ -47,8 +10,6 @@ cColors:dict = {
 #         - `2` : 배경 색 변경\n
 #     """
 #     return f'\033[{38 if Type == 1 else 48};2;{R};{G};{B}m'
-
-customColor = lambda R,G,B,T=1: f"\033[{[0,38,48][T]};2;{R};{G};{B}m"
 
 #  ┏━━━━ Wait, you're not a color >:(
 # v
@@ -116,7 +77,7 @@ LOGO:str = f"""
  /_/     _/   _  _ _/_    _ _ 
 / \\ /_//_/ |//_\'/ //  /_// /_\'
 
-  {cColors['fg']['R']}.-  .-..  .--.  ....  .-{cColors['end']}
+  {_cc['fg']['R']}.-  .-..  .--.  ....  .-{_cc['end']}
 
 """
 
@@ -128,25 +89,25 @@ ids:dict[int,str] = {
     1 :  '■',
     2 :  '.',
     3 :  ' ',
-    4 :  f"{cColors['fg']['Y']}É{cColors['end']}",
-    5 :  f"{cColors['fg']['R']}F{cColors['end']}",
+    4 :  "É",
+    5 :  "F",
     6 :  '☒',
-    7 :  f"{cColors['fg']['R']}X{cColors['end']}",
-    8 :  f"{cColors['fg']['B1']}{cMarkdown(1)}O{cColors['end']}",
-    9 :  f"{cColors['fg']['B1']}{cMarkdown(1)}o{cColors['end']}",
-    10 : f"{cColors['fg']['R']}o{cColors['end']}",
-    11 : f"{cColors['fg']['B1']}o{cColors['end']}",
-    12 : f"{cColors['fg']['L']}o{cColors['end']}",
-    13 : f"{cColors['fg']['Y']}o{cColors['end']}",
-    14 : f"{cColors['fg']['F']}ø{cColors['end']}",
-    15 : f"{cColors['fg']['R']}O{cColors['end']}",
-    16 : f"{cColors['fg']['B1']}O{cColors['end']}",
-    17 : f"{cColors['fg']['L']}O{cColors['end']}",
-    18 : f"{cColors['fg']['Y']}O{cColors['end']}",
-    19 : f"{cColors['fg']['F']}Ø{cColors['end']}",
+    7 :  "X",
+    8 :  "O",
+    9 :  "o",
+    10 : "o",
+    11 : "o",
+    12 : "o",
+    13 : "o",
+    14 : "ø",
+    15 : "O",
+    16 : "O",
+    17 : "O",
+    18 : "O",
+    19 : "Ø",
 
-    300 : f"{customColor(0, 255, 10)}@{cColors['end']}", # 0, 255, 10
-    301 : f"{customColor(0, 255, 10)}&{cColors['end']}", # 0, 255, 10
+    300 : "@", # 0, 255, 10
+    301 : "&", # 0, 255, 10
 
     600 : '%',
     601 : '#'
@@ -184,7 +145,7 @@ Dungeon:list     = []
 roomLock:bool    = False
 killAll:bool     = False
 DROD:list        = [None, '']
-pauseText:str    = f"\n{cMarkdown(1)}{cColors['fg']['L']}P a u s e{cColors['end']}\n"
+pauseText:str    = f"\n{cMarkdown(1)}{_cc['fg']['L']}P a u s e{_cc['end']}\n"
 debugScreen:bool = False
 
 allSound:bool        = True

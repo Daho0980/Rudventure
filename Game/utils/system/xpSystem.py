@@ -1,12 +1,12 @@
 from playsound import playsound as play
 
-from   Assets.data        import status
-from   Game.core.system   import logger
+from Assets.data       import status
+from Assets.data.color import cColors as cc
+from Game.core.system  import logger
 # from   Game.utils.sound   import play
 
 
 s  = status
-cc = s.cColors
 
 def getXP(count:int=0) -> None:
     """

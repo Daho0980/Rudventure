@@ -2,15 +2,15 @@ import random, time
 import curses
 from   playsound   import playsound as play
 
-from   Assets.data          import rooms, status
-from   Game.core.system     import logger
-from   Game.entities.player import event
-from   Game.utils.system    import xpSystem
+from Assets.data          import rooms, status
+from Assets.data.color    import cColors      as cc
+from Game.core.system     import logger
+from Game.entities.player import event
+from Game.utils.system    import xpSystem
 # from   Game.utils.sound     import play
 
 
 s, r     = status, rooms
-cc       = s.cColors
 
 def set() -> None:
     s.hp       = 10
@@ -33,8 +33,7 @@ def damage(block:str="?") -> None:
     else       : s.hp -= 1
 
     if s.hp <= 0 and s.df <= 0:
-        dr:str = random.choice(["과다출혈", "피로 과다", "졸도", "자살", "우울증"])
-        s.DROD = [f"{s.cColors['fg']['R']}{dr}{s.cColors['end']}", 'R']
+        s.DROD = [f"{cc['fg']['R']}{random.choice(['과다출혈', '피로 과다', '졸도', '자살', '우울증'])}{cc['end']}", 'R']
     logger.addLog(f"{s.lightName}이(가) [ {block} ] 에 의해 상처입었습니다")
 
 def itemEvent(y:int, x:int) -> None:

@@ -1,4 +1,4 @@
-from Assets.data.status import cColors as cc
+from Assets.data.color import cColors as cc
 
 
 lowHpComment:list[str] = [

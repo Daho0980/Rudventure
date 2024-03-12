@@ -4,7 +4,7 @@ import time, random
 from   playsound   import playsound as play
 from   cusser      import Cusser
 
-from   Assets.data         import comments, lockers, status
+from   Assets.data         import comments, lockers, status, color
 from   Game.core.system    import quests, logger
 from   Game.entities       import entity, player
 from   Game.scenes         import mainSettings, mainMenu
@@ -22,7 +22,7 @@ c, s, l                 = comments, status, lockers
 p, t, dgm, mnl          = player, Textbox, DungeonMaker, makeNewListener
 ent, grp                = entity, graphic
 q                       = quests
-cc                      = s.cColors
+cc                      = color.cColors
 
 def playerChecker():
     if s.df > 0: s.dfCrack = 0
@@ -154,4 +154,5 @@ while s.main:
             roomChecker.main()
             time.sleep(s.frame)
         else: time.sleep(1)
+    if s.hunger <= 0: s.DROD = [f"{cc['fg']['Y']}아사{cc['end']}", 'Y']
     gameChecker(stdscr); quickStarter = 0

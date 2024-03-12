@@ -5,7 +5,7 @@ cd     "$(cd "$(dirname "$0")" && pwd -P)" || exit
 source bin/activate
 
 while true; do
-    python3 runGame.py
+    python3 run.py
     errorCode=$?
 
     if [ $errorCode -eq 1 ]; then

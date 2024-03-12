@@ -1,0 +1,1 @@
+clearedRoomLoot = 50

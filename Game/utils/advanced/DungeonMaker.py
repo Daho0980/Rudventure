@@ -19,12 +19,13 @@
 import re
 import copy
 import random
-from   Assets.data import rooms,  status
-from   Game.utils  import graphic
+
+from Assets.data       import rooms, status
+from Assets.data.color import cColors      as cc
+from Game.utils        import graphic
 
 grp = graphic
 s   = status
-cc  = s.cColors
 
 Map       = []
 direction = {
@@ -34,11 +35,11 @@ direction = {
     'L' : 4
 }
 roomIcons = [
-    f"{cc['fg']['R']}§{cc['end']}",
-    "•",
-    f"{cc['fg']['L']}*{cc['end']}",
-    f"{cc['fg']['Y']}!{cc['end']}",
-    f"{cc['fg']['B1']}/{cc['end']}"
+    ["§", "R"],
+    ["•", ""],
+    ["*", "L"],
+    ["!", "Y"],
+    ["/", "B1"]
     ]
 
 # ---------- Graphic section ----------
@@ -54,7 +55,7 @@ def GraphicMaker(MapData:list):
     for i in range(len(MapData)):
         grid.append([])
         for j in range(len(MapData[i])):
-            if len(MapData[i][j]) > 0: grid[i].append(MapData[i][j]["roomIcon"])
+            if len(MapData[i][j]) > 0: grid[i].append(f"{cc['fg'][MapData[i][j]['roomIcon'][1]]}{MapData[i][j]['roomIcon'][0]}{cc['end']}")
             else                     : grid[i].append(' ')
 
     return grid
@@ -80,12 +81,12 @@ def gridMapReturn(grid:list, blank:int=0, center:bool=False):
             for column in range(len(DisplayMap[row])):
                 FixY, FixX = row+toolY, column+toolX
                 if FixY >= 0 and FixY <= len(DisplayMap)-1 and FixX >= 0 and FixX <= len(DisplayMap[row])-1 and len(grid[row][column]) > 0:
-                    if row == s.Dy and column == s.Dx: DisplayMap[FixY][FixX] = f"{cc['bg']['F']}{escapeAnsi(grid[s.Dy][s.Dx]['roomIcon'])}{cc['end']}"
+                    if row == s.Dy and column == s.Dx: DisplayMap[FixY][FixX] = f"{cc['bg']['F']}{grid[s.Dy][s.Dx]['roomIcon'][0]}{cc['end']}"
                     else:
                         match grid[row][column]["isPlayerVisited"]:
                             case 0: DisplayMap[FixY][FixX] = ' '
                             case 1: DisplayMap[FixY][FixX] = f"{cc['fg']['F']}?{cc['end']}"
-                            case 2: DisplayMap[FixY][FixX] = grid[row][column]["roomIcon"]
+                            case 2: DisplayMap[FixY][FixX] = f"{'' if not grid[row][column]['roomIcon'][1] else cc['fg'][grid[row][column]['roomIcon'][1]]}{grid[row][column]['roomIcon'][0]}{cc['end']}"
 
     elif center == False:
         DisplayMap = GraphicMaker(grid)
@@ -362,7 +363,7 @@ def DungeonMaker(showAll=False) -> list:
             for j in range(9):
                 output[i].append({
                     "room":[],
-                    "roomIcon":' ',
+                    "roomIcon":[" ", ""],
                     "doorPos":{"U":0, "R":0, "D":0, "L":0},
                     "roomType":None,
                     "isPlayerHere":False,

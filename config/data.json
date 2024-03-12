@@ -1,10 +1,48 @@
 {
-    "allSound": true,
+    "allSound": false,
     "sound": {
         "hostileMob": true,
         "friendlyMob": true,
         "interaction": true,
         "system": true,
         "player": true
+    },
+    "color": {
+        "fg": {
+            "B": true,
+            "M": true,
+            "G": true,
+            "O": true,
+            "N": true,
+            "P": true,
+            "T": true,
+            "S": true,
+            "G1": true,
+            "R": true,
+            "L": true,
+            "Y": true,
+            "B1": true,
+            "F": true,
+            "A": true,
+            "W": true
+        },
+        "bg": {
+            "B": true,
+            "M": true,
+            "G": true,
+            "O": true,
+            "N": true,
+            "P": true,
+            "T": true,
+            "S": true,
+            "G1": true,
+            "R": true,
+            "L": true,
+            "Y": true,
+            "B1": true,
+            "F": true,
+            "A": true,
+            "W": true
+        }
     }
 }

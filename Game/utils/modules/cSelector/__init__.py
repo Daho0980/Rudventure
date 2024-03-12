@@ -4,12 +4,11 @@ import curses
 from   cusser    import Cusser
 from   playsound import playsound as play
 
-from   Assets.data      import status  as s
-from   Game.utils       import graphic as grp
+from Assets.data       import status  as s
+from Assets.data.color import cColors as cc
+from Game.utils        import graphic as grp
 # from   Game.utils.sound import play
 
-
-cc:dict = s.cColors
 
 def main(
         title:str,

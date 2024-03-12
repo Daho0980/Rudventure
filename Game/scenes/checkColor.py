@@ -1,6 +1,6 @@
 from playsound import playsound as play
 
-from Assets.data.status import cColors as cc
+from Assets.data.color import cColors as cc
 from Game.utils         import system
 # from Game.utils.sound   import play
 

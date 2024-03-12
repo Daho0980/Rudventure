@@ -1,17 +1,18 @@
-import threading, random
-from   playsound        import playsound as play
+import threading
+from   random    import randrange, choice
+from   playsound import playsound        as play
 
-from   Assets.data          import comments, lockers, status
-from   Game.core.system     import logger
-from   Game.entities.entity import addEntity
-from   Game.utils.modules   import cSelector
-from   Game.utils.system    import placeRandomBlock
+from Assets.data          import comments, lockers, status, percentage
+from Assets.data.color    import cColors                              as cc
+from Game.core.system     import logger
+from Game.entities.entity import addEntity
+from Game.utils.modules   import cSelector
+from Game.utils.system    import placeRandomBlock
 # from   Game.utils.sound     import play
 
 
-c, l, s  = comments,          lockers, status
+c, l, s  = comments, lockers, status
 selector = cSelector
-cc       = s.cColors
 
 def changeDoorPosBlock(ID:int, data:dict) -> None:
     DPG:dict[str,list[int]] = {
@@ -39,10 +40,10 @@ def summonRandomMonster(data:dict) -> None:
         s.Dungeon[s.Dy][s.Dx]['summonCount'] = 0
         monsterData = [[0, 4], [1, 10]]
         for _ in range(count):
-            choiced = random.choice(monsterData)
+            choiced = choice(monsterData)
             addEntity(
                 choiced[0],
-                choiced[1],
+                int(choiced[1]),
                 Dy=s.Dy,
                 Dx=s.Dx,
                 y =[1, len(data['room'])-2   ],
@@ -51,7 +52,7 @@ def summonRandomMonster(data:dict) -> None:
                 )
     threading.Thread(target=event, daemon=True).start()
     
-def placeRandomOrbs() -> None:
+def placeRandomOrbs(multiple:int=1) -> None:
     # hp -> def -> atk -> hng -> exp
     orbs:dict = {
         "size" : {
@@ -79,12 +80,12 @@ def placeRandomOrbs() -> None:
         }
     }
     roomGrid = s.Dungeon[s.Dy][s.Dx]['room']
-    for _ in range(random.randrange(2, 6)):
+    for _ in range(randrange(2, 6)*multiple):
         orbIDs = {"hp" : [10, 15], "def" : [11, 16], "atk" : [12, 17], "hunger" : [13, 18], "exp" : [14, 19]}
-        sizeIndex = random.randrange(0, 2)
+        sizeIndex = randrange(0, 2)
 
         typeIndex = None
-        rate = random.randrange(1, 101)
+        rate = randrange(1, 101)
         if   rate > 0  and rate <= 45: typeIndex = "hunger"
         elif rate > 45 and rate <= 70: typeIndex = "hp"
         elif rate > 70 and rate <= 80: typeIndex = "def"
@@ -104,7 +105,7 @@ def main() -> None:
     data:dict = s.Dungeon[s.Dy][s.Dx]
 
     if l.jpsf and data['interaction'] == False:
-        commentP = True if random.randrange(1, 3) == 1 else False
+        commentP = True if randrange(1, 3) == 1 else False
         match data['roomType']:
             case 1:
                 if data['summonCount'] > 0:
@@ -117,7 +118,7 @@ def main() -> None:
 
                     s.roomLock = False
                     s.Dungeon[s.Dy][s.Dx]['interaction'] = True
-                    placeRandomOrbs()
+                    if randrange(0, 101) > percentage.clearedRoomLoot: placeRandomOrbs()
                     changeDoorPosBlock(2, data)
 
             case 2:
@@ -125,20 +126,20 @@ def main() -> None:
                 s.Dungeon[s.Dy][s.Dx]['interaction'] = True
 
             case 3:
-                rewardP = random.randrange(1, 101)
+                rewardP = randrange(1, 101)
                 comment = ""
 
                 if rewardP > 30:
                     s.Dungeon[s.Dy][s.Dx]['room'][6][6] = {"block" : s.ids[4], "id" : 4}
-                    if commentP: comment = random.choice(c.treasureRoomComment[0])
+                    if commentP: comment = choice(c.treasureRoomComment[0])
                 elif rewardP >= 10 and rewardP < 30:
                     for i in range(5, 8): s.Dungeon[s.Dy][s.Dx]['room'][i][i] = {"block" : s.ids[4], "id" : 4}
-                    if commentP: comment = random.choice(c.treasureRoomComment[1])
+                    if commentP: comment = choice(c.treasureRoomComment[1])
                 else:
                     for i in range(5, 8): s.Dungeon[s.Dy][s.Dx]['room'][i][i] = {"block" : s.ids[4], "id" : 4}
                     s.Dungeon[s.Dy][s.Dx]['room'][5][7] = {"block" : s.ids[4], "id" : 4}
                     s.Dungeon[s.Dy][s.Dx]['room'][7][5] = {"block" : s.ids[4], "id" : 4}
-                    if commentP: comment = random.choice(c.treasureRoomComment[2])
+                    if commentP: comment = choice(c.treasureRoomComment[2])
                 if commentP: logger.addLog(f"{cc['fg']['L']}\"{comment}\"{cc['end']}")
                 s.Dungeon[s.Dy][s.Dx]['interaction'] = True
 
@@ -155,5 +156,5 @@ def main() -> None:
                     s.roomLock = False
                     s.Dungeon[s.Dy][s.Dx]['room'][6][6]  = {"block" : s.ids[5], "id" : 5}
                     s.Dungeon[s.Dy][s.Dx]['interaction'] = True
-                    placeRandomOrbs()
+                    placeRandomOrbs(multiple=2)
                     changeDoorPosBlock(2, data)

@@ -1,16 +1,16 @@
 import random
 from   playsound import playsound as play
 
-from   Assets.data        import status as s
-from   Game.core.system   import logger
-from   Game.utils         import graphic, system
-from   Game.utils.modules import cSelector, Textbox
+from Assets.data        import status            as s
+from Assets.data.color  import cColors           as cc
+from Game.core.system   import logger
+from Game.utils         import graphic, system
+from Game.utils.modules import cSelector, Textbox
 # from   Game.utils.sound   import play
 
 
 t    = Textbox
 grp  = graphic
-cc   = s.cColors
 
 def main(stdscr) -> None:
     play("smash")
@@ -155,6 +155,22 @@ def main(stdscr) -> None:
                         f"오실 때 {cc['fg']['R']}{s.cMarkdown(1)}피자{cc['end']}는 가져오셨죠? 장난입니다, {s.lightName}님.",
                         f"기다리느라 목 빠지는 줄 알았습니다, {s.lightName}님."
                         ]
-
+    s.ids[4]   = f"{cc['fg']['Y']}É{cc['end']}"
+    s.ids[5]   = f"{cc['fg']['R']}F{cc['end']}"
+    s.ids[7]   = f"{cc['fg']['R']}X{cc['end']}"
+    s.ids[8]   = f"{cc['fg']['B1']}{s.cMarkdown(1)}O{cc['end']}"
+    s.ids[9]   = f"{cc['fg']['B1']}{s.cMarkdown(1)}o{cc['end']}"
+    s.ids[10]  = f"{cc['fg']['R']}o{cc['end']}"
+    s.ids[11]  = f"{cc['fg']['B1']}o{cc['end']}"
+    s.ids[12]  = f"{cc['fg']['L']}o{cc['end']}"
+    s.ids[13]  = f"{cc['fg']['Y']}o{cc['end']}"
+    s.ids[14]  = f"{cc['fg']['F']}ø{cc['end']}"
+    s.ids[15]  = f"{cc['fg']['R']}O{cc['end']}"
+    s.ids[16]  = f"{cc['fg']['B1']}O{cc['end']}"
+    s.ids[17]  = f"{cc['fg']['L']}O{cc['end']}"
+    s.ids[18]  = f"{cc['fg']['Y']}O{cc['end']}"
+    s.ids[19]  = f"{cc['fg']['F']}Ø{cc['end']}"
+    s.ids[300] = f"{cc['fg']['L']}@{cc['end']}"
+    s.ids[301] = f"{cc['fg']['L']}&{cc['end']}"
     logger.addLog(s.welcomeMessage[random.randrange(0, len(s.welcomeMessage))])
     
