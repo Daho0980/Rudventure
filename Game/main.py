@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import curses
 import time, random
-from   playsound   import playsound as play
 from   cusser      import Cusser
 
 from   Assets.data         import comments, lockers, status, color
@@ -29,7 +28,6 @@ def playerChecker():
 
     if s.hp <= int(s.Mhp*0.3) and s.hpLow == False:
         s.hpLow = True
-        play(f"hp_low")
         logger.addLog(f"{cc['fg']['L']}\"{random.choice(c.lowHpComment)}\"{cc['end']}")
     elif int((s.hp / s.Mhp) * 10) > 3: s.hpLow = False
 
@@ -42,7 +40,6 @@ def gameChecker(stdscr):
             comment   = random.choice(c.defeatComment[f"hp 부족" if s.hp <= 0 else f"허기 부족"])
             stdscr.nodelay(False)
 
-            play("defeat")
             y, x = grp.addstrMiddle(
                 stdscr,
                 cc['fg']['R']+t.TextBox(
@@ -72,10 +69,8 @@ def gameChecker(stdscr):
             achievementsValues:list[list[str|int]] = list(achievements.values())
             for num, text in enumerate(achievements):
                 stdscr.addstr(f"\033[{x};{y}H{text} : {achievementsValues[num][0]}\n"); stdscr.refresh()
-                play("smash")
                 time.sleep(0.2)
                 y += (1+achievementsValues[num][1]) # type: ignore
-            play("smash")
             the_choice:int = cSelector.main(
                 cc['fg']['R']+t.TextBox(
                     f"   사 망 하 셨 습 니 다   \n\n   \"{comment}\"   ",
@@ -99,13 +94,11 @@ def gameChecker(stdscr):
                 '@'
                 )
 
-            play("crack")
             s.main = 0
             curses.endwin()
             exit(0 if the_choice-1 else 1)
 
         else:
-            play("clear")
             grp.addstrMiddle(
                 stdscr,
                 cc['fg']['L']+t.TextBox(
@@ -142,7 +135,7 @@ while s.main:
         stdscr,
         f"{cc['fg']['R']}- {s.stage}{cc['end']}",
         stageName=f"{cc['fg']['R']}지 하   - {s.stage}   층{cc['end']}"
-        ); s.stage  += 1
+        ); s.stage += 1
 
     l.jpsf = 1
     while not q.quest():

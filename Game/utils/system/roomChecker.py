@@ -1,6 +1,5 @@
 import threading
 from   random    import randrange, choice
-from   playsound import playsound        as play
 
 from Assets.data          import comments, lockers, status, percentage
 from Assets.data.color    import cColors                              as cc
@@ -109,12 +108,10 @@ def main() -> None:
         match data['roomType']:
             case 1:
                 if data['summonCount'] > 0:
-                    play("close_door", 'interaction')
                     summonRandomMonster(data)
 
                     changeDoorPosBlock(1, data)
                 elif not s.entities and s.roomLock:
-                    play("open_door", 'interaction')
 
                     s.roomLock = False
                     s.Dungeon[s.Dy][s.Dx]['interaction'] = True
@@ -145,13 +142,11 @@ def main() -> None:
 
             case 4:
                 if data['summonCount'] > 0:
-                    play("close_door", 'interaction')
                     summonRandomMonster(data)
 
                     s.Dungeon[s.Dy][s.Dx]['room'][6][6] = {"block" : s.ids[0], "id" : 0}
                     changeDoorPosBlock(1, data)
                 elif not s.entities and s.roomLock:
-                    play("open_door", 'interaction')
 
                     s.roomLock = False
                     s.Dungeon[s.Dy][s.Dx]['room'][6][6]  = {"block" : s.ids[5], "id" : 5}

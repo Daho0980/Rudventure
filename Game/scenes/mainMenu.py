@@ -1,5 +1,4 @@
 import curses
-from   playsound import playsound as play
 
 from Assets.data                  import status     as s
 from Assets.data                  import color
@@ -9,12 +8,12 @@ from Game.utils.modules           import cSelector  as clc
 # from   Game.utils.sound             import play
 
 
-cc = color.cColors
 
 def main(stdscr) -> None:
     configs.load()
+    
+    cc = color.cColors
     checkColor.main(stdscr)
-    play("smash")
     while 1:
         mainMenu:int = clc.main(
             s.LOGO,
@@ -31,12 +30,11 @@ def main(stdscr) -> None:
         if mainMenu == 1: break
 
         elif mainMenu == 2:
-            play("smash")
             while 1:
                 mainSettings = clc.main(
                     "<< 설정 >>",
                     {
-                        "소리..." : "소리와 관련된 설정을 합니다.\n경고 : 사운드 사용 시 메모리 누수가 발생하니 현재로써는 꺼 놓는 걸 추천드립니다. <개발자>",
+                        "소리?" : "소리같은 건 없습니다.\n그저 데이터 세이브가 존재할 뿐...",
                         "색..."   : "게임에 표시되는 색과 관련된 설정을 합니다.",
                         ""        : "",
                         "완료"    : ""
@@ -46,36 +44,9 @@ def main(stdscr) -> None:
                 )
                 match mainSettings:
                     case 1:
-                        play("smash")
-                        while 1:
-                            soundSettings = clc.main(
-                                "<< 소리 >>",
-                                [
-                                    f"모든 소리 : {s.allSound}",
-                                    "",
-                                    f"적대적인 몹 : {s.sound['hostileMob']}",
-                                    f"친화적인 몹 : {s.sound['friendlyMob']}",
-                                    f"상호작용    : {s.sound['interaction']}",
-                                    f"시스템      : {s.sound['system']}",
-                                    f"플레이어    : {s.sound['player']}",
-                                    "",
-                                    "완료"
-                                ],
-                                [1,0,255,10],
-                                '@'
-                            )
-                            match soundSettings:
-                                case 1: s.allSound = False if s.allSound else True
-                                case 2: s.sound['hostileMob']  = False if s.sound['hostileMob']  else True
-                                case 3: s.sound['friendlyMob'] = False if s.sound['friendlyMob'] else True
-                                case 4: s.sound['interaction'] = False if s.sound['interaction'] else True
-                                case 5: s.sound['system']      = False if s.sound['system']      else True
-                                case 6: s.sound['player']      = False if s.sound['player']      else True
-                                case 7: break
                             
                             configs.save()
                     case 2:
-                        play("smash")
                         while 1:
                             selectPos = clc.main(
                                 "<< 색 >>",
@@ -90,7 +61,6 @@ def main(stdscr) -> None:
                             )
                             if selectPos == 3: break
 
-                            play("smash")
                             while 1:
                                 selectColor = clc.main(
                                     f"{cc['end']}\n".join(
@@ -113,7 +83,9 @@ def main(stdscr) -> None:
                                     '@',
                                     maxLine=8
                                 )
-                                if selectColor == 17: break
+                                if selectColor == 17:
+                                    configs.save()
+                                    break
 
                                 dataSet = color.colorList[selectPos-1][selectColor-1]
                                 if dataSet[0]:

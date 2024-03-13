@@ -1,5 +1,4 @@
 import random, time
-from   playsound   import playsound as play
 
 from   Assets.data             import status, lockers
 from   Assets.data.status      import entities
@@ -34,12 +33,12 @@ class enemy:
     def damaged(self) -> None:
         if len(s.hitPos) > 0 and [self.y, self.x] in s.hitPos:
             rate:int         = random.randrange(1,101)
-            crit, dmg, sound = 0, s.atk, None
+            crit, dmg, = 0, s.atk
             if rate <= s.critRate:
-                sound, crit = "crack", 1
-                dmg   = round(eval(f"(s.atk+(s.critDMG*0.1)){random.choice(['+', '-'])}(s.atk*(s.critDMG*0.005))"))
+                crit = 1
+                dmg  = round(eval(f"(s.atk+(s.critDMG*0.1)){random.choice(['+', '-'])}(s.atk*(s.critDMG*0.005))"))
             elif rate >= 90:
-                sound, dmg = "close_door", 0
+                dmg = 0
 
             self.hp -= dmg
             if self.hp > 0:
@@ -48,7 +47,6 @@ class enemy:
                 elif crit: msg += f" {cc['fg']['L']}치명타!{cc['end']}"
                 if dmg: eEvent.hitted(self.y, self.x, self.icon, self.id)
                 addLog(msg)
-                if sound: play(sound, 'player')
 
     def start(self, sethp:int, setAtk:int, Dy:int, Dx:int, y:int, x:int) -> None:
         self.hp:int       = sethp
@@ -72,20 +70,17 @@ class enemy:
 
     def pDamage(self) -> None:
         event.hitted()
-        sound:str = f'enemy_Hit'
         if s.df > 0:
             s.df -= self.atk
             s.DROD = [f"{cc['fg']['F']}{self.name}{cc['end']}", 'F']
             if s.df < 0                    : s.hp += s.df
             if round(s.df) < 0             : s.df = 0
             if s.df == 0 and s.dfCrack <= 0:
-                sound     = f'crack'
                 addLog(f"{cc['fg']['B1']}방어구{cc['end']}가 부서졌습니다!")
                 s.dfCrack = 1
         else: s.hp -= self.atk
 
         addLog(f"{s.lightName}이(가) {cc['fg']['F']}{self.name}{cc['end']}({self.icon}) 에 의해 {cc['fg']['R']}{self.atk}{cc['end']}만큼의 피해를 입었습니다!")
-        play(sound, 'player')
 
     def move(self) -> None:
         nowDRP:dict = s.Dungeon[self.Dy][self.Dx]
@@ -100,7 +95,6 @@ class enemy:
             if self.hp > 0:
                 if random.randrange(1,3000) == 1215:
                     self.atk += 1+(round(s.stage/10))
-                    play(f"growl", 'hostileMob')
                     addLog(f"{cc['fg']['F']}{self.name}{cc['end']}({self.icon})이 울부짖습니다!")
                     addLog(f"{cc['fg']['F']}{self.name}{cc['end']}({self.icon})의 공격력이 {cc['fg']['L']}{1+(round(s.stage/10))}{cc['end']} 상승합니다.")
                     for _ in range(3):
@@ -173,7 +167,6 @@ class observer(enemy):
                 a:int         = 0
 
                 if self.Dy == s.Dy and self.Dx == s.Dx and (self.x == s.x or self.y == s.y):
-                    play(f"TargetLocked", 'hostileMob')
                     if self.x == s.x:
                         Targetted()
                         if self.y < s.y: a = 0

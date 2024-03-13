@@ -10,7 +10,6 @@ Global Functions 중 Graphic 옵션
 import re
 import math, time
 import psutil
-from   playsound import playsound as play
 
 from Assets.data         import status, lockers
 from Assets.data.color   import cColors        as cc
@@ -51,13 +50,12 @@ def addstrMiddle(
     elif not returnEndyx and     returnStr: return output
     elif     returnEndyx and not returnStr: return y+len(string.split("\n")), x # type: ignore
 
-def showStage(stdscr, stageNum:str, stageName:str, sound:str="smash"):
+def showStage(stdscr, stageNum:str, stageName:str):
     """
     `stage`(str)    : 현재 스테이지의 숫자\n
     `stageName`(str): 현재 스테이지의 이름\n
     `sound`(str)    : 스테이지 출력 시 같이 출력될 사운드, 기본적으로 `"smash"`로 설정되어 있음
     """
-    play(sound)
     addstrMiddle(
         stdscr,
         Textbox.TextBox(
@@ -73,7 +71,6 @@ def showStage(stdscr, stageNum:str, stageName:str, sound:str="smash"):
     time.sleep(1.6)
     stdscr.clear()
 
-    play(sound)
     addstrMiddle(
         stdscr,
         Textbox.TextBox(
@@ -88,7 +85,6 @@ def showStage(stdscr, stageNum:str, stageName:str, sound:str="smash"):
         ); stdscr.refresh()
     time.sleep(1.6)
     stdscr.clear(); stdscr.refresh()
-    play(sound)
 
 def statusBar(
         status:int,

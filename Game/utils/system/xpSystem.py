@@ -1,5 +1,3 @@
-from playsound import playsound as play
-
 from Assets.data       import status
 from Assets.data.color import cColors as cc
 from Game.core.system  import logger
@@ -14,7 +12,6 @@ def getXP(count:int=0) -> None:
         `count`(int) : xp 증가율
     """
     while s.xp + count > s.Mxp:
-        play("levelUp", 'interaction')
         logger.addLog(f"{cc['fg']['F']}저주가 한 층 더 깊어집니다...{cc['end']}")
         s.lvl += 1
         s.Mxp += 3

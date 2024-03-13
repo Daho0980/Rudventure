@@ -148,15 +148,6 @@ DROD:list        = [None, '']
 pauseText:str    = f"\n{cMarkdown(1)}{_cc['fg']['L']}P a u s e{_cc['end']}\n"
 debugScreen:bool = False
 
-allSound:bool        = True
-sound:dict[str,bool|int] = {
-    "hostileMob"  : True,
-    "friendlyMob" : True,
-    "interaction" : True,
-    "system"      : True,
-    "player"      : True
-}
-
 entities:int = 0
 hitPos:list   = []
 

@@ -1,5 +1,4 @@
 import random
-from   playsound import playsound as play
 
 from Assets.data        import status            as s
 from Assets.data.color  import cColors           as cc
@@ -13,7 +12,6 @@ t    = Textbox
 grp  = graphic
 
 def main(stdscr) -> None:
-    play("smash")
     if s.frame == 0:
         selectFrame = cSelector.main(
             f"{s.LOGO}를 시작하기 전에, 프레임을 설정해주세요",
@@ -29,7 +27,6 @@ def main(stdscr) -> None:
         )
         s.frame = [1, 30, 60, 0][selectFrame-1]
         if s.frame: s.frame = 1/s.frame
-        play("smash")
 
     stdscr.clear()
 #     grp.addstrMiddle(
@@ -64,7 +61,6 @@ def main(stdscr) -> None:
     reTryCount:int      = 0
     temporaryName:str   = ""
     while 1:
-        play("select")
         if nameChangeCount == 5:
             temporaryName = "이름도 못 정하는 멍청이"
             cSelector.main(
@@ -95,7 +91,7 @@ def main(stdscr) -> None:
                 end   =f"{cc['fg']['Y']} ",
                 cursor=True
             )
-        stdscr.addstr(cc['end']); play("select")
+        stdscr.addstr(cc['end'])
         stdscr.clear(); stdscr.refresh()
 
         if len(temporaryName) == 0 or len(temporaryName.split()) == 0:

@@ -1,6 +1,5 @@
 import random, time
 import curses
-from   playsound   import playsound as play
 
 from Assets.data          import rooms, status
 from Assets.data.color    import cColors      as cc
@@ -85,10 +84,8 @@ def move(Dir, Int:int) -> None:
         case curses.KEY_RIGHT: tx += Int
 
     s.hunger -= 1
-    sound:str = "move"
 
     if roomGrid[ty][tx]["id"] == -1:
-        sound = ""
         ty, tx = bfy, bfx
 
     if roomGrid[ty][tx]["id"] in [1, 3]:
@@ -98,13 +95,10 @@ def move(Dir, Int:int) -> None:
         s.Dy, s.Dx = bfDy, bfDx
 
         if s.df <= 0 and s.dfCrack <= 0:
-            sound     = "crack"
             s.dfCrack = 1
             logger.addLog(f"{cc['fg']['B1']}방어구{cc['end']}가 부서졌습니다!")
-        else: sound = "Hit"
 
     elif roomGrid[ty][tx]["id"] in enemies:
-        sound = "slash"
 
         s.hitPos.append([ty, tx])
         time.sleep(0.001)
@@ -114,12 +108,10 @@ def move(Dir, Int:int) -> None:
         s.Dy, s.Dx = bfDy, bfDx
 
     elif roomGrid[ty][tx]["id"] == 4:
-        sound = "move_box"
         itemEvent(ty, tx)
         ty, tx = bfy, bfx
 
     elif roomGrid[ty][tx]["id"] in s.orbIds["size"]["smallOne"] or roomGrid[ty][tx]["id"] in s.orbIds["size"]["bigOne"]:
-        sound = "get_item"
         orbId = roomGrid[ty][tx]["id"]
         
         sizeD:int = 0 if orbId in s.orbIds["size"]["bigOne"] else 1
@@ -134,8 +126,7 @@ def move(Dir, Int:int) -> None:
 
     elif roomGrid[ty][tx]["id"] == 2:
         s.Dungeon[s.Dy][s.Dx]['room'][ty][tx]["id"] = 2
-        sound = "open"
-        pos   = [bfy-ty, bfx-tx]
+        pos = [bfy-ty, bfx-tx]
         # ┏>|y, x| : U to D   D to U  L to R   R to L
         resetYX:list[list[int]] = [[11, 6], [1, 6], [6, 11], [6, 1]]
         resetType:int = 0
@@ -178,4 +169,3 @@ def move(Dir, Int:int) -> None:
     s.y, s.x                                = ty, tx
     s.Dungeon[bfDy][bfDx]['room'][bfy][bfx] = {"block" : s.ids[0], "id" : 0}
     s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x] = {"block":s.ids[300], "id":300}
-    play(sound, 'player')

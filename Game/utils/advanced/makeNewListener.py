@@ -1,7 +1,6 @@
 import curses
 import time
 import threading
-from   playsound import playsound as play
 
 from Assets.data             import lockers, status
 from Assets.data.color       import cColors as cc
@@ -25,15 +24,12 @@ def newAddListener() -> None:
                         p.move(key, 1)
                     # elif key == 113: curses.wrapper(options.menu)
                     elif key == 9:
-                        play("move_box")
                         s.showDungeonMap = 1 if not s.showDungeonMap else 0
                     elif key == 68: # Shift + d
-                        play("move_box")
                         s.debugScreen = False if s.debugScreen else True
                         addLog(f"디버그 모드가 {s.debugScreen}(으)로 변경되었습니다.")
                         
                 if key == 32:
-                    play("move_box")
                     s.pauseText = f"\n{s.cMarkdown(1)}{cc['fg']['L']}P a u s e{cc['end']}\n"
                     l.pause     = False if l.pause else True
             else: time.sleep(1)

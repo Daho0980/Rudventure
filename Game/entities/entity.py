@@ -5,7 +5,6 @@ Global Functions 중 Entity 옵션
 """
 
 import threading, time
-from   playsound      import playsound as play
 
 from Assets.data       import status as s
 from Assets.data.color import cColors as cc
@@ -73,7 +72,6 @@ if s.main ==1 and not s.killAll: s.Dungeon[{valuableName}.Dy][{valuableName}.Dx]
 if s.main and not s.killAll: xps.getXP({xpType[entityType]})
         """)
         if s.main == 1 and not s.killAll:
-            play("monster_dead", 'player')
             s.killCount += 1
             logger.addLog(f"{cc['fg']['F']}{name}{cc['end']}이(가) 죽었습니다!")
     threading.Thread(target=EntityInteraction, name=name, daemon=True).start()

@@ -2,7 +2,6 @@
 
 import curses
 from   cusser    import Cusser
-from   playsound import playsound as play
 
 from Assets.data       import status  as s
 from Assets.data.color import cColors as cc
@@ -18,10 +17,7 @@ def main(
         maxLine:(int|str)                 ="max",
         lineSpace:int                     =1,
         tag:str                           ="",
-        frontTag:str                      ="",
-        moveCursorSound:str               ="select",
-        blockCursorSound:str              ="open",
-        endSelectorSound:str              ="get_item"
+        frontTag:str                      =""
         ) -> int:
     """
     `title`(str, list)                     : 메뉴바의 타이틀이 될 문자열, 리스트 형태로 기입 시 타이틀과 메뉴의 공백이 제거됨. 무조건 기입해야 함\n
@@ -64,10 +60,7 @@ def main(
                             maxLine,
                             lineSpace,
                             tag,
-                            frontTag,
-                            moveCursorSound,
-                            blockCursorSound,
-                            endSelectorSound
+                            frontTag
                             )
 
 def Change2D(subtitle, maxLine:int): # 1차원 subtitle을 2차원으로 재배열
@@ -163,9 +156,6 @@ def system(
         lineSpace,
         tag,
         frontTag,
-        moveCursorSound,
-        blockCursorSound,
-        endSelectorSound
         ):
     stdscr = curses.initscr()
     if not isinstance(stdscr, Cusser): stdscr = Cusser(stdscr)
@@ -232,7 +222,6 @@ def system(
         grp.addstrMiddle(stdscr, display, y=y, x=x)
         stdscr.refresh()
 
-        menuSound                            = moveCursorSound
         SNum, SNum1                          = 1, 0 # 세로, 가로 변환 정도값
         arrow[nowSelectRow][nowSelectColumn] = ' '
         key                                  = stdscr.getch()
@@ -241,7 +230,6 @@ def system(
             while 1:
                 if nowSelectColumn == 0 and nowSelectRow == 0:
                     SNum, SNum1 = 0, 0
-                    menuSound   = blockCursorSound
                     break
                 if nowSelectColumn-SNum < 0 and nowSelectRow > 0:
                     nowSelectColumn = maxLine - 1
@@ -251,7 +239,6 @@ def system(
                     if nowSelectColumn - SNum+1 < 0:
                         if nowSelectRow - SNum1+1 < 0:
                             SNum, SNum1 = 0, 0
-                            menuSound   = blockCursorSound
                             break
                         else:
                             SNum   = 0
@@ -260,13 +247,11 @@ def system(
                 else: break
             nowSelectRow    -= SNum1
             nowSelectColumn -= SNum
-            play(menuSound)
 
         elif key == curses.KEY_DOWN: # sublist column값 증가
             while 1:
                 if nowSelectColumn == maxLine-1 and nowSelectRow == len(subtitleKeys)-1:
                     SNum, SNum1 = 0, 0
-                    menuSound   = blockCursorSound
                     break
                 if nowSelectColumn+SNum > maxLine-1: # 내렸을 때 maxLine-1보다 nowSelectColumn+SNum이 더 높을 때:
                     nowSelectColumn = 0
@@ -276,7 +261,6 @@ def system(
                     if nowSelectColumn + SNum+1 > maxLine-1: # 근데 행이 올라가면 끝나?
                         if nowSelectRow + SNum1+1 > len(subtitleKeys)-1: # 근데 열도 올라가면 끝나??
                             SNum, SNum1 = 0, 0
-                            menuSound   = blockCursorSound
                             break
                         else:
                             SNum   = 0
@@ -285,43 +269,36 @@ def system(
                 else: break
             nowSelectRow    += SNum1
             nowSelectColumn += SNum
-            play(menuSound)
 
         elif key == curses.KEY_LEFT: # row 값 감소
             SNum1 = 1
             while 1:
                 if nowSelectRow == 0:
                     SNum1     = 0
-                    menuSound = blockCursorSound
                     break
                 if subtitleKeys[nowSelectRow-SNum1][nowSelectColumn] == '':
                     if nowSelectRow-SNum1 <= 0:
                         SNum1     = 0
-                        menuSound = blockCursorSound
                         break
                     else: SNum1 += 1
                 else: break
             nowSelectRow -= SNum1
-            play(menuSound)
 
         elif key == curses.KEY_RIGHT: # row 값 증가
             SNum1 = 1
             while 1:
                 if nowSelectRow == len(subtitleKeys)-1:
                     SNum1     = 0
-                    menuSound = blockCursorSound
                     break
                 if subtitleKeys[nowSelectRow+SNum1][nowSelectColumn] == '':
                     if nowSelectRow+SNum1 >= len(subtitleKeys)-1:
                         SNum1     = 0
-                        menuSound = blockCursorSound
                         break
                     else: SNum1 += 1
                 else: break
             nowSelectRow += SNum1
-            play(menuSound)
 
-        elif key == 10: play(endSelectorSound); break # enter
+        elif key == 10: break # enter
     stdscr.clear(); stdscr.refresh() # 최종
     blankD = 0 # 공백 개수 변수 선언
     for i in range(0, nowSelectRow+1): # 처음부터 현재 위치까지 존재하는 공백 개수 확인
