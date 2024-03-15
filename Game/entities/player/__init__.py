@@ -1,5 +1,6 @@
 import random, time
 import curses
+from   itertools import chain
 
 from Assets.data          import rooms, status
 from Assets.data.color    import cColors      as cc
@@ -69,7 +70,6 @@ def orbEvent(Size:int, Type:int) -> None:
 
 
 def move(Dir, Int:int) -> None:
-    enemies:list[int]  = [600, 601]
     roomGrid:dict = s.Dungeon[s.Dy][s.Dx]['room']
 
     if s.df > 0: s.dfCrack = 0
@@ -85,44 +85,47 @@ def move(Dir, Int:int) -> None:
 
     s.hunger -= 1
 
-    if roomGrid[ty][tx]["id"] == -1:
-        ty, tx = bfy, bfx
+    if roomGrid[ty][tx]["id"] == -1: ty, tx = bfy, bfx
 
     if roomGrid[ty][tx]["id"] in [1, 3]:
         damage(roomGrid[ty][tx]["block"])
 
-        ty, tx   = bfy, bfx
+        ty, tx     = bfy, bfx
         s.Dy, s.Dx = bfDy, bfDx
 
         if s.df <= 0 and s.dfCrack <= 0:
             s.dfCrack = 1
             logger.addLog(f"{cc['fg']['B1']}방어구{cc['end']}가 부서졌습니다!")
 
-    elif roomGrid[ty][tx]["id"] in enemies:
+    elif roomGrid[ty][tx]["id"] in s.enemyIds:
 
         s.hitPos.append([ty, tx])
         time.sleep(0.001)
         s.hitPos.remove([ty, tx])
 
-        ty,  tx  = bfy,  bfx
+        ty, tx     = bfy, bfx
         s.Dy, s.Dx = bfDy, bfDx
 
     elif roomGrid[ty][tx]["id"] == 4:
         itemEvent(ty, tx)
         ty, tx = bfy, bfx
 
-    elif roomGrid[ty][tx]["id"] in s.orbIds["size"]["smallOne"] or roomGrid[ty][tx]["id"] in s.orbIds["size"]["bigOne"]:
+    elif roomGrid[ty][tx]["id"] in chain(s.orbIds["size"]["smallOne"], s.orbIds["size"]["bigOne"]):
         orbId = roomGrid[ty][tx]["id"]
-        
-        sizeD:int = 0 if orbId in s.orbIds["size"]["bigOne"] else 1
-        typeD:int = 0
-        match orbId:
-            case _ if orbId in s.orbIds["type"]["hp"]:     typeD = 0
-            case _ if orbId in s.orbIds["type"]["def"]:    typeD = 1
-            case _ if orbId in s.orbIds["type"]["atk"]:    typeD = 2
-            case _ if orbId in s.orbIds["type"]["hunger"]: typeD = 3
-            case _ if orbId in s.orbIds["type"]["exp"]:    typeD = 4
-        orbEvent(sizeD, typeD)
+        orbEvent(
+            Size=0 if orbId in s.orbIds["size"]["bigOne"] else 1,
+            Type=int(
+                list(
+                    chain(
+                        s.orbIds["type"]["hp"],
+                        s.orbIds["type"]["def"],
+                        s.orbIds["type"]["atk"],
+                        s.orbIds["type"]["hunger"],
+                        s.orbIds["type"]["exp"]
+                        )
+                    ).index(orbId)/2
+                )
+            )
 
     elif roomGrid[ty][tx]["id"] == 2:
         s.Dungeon[s.Dy][s.Dx]['room'][ty][tx]["id"] = 2
@@ -131,7 +134,7 @@ def move(Dir, Int:int) -> None:
         resetYX:list[list[int]] = [[11, 6], [1, 6], [6, 11], [6, 1]]
         resetType:int = 0
 
-        if pos[0]   == 1 : s.Dy -= 1; resetType = 0
+        if pos[0] == 1   : s.Dy -= 1; resetType = 0
         elif pos[0] == -1: s.Dy += 1; resetType = 1
         elif pos[1] == 1 : s.Dx -= 1; resetType = 2
         elif pos[1] == -1: s.Dx += 1; resetType = 3
@@ -151,7 +154,6 @@ def move(Dir, Int:int) -> None:
         s.Dungeon[s.Dy][s.Dx]['isPlayerHere'] = True
 
     elif roomGrid[ty][tx]["id"] == 6:
-        sound  = "move_box"
         cx, cy = 0, 0
         Type   = 1 if Dir in [curses.KEY_LEFT, curses.KEY_RIGHT] else 0
         match Dir:
@@ -161,8 +163,8 @@ def move(Dir, Int:int) -> None:
             case curses.KEY_RIGHT: cx = tx + Int
 
         positions = [[cy, tx], [ty, cx]]
-        if roomGrid[positions[Type][0]][positions[Type][1]]["id"] in [1, 600, 601, 2, 6, 3, 5]:
-            ty, tx   = bfy, bfx
+        if roomGrid[positions[Type][0]][positions[Type][1]]["id"] in s.interactableBlocks["cannotStepOn"]:
+            ty, tx     = bfy, bfx
             s.Dy, s.Dx = bfDy, bfDx
         else: s.Dungeon[s.Dy][s.Dx]['room'][positions[Type][0]][positions[Type][1]] = {"block" : s.ids[6], "id" : 6}
 

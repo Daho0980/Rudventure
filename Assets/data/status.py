@@ -96,13 +96,13 @@ ids:dict[int,str] = {
     8 :  "O",
     9 :  "o",
     10 : "o",
-    11 : "o",
-    12 : "o",
+    11 : "q",
+    12 : "v",
     13 : "o",
     14 : "ø",
     15 : "O",
-    16 : "O",
-    17 : "O",
+    16 : "Q",
+    17 : "V",
     18 : "O",
     19 : "Ø",
 
@@ -132,6 +132,8 @@ interactableBlocks:dict[str,list[int]] = {
     "canStepOn"    : [4, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
     "cannotStepOn" : [-1, 1, 2, 3, 5, 6, 600, 601]
 }
+
+enemyIds = [600, 601]
 
 # Stage settings
 stage:int     = 0

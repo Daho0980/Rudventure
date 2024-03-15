@@ -167,7 +167,10 @@ def fieldPrint(stdscr, grid:list):
             Type        ='middle',
             AMLS        =True,
             endLineBreak=True,
-            LineType    ='double'
+            LineType    ='double',
+            sideText    ="Dungeon Map",
+            sideTextPos=["under", "middle"],
+            coverSideText=True
             )
         Display += addstrMiddle(stdscr, buffer, y=2, x=x-len(max(buffer.split("\n"))), returnStr=True)
 
@@ -184,11 +187,27 @@ def fieldPrint(stdscr, grid:list):
     # Status
     match s.showStateDesign:
         case 1:
-            buffer = f"""
-hp : {cc['fg']['R']}{s.hp}/{s.Mhp}{cc['end']} | def : {cc['fg']['B1']}{s.df}/{s.Mdf}{cc['end']}
+            buffer = Textbox.TextBox(
+f"""hp : {cc['fg']['R']}{s.hp}/{s.Mhp}{cc['end']} | def : {cc['fg']['B1']}{s.df}/{s.Mdf}{cc['end']}
 hunger : {cc['fg']['Y']}{round(s.hunger/10)}%{cc['end']} | atk : {cc['fg']['L']}{s.atk}{cc['end']}
-
-"""
+TextBox.Line\n"""+statusBar(
+                        int((s.xp/s.Mxp)*10),
+                        maxStatus=10,
+                        end      =False, # test code
+                        color    =cc['fg']['F'],
+                        barType  ="Cursed",
+                        frontTag =f"{cc['fg']['F']}{s.lvl}{cc['end']}",
+                        backTag  =f"{cc['fg']['F']}{s.lvl+1}{cc['end']}",
+                        space    =0, # normal = 5
+                        showComma=False
+                        ),
+                Type         ="middle",
+                AMLS         =True,
+                LineType     ='double',
+                sideText     ="Status",
+                sideTextPos  =["under", "left"],
+                coverSideText=True
+            )
         case 2:
             buffer = Textbox.TextBox(
                 ''.join([
@@ -200,7 +219,7 @@ hunger : {cc['fg']['Y']}{round(s.hunger/10)}%{cc['end']} | atk : {cc['fg']['L']}
                         maxStatus    =10,
                         color        =cc['fg']['L'],
                         space        =4,
-                        showEmptyCell=False
+                        showEmptyCell=False,
                         ),
 
                     statusBar(
@@ -224,8 +243,11 @@ hunger : {cc['fg']['Y']}{round(s.hunger/10)}%{cc['end']} | atk : {cc['fg']['L']}
                         showComma=False
                         )
                     ]),
-                AMLS     =True,
-                LineType ='double'
+                AMLS         =True,
+                LineType     ='double',
+                sideText     ="Status",
+                sideTextPos  =["under", "left"],
+                coverSideText=True
             )
     Display += addstrMiddle(stdscr, buffer, y=2, x=1, returnStr=True)
 
@@ -234,15 +256,19 @@ hunger : {cc['fg']['Y']}{round(s.hunger/10)}%{cc['end']} | atk : {cc['fg']['L']}
         stdscr,
         Textbox.TextBox(
             "\n".join(s.onDisplay),
-            AMLS           =True,
+            maxLine        =x-3,
             LineType       ='double',
-            alwaysReturnBox=False
+            alwaysReturnBox=False,
+            sideText       ="Log",
+            sideTextPos    =["over", "middle"],
+            coverSideText  =True
         ),
-        y        =list(stdscr.getmaxyx())[0]-(1 if not len(s.onDisplay) else len(s.onDisplay)),
+        y        =y-(1 if not len(s.onDisplay) else len(s.onDisplay)),
         x        =0,
         returnStr=True
     )
 
+    # Debug Mode
     if s.debugScreen:
         y, x           = stdscr.getmaxyx()
         by, bx, buffer = Textbox.TextBox(
@@ -253,19 +279,23 @@ Number of threads : {psutil.Process().num_threads()}
 
 Dx : {s.Dx}, Dy : {s.Dy}, x : {s.x}, y : {s.y}
 Number of entities : {s.entities}""",
-                Type        ="right",
-                AMLS        =True,
-                LineType    ="bold",
-                returnSizeyx=True
+                Type         ="right",
+                AMLS         =True,
+                LineType     ="bold",
+                returnSizeyx =True,
+                sideText     ="Debug",
+                sideTextPos  =["over", "right"],
+                coverSideText=True
             )
         Display += addstrMiddle(
             stdscr,
             buffer,
-            y        =y-by,
+            y        =int((y/2)-(by/2)), # type: ignore
             x        =x-bx,
             returnStr=True
         )
 
+    # Pause
     if l.pause:
         Display += addstrMiddle(
             stdscr,

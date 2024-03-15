@@ -57,23 +57,23 @@ def placeRandomOrbs(multiple:int=1) -> None:
         "size" : {
             "smallOne" : [
                 f"{cc['fg']['R']}o{cc['end']}",
-                f"{cc['fg']['B1']}o{cc['end']}",
-                f"{cc['fg']['L']}o{cc['end']}",
+                f"{cc['fg']['B1']}q{cc['end']}",
+                f"{cc['fg']['L']}v{cc['end']}",
                 f"{cc['fg']['Y']}o{cc['end']}",
                 f"{cc['fg']['F']}ø{cc['end']}"
             ],
             "bigOne" : [
                 f"{cc['fg']['R']}O{cc['end']}",
-                f"{cc['fg']['B1']}O{cc['end']}",
-                f"{cc['fg']['L']}O{cc['end']}",
+                f"{cc['fg']['B1']}Q{cc['end']}",
+                f"{cc['fg']['L']}V{cc['end']}",
                 f"{cc['fg']['Y']}O{cc['end']}",
                 f"{cc['fg']['F']}Ø{cc['end']}"
             ]
         },
         "type" : {
             "hp"     : [f"{cc['fg']['R']}o{cc['end']}",  f"{cc['fg']['R']}O{cc['end']}"],
-            "def"    : [f"{cc['fg']['B1']}o{cc['end']}", f"{cc['fg']['B1']}O{cc['end']}"],
-            "atk"    : [f"{cc['fg']['L']}o{cc['end']}",  f"{cc['fg']['L']}O{cc['end']}"],
+            "def"    : [f"{cc['fg']['B1']}q{cc['end']}", f"{cc['fg']['B1']}Q{cc['end']}"],
+            "atk"    : [f"{cc['fg']['L']}v{cc['end']}",  f"{cc['fg']['L']}V{cc['end']}"],
             "hunger" : [f"{cc['fg']['Y']}o{cc['end']}",  f"{cc['fg']['Y']}O{cc['end']}"],
             "exp"    : [f"{cc['fg']['F']}ø{cc['end']}",  f"{cc['fg']['F']}Ø{cc['end']}"]
         }
