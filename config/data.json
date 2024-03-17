@@ -1,0 +1,8 @@
+{
+    "system": {
+        "statusDesign": 1,
+        "debugScreen": false,
+        "showDungeonMap": 0,
+        "frameRate": -1
+    }
+}
