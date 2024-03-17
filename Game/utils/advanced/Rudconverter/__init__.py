@@ -61,7 +61,8 @@ def save() -> int:
         'maxStack', 'onDisplay', 'onTime',
         'debugScreen',
         'frame', 'frameRate',
-        'showDungeonMap', 'statusDesign'
+        'showDungeonMap', 'statusDesign',
+        'lightName'
         ]
     try:
         file_path = f'{s.TFP}saveData{s.s}{s.name}.json'

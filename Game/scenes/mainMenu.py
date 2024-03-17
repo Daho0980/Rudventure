@@ -19,7 +19,9 @@ clc, t = cSelector, Textbox
 
 def setData(data):
     data = data['status']
+
     s.name           = data['name']
+    s.lightName      = f"{cc['fg']['L']}{data['name']}{cc['end']}"
     s.welcomeMessage = data['welcomeMessage']
 
     s.hp             = data['hp']
@@ -45,7 +47,7 @@ def main(stdscr) -> None:
     checkColor.main(stdscr)
     while 1:
         mainMenu:int = clc.main(
-            s.LOGO+f"\n{s.name}",
+            s.LOGO,
             {
                 "나락 입장" : "건투를 빕니다.",
                 "운명 인식" : "운명에 갇힌 육신을 선택해 빙의합니다.",
