@@ -1,18 +1,7 @@
-from Assets.data.color import cColors, customColor
+from Assets.data.color import cColors
 
 _cc = cColors
 
-# def customColor(R, G, B, Type=1):
-#     """
-#     `R, G, B`(int): RGB값을 정함\n
-#     `Type`(int) : 어떤 색을 변경할 지 정함\n
-#         - `1` : 글자 색 변경\n
-#         - `2` : 배경 색 변경\n
-#     """
-#     return f'\033[{38 if Type == 1 else 48};2;{R};{G};{B}m'
-
-#  ┏━━━━ Wait, you're not a color >:(
-# v
 def cMarkdown(Type:(list[int]|int)=0) -> str:
     """
     list 형식으로 여러개 쓸 수 있음
@@ -133,7 +122,7 @@ interactableBlocks:dict[str,list[int]] = {
     "cannotStepOn" : [-1, 1, 2, 3, 5, 6, 600, 601]
 }
 
-enemyIds = [600, 601]
+enemyIds:list[int] = [600, 601]
 
 # Stage settings
 stage:int     = 0
@@ -149,12 +138,10 @@ killAll:bool     = False
 DROD:list        = [None, '']
 pauseText:str    = f"\n{cMarkdown(1)}{_cc['fg']['L']}P a u s e{_cc['end']}\n"
 debugScreen:bool = False
+cowardMode:bool  = False
 
 entities:int = 0
-hitPos:list   = []
-
-# Option available
-option:bool = False
+hitPos:list  = []
 
 # Log system
 maxStack:int        = 10
@@ -162,6 +149,7 @@ onDisplay:list[str] = []
 onTime:list[int]    = []
 
 # InGame print settings
-showStateDesign:int = 2 # normal = 1
-frame:int           = 0
-showDungeonMap:int  = 0 # normal = 0
+frameRate:int      = -1
+frame:int|float    = 0
+statusDesign:int   = 1 # normal = 0
+showDungeonMap:int = 0 # normal = 0

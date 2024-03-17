@@ -6,7 +6,6 @@ from   Assets.data.color       import cColors        as cc
 from   Game.core.system.logger import addLog
 from   Game.entities.enemy     import event          as eEvent
 from   Game.entities.player    import event
-# from   Game.utils.sound        import play
 
 
 l  = lockers

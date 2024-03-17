@@ -7,7 +7,6 @@ from Game.core.system     import logger
 from Game.entities.entity import addEntity
 from Game.utils.modules   import cSelector
 from Game.utils.system    import placeRandomBlock
-# from   Game.utils.sound     import play
 
 
 c, l, s  = comments, lockers, status

@@ -2,19 +2,21 @@
 import sys, os
 from   Assets.data import status as s
 
-directory       = os.path.dirname(os.path.realpath(__file__))
+directory = os.path.dirname(os.path.realpath(__file__))
 
 match os.name:
     case 'posix':
+        s.s             = '/'
         pythonDirectory = "/Library/Frameworks/Python.framework/Versions/3.10/lib"
 
-        sys.path  = []
+        sys.path = []
         sys.path.append(directory)
         sys.path.append(os.path.join(pythonDirectory, 'python310.zip'))
         sys.path.append(os.path.join(pythonDirectory, 'python3.10'))
         sys.path.append(os.path.join(pythonDirectory, 'python3.10', 'lib-dynload'))
         sys.path.append(os.path.join(directory, 'lib', 'python3.10', 'site-packages'))
     case 'nt':
+        s.s             = '\\'
         pythonDirectory = "%APPDATA%\\Local\\Programs\\Python\\Python310"
 
         sys.path = []
@@ -41,8 +43,7 @@ Windows 64-bit : https://www.python.org/ftp/python/3.10.11/python-3.10.11-amd64.
     )
     exit(1)
 
-s.s   = {'posix':'/', 'nt':'\\'}[os.name]
 s.TFP = str(os.path.abspath(''))+s.s
 
-os.system("clear" if os.name == "posix" else "cls")
+os.system("clear"if os.name=="posix"else"cls")
 import Game.main

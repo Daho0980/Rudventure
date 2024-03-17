@@ -3,7 +3,6 @@ import time
 from Assets.data        import status    as s
 from Assets.data.color  import cColors as cc
 from Game.utils.graphic import escapeAnsi
-# from   Game.utils.sound   import play
 
 
 def hitted(y:int, x:int, icon:str, ID:int) -> None:

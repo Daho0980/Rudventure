@@ -15,7 +15,6 @@ from Assets.data         import status, lockers
 from Assets.data.color   import cColors        as cc
 from Game.utils.advanced import DungeonMaker   as dgm
 from Game.utils.modules  import Textbox
-# from   Game.utils.sound    import play
 
 s, l = status, lockers
 
@@ -185,8 +184,8 @@ def fieldPrint(stdscr, grid:list):
         )
 
     # Status
-    match s.showStateDesign:
-        case 1:
+    match s.statusDesign:
+        case 0:
             buffer = Textbox.TextBox(
 f"""hp : {cc['fg']['R']}{s.hp}/{s.Mhp}{cc['end']} | def : {cc['fg']['B1']}{s.df}/{s.Mdf}{cc['end']}
 hunger : {cc['fg']['Y']}{round(s.hunger/10)}%{cc['end']} | atk : {cc['fg']['L']}{s.atk}{cc['end']}
@@ -208,7 +207,7 @@ TextBox.Line\n"""+statusBar(
                 sideTextPos  =["under", "left"],
                 coverSideText=True
             )
-        case 2:
+        case 1:
             buffer = Textbox.TextBox(
                 ''.join([
                     statusBar(s.hp, statusName="hp", maxStatus=s.Mhp, space=5),

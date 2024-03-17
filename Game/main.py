@@ -3,22 +3,22 @@ import curses
 import time, random
 from   cusser      import Cusser
 
-from   Assets.data         import comments, lockers, status, color
-from   Game.core.system    import quests, logger
-from   Game.entities       import entity, player
-from   Game.scenes         import mainSettings, mainMenu
-from   Game.utils          import graphic
-from   Game.utils.advanced import DungeonMaker, makeNewListener
-from   Game.utils.modules  import Textbox, cSelector
-from   Game.utils.system   import roomChecker
-# from   Game.utils.sound    import play
+from   Assets.data                      import comments, lockers, status, color
+from   Game.core.system                 import quests, logger
+from   Game.entities                    import entity, player
+from   Game.scenes                      import mainSettings, mainMenu
+from   Game.utils                       import graphic
+from   Game.utils.advanced              import DungeonMaker, keyHandler
+from   Game.utils.advanced.Rudconverter import save
+from   Game.utils.modules               import Textbox, cSelector
+from   Game.utils.system                import roomChecker
 
 
 stdscr = Cusser(curses.initscr())
 
 quickStarter            = 0
 c, s, l                 = comments, status, lockers
-p, t, dgm, mnl          = player, Textbox, DungeonMaker, makeNewListener
+p, t, dgm, kh          = player, Textbox, DungeonMaker, keyHandler
 ent, grp                = entity, graphic
 q                       = quests
 cc                      = color.cColors
@@ -119,13 +119,17 @@ curses.noecho()
 curses.curs_set(0)
 
 mainMenu.main(stdscr)
-mainSettings.main(stdscr)
-stdscr.nodelay(True)
+if s.name == "":
+    mainSettings.main(stdscr)
+    p.set()
+else:
+    mainSettings.presetted(stdscr)
 
-p.set()
-mnl.newAddListener()
+stdscr.nodelay(True)
+kh.add()
 
 while s.main:
+    if s.cowardMode: save()
     s.Dungeon = dgm.DungeonMaker()
 
     p.start(4, 4, 6, 6)

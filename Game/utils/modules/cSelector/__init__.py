@@ -3,11 +3,10 @@
 import curses
 from   cusser    import Cusser
 
-from Assets.data       import status  as s
-from Assets.data.color import cColors as cc
+from Assets.data.color import cColors, customColor
 from Game.utils        import graphic as grp
-# from   Game.utils.sound import play
 
+cc = cColors
 
 def main(
         title:str,
@@ -35,7 +34,7 @@ def main(
     `frontTag`(str)                        : 상시로 메뉴 맨 위에 생기는 문자열, 기본적으로 빈 문자열로 지정되어 있음\n\n
     예시 :
         ```py
-    selector.main(
+    cSelector.main(
         title=f'이것은 타이틀입니다!',
         subtitle={
             "Option 1" : "1을 반환합니다.",
@@ -182,7 +181,7 @@ def system(
 
     if   isinstance(title, list): Enter      = '\n' # title이 list면 title이랑 subtitle 사이의 공백 제거
     if   isinstance(color, int ): arrowColor = f"\033[{basicColors[color]}m" # 화살표 기본색 간단설정
-    elif isinstance(color, list): arrowColor = s.customColor(color[1], color[2], color[3], color[0]) # 세부 RGB 설정
+    elif isinstance(color, list): arrowColor = customColor(color[1], color[2], color[3], color[0]) # 세부 RGB 설정
     
     subtitleKeys = Change2D(subtitleKeys, maxLine)
     a:int        = 0

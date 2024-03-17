@@ -5,28 +5,28 @@ from Assets.data.color  import cColors           as cc
 from Game.core.system   import logger
 from Game.utils         import graphic, system
 from Game.utils.modules import cSelector, Textbox
-# from   Game.utils.sound   import play
 
 
-t    = Textbox
-grp  = graphic
+t   = Textbox
+grp = graphic
 
 def main(stdscr) -> None:
-    if s.frame == 0:
-        selectFrame = cSelector.main(
+    if s.frame == -1:
+        frameSettings = cSelector.main(
             f"{s.LOGO}를 시작하기 전에, 프레임을 설정해주세요",
             {
                 "1프레임"         : "정말로요...?",
                 "30프레임 (권장)" : "표준 설정입니다.",
                 "60프레임"        : "더 쾌적하게 플레이할 수 있습니다.\n하지만 안타깝게도 눈에 띄는 변화는 찾아볼 수 없겠군요 :(",
-                "MAX"             : "최대한 빠르게 새로고침합니다. 화면이 [심하게] 깜빡거릴 수 있습니다."
+                "MAX"             : "최대한 빠르게 새로고침합니다.\n화면이 [심하게] 깜빡거릴 수 있습니다."
             },
             [1,0,255,10],
             '@',
             maxLine=2
         )
-        s.frame = [1, 30, 60, 0][selectFrame-1]
-        if s.frame: s.frame = 1/s.frame
+        s.frameRate = [0,1,30,60,0][frameSettings]
+        s.frame     = 1/s.frameRate if s.frameRate else 0
+        # if s.frame: s.frame = 1/s.frame
 
     stdscr.clear()
 #     grp.addstrMiddle(
@@ -169,4 +169,39 @@ def main(stdscr) -> None:
     s.ids[300] = f"{cc['fg']['L']}@{cc['end']}"
     s.ids[301] = f"{cc['fg']['L']}&{cc['end']}"
     logger.addLog(s.welcomeMessage[random.randrange(0, len(s.welcomeMessage))])
-    
+
+def presetted(stdscr) -> None:
+    if s.frame == -1:
+        frameSettings = cSelector.main(
+            f"{s.LOGO}를 시작하기 전에, 프레임을 설정해주세요",
+            {
+                "1프레임"         : "정말로요...?",
+                "30프레임 (권장)" : "표준 설정입니다.",
+                "60프레임"        : "더 쾌적하게 플레이할 수 있습니다.\n하지만 안타깝게도 눈에 띄는 변화는 찾아볼 수 없겠군요 :(",
+                "MAX"             : "최대한 빠르게 새로고침합니다.\n화면이 [심하게] 깜빡거릴 수 있습니다."
+            },
+            [1,0,255,10],
+            '@',
+            maxLine=2
+        )
+        s.frameRate = [0,1,30,60,0][frameSettings]
+        s.frame     = 1/s.frameRate if s.frameRate else 0
+
+    s.ids[4]   = f"{cc['fg']['Y']}É{cc['end']}"
+    s.ids[5]   = f"{cc['fg']['R']}F{cc['end']}"
+    s.ids[7]   = f"{cc['fg']['R']}X{cc['end']}"
+    s.ids[8]   = f"{cc['fg']['B1']}{s.cMarkdown(1)}O{cc['end']}"
+    s.ids[9]   = f"{cc['fg']['B1']}{s.cMarkdown(1)}o{cc['end']}"
+    s.ids[10]  = f"{cc['fg']['R']}o{cc['end']}"
+    s.ids[11]  = f"{cc['fg']['B1']}q{cc['end']}"
+    s.ids[12]  = f"{cc['fg']['L']}v{cc['end']}"
+    s.ids[13]  = f"{cc['fg']['Y']}o{cc['end']}"
+    s.ids[14]  = f"{cc['fg']['F']}ø{cc['end']}"
+    s.ids[15]  = f"{cc['fg']['R']}O{cc['end']}"
+    s.ids[16]  = f"{cc['fg']['B1']}Q{cc['end']}"
+    s.ids[17]  = f"{cc['fg']['L']}V{cc['end']}"
+    s.ids[18]  = f"{cc['fg']['Y']}O{cc['end']}"
+    s.ids[19]  = f"{cc['fg']['F']}Ø{cc['end']}"
+    s.ids[300] = f"{cc['fg']['L']}@{cc['end']}"
+    s.ids[301] = f"{cc['fg']['L']}&{cc['end']}"
+    logger.addLog(s.welcomeMessage[random.randrange(0, len(s.welcomeMessage))])
