@@ -29,19 +29,23 @@ def changeDoorPosBlock(ID:int, data:dict) -> None:
             if   keys[i] in ['U','D']: s.Dungeon[s.Dy][s.Dx]['room'][DPY][DPX-1], s.Dungeon[s.Dy][s.Dx]['room'][DPY][DPX+1] = {"block" : s.ids[ID], "id" : ID}, {"block" : s.ids[ID], "id" : ID}
             elif keys[i] in ['R','L']: s.Dungeon[s.Dy][s.Dx]['room'][DPY-1][DPX], s.Dungeon[s.Dy][s.Dx]['room'][DPY+1][DPX] = {"block" : s.ids[ID], "id" : ID}, {"block" : s.ids[ID], "id" : ID}
 
-def summonRandomMonster(data:dict) -> None:
+def summonRandomMonster(
+        data:dict,
+        hpMultiplier:int =1,
+        atkMultiplier:int=1,
+        ) -> None:
     # type, hp
     def event() -> None:
         nonlocal data
 
-        count = data['summonCount']
+        count                                = data['summonCount']
         s.Dungeon[s.Dy][s.Dx]['summonCount'] = 0
-        monsterData = [[0, 4], [1, 10]]
+        monsterType                          = [0, 1]
         for _ in range(count):
-            choiced = choice(monsterData)
             addEntity(
-                choiced[0],
-                int(choiced[1]),
+                choice(monsterType),
+                hpMultiplier,
+                atkMultiplier,
                 Dy=s.Dy,
                 Dx=s.Dx,
                 y =[1, len(data['room'])-2   ],
@@ -141,7 +145,7 @@ def main() -> None:
 
             case 4:
                 if data['summonCount'] > 0:
-                    summonRandomMonster(data)
+                    summonRandomMonster(data, 3, 2)
 
                     s.Dungeon[s.Dy][s.Dx]['room'][6][6] = {"block" : s.ids[0], "id" : 0}
                     changeDoorPosBlock(1, data)

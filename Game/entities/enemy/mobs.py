@@ -85,7 +85,7 @@ class enemy:
         nowDRP:dict = s.Dungeon[self.Dy][self.Dx]
 
         if self.coolTime == 0:
-            self.coolTime = random.randrange(60, 81)*10
+            self.coolTime = int((random.randrange(60, 81)*10)/2) if s.publicMode else random.randrange(60, 81)*10
             if self.stepped not in s.stepableBlocks: self.stepped = 0
             elif nowDRP['room'][self.y][self.x]["id"] in s.stepableBlocks and nowDRP['room'][self.y][self.x]["id"] not in [4, 7]:
                 self.stepped = nowDRP['room'][self.y][self.x]["id"]
@@ -110,7 +110,10 @@ class enemy:
                 if 300 in exPos:
                     nowDRP['room'][self.y][self.x] = {"block" : f"{cc['fg']['F']}{self.icon}{cc['end']}", "id" : -1}; time.sleep(0.1)
                     nowDRP['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id}
-                    enemy.pDamage(self)
+                    if s.ezMode:
+                        if random.randrange(1,11)<8: addLog(f"{cc['fg']['F']}{self.name}{cc['end']}의 공격을 피했습니다!")
+                        else:                        enemy.pDamage(self)
+                    else: enemy.pDamage(self)
                 else:
                     while 1:
                         moveTo:int = random.randrange(-1,2)
@@ -126,7 +129,11 @@ class enemy:
                             self.x, self.y = bfx, bfy
                             continue
 
-                        if nowDRP['room'][self.y][self.x]["id"] == 300: enemy.pDamage(self)
+                        if nowDRP['room'][self.y][self.x]["id"] == 300:
+                            if s.ezMode:
+                                if random.randrange(1,11)<8: addLog(f"{cc['fg']['F']}{self.name}{cc['end']}의 공격을 피했습니다!")
+                                else:                        enemy.pDamage(self)
+                            else: enemy.pDamage(self)
                         break
                 s.Dungeon[self.Dy][self.Dx]['room'][bfy][bfx]       = {"block" : s.ids[self.stepped], "id" : self.stepped}
                 s.Dungeon[self.Dy][self.Dx]['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id}
@@ -154,7 +161,7 @@ class observer(enemy):
                 nowDRP['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id}; time.sleep(0.07)
 
         if self.coolTime == 0:
-            self.coolTime = random.randrange(40, 61)*10
+            self.coolTime = int((random.randrange(40, 61)*10)/2) if s.publicMode else random.randrange(40, 61)*10
             if self.stepped not in s.stepableBlocks: self.stepped = 0
             elif nowDRP['room'][self.y][self.x]["id"] in s.stepableBlocks and nowDRP['room'][self.y][self.x]["id"] not in [4, 7]:
                 self.stepped = nowDRP['room'][self.y][self.x]["id"]
@@ -173,7 +180,11 @@ class observer(enemy):
 
                         while 1:
                             if not l.pause:
-                                if nowDRP['room'][eval(f"self.y{Moves1[a]}1")][self.x]["id"] == 300: enemy.pDamage(self)
+                                if nowDRP['room'][eval(f"self.y{Moves1[a]}1")][self.x]["id"] == 300:
+                                    if s.ezMode:
+                                        if random.randrange(1,11)<8: addLog(f"{cc['fg']['F']}{self.name}{cc['end']}의 공격을 피했습니다!")
+                                        else:                        enemy.pDamage(self)
+                                    else: enemy.pDamage(self)
                                 if nowDRP['room'][eval(f"self.y{Moves1[a]}1")][self.x]["id"] not in canBreak: break
                                 nowDRP['room'][self.y][self.x] = {"block" : s.ids[0], "id" : 0}
                                 exec(f"self.y{Moves[a]}1"); nowDRP['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id}
@@ -186,7 +197,11 @@ class observer(enemy):
 
                         while 1:
                             if not l.pause:
-                                if nowDRP['room'][self.y][eval(f"self.x{Moves1[a]}1")]["id"] == 300: enemy.pDamage(self)
+                                if nowDRP['room'][self.y][eval(f"self.x{Moves1[a]}1")]["id"] == 300:
+                                    if s.ezMode:
+                                        if random.randrange(1,11)<8: addLog(f"{cc['fg']['F']}{self.name}{cc['end']}의 공격을 피했습니다!")
+                                        else:                        enemy.pDamage(self)
+                                    else: enemy.pDamage(self)
                                 if nowDRP['room'][self.y][eval(f"self.x{Moves1[a]}1")]["id"] not in canBreak: break
                                 nowDRP['room'][self.y][self.x] = {"block" : s.ids[0], "id" : 0}
                                 exec(f"self.x{Moves[a]}1"); nowDRP['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id}

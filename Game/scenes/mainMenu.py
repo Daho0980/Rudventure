@@ -1,5 +1,6 @@
 import os
 import curses
+import socket
 
 from Assets.data                       import status, color
 from Game.core.system                 import configs
@@ -39,7 +40,10 @@ def setData(data):
 
     s.stage          = data['stage']
     s.killCount      = data['killCount']
+
     s.cowardMode     = data['cowardMode']
+    s.ezMode         = data["exMode"]
+    s.publicMode     = data['publicMode']
 
 def main(stdscr) -> None:
     configs.load()
@@ -160,7 +164,8 @@ def main(stdscr) -> None:
                                         "완료"            : ""
                                     },
                                     [1,0,255,10],
-                                    '@'
+                                    '@',
+                                    maxLine=3
                                 )
                                 match frameSettings:
                                     case 1|2|3|4:
@@ -175,8 +180,16 @@ def main(stdscr) -> None:
                                     "<< 게임 모드 >>",
                                     {
                                         f"겁쟁이 모드 : {s.cowardMode}" : [
-                                            "활성화 시 스테이지를 클리어할 때마다 세이브 데이터가 저장됩니다.",
+                                            "활성화 시 스테이지를 클리어할 때마다\n세이브 데이터가 저장됩니다.",
                                             "게임에서마저도 죽는 게 두려운가 봐요?"][s.cowardMode],
+                                        f"정 말쉬운모 드 : {s.ezMode}" : [
+                                            "활성화 시 모든 편린의 체력이 2 낮아집니다.\n또한 확률적으로 편린의 공격을 회피합니다.\n심지어 초반 공격력이 4 상승합니다!",
+                                            "\"갓 난 뉴비 활성화.\""
+                                        ][s.ezMode],
+                                        f"\"일 반 인\" 모드 : {s.publicMode}" : [
+                                            "활성화 시 모든 편린의 쿨타임이 절반으로 줄어듭니다!",
+                                            f"일반인의 세계에 오신 것을 환영합니다,\n{socket.gethostname()}."
+                                        ][s.publicMode],
                                         ""     : "",
                                         "완료" : ""
                                     },
@@ -185,7 +198,9 @@ def main(stdscr) -> None:
                                 )
                                 match modeSettings:
                                     case 1: s.cowardMode = False if s.cowardMode else True
-                                    case 2: break
+                                    case 2: s.ezMode     = False if s.ezMode     else True
+                                    case 3: s.publicMode = False if s.publicMode else True
+                                    case 4: break
                         case 4: break
             case 4: clc.main("제작중", ["화긴"], [1,0,255,10], '@')
             case 5:

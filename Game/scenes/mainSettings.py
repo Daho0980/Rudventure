@@ -147,10 +147,15 @@ def main(stdscr) -> None:
                 elif nameSuggestions == 2: reTryCount += 1; continue
 
     s.name, s.lightName = temporaryName, f"{cc['fg']['L']}{temporaryName}{cc['end']}"
-    s.welcomeMessage    = [f"나락에 오신 걸 환영합니다, {s.lightName}님.", 
-                        f"오실 때 {cc['fg']['R']}{s.cMarkdown(1)}피자{cc['end']}는 가져오셨죠? 장난입니다, {s.lightName}님.",
-                        f"기다리느라 목 빠지는 줄 알았습니다, {s.lightName}님."
-                        ]
+    s.welcomeMessage    = [
+        f"우쭈쭈, 우리 {s.cMarkdown(2)}겁. 쟁. 이.{cc['end']} {s.lightName}님 오셨군요?",
+        f"ㅋ, ㅋㅋㅎ, ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅎㅋㅋㅋㅋㅋㅎㅋㅎㅋ",
+        f"전 {cc['fg']['L']}당ㅋ신{cc['end']}이 아ㅋ주 자랑ㅋ스럽습ㅋ니다. {cc['fg']['R']}정말ㅋ로요.{cc['end']}"
+    ]if s.ezMode else [
+        f"나락에 오신 걸 환영합니다, {s.lightName}님.", 
+        f"오실 때 {cc['fg']['R']}{s.cMarkdown(1)}피자{cc['end']}는 가져오셨죠? 장난입니다, {s.lightName}님.",
+        f"기다리느라 목 빠지는 줄 알았습니다, {s.lightName}님."
+    ]
     s.ids[4]   = f"{cc['fg']['Y']}É{cc['end']}"
     s.ids[5]   = f"{cc['fg']['R']}F{cc['end']}"
     s.ids[7]   = f"{cc['fg']['R']}X{cc['end']}"

@@ -122,8 +122,8 @@ mainMenu.main(stdscr)
 if s.name == "":
     mainSettings.main(stdscr)
     p.set()
-else:
-    mainSettings.presetted(stdscr)
+    if s.ezMode: s.atk += 4
+else: mainSettings.presetted(stdscr)
 
 stdscr.nodelay(True)
 kh.add()

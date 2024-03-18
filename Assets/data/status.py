@@ -128,8 +128,8 @@ enemyIds:list[int] = [600, 601]
 stage:int     = 0
 
 # Background vars
-s:str   = ''
-TFP:str = ""
+s:str         = ''
+TFP:str       = ""
 pythonVersion = __import__("sys").version_info
 
 Dungeon:list     = []
@@ -138,7 +138,11 @@ killAll:bool     = False
 DROD:list        = [None, '']
 pauseText:str    = f"\n{cMarkdown(1)}{_cc['fg']['L']}P a u s e{_cc['end']}\n"
 debugScreen:bool = False
+
+# Modes
 cowardMode:bool  = False
+ezMode:bool      = False
+publicMode:bool  = False
 
 entities:int = 0
 hitPos:list  = []

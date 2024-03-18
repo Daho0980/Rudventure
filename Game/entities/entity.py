@@ -13,7 +13,8 @@ from Game.core.system  import logger
 
 def addEntity(
         entityType:int,
-        initHp:int,
+        hpMtp:int,
+        atkMtp:int,
         Dy:int,
         Dx:int,
         y:list,
@@ -37,6 +38,7 @@ def addEntity(
     classType:list[str]  = ["enemy", "observer"]
     idType:list[int]     = [600, 601]
     xpType:list[int]     = [3, 5]
+    hpType:list[int]     = [4, 10]
     atkType:list[int]    = [1, 2]
     icons:list[str]      = [s.ids[600], s.ids[601]]
 
@@ -55,7 +57,7 @@ from   Game.utils.system   import xpSystem        as xps
 l, s = lockers, status
              
 {valuableName} = mobs.{classType[entityType]}(\"{name}\", \"{icons[entityType]}\", {idType[entityType]})
-{valuableName}.start({initHp}+((s.stage-1)*2), {atkType[entityType]}+(s.stage-1), {Dy}, {Dx}, {y}, {x})
+{valuableName}.start({(hpType[entityType]-2 if s.ezMode else hpType)*hpMtp}+((s.stage-1)*2), {(atkType[entityType])*atkMtp}+(s.stage-1), {Dy}, {Dx}, {y}, {x})
 if {useRoomLock}: s.roomLock = True
 
 while s.main == 1:
