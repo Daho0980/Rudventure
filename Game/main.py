@@ -16,17 +16,17 @@ from   Game.utils.system                import roomChecker
 
 stdscr = Cusser(curses.initscr())
 
-quickStarter            = 0
-c, s, l                 = comments, status, lockers
-p, t, dgm, kh          = player, Textbox, DungeonMaker, keyHandler
-ent, grp                = entity, graphic
-q                       = quests
-cc                      = color.cColors
+quickStarter  = 0
+c, s, l       = comments, status, lockers
+p, t, dgm, kh = player, Textbox, DungeonMaker, keyHandler
+ent, grp      = entity, graphic
+q             = quests
+cc            = color.cColors
 
 def playerChecker():
     if s.df > 0: s.dfCrack = 0
 
-    if s.hp <= int(s.Mhp*0.3) and s.hpLow == False:
+    if s.hp <= int(s.Mhp*0.3) and not s.hpLow:
         s.hpLow = True
         logger.addLog(f"{cc['fg']['L']}\"{random.choice(c.lowHpComment)}\"{cc['end']}")
     elif int((s.hp / s.Mhp) * 10) > 3: s.hpLow = False
@@ -52,7 +52,7 @@ def gameChecker(stdscr):
                     LineType    ="bold"
                     )+cc['end'],
                     addOnCoordinate=[-5, 0],
-                    returnEndyx=True
+                    returnEndyx    =True
                 )
             y -= 1 # type: ignore
             stdscr.refresh()
@@ -122,7 +122,17 @@ mainMenu.main(stdscr)
 if s.name == "":
     mainSettings.main(stdscr)
     p.set()
-    if s.ezMode: s.atk += 4
+    if s.ezMode:
+        s.hp  += 10
+        s.df  += 5
+        s.atk += 4
+
+        s.Mhp += 10
+        s.Mdf += 5
+
+        s.critRate += 10
+        s.critDMG  += 10
+        s.hunger   += 1000
 else: mainSettings.presetted(stdscr)
 
 stdscr.nodelay(True)
@@ -137,8 +147,8 @@ while s.main:
 
     grp.showStage(
         stdscr,
-        f"{cc['fg']['R']}- {s.stage}{cc['end']}",
-        stageName=f"{cc['fg']['R']}지 하   - {s.stage}   층{cc['end']}"
+        f"- {s.stage}",
+        f"지 하   -{s.stage}   층"
         ); s.stage += 1
 
     l.jpsf = 1
@@ -147,9 +157,9 @@ while s.main:
         if l.jpsf:
             playerChecker()
             grp.fieldPrint(stdscr, s.Dungeon[s.Dy][s.Dx]['room'])
-            if not quickStarter: stdscr.refresh(); quickStarter = 1
+            if not quickStarter: stdscr.refresh(); quickStarter=1
             roomChecker.main()
             time.sleep(s.frame)
         else: time.sleep(1)
     if s.hunger <= 0: s.DROD = [f"{cc['fg']['Y']}아사{cc['end']}", 'Y']
-    gameChecker(stdscr); quickStarter = 0
+    gameChecker(stdscr); quickStarter=0

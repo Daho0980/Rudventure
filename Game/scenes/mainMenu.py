@@ -12,12 +12,6 @@ from Game.utils.advanced.Rudconverter import load
 s, cc  = status, color.cColors
 clc, t = cSelector, Textbox
 
-# def setData(data):
-#     a = data
-#     for key, value in zip(data.keys(), data.values()):
-#         exec(f"s.{key}={value}")
-#     1+1
-
 def setData(data):
     data = data['status']
 
@@ -183,7 +177,7 @@ def main(stdscr) -> None:
                                             "활성화 시 스테이지를 클리어할 때마다\n세이브 데이터가 저장됩니다.",
                                             "게임에서마저도 죽는 게 두려운가 봐요?"][s.cowardMode],
                                         f"정 말쉬운모 드 : {s.ezMode}" : [
-                                            "활성화 시 모든 편린의 체력이 2 낮아집니다.\n또한 확률적으로 편린의 공격을 회피합니다.\n심지어 초반 공격력이 4 상승합니다!",
+                                            "활성화 시 모든 편린의 체력이 2 낮아집니다.\n또한 확률적으로 편린의 공격을 회피합니다.\n심지어 저주 제외 모든 스탯이 100% 상승합니다!\n거기에다가 공격력은 특별히 400% 상승합니다!!",
                                             "\"갓 난 뉴비 활성화.\""
                                         ][s.ezMode],
                                         f"\"일 반 인\" 모드 : {s.publicMode}" : [

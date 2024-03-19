@@ -18,7 +18,7 @@ from Game.utils.modules  import Textbox
 
 s, l = status, lockers
 
-escapeAnsi = lambda line: re.compile(r'(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]').sub('', line)
+escapeAnsi=lambda l:re.compile(r'(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]').sub('',l)
 
 def addstrMiddle(
         stdscr,
@@ -58,8 +58,9 @@ def showStage(stdscr, stageNum:str, stageName:str):
     addstrMiddle(
         stdscr,
         Textbox.TextBox(
-            f"\nS T A G E   {stageNum}\n",
+            f"S T A G E   {cc['fg']['R']}{stageNum}{cc['end']}",
             Type        ="middle",
+            inDistance  =1,
             outDistance =3,
             AMLS        =True, 
             endLineBreak=True,
@@ -73,8 +74,9 @@ def showStage(stdscr, stageNum:str, stageName:str):
     addstrMiddle(
         stdscr,
         Textbox.TextBox(
-            f"\nS T A G E   {stageNum}\n\n{stageName}\n",
+            f"S T A G E   {cc['fg']['R']}{stageNum}{cc['end']}\n\n{cc['fg']['R']}{stageName}{cc['end']}",
             Type        ="middle",
+            inDistance  =1,
             outDistance =3,
             AMLS        =True,
             endLineBreak=True,
@@ -133,8 +135,7 @@ def statusBar(
 
     Display += f"{statusName} :{spaceLen}{frontTag} {barTypes[barType][0]}{color}" if len(statusName) > 0 else f"{spaceLen}{frontTag} {barTypes[barType][0]}{color}"
     if usePercentage:
-        status    = round((status/maxStatus)*10)
-        maxStatus = 10
+        status, maxStatus = round((status/maxStatus)*10), 10
     elif not usePercentage: statusForDisplay = maxStatus if status > maxStatus else status
     
     Display += ('|'*statusForDisplay+emptyCellColor+'|'*((maxStatus-statusForDisplay) if showEmptyCell else 0)+f"{cc['end']}{barTypes[barType][1]}")
@@ -163,12 +164,12 @@ def fieldPrint(stdscr, grid:list):
                 blank =1,
                 center=True
                 ),
-            Type        ='middle',
-            AMLS        =True,
-            endLineBreak=True,
-            LineType    ='double',
-            sideText    ="Dungeon Map",
-            sideTextPos=["under", "middle"],
+            Type          ='middle',
+            AMLS          =True,
+            endLineBreak  =True,
+            LineType      ='double',
+            sideText      ="Dungeon Map",
+            sideTextPos  =["under", "middle"],
             coverSideText=True
             )
         Display += addstrMiddle(stdscr, buffer, y=2, x=x-len(max(buffer.split("\n"))), returnStr=True)
@@ -269,7 +270,6 @@ TextBox.Line\n"""+statusBar(
 
     # Debug Mode
     if s.debugScreen:
-        y, x           = stdscr.getmaxyx()
         by, bx, buffer = Textbox.TextBox(
                 f"""Python version : {s.pythonVersion.major}.{s.pythonVersion.minor}.{s.pythonVersion.micro}
 Window size : {stdscr.getmaxyx()}

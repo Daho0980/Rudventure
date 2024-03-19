@@ -1,1 +1,1 @@
-clearedRoomLoot = 50
+clearedRoomLoot:int = 50

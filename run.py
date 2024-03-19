@@ -9,23 +9,25 @@ match os.name:
         s.s             = '/'
         pythonDirectory = "/Library/Frameworks/Python.framework/Versions/3.10/lib"
 
-        sys.path = []
-        sys.path.append(directory)
-        sys.path.append(os.path.join(pythonDirectory, 'python310.zip'))
-        sys.path.append(os.path.join(pythonDirectory, 'python3.10'))
-        sys.path.append(os.path.join(pythonDirectory, 'python3.10', 'lib-dynload'))
-        sys.path.append(os.path.join(directory, 'lib', 'python3.10', 'site-packages'))
+        sys.path = [            
+            directory,
+            os.path.join(pythonDirectory, 'python310.zip'),
+            os.path.join(pythonDirectory, 'python3.10'),
+            os.path.join(pythonDirectory, 'python3.10', 'lib-dynload'),
+            os.path.join(directory, 'lib', 'python3.10', 'site-packages')
+        ]
     case 'nt':
         s.s             = '\\'
         pythonDirectory = "%APPDATA%\\Local\\Programs\\Python\\Python310"
 
-        sys.path = []
-        sys.path.append(directory)
-        sys.path.append(os.path.join(pythonDirectory, 'python310.zip'))
-        sys.path.append(os.path.join(pythonDirectory, 'DLLs'))
-        sys.path.append(os.path.join(pythonDirectory, 'lib'))
-        sys.path.append(pythonDirectory)
-        sys.path.append(os.path.join(pythonDirectory, 'lib', 'site-packages'))
+        sys.path = [            
+            directory,
+            os.path.join(pythonDirectory, 'python310.zip'),
+            os.path.join(pythonDirectory, 'DLLs'),
+            os.path.join(pythonDirectory, 'lib'),
+            pythonDirectory,
+            os.path.join(pythonDirectory, 'lib', 'site-packages')
+        ]
 
 pyV = sys.version_info
 

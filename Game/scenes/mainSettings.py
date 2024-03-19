@@ -26,7 +26,6 @@ def main(stdscr) -> None:
         )
         s.frameRate = [0,1,30,60,0][frameSettings]
         s.frame     = 1/s.frameRate if s.frameRate else 0
-        # if s.frame: s.frame = 1/s.frame
 
     stdscr.clear()
 #     grp.addstrMiddle(

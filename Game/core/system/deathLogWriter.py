@@ -83,6 +83,8 @@ draw.text((0, -108), noize, font=font, fill=(214, 222, 235))# upside bar
 draw.text((0, 100), line, font=font, fill=(214, 222, 235)) # downside line
 draw.text((0, 575), line, font=font, fill=(214, 222, 235))# upside line
 
+if s.ezMode: ...
+
 
 # 이미지 저장
 image.save(f"DeathLog{s.s}{datetime.now().strftime('%Y%m%d%H%M')}_{s.name}.png")

@@ -103,67 +103,6 @@ def gridMapReturn(grid:list, blank:int=0, center:bool=False):
 
     return output
 
-# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 이거 안씀 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-# def checkOpenDoor(grid:list):
-#     """
-#     맵 데이터를 탐색해 각 방 당 열린 문의 위치를 출력하는 함수, 현재는 사용하지 않음
-    
-#         `grid`(list(raw)) : 맵 데이터가 포함됨, 무조건 기입해야 함
-#     """
-#     global roomIcons
-
-#     print("code running")
-
-#     for row in range(len(grid)):
-#         for column in range(len(grid[row])):
-#             if grid[row][column]["roomType"] != None:
-#                 Door                     = ['up', 'right', 'down', 'left']
-#                 DoorIndexChar, DoorIndex = ['U', 'R', 'D', 'L'], [0, 1, 2, 3]
-#                 OpenDoorIndex            = []
-#                 OpenDoor                 = []
-#                 RoomKind                 = ["(Start)           ",
-#                                             "(Basic room)      ",
-#                                             "(Event room)      ",
-#                                             "(TreasureBox room)",
-#                                             "(Exit)            "
-#                                            ]
-#                 for i in range(len(grid[row][column]["doorPos"])):
-#                     if grid[row][column]["doorPos"][DoorIndexChar[i]] == 1: OpenDoorIndex.append(DoorIndex[i])
-
-#                 while len(OpenDoorIndex) > 0:
-#                     for j in range(len(Door)):
-#                         if Door[j] == Door[OpenDoorIndex[0]]:
-#                             OpenDoor.append(Door[OpenDoorIndex[0]])
-#                             OpenDoorIndex.remove(OpenDoorIndex[0])
-#                             break
-#                 print(f"The door located at \033[31my : {row}, x : {column} {RoomKind[grid[row][column]['roomType']]}\033[0m is open to the \033[32m{' and '.join(map(str, OpenDoor))}\033[0m")
-
-# def showProgress(Data:list):
-#     """
-#     global 리스트인 `progress`를 이용해 `GraphicMaker`함수로 그래픽만 남은 맵에서 진행 경로를 출력하는 함수, 현재는 문이 여러 개가 될 확률이 생겼고, 별로 쓸 이유가 없으므로 현재는 사용하지 않음
-    
-#         `Data`(list(2d)) : `GraphicMaker`함수로 그래픽만 남은 맵이 포함됨, 무조건 기입해야 함
-#     """
-#     global roomIcons
-
-#     Map, progress    = Data[0], Data[1]
-#     MfS              = copy.deepcopy(Map)
-#     savedRoomGraphic = ''
-#     for i in range(len(progress)):
-#         from Packages.lib.system import globalFunctions as gbf
-#         gbf.clear()
-#         if i > 0:
-#             MfS[progress[i-1][0]][progress[i-1][1]]["roomIcon"] = savedRoomGraphic
-#             savedRoomGraphic                                = MfS[progress[i][0]][progress[i][1]]["roomIcon"]
-#             MfS[4][4]["roomIcon"]                               = roomIcons[0]
-
-#         print(progress[i])
-#         print(f"Data : {Map[progress[i][0]][progress[i][1]]}")
-#         MfS[progress[i][0]][progress[i][1]]["roomIcon"]         = f'\033[45m{MfS[progress[i][0]][progress[i][1]]["roomIcon"]}\033[0m'
-#         gridMapReturn(MfS)
-#         time.sleep(1)
-# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 이거 안씀 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
 # ---------- Init section ----------
 def makeRoom(Map:list):
     """

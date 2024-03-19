@@ -5,7 +5,6 @@ import threading
 from Assets.data             import lockers, status, color
 from Game.core.system.logger import addLog
 from Game.entities           import player
-from Game.utils.advanced.Rudconverter import save
 
 
 p    = player

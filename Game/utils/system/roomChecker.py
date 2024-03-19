@@ -29,10 +29,12 @@ def changeDoorPosBlock(ID:int, data:dict) -> None:
             if   keys[i] in ['U','D']: s.Dungeon[s.Dy][s.Dx]['room'][DPY][DPX-1], s.Dungeon[s.Dy][s.Dx]['room'][DPY][DPX+1] = {"block" : s.ids[ID], "id" : ID}, {"block" : s.ids[ID], "id" : ID}
             elif keys[i] in ['R','L']: s.Dungeon[s.Dy][s.Dx]['room'][DPY-1][DPX], s.Dungeon[s.Dy][s.Dx]['room'][DPY+1][DPX] = {"block" : s.ids[ID], "id" : ID}, {"block" : s.ids[ID], "id" : ID}
 
-def summonRandomMonster(
+def summonMonster(
         data:dict,
         hpMultiplier:int =1,
         atkMultiplier:int=1,
+        monsterIndex:int =0,
+        useRandom:bool   =True
         ) -> None:
     # type, hp
     def event() -> None:
@@ -43,7 +45,7 @@ def summonRandomMonster(
         monsterType                          = [0, 1]
         for _ in range(count):
             addEntity(
-                choice(monsterType),
+                choice(monsterType)if useRandom else monsterIndex,
                 hpMultiplier,
                 atkMultiplier,
                 Dy=s.Dy,
@@ -106,17 +108,17 @@ def placeRandomOrbs(multiple:int=1) -> None:
 def main() -> None:
     data:dict = s.Dungeon[s.Dy][s.Dx]
 
-    if l.jpsf and data['interaction'] == False:
-        commentP = True if randrange(1, 3) == 1 else False
+    if l.jpsf and not data['interaction']:
+        commentP = randrange(0, 2)
         match data['roomType']:
             case 1:
                 if data['summonCount'] > 0:
-                    summonRandomMonster(data)
+                    summonMonster(data)
 
                     changeDoorPosBlock(1, data)
                 elif not s.entities and s.roomLock:
 
-                    s.roomLock = False
+                    s.roomLock                           = False
                     s.Dungeon[s.Dy][s.Dx]['interaction'] = True
                     if randrange(0, 101) > percentage.clearedRoomLoot: placeRandomOrbs()
                     changeDoorPosBlock(2, data)
@@ -132,7 +134,7 @@ def main() -> None:
                 if rewardP > 30:
                     s.Dungeon[s.Dy][s.Dx]['room'][6][6] = {"block" : s.ids[4], "id" : 4}
                     if commentP: comment = choice(c.treasureRoomComment[0])
-                elif rewardP >= 10 and rewardP < 30:
+                elif 10 <= rewardP < 30:
                     for i in range(5, 8): s.Dungeon[s.Dy][s.Dx]['room'][i][i] = {"block" : s.ids[4], "id" : 4}
                     if commentP: comment = choice(c.treasureRoomComment[1])
                 else:
@@ -145,7 +147,7 @@ def main() -> None:
 
             case 4:
                 if data['summonCount'] > 0:
-                    summonRandomMonster(data, 3, 2)
+                    summonMonster(data, 3, 2)
 
                     s.Dungeon[s.Dy][s.Dx]['room'][6][6] = {"block" : s.ids[0], "id" : 0}
                     changeDoorPosBlock(1, data)

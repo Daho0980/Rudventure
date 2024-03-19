@@ -9,17 +9,19 @@ from Game.entities.player import event
 from Game.utils.system    import xpSystem
 
 
-s, r     = status, rooms
+s, r = status, rooms
 
 def set() -> None:
     s.hp       = 10
-    s.Mhp      = s.hp
     s.df       = 5
-    s.Mdf      = s.df
     s.atk      = 1
+    s.hunger   = 1000
+
     s.critRate = 10
     s.critDMG  = 10
-    s.hunger   = 1000
+    
+    s.Mhp      = s.hp
+    s.Mdf      = s.df
     s.Mxp      = 10
 
 def start(Dy:int, Dx:int, y:int, x:int) -> None:

@@ -57,7 +57,7 @@ from   Game.utils.system   import xpSystem        as xps
 l, s = lockers, status
              
 {valuableName} = mobs.{classType[entityType]}(\"{name}\", \"{icons[entityType]}\", {idType[entityType]})
-{valuableName}.start({(hpType[entityType]-2 if s.ezMode else hpType)*hpMtp}+((s.stage-1)*2), {(atkType[entityType])*atkMtp}+(s.stage-1), {Dy}, {Dx}, {y}, {x})
+{valuableName}.start({((hpType[entityType]-2 if s.ezMode else hpType[entityType])*hpMtp)+((s.stage-1)*2)}, {((atkType[entityType])*atkMtp)+(s.stage-1)}, {Dy}, {Dx}, {y}, {x})
 if {useRoomLock}: s.roomLock = True
 
 while s.main == 1:

@@ -1,7 +1,7 @@
 import os
-import zlib
 import json
-import base64
+from   zlib import compress, decompress
+from   base64 import b64encode, b64decode
 
 from Assets.data import status as s
 
@@ -9,16 +9,16 @@ def _encode(strings: list[str]) -> list[str]:
     encoded_data = []
     for string in strings:
         # Base64로 인코딩하여 저장
-        encoded_data.append(base64.b64encode(zlib.compress(string.encode('utf-8'))).decode('utf-8'))
+        encoded_data.append(b64encode(compress(string.encode('utf-8'))).decode('utf-8'))
     return encoded_data
     
 def _decode(encoded_strings: list[str]) -> list[str]:
     decoded_data = []
     for encoded_string in encoded_strings:
         # Base64 디코딩
-        decoded_base64 = base64.b64decode(encoded_string.encode('utf-8'))
+        decoded_base64 = b64decode(encoded_string.encode('utf-8'))
         # 압축 해제 및 UTF-8 디코딩
-        decompressed_data = zlib.decompress(decoded_base64).decode('utf-8')
+        decompressed_data = decompress(decoded_base64).decode('utf-8')
         decoded_data.append(decompressed_data)
     return decoded_data
     
@@ -98,7 +98,7 @@ def load(name:str):
             
         with open(f"saveData{s.s}{name}.json", 'r') as d:
             dictData = json.load(d)
-        # os.remove(f"saveData{s.s}{name}.json")
+        os.remove(f"saveData{s.s}{name}.json")
     except: return False
     else:   return dictData
 

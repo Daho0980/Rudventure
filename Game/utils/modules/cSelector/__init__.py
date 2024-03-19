@@ -1,10 +1,10 @@
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! row는 가로, column은 세로입니다 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 import curses
-from   cusser    import Cusser
+from   cusser import Cusser
 
 from Assets.data.color import cColors, customColor
-from Game.utils        import graphic as grp
+from Game.utils        import graphic             as grp
 
 cc = cColors
 
