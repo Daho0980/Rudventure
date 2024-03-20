@@ -1,6 +1,7 @@
 import os
 import curses
 import socket
+from   random import choice
 
 from Assets.data                       import status, color
 from Game.core.system                 import configs
@@ -108,7 +109,7 @@ def main(stdscr) -> None:
                                 '@'
                             ); break
                     except: break
-                if s.name != "": break
+                if not s.name: break
             case 3: 
                 while 1:
                     mainSettings:int = clc.main(
@@ -125,8 +126,9 @@ def main(stdscr) -> None:
                     )
                     match mainSettings:
                         case 1:
+                            UISAP = [0, 0]
                             while 1:
-                                UISettings:int = clc.main(
+                                UISettings, UISAP = clc.main(
                                     "<< UI 설정 >>",
                                     {
                                         f"현재 스탯 UI : {['콤팩트', '코지'][s.statusDesign]}" : "좌상단에 표시될 스탯의 디자인을 변경합니다.\n인게임에서 Shift + s 키로 변경할 수 있습니다.",
@@ -136,7 +138,9 @@ def main(stdscr) -> None:
                                         "완료"                                                 : ""
                                     },
                                     [1,0,255,10],
-                                    '@'
+                                    '@',
+                                    setArrowPos   =UISAP,
+                                    returnArrowPos=True
                                 )
                                 match UISettings:
                                     case 1: s.statusDesign = 0     if s.statusDesign   else 1
@@ -146,39 +150,51 @@ def main(stdscr) -> None:
                                         configs.save()
                                         break
                         case 2:
+                            frameSAP = [0, 0]
                             while 1:
-                                frameSettings = clc.main(
+                                frameSettings, frameSAP = clc.main(
                                     f"<< 프레임 설정 >>\n\n현재 프레임 : {'MAX' if not s.frameRate else '설정되지 않음' if s.frameRate==-1 else s.frameRate}",
                                     {
                                         "1프레임"         : "정말로요...?",
                                         "30프레임 (권장)" : "표준 설정입니다.",
-                                        "60프레임"        : "더 쾌적하게 플레이할 수 있습니다.\n하지만 안타깝게도 눈에 띄는 변화는 찾아볼 수 없겠군요 :(",
-                                        "MAX"             : "최대한 빠르게 새로고침합니다.\n화면이 [심하게] 깜빡거릴 수 있습니다.",
                                         ""                : "",
-                                        "완료"            : ""
+                                        "완료"            : "",
+                                        "60프레임"        : "더 쾌적하게 플레이할 수 있습니다.\n하지만 안타깝게도 눈에 띄는 변화는 찾아볼 수 없겠군요 :(",
+                                        "MAX"             : "최대한 빠르게 새로고침합니다.\n화면이 [심하게] 깜빡거릴 수 있습니다."
                                     },
                                     [1,0,255,10],
                                     '@',
-                                    maxLine=3
+                                    maxLine       =4,
+                                    setArrowPos   =frameSAP,
+                                    returnArrowPos=True
                                 )
                                 match frameSettings:
-                                    case 1|2|3|4:
-                                        s.frameRate = [0,1,30,60,0][frameSettings]
+                                    case 1|2|4|5:
+                                        s.frameRate = [0,1,30,0,60,0][frameSettings]
                                         s.frame     = 1/s.frameRate if s.frameRate else 0
-                                    case 5:
+                                    case 3:
                                         configs.save()
                                         break
                         case 3:
+                            modeSAP = [0, 0]
                             while 1:
-                                modeSettings:int = clc.main(
+                                modeSettings, modeSAP = clc.main(
                                     "<< 게임 모드 >>",
                                     {
                                         f"겁쟁이 모드 : {s.cowardMode}" : [
                                             "활성화 시 스테이지를 클리어할 때마다\n세이브 데이터가 저장됩니다.",
-                                            "게임에서마저도 죽는 게 두려운가 봐요?"][s.cowardMode],
-                                        f"정 말쉬운모 드 : {s.ezMode}" : [
+                                             "괜찮아요. 좀만 하다 보면 곧 익숙해질 겁니다." if s.cowardMode and s.ezMode else "게임에서마저도 죽는 게 두려운가 봐요?"
+                                            ][s.cowardMode],
+                                        f"쫄보 모드 : {s.ezMode}" : [
                                             "활성화 시 모든 편린의 체력이 2 낮아집니다.\n또한 확률적으로 편린의 공격을 회피합니다.\n심지어 저주 제외 모든 스탯이 100% 상승합니다!\n거기에다가 공격력은 특별히 400% 상승합니다!!",
-                                            "\"갓 난 뉴비 활성화.\""
+                                            "이거 완전 쌩 뉴비를 위한 설정이네요.\n이 게임이 처음이신가 봐요?" if s.cowardMode and s.ezMode else choice(
+                                                [
+                                                    "\"쫄보 활성화.\"",
+                                                    "쫄?",         "아.. 쫄?",
+                                                    "큼... 쫄?",   "씁... 쫄?",
+                                                    "어으... 쫄?", "어음... 쫄?"
+                                                ]
+                                            )
                                         ][s.ezMode],
                                         f"\"일 반 인\" 모드 : {s.publicMode}" : [
                                             "활성화 시 모든 편린의 쿨타임이 절반으로 줄어듭니다!",
@@ -188,7 +204,9 @@ def main(stdscr) -> None:
                                         "완료" : ""
                                     },
                                     [1,0,255,10],
-                                    '@'
+                                    '@',
+                                    setArrowPos   =modeSAP,
+                                    returnArrowPos=True
                                 )
                                 match modeSettings:
                                     case 1: s.cowardMode = False if s.cowardMode else True

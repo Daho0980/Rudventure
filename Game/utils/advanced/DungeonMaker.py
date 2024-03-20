@@ -45,7 +45,7 @@ roomIcons = [
 # ---------- Graphic section ----------
 escapeAnsi = lambda line: re.compile(r'(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]').sub('', line)
 
-def GraphicMaker(MapData:list):
+def _GraphicMaker(MapData:list):
     """
     맵의 데이터에서 방 아이콘만 빼내 그래픽을 출력하기 쉽게 하기 위해 만든 함수
 
@@ -89,7 +89,7 @@ def gridMapReturn(grid:list, blank:int=0, center:bool=False):
                             case 2: DisplayMap[FixY][FixX] = f"{'' if not grid[row][column]['roomIcon'][1] else cc['fg'][grid[row][column]['roomIcon'][1]]}{grid[row][column]['roomIcon'][0]}{cc['end']}"
 
     elif center == False:
-        DisplayMap = GraphicMaker(grid)
+        DisplayMap = _GraphicMaker(grid)
 
         DisplayMap[s.Dy][s.Dx] = f"{cc['bg']['F']}{DisplayMap[s.Dy][s.Dx]}{cc['end']}"
         for row in range(len(DisplayMap)):
@@ -104,7 +104,7 @@ def gridMapReturn(grid:list, blank:int=0, center:bool=False):
     return output
 
 # ---------- Init section ----------
-def makeRoom(Map:list):
+def _makeRoom(Map:list):
     """
     `deleteBlankData`함수로 수정된 맵 데이터 중 "room" 데이터를 추가하는 함수, 맵 데이터 중 "doors"도 활용함
 
@@ -172,7 +172,7 @@ def makeRoom(Map:list):
                             output[p[i][0]][p[i][1]]['room'][grd[i][1][0]-1][grd[i][1][1]], output[p[i][0]][p[i][1]]['room'][grd[i][1][0]+1][grd[i][1][1]] = {"block":s.ids[2], "id":2}, {"block":s.ids[2], "id":2}
     return output
 
-def deleteBlankData(grid:list):
+def _deleteBlankData(grid:list):
     """
     맵의 데이터 중 쓸데없이 메모리만 차지하는 공백 데이터를 제거하는 함수
     
@@ -186,7 +186,7 @@ def deleteBlankData(grid:list):
 
     return grid
 
-def initBranch(Map:list, y:int, x:int, rawPrint:bool=False, showAll:bool=False):
+def _initBranch(Map:list, y:int, x:int, rawPrint:bool=False, showAll:bool=False):
     """
     처음으로 맵 데이터를 작성하고 기초를 다지는 함수, 이 프로그램의 핵심 알고리즘이 포함됨
     
@@ -285,7 +285,7 @@ def initBranch(Map:list, y:int, x:int, rawPrint:bool=False, showAll:bool=False):
         Map[bfy][bfx]["doorPos"][locationData[3]] = 1
         Map[y][x]["summonCount"]                  = 1 if selectRoomKind == 4 else 0 if selectRoomKind in [2, 3] else size
 
-    if rawPrint == False and Map: return GraphicMaker(Map)
+    if rawPrint == False and Map: return _GraphicMaker(Map)
     else:                         return Map
 
 def DungeonMaker(showAll=False) -> list:
@@ -317,7 +317,7 @@ def DungeonMaker(showAll=False) -> list:
         output[4][4]["isPlayerHere"]    = True
         output[4][4]["interaction"]     = True
 
-        output        = makeRoom(deleteBlankData(initBranch(output, 4, 4, rawPrint=True, showAll=showAll)))
+        output        = _makeRoom(_deleteBlankData(_initBranch(output, 4, 4, rawPrint=True, showAll=showAll)))
         if output: break
     SR            = [[4-1, 4], [4, 4+1], [4+1, 4], [4, 4-1]]
     doorPositions = list(output[4][4]["doorPos"].values())
