@@ -109,7 +109,7 @@ def main(stdscr) -> None:
                                 '@'
                             ); break
                     except: break
-                if not s.name: break
+                if s.name: break
             case 3: 
                 while 1:
                     mainSettings:int = clc.main(
