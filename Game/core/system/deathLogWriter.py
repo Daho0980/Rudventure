@@ -73,7 +73,7 @@ line:str  = "━"*100
 
 draw.text((80, 182), text, font=font, fill=(214,222,235)) # text
 draw.text((200, 350), s.name, font=font, fill=ftColors['L']) # name
-draw.text((200, 371), escapeAnsi(escapeAnsi(s.DROD[0])), font=font, fill=ftColors[s.DROD[1]]) # deadReason
+draw.text((200, 371), escapeAnsi(s.DROD[0]), font=font, fill=ftColors[s.DROD[1]]) # deadReason
 draw.text((250, 413), str(s.stage-1), font=font, fill=ftColors['Y']) # stage
 draw.text((300, 434), str(s.killCount), font=font, fill=ftColors['R']) # killCount
 draw.text((320, 455), str(s.lvl), font=font, fill=ftColors['F']) # level

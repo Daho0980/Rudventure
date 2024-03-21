@@ -69,9 +69,9 @@ class enemy:
 
     def pDamage(self) -> None:
         event.hitted()
+        s.DROD = [f"{cc['fg']['F']}{self.name}{cc['end']}", 'F']
         if s.df > 0:
             s.df -= self.atk
-            s.DROD = [f"{cc['fg']['F']}{self.name}{cc['end']}", 'F']
             if s.df < 0                    : s.hp += s.df
             if round(s.df) < 0             : s.df = 0
             if s.df == 0 and s.dfCrack <= 0:
