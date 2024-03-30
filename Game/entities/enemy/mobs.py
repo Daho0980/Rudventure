@@ -29,6 +29,8 @@ class enemy:
         self.id   = ID
 
         self.isFocused = True
+        
+        self.xpMultiplier = 1
 
     def damaged(self) -> None:
         if s.hitPos and [self.y, self.x] in s.hitPos:
@@ -100,8 +102,9 @@ class enemy:
                         addLog(f"{cc['fg']['F']}{self.name}{cc['end']}({self.icon})이 울부짖습니다!")
                         addLog(f"{cc['fg']['F']}{self.name}{cc['end']}({self.icon})의 공격력이 {cc['fg']['L']}{1+(round(s.stage/10))}{cc['end']} 상승합니다.")
                         for _ in range(3):
-                            nowDRP['room'][self.y][self.x] = {"block" : f"{cc['fg']['F']}{self.icon}{cc['end']}", "id" : self.id}; time.sleep(0.1)
-                            nowDRP['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id}; time.sleep(0.1)
+                            nowDRP['room'][self.y][self.x] = {"block" : f"{cc['fg']['F']}{self.icon}{cc['end']}", "id" : -1}; time.sleep(0.1)
+                            nowDRP['room'][self.y][self.x] = {"block" : self.icon, "id" : -1}; time.sleep(0.1)
+                        nowDRP['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id}
 
                     exPos = [
                         nowDRP['room'][self.y-1][self.x]["id"],
@@ -128,7 +131,7 @@ class enemy:
                                 if self.y + moveTo > len(nowDRP['room'])-1: continue
                                 self.y += moveTo
 
-                            if nowDRP['room'][self.y][self.x]["id"] in s.interactableBlocks['cannotStepOn']:
+                            if nowDRP['room'][self.y][self.x]["id"] in s.interactableBlocks['cannotStepOn']+s.enemyIds:
                                 self.x, self.y = bfx, bfy
                                 continue
 
@@ -323,6 +326,7 @@ class mine(enemy):
                                 else:                        enemy.pDamage(self)
                             else: enemy.pDamage(self)
                             explode()
+                            self.xpMultiplier = 2
                             if random.randrange(0,2): addLog(f"{cc['fg']['L']}\"{random.choice(TIOTAComments)}\"{cc['end']}")
                         else: nowDRP['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id}
                     else: blink()

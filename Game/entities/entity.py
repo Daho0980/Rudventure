@@ -41,6 +41,7 @@ def addMonster(
     hpType:list[int]          = [4, 10, 5]
     atkType:list[int]         = [1, 2, 7]
     entityCountType:list[int] = [1, 1, 1]
+    ashChipType:list[int]     = [1, 2, 1]
     icons:list[str]           = [s.ids[600], s.ids[601], s.ids[602]]
 
     name:str             = kinds[entityType]
@@ -59,7 +60,7 @@ from   Game.utils.system   import xpSystem        as xps
 
 l, s = lockers, status
              
-{valuableName} = mobs.{classType[entityType]}(\"{name}\", \"{icons[entityType]}\", {idType[entityType]})
+{valuableName} = mobs.{classType[entityType]}("{name}", "{icons[entityType]}", {idType[entityType]})
 {valuableName}.start({((hpType[entityType]-2 if s.ezMode else hpType[entityType])*hpMtp)+((s.stage-1)*2)}, {((atkType[entityType])*atkMtp)+(s.stage-1)}, {Dy}, {Dx}, {y}, {x})
 if {useRoomLock}: s.roomLock = True
 
@@ -73,8 +74,14 @@ while s.main == 1:
             break
         {valuableName}.move()
     else: time.sleep(0.1)
-if s.main ==1 and not s.killAll: s.Dungeon[{valuableName}.Dy][{valuableName}.Dx]['room'][{valuableName}.y][{valuableName}.x] = {{"block" : f\"{cc['fg']['G1']}{{{valuableName}.icon}}{cc['end']}\", "id" : 0}}
-if s.main and not s.killAll: xps.getXP({xpType[entityType]})
+if s.main ==1 and not s.killAll:
+    s.Dungeon[{valuableName}.Dy][{valuableName}.Dx]['room'][{valuableName}.y][{valuableName}.x] = {{
+        "block" : f"{cc['fg']['G1']}{{{valuableName}.icon}}{cc['end']}",
+        "id"    : 900,
+        "nbt"   : {{
+            "count" : {ashChipType[entityType]}}}
+        }}
+if s.main and not s.killAll: xps.getXP({xpType[entityType]}*{valuableName}.xpMultiplier)
         """)
         if s.main == 1 and not s.killAll:
             s.killCount += 1

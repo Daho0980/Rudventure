@@ -152,8 +152,7 @@ while s.main:
 
     grp.showStage(
         stdscr,
-        f"- {s.stage}",
-        f"지 하   -{s.stage}   층"
+        f"지 하   {cc['fg']['R']}-{s.stage}{cc['end']}   층"
         ); s.stage += 1
 
     l.jpsf = 1

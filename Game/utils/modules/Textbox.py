@@ -70,10 +70,17 @@ def TextBox(
         for textLine in Texts:
             space = checkActualLen(escapeAnsi(textLine))
 
-            if   textLine == "TextBox.Line": Display += f"{Line[LineType][2][0]}{Line[LineType][3][0]*(maxLine+fullAddWidth)}{Line[LineType][2][1]}\n"
-            elif textLine.startswith("TextBox.Middle_"):
-                space   -= len("TextBox.Middle_")
-                Display += f"{Line[LineType][3][1]}{fillChar*int((maxLine-space)/2)}{textLine.lstrip('TextBox.Middle_')}{fillChar*(int((maxLine-space)/2) if not (maxLine-space)%2 else int((maxLine-space)/2)+1)}{Line[LineType][3][1]}\n"
+            if textLine.startswith("TextBox."):
+                if textLine == "TextBox.Line_": Display += f"{Line[LineType][2][0]}{Line[LineType][3][0]*(maxLine+fullAddWidth)}{Line[LineType][2][1]}\n"
+                elif textLine.startswith("TextBox.Middle_"):
+                    space   -= 15
+                    Display += f"{Line[LineType][3][1]}{fillChar*int((maxLine-space)/2)}{textLine.lstrip('TextBox.Middle_')}{fillChar*(int((maxLine-space)/2) if not (maxLine-space)%2 else int((maxLine-space)/2)+1)}{Line[LineType][3][1]}\n"
+                elif textLine.startswith("TextBox.Left_"):
+                    space   -= 13
+                    Display += f"{Line[LineType][3][1]}{textLine.lstrip('TextBox.Left_')}{fillChar*((maxLine-space)+addWidth)}{Line[LineType][3][1]}\n"
+                elif textLine.startswith("TextBox.Right_"):
+                    space   -= 14
+                    Display += f"{Line[LineType][3][1]}{fillChar*((maxLine-space)+addWidth)}{textLine.lstrip('TextBox.Right_')}{Line[LineType][3][1]}\n"
             else:
                 match Type:
                     case "left": BackSpace = fillChar*((maxLine-space)+addWidth)

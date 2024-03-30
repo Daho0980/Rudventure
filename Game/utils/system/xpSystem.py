@@ -29,7 +29,7 @@ def loseXp(count:int=0) -> None:
     while count > 0:
         if s.xp < count:
             if s.lvl == 0:
-                logger.addLog(f"{cc['fg']['F']}저주{cc['end']}가 부족합니다!")
+                logger.addLog(f"{cc['fg']['F']}저주{cc['end']}가 바닥났습니다!")
                 s.xp, s.Mxp, s.lvl = bfxp, bfMxp, bfLvl
                 break
             count -= s.xp

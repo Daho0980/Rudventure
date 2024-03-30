@@ -10,6 +10,7 @@ Global Functions 중 Graphic 옵션
 import re
 import math, time
 import psutil
+import unicodedata
 
 from Assets.data         import status, lockers
 from Assets.data.color   import cColors        as cc
@@ -18,7 +19,8 @@ from Game.utils.modules  import Textbox
 
 s, l = status, lockers
 
-escapeAnsi=lambda l:re.compile(r'(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]').sub('',l)
+escapeAnsi    =lambda l:re.compile(r'(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]').sub('',l)
+checkActualLen=lambda l: sum(map(lambda char:2 if unicodedata.east_asian_width(char)in['F','W']else 1,l))
 
 def addstrMiddle(
         stdscr,
@@ -49,20 +51,18 @@ def addstrMiddle(
     elif not returnEndyx and     returnStr: return output
     elif     returnEndyx and not returnStr: return y+len(string.split("\n")), x # type: ignore
 
-def showStage(stdscr, stageNum:str, stageName:str):
+def showStage(stdscr, stageName:str):
     """
-    `stage`(str)    : 현재 스테이지의 숫자\n
-    `stageName`(str): 현재 스테이지의 이름\n
-    `sound`(str)    : 스테이지 출력 시 같이 출력될 사운드, 기본적으로 `"smash"`로 설정되어 있음
+    `stageName`(str): 현재 스테이지의 이름
     """
     addstrMiddle(
         stdscr,
         Textbox.TextBox(
-            f"S T A G E   {cc['fg']['R']}{stageNum}{cc['end']}",
+            f"{cc['fg']['R']}나 락{cc['end']}",
             Type        ="middle",
             inDistance  =1,
             outDistance =3,
-            AMLS        =True, 
+            maxLine=int(checkActualLen(stageName)/2)+2,
             endLineBreak=True,
             LineType    ="double",
             addWidth    =3
@@ -74,7 +74,7 @@ def showStage(stdscr, stageNum:str, stageName:str):
     addstrMiddle(
         stdscr,
         Textbox.TextBox(
-            f"S T A G E   {cc['fg']['R']}{stageNum}{cc['end']}\n\n{cc['fg']['R']}{stageName}{cc['end']}",
+            f"{cc['fg']['R']}나 락{cc['end']}\n\n{stageName}",
             Type        ="middle",
             inDistance  =1,
             outDistance =3,
@@ -96,7 +96,7 @@ def statusBar(
         barType:str       ="Normal",
         frontTag:str      ="",
         backTag:str       ="",
-        space:int         =1,
+        space:int         =0,
         end:bool          =True,
         showComma:bool    =True,
         usePercentage:bool=False, 
@@ -121,10 +121,10 @@ def statusBar(
     emptyCellColor = cc['fg']['G1'] if not emptyCellColor else emptyCellColor
 
     barTypes:dict[str,list[str]] = {
-        "Normal"     : ["[", "]"],
-        "Cursed"     : ["<", ">"],
+        "Normal" :     ["[", "]"],
+        "Cursed" :     ["<", ">"],
         "OverCursed" : ["{", "}"],
-        "Curved"     : ["(", ")"]
+        "Curved" :     ["(", ")"]
     }
 
     maxStatus = status if not maxStatus else maxStatus
@@ -133,12 +133,12 @@ def statusBar(
     spaceLen:str         = " "*space
     statusForDisplay:int = 0
 
-    Display += f"{statusName} :{spaceLen}{frontTag} {barTypes[barType][0]}{color}" if len(statusName) > 0 else f"{spaceLen}{frontTag} {barTypes[barType][0]}{color}"
+    Display += f"{statusName} {spaceLen}{frontTag} {cc['fg']['G1']}{barTypes[barType][0]}{color}" if len(statusName) > 0 else f"{spaceLen}{frontTag} {cc['fg']['G1']}{barTypes[barType][0]}{color}"
     if usePercentage:
         status, maxStatus = round((status/maxStatus)*10), 10
     elif not usePercentage: statusForDisplay = maxStatus if status > maxStatus else status
     
-    Display += ('|'*statusForDisplay+emptyCellColor+'|'*((maxStatus-statusForDisplay) if showEmptyCell else 0)+f"{cc['end']}{barTypes[barType][1]}")
+    Display += ('|'*statusForDisplay+emptyCellColor+'|'*((maxStatus-statusForDisplay) if showEmptyCell else 0)+f"{cc['fg']['G1']}{barTypes[barType][1]}{cc['end']}")
     if status - maxStatus > 0: Display += f" {color}+{status-maxStatus}{cc['end']}"
     Display += f"{',' if len(backTag)>0 and showComma else ''} {backTag}"+("\n"if end else "")
 
@@ -168,11 +168,11 @@ def fieldPrint(stdscr, grid:list):
             AMLS          =True,
             endLineBreak  =True,
             LineType      ='double',
-            sideText      ="Dungeon Map",
+            sideText      ="던전 지도",
             sideTextPos  =["under", "middle"],
             coverSideText=True
             )
-        Display += addstrMiddle(stdscr, buffer, y=2, x=x-len(max(buffer.split("\n"))), returnStr=True)
+        Display += addstrMiddle(stdscr, buffer, y=2, x=x-checkActualLen(max(buffer.split("\n"))), returnStr=True)
 
     # Stage
     buffer   = "\n".join(GFD)
@@ -188,9 +188,10 @@ def fieldPrint(stdscr, grid:list):
     match s.statusDesign:
         case 0:
             buffer = Textbox.TextBox(
-f"""hp : {cc['fg']['R']}{s.hp}/{s.Mhp}{cc['end']} | def : {cc['fg']['B1']}{s.df}/{s.Mdf}{cc['end']}
-hunger : {cc['fg']['Y']}{round(s.hunger/10)}%{cc['end']} | atk : {cc['fg']['L']}{s.atk}{cc['end']}
-TextBox.Line\n"""+statusBar(
+f"""체력 : {cc['fg']['R']}{s.hp}/{s.Mhp}{cc['end']} | 방어력 : {cc['fg']['B1']}{s.df}/{s.Mdf}{cc['end']}
+허기 : {cc['fg']['Y']}{round(s.hunger/10)}%{cc['end']} | 공격력 : {cc['fg']['L']}{s.atk}{cc['end']}
+TextBox.Line_\nTextBox.Left_잿조각  {cc['fg']['G1']}{s.ashChip}{cc['end']}
+TextBox.Line_\n"""+statusBar(
                         int((s.xp/s.Mxp)*10),
                         maxStatus=10,
                         end      =False, # test code
@@ -204,34 +205,33 @@ TextBox.Line\n"""+statusBar(
                 Type         ="middle",
                 AMLS         =True,
                 LineType     ='double',
-                sideText     ="Status",
+                sideText     ="상태",
                 sideTextPos  =["under", "left"],
                 coverSideText=True
             )
         case 1:
             buffer = Textbox.TextBox(
                 ''.join([
-                    statusBar(s.hp, statusName="hp", maxStatus=s.Mhp, space=5),
-                    statusBar(s.df, statusName="def", maxStatus=s.Mdf, color=cc['fg']['B1'], space=4),
+                    statusBar(s.hp, statusName="체  력", maxStatus=s.Mhp),
+                    statusBar(s.df, statusName="방어력", maxStatus=s.Mdf, color=cc['fg']['B1']),
                     statusBar(
                         s.atk,
-                        statusName   ="atk",
+                        statusName   ="공격력",
                         maxStatus    =10,
                         color        =cc['fg']['L'],
-                        space        =4,
                         showEmptyCell=False,
                         ),
 
                     statusBar(
                         math.ceil(s.hunger/100),
-                        statusName="hunger",
+                        statusName="허  기",
                         maxStatus =10,
                         # end       =False,
                         color     =cc['fg']['Y'],
                         backTag   =f"{cc['fg']['Y']}{s.hunger}{cc['end']}" if s.hunger <= 100 else f"{cc['fg']['Y']}{round(s.hunger/10)}%{cc['end']}",
                         ),
-
-                    "TextBox.Line\nTextBox.Middle_"+statusBar(
+                    f"TextBox.Line_\n잿조각  {cc['fg']['G1']}{s.ashChip}{cc['end']}\n"
+                    "TextBox.Line_\nTextBox.Middle_"+statusBar(
                         int((s.xp/s.Mxp)*10),
                         maxStatus=10,
                         end      =False, # test code
@@ -239,13 +239,12 @@ TextBox.Line\n"""+statusBar(
                         barType  ="Cursed",
                         frontTag =f"{cc['fg']['F']}{s.lvl}{cc['end']}",
                         backTag  =f"{cc['fg']['F']}{s.lvl+1}{cc['end']}",
-                        space    =0, # normal = 5
                         showComma=False
                         )
                     ]),
                 AMLS         =True,
                 LineType     ='double',
-                sideText     ="Status",
+                sideText     ="상태",
                 sideTextPos  =["under", "left"],
                 coverSideText=True
             )
@@ -259,7 +258,7 @@ TextBox.Line\n"""+statusBar(
             maxLine        =x-3,
             LineType       ='double',
             alwaysReturnBox=False,
-            sideText       ="Log",
+            sideText       ="로그",
             sideTextPos    =["over", "middle"],
             coverSideText  =True
         ),
@@ -283,7 +282,7 @@ Number of total entities : {s.totalEntityCount}""",
                 AMLS         =True,
                 LineType     ="bold",
                 returnSizeyx =True,
-                sideText     ="Debug",
+                sideText     ="디버그 콘솔",
                 sideTextPos  =["over", "right"],
                 coverSideText=True
             )

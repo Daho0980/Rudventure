@@ -169,6 +169,10 @@ def move(Dir, Int:int) -> None:
             s.Dy, s.Dx = bfDy, bfDx
         else: s.Dungeon[s.Dy][s.Dx]['room'][positions[Type][0]][positions[Type][1]] = {"block" : s.ids[6], "id" : 6}
 
+    elif roomGrid[ty][tx]["id"] == 900:
+        s.ashChip += roomGrid[ty][tx]["nbt"]["count"]
+        logger.addLog(f"{cc['fg']['G1']}잿조각{cc['end']}을 {cc['fg']['G1']}{roomGrid[ty][tx]['nbt']['count']}{cc['end']}개 얻었습니다.")
+
     s.y, s.x                                = ty, tx
     s.Dungeon[bfDy][bfDx]['room'][bfy][bfx] = {"block" : s.ids[0], "id" : 0}
     s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x] = {"block":s.ids[300], "id":300}
