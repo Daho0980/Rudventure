@@ -1,7 +1,7 @@
 """
 Global Functions 중 Entity 옵션
 
-    ``addEntity`` : 모든 엔티티(적)을 소환할 수 있는 함수
+    ``addMonster`` : 모든 몬스터를 소환할 수 있는 함수
 """
 
 import threading, time
@@ -11,7 +11,7 @@ from Assets.data.color import cColors as cc
 from Game.core.system  import logger
 
 
-def addEntity(
+def addMonster(
         entityType:int,
         hpMtp:int,
         atkMtp:int,
@@ -34,22 +34,25 @@ def addEntity(
         `x`(list)         : 적이 소환될 x값, 리스트 형태로 `[방 x 최솟값, 방 x 최댓값]`과 같이 기입해도 되지만,
             특정 위치에 소환하려면 `int`형식으로 기입해야됨
     """
-    kinds:list[str]      = ["고통의 편린", "불안의 편린"]
-    classType:list[str]  = ["enemy", "observer"]
-    idType:list[int]     = [600, 601]
-    xpType:list[int]     = [3, 5]
-    hpType:list[int]     = [4, 10]
-    atkType:list[int]    = [1, 2]
-    icons:list[str]      = [s.ids[600], s.ids[601]]
+    kinds:list[str]           = ["고통의 편린", "불안의 편린", "원망의 편린"]
+    classType:list[str]       = ["enemy", "observer", "mine"]
+    idType:list[int]          = [600, 601, 602]
+    xpType:list[int]          = [3, 5, 3]
+    hpType:list[int]          = [4, 10, 5]
+    atkType:list[int]         = [1, 2, 7]
+    entityCountType:list[int] = [1, 1, 1]
+    icons:list[str]           = [s.ids[600], s.ids[601], s.ids[602]]
 
     name:str             = kinds[entityType]
     valuableName         = classType[entityType]
 
-    s.entities += 1
+    s.entityCount      += entityCountType[entityType]
+    s.totalEntityCount += 1
 
     def EntityInteraction() -> None:
         exec(f"""
 import time
+             
 from   Assets.data         import lockers, status
 from   Game.entities.enemy import mobs
 from   Game.utils.system   import xpSystem        as xps
@@ -65,7 +68,8 @@ while s.main == 1:
 
     if l.jpsf and not l.pause:
         if {valuableName}.hp <= 0:
-            s.entities -= 1
+            s.entityCount      -= {entityCountType[entityType]}
+            s.totalEntityCount -= 1
             break
         {valuableName}.move()
     else: time.sleep(0.1)

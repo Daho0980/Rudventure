@@ -56,7 +56,7 @@ def save() -> int:
         'roomLock', 'killAll',
         'DROD',
         'pauseText',
-        'entities', 'hitPos',
+        'entityCount', 'totalEntityCount', 'hitPos',
         'option',
         'maxStack', 'onDisplay', 'onTime',
         'debugScreen',

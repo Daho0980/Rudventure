@@ -11,7 +11,7 @@ from   Game.utils                       import graphic
 from   Game.utils.advanced              import DungeonMaker, keyHandler
 from   Game.utils.advanced.Rudconverter import save
 from   Game.utils.modules               import Textbox, cSelector
-from   Game.utils.system                import roomChecker
+from   Game.utils.system                import roomManager
 
 
 stdscr = Cusser(curses.initscr())
@@ -102,7 +102,7 @@ def gameChecker(stdscr):
             grp.addstrMiddle(
                 stdscr,
                 cc['fg']['L']+t.TextBox(
-                    f"   지 배   성 공   \n\n   \"{random.choice(c.victoryComment)}\"   ",
+                    f"   지 배   성 공   \n\n   \"{random.choice(c.victoryComment[int((s.hp/s.Mhp)*3)])}\"   ",
                     Type        ="middle",
                     inDistance  =1,
                     outDistance =1,
@@ -111,7 +111,12 @@ def gameChecker(stdscr):
                     LineType    ="bold"
                     )+cc['end']
                 ); stdscr.refresh()
-            time.sleep(2.5)
+            logger.clear()
+            s.killAll = True
+            time.sleep(0.6)
+            s.killAll = False
+
+            time.sleep(1.9)
             stdscr.clear(); stdscr.refresh()
 
 
@@ -143,7 +148,7 @@ while s.main:
     s.Dungeon = dgm.DungeonMaker()
 
     p.start(4, 4, 6, 6)
-    roomChecker.placeRandomOrbs()
+    roomManager.placeRandomOrbs()
 
     grp.showStage(
         stdscr,
@@ -158,7 +163,7 @@ while s.main:
             playerChecker()
             grp.fieldPrint(stdscr, s.Dungeon[s.Dy][s.Dx]['room'])
             if not quickStarter: stdscr.refresh(); quickStarter=1
-            roomChecker.main()
+            roomManager.main()
             time.sleep(s.frame)
         else: time.sleep(1)
     if s.hunger <= 0: s.DROD = [f"{cc['fg']['Y']}아사{cc['end']}", 'Y']

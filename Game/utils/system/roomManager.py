@@ -4,7 +4,7 @@ from   random    import randrange, choice
 from Assets.data          import comments, lockers, status, percentage
 from Assets.data.color    import cColors                              as cc
 from Game.core.system     import logger
-from Game.entities.entity import addEntity
+from Game.entities.entity import addMonster
 from Game.utils.modules   import cSelector
 from Game.utils.system    import placeRandomBlock
 
@@ -42,9 +42,9 @@ def summonMonster(
 
         count                                = data['summonCount']
         s.Dungeon[s.Dy][s.Dx]['summonCount'] = 0
-        monsterType                          = [0, 1]
+        monsterType                          = [0, 1, 2]
         for _ in range(count):
-            addEntity(
+            addMonster(
                 choice(monsterType)if useRandom else monsterIndex,
                 hpMultiplier,
                 atkMultiplier,
@@ -116,7 +116,7 @@ def main() -> None:
                     summonMonster(data)
 
                     changeDoorPosBlock(1, data)
-                elif not s.entities and s.roomLock:
+                elif not s.entityCount and s.roomLock:
 
                     s.roomLock                           = False
                     s.Dungeon[s.Dy][s.Dx]['interaction'] = True
@@ -151,7 +151,7 @@ def main() -> None:
 
                     s.Dungeon[s.Dy][s.Dx]['room'][6][6] = {"block" : s.ids[0], "id" : 0}
                     changeDoorPosBlock(1, data)
-                elif not s.entities and s.roomLock:
+                elif not s.entityCount and s.roomLock:
 
                     s.roomLock = False
                     s.Dungeon[s.Dy][s.Dx]['room'][6][6]  = {"block" : s.ids[5], "id" : 5}

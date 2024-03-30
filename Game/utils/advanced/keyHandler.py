@@ -1,6 +1,7 @@
 import curses
 import time
 import threading
+import asyncio
 
 from Assets.data             import lockers, status, color
 from Game.core.system.logger import addLog
@@ -12,7 +13,7 @@ l, s = lockers, status
 cc   = color.cColors
 
 def add() -> None:
-    def interactions(stdscr):
+    async def interactions(stdscr):
         while s.main:
             if l.jpsf:
                 key = stdscr.getch()
@@ -30,6 +31,6 @@ def add() -> None:
                             addLog(f"스탯 창 디자인이 \'{['콤팩트', '코지'][s.statusDesign]}\'로 변경되었습니다.")
 
                 if key == 32: l.pause = False if l.pause else True # Space
-            else: time.sleep(1)
+            else: await asyncio.sleep(1)
 
-    threading.Thread(name="keyListener",target=lambda: curses.wrapper(interactions)).start()
+    threading.Thread(name="keyHandler",target=lambda: curses.wrapper(lambda stdscr: asyncio.run(interactions(stdscr)))).start()

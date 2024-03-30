@@ -277,7 +277,8 @@ Memory usage : {psutil.Process().memory_info().rss/2**20: .5f} MB
 Number of threads : {psutil.Process().num_threads()}
 
 Dx : {s.Dx}, Dy : {s.Dy}, x : {s.x}, y : {s.y}
-Number of entities : {s.entities}""",
+Number of entities : {s.entityCount}
+Number of total entities : {s.totalEntityCount}""",
                 Type         ="right",
                 AMLS         =True,
                 LineType     ="bold",

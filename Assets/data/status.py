@@ -99,7 +99,10 @@ ids:dict[int,str] = {
     301 : "&", # 0, 255, 10
 
     600 : '%',
-    601 : '#'
+    601 : '#',
+    602 : "※",
+
+    900 : ';'
 }
 
 orbIds:dict[str,dict[str,list[int]]] = {
@@ -118,11 +121,12 @@ orbIds:dict[str,dict[str,list[int]]] = {
 
 stepableBlocks:list[int]               = [0, 4, 7]
 interactableBlocks:dict[str,list[int]] = {
-    "canStepOn"    : [4, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
-    "cannotStepOn" : [-1, 1, 2, 3, 5, 6, 600, 601]
+    "canStepOn"    : [4, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 900],
+    "cannotStepOn" : [-1, 1, 2, 3, 5, 6, 600, 601],
+    "explodable"   : [0, 4, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 900]
 }
 
-enemyIds:list[int] = [600, 601]
+enemyIds:list[int] = [600, 601, 602]
 
 # Stage settings
 stage:int     = 0
@@ -144,8 +148,9 @@ cowardMode:bool  = False
 ezMode:bool      = False
 publicMode:bool  = False
 
-entities:int = 0
-hitPos:list  = []
+entityCount:int      = 0
+totalEntityCount:int = 0
+hitPos:list           = []
 
 # Log system
 maxStack:int        = 10
