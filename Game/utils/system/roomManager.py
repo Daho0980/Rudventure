@@ -31,10 +31,11 @@ def changeDoorPosBlock(ID:int, data:dict) -> None:
 
 def summonMonster(
         data:dict,
-        hpMultiplier:int =1,
-        atkMultiplier:int=1,
-        monsterIndex:int =0,
-        useRandom:bool   =True
+        hpMultiplier:int     =1,
+        atkMultiplier:int    =1,
+        ashChipMultiplier:int=1,
+        monsterIndex:int     =0,
+        useRandom:bool       =True
         ) -> None:
     # type, hp
     def event() -> None:
@@ -48,6 +49,7 @@ def summonMonster(
                 choice(monsterType)if useRandom else monsterIndex,
                 hpMultiplier,
                 atkMultiplier,
+                ashChipMultiplier,
                 Dy=s.Dy,
                 Dx=s.Dx,
                 y =[1, len(data['room'])-2   ],
@@ -147,7 +149,7 @@ def main() -> None:
 
             case 4:
                 if data['summonCount'] > 0:
-                    summonMonster(data, 3, 2)
+                    summonMonster(data, 3, 2, 10)
 
                     s.Dungeon[s.Dy][s.Dx]['room'][6][6] = {"block" : s.ids[0], "id" : 0}
                     changeDoorPosBlock(1, data)

@@ -15,6 +15,7 @@ def addMonster(
         entityType:int,
         hpMtp:int,
         atkMtp:int,
+        acMtp:int,
         Dy:int,
         Dx:int,
         y:list,
@@ -79,7 +80,7 @@ if s.main ==1 and not s.killAll:
         "block" : f"{cc['fg']['G1']}{{{valuableName}.icon}}{cc['end']}",
         "id"    : 900,
         "nbt"   : {{
-            "count" : {ashChipType[entityType]}}}
+            "count" : {ashChipType[entityType]*acMtp}}}
         }}
 if s.main and not s.killAll: xps.getXP({xpType[entityType]}*{valuableName}.xpMultiplier)
         """)
