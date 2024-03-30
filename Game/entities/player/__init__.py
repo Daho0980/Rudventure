@@ -12,7 +12,7 @@ from Game.utils.system    import xpSystem
 s, r = status, rooms
 
 def set() -> None:
-    s.hp       = 100
+    s.hp       = 10
     s.df       = 5
     s.atk      = 1
     s.hunger   = 1000
