@@ -28,6 +28,7 @@ def setData(data):
     s.lvl            = data['lvl']
     s.critDMG        = data['critDMG']
     s.critRate       = data['critRate']
+    s.ashChip        = data['ashChip']
 
     s.Mhp            = data['Mhp']
     s.Mdf            = data['Mdf']
