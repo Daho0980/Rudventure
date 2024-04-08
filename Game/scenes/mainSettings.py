@@ -28,6 +28,8 @@ def setIconColor() -> None:
     s.ids[19]  = f"{cc['fg']['F']}Ø{cc['end']}"
     s.ids[300] = f"{cc['fg']['L']}@{cc['end']}"
     s.ids[301] = f"{cc['fg']['L']}&{cc['end']}"
+    s.ids[400] = f"{cc['fg']['A']}Y{cc['end']}"
+    s.ids[401] = f"{cc['fg']['F']}Y{cc['end']}"
     s.ids[900] = f"{cc['fg']['G1']};{cc['end']}"
 
 def main(stdscr) -> None:

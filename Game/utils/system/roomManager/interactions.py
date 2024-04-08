@@ -1,16 +1,11 @@
 import threading
-from   random    import randrange, choice
+from   random   import randrange, choice
 
-from Assets.data          import comments, lockers, status, percentage
-from Assets.data.color    import cColors                              as cc
-from Game.core.system     import logger
+from Assets.data          import status          as s
+from Assets.data.color    import cColors         as cc
 from Game.entities.entity import addMonster
-from Game.utils.modules   import cSelector
 from Game.utils.system    import placeRandomBlock
 
-
-c, l, s  = comments, lockers, status
-selector = cSelector
 
 def changeDoorPosBlock(ID:int, data:dict) -> None:
     DPG:dict[str,list[int]] = {
@@ -35,7 +30,8 @@ def summonMonster(
         atkMultiplier:int    =1,
         ashChipMultiplier:int=1,
         monsterIndex:int     =0,
-        useRandom:bool       =True
+        useRandom:bool       =True,
+        boss:bool            =False
         ) -> None:
     # type, hp
     def event() -> None:
@@ -43,7 +39,7 @@ def summonMonster(
 
         count                                = data['summonCount']
         s.Dungeon[s.Dy][s.Dx]['summonCount'] = 0
-        monsterType                          = [0, 1, 2]
+        monsterType                          = [[0,1,2],[0,1]][boss]
         for _ in range(count):
             addMonster(
                 choice(monsterType)if useRandom else monsterIndex,
@@ -106,57 +102,3 @@ def placeRandomOrbs(multiple:int=1) -> None:
             [1, len(roomGrid)-2],
             [0]
             )
-
-def main() -> None:
-    data:dict = s.Dungeon[s.Dy][s.Dx]
-
-    if l.jpsf and not data['interaction']:
-        commentP = randrange(0, 2)
-        match data['roomType']:
-            case 1:
-                if data['summonCount'] > 0:
-                    summonMonster(data)
-
-                    changeDoorPosBlock(1, data)
-                elif not s.entityCount and s.roomLock:
-
-                    s.roomLock                           = False
-                    s.Dungeon[s.Dy][s.Dx]['interaction'] = True
-                    if randrange(0, 101) > percentage.clearedRoomLoot: placeRandomOrbs()
-                    changeDoorPosBlock(2, data)
-
-            case 2:
-                logger.addLog(f"(슬쩍) 아직 {cc['fg']['L']}이벤트{cc['end']}는 {cc['fg']['R']}{s.cMarkdown([1,2])}안{cc['end']} 만들었답니다 ㅎㅎ;")
-                s.Dungeon[s.Dy][s.Dx]['interaction'] = True
-
-            case 3:
-                rewardP = randrange(1, 101)
-                comment = ""
-
-                if rewardP > 30:
-                    s.Dungeon[s.Dy][s.Dx]['room'][6][6] = {"block" : s.ids[4], "id" : 4}
-                    if commentP: comment = choice(c.treasureRoomComment[0])
-                elif 10 <= rewardP < 30:
-                    for i in range(5, 8): s.Dungeon[s.Dy][s.Dx]['room'][i][i] = {"block" : s.ids[4], "id" : 4}
-                    if commentP: comment = choice(c.treasureRoomComment[1])
-                else:
-                    for i in range(5, 8): s.Dungeon[s.Dy][s.Dx]['room'][i][i] = {"block" : s.ids[4], "id" : 4}
-                    s.Dungeon[s.Dy][s.Dx]['room'][5][7] = {"block" : s.ids[4], "id" : 4}
-                    s.Dungeon[s.Dy][s.Dx]['room'][7][5] = {"block" : s.ids[4], "id" : 4}
-                    if commentP: comment = choice(c.treasureRoomComment[2])
-                if commentP: logger.addLog(f"{cc['fg']['L']}\"{comment}\"{cc['end']}")
-                s.Dungeon[s.Dy][s.Dx]['interaction'] = True
-
-            case 4:
-                if data['summonCount'] > 0:
-                    summonMonster(data, 3, 2, 10)
-
-                    s.Dungeon[s.Dy][s.Dx]['room'][6][6] = {"block" : s.ids[0], "id" : 0}
-                    changeDoorPosBlock(1, data)
-                elif not s.entityCount and s.roomLock:
-
-                    s.roomLock = False
-                    s.Dungeon[s.Dy][s.Dx]['room'][6][6]  = {"block" : s.ids[5], "id" : 5}
-                    s.Dungeon[s.Dy][s.Dx]['interaction'] = True
-                    placeRandomOrbs(multiple=2)
-                    changeDoorPosBlock(2, data)

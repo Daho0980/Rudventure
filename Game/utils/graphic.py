@@ -20,7 +20,7 @@ from Game.utils.modules  import Textbox
 s, l = status, lockers
 
 escapeAnsi    =lambda l:re.compile(r'(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]').sub('',l)
-checkActualLen=lambda l: sum(map(lambda char:2 if unicodedata.east_asian_width(char)in['F','W']else 1,l))
+checkActualLen=lambda l:sum(map(lambda char:2 if unicodedata.east_asian_width(char)in['F','W']else 1,l))
 
 def addstrMiddle(
         stdscr,
@@ -36,7 +36,7 @@ def addstrMiddle(
         lambda c:c[0]-round([len(lines)/2,max(lines)/2][c[1]]),
         list(zip(map(lambda n:round(n/2),list(stdscr.getmaxyx())),[0,1]))
         )
-    y, x = y+addOnCoordinate[0], x+addOnCoordinate[1]
+    y, x = y+addOnCoordinate[0], x+addOnCoordinate[1]+1
     output:str = ''.join(
         [
             escc for line in zip(
@@ -61,8 +61,7 @@ def showStage(stdscr, stageName:str):
             f"{cc['fg']['R']}나 락{cc['end']}",
             Type        ="middle",
             inDistance  =1,
-            outDistance =3,
-            maxLine=int(checkActualLen(stageName)/2)+2,
+            maxLine=int(checkActualLen(stageName)/2)+1,
             endLineBreak=True,
             LineType    ="double",
             addWidth    =3
@@ -189,7 +188,7 @@ def fieldPrint(stdscr, grid:list):
         case 0:
             buffer = Textbox.TextBox(
 f"""체력 : {cc['fg']['R']}{s.hp}/{s.Mhp}{cc['end']} | 방어력 : {cc['fg']['B1']}{s.df}/{s.Mdf}{cc['end']}
-허기 : {cc['fg']['Y']}{round(s.hunger/10)}%{cc['end']} | 공격력 : {cc['fg']['L']}{s.atk}{cc['end']}
+허기 : {cc['fg']['Y']}{s.hunger if s.hunger<=100 else f'{round(s.hunger/10)}%'}{cc['end']} | 공격력 : {cc['fg']['L']}{s.atk}{cc['end']}
 TextBox.Line_\nTextBox.Left_잿조각  {cc['fg']['G1']}{s.ashChip}{cc['end']}
 TextBox.Line_\n"""+statusBar(
                         int((s.xp/s.Mxp)*10),
@@ -226,15 +225,14 @@ TextBox.Line_\n"""+statusBar(
                         math.ceil(s.hunger/100),
                         statusName="허  기",
                         maxStatus =10,
-                        # end       =False,
                         color     =cc['fg']['Y'],
-                        backTag   =f"{cc['fg']['Y']}{s.hunger}{cc['end']}" if s.hunger <= 100 else f"{cc['fg']['Y']}{round(s.hunger/10)}%{cc['end']}",
+                        backTag   =f"{cc['fg']['Y']}{s.hunger if s.hunger<=100 else f'{round(s.hunger/10)}%'}{cc['end']}"
                         ),
                     f"TextBox.Line_\n잿조각  {cc['fg']['G1']}{s.ashChip}{cc['end']}\n"
                     "TextBox.Line_\nTextBox.Middle_"+statusBar(
                         int((s.xp/s.Mxp)*10),
                         maxStatus=10,
-                        end      =False, # test code
+                        end      =False,
                         color    =cc['fg']['F'],
                         barType  ="Cursed",
                         frontTag =f"{cc['fg']['F']}{s.lvl}{cc['end']}",

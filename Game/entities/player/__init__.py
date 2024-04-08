@@ -23,6 +23,7 @@ def set() -> None:
     s.Mhp      = s.hp
     s.Mdf      = s.df
     s.Mxp      = 10
+    s.Mlvl     = 25
 
 def start(Dy:int, Dx:int, y:int, x:int) -> None:
     s.Dungeon[Dy][Dx]['room'][y][x] = {"block":s.ids[300], "id":300}
@@ -169,10 +170,30 @@ def move(Dir, Int:int) -> None:
             s.Dy, s.Dx = bfDy, bfDx
         else: s.Dungeon[s.Dy][s.Dx]['room'][positions[Type][0]][positions[Type][1]] = {"block" : s.ids[6], "id" : 6}
 
+    elif roomGrid[ty][tx]["id"] == 400:
+        s.Dy, s.Dx = bfDy, bfDx
+
+        if s.lvl<5:
+            ty, tx     = bfy, bfx
+            logger.addLog(f"{cc['fg']['L']}당신{cc['end']}은 아직 {cc['fg']['F']}자격{cc['end']}이 주어지지 않았습니다.")
+            return
+        else:        
+            s.lvl           -= 5
+            s.Mxp           -= 15
+            roomGrid[ty][tx] = {"block" : s.ids[401], "id" : 401}
+            ty, tx           = bfy, bfx
+
+            logger.addLog(f"{cc['fg']['L']}당신{cc['end']}의 몸에서 {cc['fg']['F']}저주{cc['end']}가 빠져나가는 것이 느껴집니다...")
+
+    elif roomGrid[ty][tx]["id"] == 401:
+        ty, tx     = bfy, bfx
+        s.Dy, s.Dx = bfDy, bfDx
+        logger.addLog(f"이 {cc['fg']['A']}신상{cc['end']}은 이미 {cc['fg']['F']}저주{cc['end']}에 물들었습니다...")
+
     elif roomGrid[ty][tx]["id"] == 900:
         s.ashChip += roomGrid[ty][tx]["nbt"]["count"]
         logger.addLog(f"{cc['fg']['G1']}잿조각{cc['end']}을 {cc['fg']['G1']}{roomGrid[ty][tx]['nbt']['count']}{cc['end']}개 얻었습니다.")
 
     s.y, s.x                                = ty, tx
-    s.Dungeon[bfDy][bfDx]['room'][bfy][bfx] = {"block" : s.ids[0], "id" : 0}
-    s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x] = {"block":s.ids[300], "id":300}
+    s.Dungeon[bfDy][bfDx]['room'][bfy][bfx] = {"block" : s.ids[0],   "id" : 0  }
+    s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x] = {"block" : s.ids[300], "id" : 300}

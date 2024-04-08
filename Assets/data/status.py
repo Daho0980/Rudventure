@@ -51,6 +51,7 @@ lvl:int          = 0
 Mhp:int          = 0
 Mdf:int          = 0
 Mxp:int          = 0
+Mlvl:int         = 0
 
 atk:int          = 0
 critRate:int     = 0
@@ -80,36 +81,39 @@ LOGO:str = f"""
 welcomeMessage:list[str] = []
 
 ids:dict[int,str] = {
-    -1 : ' ',
-    0 :  ' ',
-    1 :  '■',
-    2 :  '.',
-    3 :  ' ',
-    4 :  "É",
-    5 :  "F",
-    6 :  '☒',
-    7 :  "X",
-    8 :  "O",
-    9 :  "o",
-    10 : "o",
-    11 : "q",
-    12 : "v",
-    13 : "o",
-    14 : "ø",
-    15 : "O",
-    16 : "Q",
-    17 : "V",
-    18 : "O",
-    19 : "Ø",
+    -1 : ' ',  # 무적
+    0 :  ' ',  # 바닥
+    1 :  '■', # 벽
+    2 :  '.',  # 문
+    3 :  ' ',  # 가짜벽
+    4 :  "É",  # 아이템
+    5 :  "F",  # 출구
+    6 :  '☒',  # 상자
+    7 :  "X",  # 상자 표적
+    8 :  "O",  # 말랑이 1
+    9 :  "o",  # 말랑이 2
+    10 : "o",  # 작은 체력 구슬
+    11 : "q",  # 작은 방어력 구슬
+    12 : "v",  # 작은 공격력 구슬
+    13 : "o",  # 작은 허기 구슬
+    14 : "ø",  # 작은 저주 구슬
+    15 : "O",  # 큰 체력 구슬
+    16 : "Q",  # 큰 방어력 구슬
+    17 : "V",  # 큰 공격력 구슬
+    18 : "O",  # 큰 허기 구슬
+    19 : "Ø",  # 큰 저주 구슬
 
-    300 : "@", # 0, 255, 10
-    301 : "&", # 0, 255, 10
+    300 : "@", # 0, 255, 10 & 플레이어 1
+    301 : "&", # 0, 255, 10 & 플레이어 2
 
-    600 : '%',
-    601 : '#',
-    602 : "※",
+    400 : "Y", # 저주를 씻어내는 신상
+    401 : "Y", # 오염된 저주를 씻어내는 신상
 
-    900 : ';'
+    600 : '%', # 고통
+    601 : '#', # 불안
+    602 : "※", # 원망
+
+    900 : ';'  # 잿조각
 }
 
 orbIds:dict[str,dict[str,list[int]]] = {
@@ -129,8 +133,8 @@ orbIds:dict[str,dict[str,list[int]]] = {
 stepableBlocks:list[int]               = [0, 4, 7]
 interactableBlocks:dict[str,list[int]] = {
     "canStepOn"    : [4, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 900],
-    "cannotStepOn" : [-1, 1, 2, 3, 5, 6, 600, 601],
-    "explodable"   : [0, 4, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 900]
+    "cannotStepOn" : [-1, 1, 2, 3, 5, 6, 400, 401, 600, 601, 602],
+    "explodable"   : [0, 4, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 400, 401, 900]
 }
 
 enemyIds:list[int] = [600, 601, 602]
@@ -142,6 +146,7 @@ stage:int     = 0
 s:str         = ''
 TFP:str       = ""
 pythonVersion = __import__("sys").version_info
+
 
 Dungeon:list     = []
 roomLock:bool    = False
@@ -155,9 +160,10 @@ cowardMode:bool  = False
 ezMode:bool      = False
 publicMode:bool  = False
 
+# Entity related
 entityCount:int      = 0
 totalEntityCount:int = 0
-hitPos:list           = []
+hitPos:list          = []
 
 # Log system
 maxStack:int        = 10

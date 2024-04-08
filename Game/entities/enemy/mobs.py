@@ -1,4 +1,5 @@
-import random, time
+import time
+from   random import randrange, choice
 
 from   Assets.data             import status, lockers
 from   Assets.data.color       import cColors        as cc
@@ -34,11 +35,11 @@ class enemy:
 
     def damaged(self) -> None:
         if s.hitPos and [self.y, self.x] in s.hitPos:
-            rate:int         = random.randrange(1,101)
+            rate:int         = randrange(1,101)
             crit, dmg, = 0, s.atk
             if rate <= s.critRate:
                 crit = 1
-                dmg  = round(eval(f"(s.atk+(s.critDMG*0.1)){random.choice(['+', '-'])}(s.atk*(s.critDMG*0.005))"))
+                dmg  = round(eval(f"(s.atk+(s.critDMG*0.1)){choice(['+', '-'])}(s.atk*(s.critDMG*0.005))"))
             elif rate >= 90:
                 dmg = 0
 
@@ -58,9 +59,9 @@ class enemy:
 
         if isinstance(y, list) and isinstance(x, list):
             while 1:
-                sY  = random.randrange(1,len(nowDRP['room'])-1)
-                sX  = random.randrange(1,len(nowDRP['room'][0])-1)
-                if s.Dungeon[Dy][Dx]['room'][sY][sX]["id"] in [2, 1, 5, 600, 601, 602, 4, 300, 6, 7]:
+                sY  = randrange(1,len(nowDRP['room'])-1)
+                sX  = randrange(1,len(nowDRP['room'][0])-1)
+                if s.Dungeon[Dy][Dx]['room'][sY][sX]["id"] in s.interactableBlocks["cannotStepOn"]:
                     continue
                 else:
                     self.x, self.y = sX, sY
@@ -70,9 +71,9 @@ class enemy:
             self.Dy, self.Dx = Dy, Dx
             self.y, self.x   = y, x
 
-    def pDamage(self) -> None:
+    def pDamage(self, DR:str="") -> None:
         event.hitted()
-        s.DROD = [f"{cc['fg']['F']}{self.name}{cc['end']}", 'F']
+        s.DROD = [f"{cc['fg']['F']}{self.name if not DR else DR}{cc['end']}", 'F']
         if s.df > 0:
             s.df -= self.atk
             if s.df < 0                    : s.hp += s.df
@@ -88,7 +89,7 @@ class enemy:
         nowDRP = s.Dungeon[self.Dy][self.Dx]
 
         if not self.coolTime:
-            self.coolTime = int((random.randrange(60, 81)*10)/2) if s.publicMode else random.randrange(60, 81)*10
+            self.coolTime = int((randrange(60, 81)*10)/2) if s.publicMode else randrange(60, 81)*10
             if self.isFocused:
                 if [self.Dy, self.Dx] != [s.Dy, s.Dx]:   self.isFocused = False; return
                 if self.stepped not in s.stepableBlocks: self.stepped   = 0
@@ -97,7 +98,7 @@ class enemy:
                 
                 bfx, bfy = self.x, self.y
                 if self.hp > 0:
-                    if random.randrange(1,3000) == 1215:
+                    if randrange(1,3000) == 1215:
                         self.atk += 1+(round(s.stage/10))
                         addLog(f"{cc['fg']['F']}{self.name}{cc['end']}({self.icon})이 울부짖습니다!")
                         addLog(f"{cc['fg']['F']}{self.name}{cc['end']}({self.icon})의 공격력이 {cc['fg']['L']}{1+(round(s.stage/10))}{cc['end']} 상승합니다.")
@@ -117,14 +118,14 @@ class enemy:
                         nowDRP['room'][self.y][self.x] = {"block" : f"{cc['fg']['F']}{self.icon}{cc['end']}", "id" : -1}; time.sleep(0.1)
                         nowDRP['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id}
                         if s.ezMode:
-                            if random.randrange(1,11)<8: addLog(f"{cc['fg']['F']}{self.name}{cc['end']}의 공격을 피했습니다!")
-                            else:                        enemy.pDamage(self)
-                        else: enemy.pDamage(self)
+                            if randrange(1,11)<8: addLog(f"{cc['fg']['F']}{self.name}{cc['end']}의 공격을 피했습니다!")
+                            else:                        enemy.pDamage(self, choice(["물어뜯김", "중요 부위 손상", "쇼크"]))
+                        else: enemy.pDamage(self, choice(["물어뜯김", "중요 부위 손상", "쇼크"]))
                     else:
                         while 1:
-                            moveTo:int = random.randrange(-1,2)
+                            moveTo:int = randrange(-1,2)
 
-                            if random.randrange(0,2):
+                            if randrange(0,2):
                                 if self.x + moveTo > len(nowDRP['room'][self.y])-1: continue
                                 self.x += moveTo
                             else:
@@ -137,9 +138,9 @@ class enemy:
 
                             if nowDRP['room'][self.y][self.x]["id"] == 300:
                                 if s.ezMode:
-                                    if random.randrange(1,11)<8: addLog(f"{cc['fg']['F']}{self.name}{cc['end']}의 공격을 피했습니다!")
-                                    else:                        enemy.pDamage(self)
-                                else: enemy.pDamage(self)
+                                    if randrange(1,11)<8: addLog(f"{cc['fg']['F']}{self.name}{cc['end']}의 공격을 피했습니다!")
+                                    else:                        enemy.pDamage(self, choice(["물어뜯김", "중요 부위 손상", "쇼크"]))
+                                else: enemy.pDamage(self, choice(["물어뜯김", "중요 부위 손상", "쇼크"]))
                             break
                     s.Dungeon[self.Dy][self.Dx]['room'][bfy][bfx]       = {"block" : s.ids[self.stepped], "id" : self.stepped}
                     s.Dungeon[self.Dy][self.Dx]['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id}
@@ -174,7 +175,7 @@ class observer(enemy):
                 nowDRP['room'][self.y][self.x] = {"block" : self.icon, "id" : -1}; time.sleep(0.07)
 
         if not self.coolTime:
-            self.coolTime = int((random.randrange(40, 61)*10)/2) if s.publicMode else random.randrange(40, 61)*10
+            self.coolTime = int((randrange(40, 61)*10)/2) if s.publicMode else randrange(40, 61)*10
             if self.isFocused:
                 if self.stepped not in s.stepableBlocks: self.stepped = 0
                 elif nowDRP['room'][self.y][self.x]["id"] in s.stepableBlocks and nowDRP['room'][self.y][self.x]["id"] not in [4, 7]:
@@ -196,9 +197,9 @@ class observer(enemy):
                                 if not l.pause:
                                     if nowDRP['room'][eval(f"self.y{Moves1[a]}1")][self.x]["id"] == 300:
                                         if s.ezMode:
-                                            if random.randrange(1,11)<8: addLog(f"{cc['fg']['F']}{self.name}{cc['end']}의 공격을 피했습니다!")
-                                            else:                        enemy.pDamage(self)
-                                        else: enemy.pDamage(self)
+                                            if randrange(1,11)<8: addLog(f"{cc['fg']['F']}{self.name}{cc['end']}의 공격을 피했습니다!")
+                                            else:                        enemy.pDamage(self, choice(["충격파", "교통사고", "들이박힘"]))
+                                        else: enemy.pDamage(self, choice(["충격파", "교통사고", "들이박힘"]))
                                     if nowDRP['room'][eval(f"self.y{Moves1[a]}1")][self.x]["id"] not in canBreak: break
                                     nowDRP['room'][self.y][self.x] = {"block" : s.ids[0], "id" : 0}
                                     exec(f"self.y{Moves[a]}1"); nowDRP['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id}
@@ -213,16 +214,16 @@ class observer(enemy):
                                 if not l.pause:
                                     if nowDRP['room'][self.y][eval(f"self.x{Moves1[a]}1")]["id"] == 300:
                                         if s.ezMode:
-                                            if random.randrange(1,11)<8: addLog(f"{cc['fg']['F']}{self.name}{cc['end']}의 공격을 피했습니다!")
-                                            else:                        enemy.pDamage(self)
-                                        else: enemy.pDamage(self)
+                                            if randrange(1,11)<8: addLog(f"{cc['fg']['F']}{self.name}{cc['end']}의 공격을 피했습니다!")
+                                            else:                        enemy.pDamage(self, choice(["충격파", "교통사고", "들이박힘"]))
+                                        else: enemy.pDamage(self, choice(["충격파", "교통사고", "들이박힘"]))
                                     if nowDRP['room'][self.y][eval(f"self.x{Moves1[a]}1")]["id"] not in canBreak: break
                                     nowDRP['room'][self.y][self.x] = {"block" : s.ids[0], "id" : 0}
                                     exec(f"self.x{Moves[a]}1"); nowDRP['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id}
                                 time.sleep(0.1)
                     else:
                         bfx, bfy = self.x, self.y
-                        if random.randrange(0,2):
+                        if randrange(0,2):
                             self.x += 1 if self.x<s.x and nowDRP['room'][self.y][self.x+1]["id"] in s.stepableBlocks\
                                 else -1 if self.x>s.x and nowDRP['room'][self.y][self.x-1]["id"] in s.stepableBlocks\
                                 else  0
@@ -295,7 +296,7 @@ class mine(enemy):
                 if nowDRP['room'][expP[0]][expP[1]] == {"block" : f"{cc['fg']['F']}.{cc['end']}", "id" : -1}:
                     nowDRP['room'][expP[0]][expP[1]] = {"block" : f"{cc['fg']['G1']}.{cc['end']}", "id": 0}
             
-            self.icon = random.choice(['×', 'x', 'X'])
+            self.icon = choice(['×', 'x', 'X'])
             self.hp   = 0
             
         if not self.coolTime:
@@ -322,12 +323,12 @@ class mine(enemy):
                         ]
                         if 300 in exPos:
                             if s.ezMode:
-                                if random.randrange(1,11)<8: addLog(f"{cc['fg']['F']}{self.name}{cc['end']}의 공격을 피했습니다!")
-                                else:                        enemy.pDamage(self)
-                            else: enemy.pDamage(self)
+                                if randrange(1,11)<8: addLog(f"{cc['fg']['F']}{self.name}{cc['end']}의 공격을 피했습니다!")
+                                else:                        enemy.pDamage(self, "폭발")
+                            else: enemy.pDamage(self, "폭발")
                             explode()
                             self.xpMultiplier = 2
-                            if random.randrange(0,2): addLog(f"{cc['fg']['L']}\"{random.choice(TIOTAComments)}\"{cc['end']}")
+                            if randrange(0,2): addLog(f"{cc['fg']['L']}\"{choice(TIOTAComments)}\"{cc['end']}")
                         else: nowDRP['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id}
                     else: blink()
 

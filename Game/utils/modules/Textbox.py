@@ -2,6 +2,8 @@ import unicodedata, re
 from   math           import ceil
 from   itertools      import chain
 
+from Assets.data.color import cColors as cc
+
 
 escapeAnsi     = lambda l: re.compile(r'(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]').sub('',l)
 checkActualLen = lambda l: sum(map(lambda char:2 if unicodedata.east_asian_width(char)in['F','W']else 1,l))
@@ -21,7 +23,8 @@ def TextBox(
         alwaysReturnBox:bool =True,
         sideText:str         ="",
         sideTextPos:list[str]=["over", "middle"],
-        coverSideText:bool   =False
+        coverSideText:bool   =False,
+        coverColor:str       =""
         ) -> str:
         """
         ``Inp``(str)                                                                : 텍스트박스 내용, 줄바꿈하려면 `\\n`을 사용해야 함\n
@@ -38,6 +41,7 @@ def TextBox(
         ``alwaysReturnBox``(bool)                                                   : 빈 문자열 입력 시 무조건적인 박스 반환 여부, 기본적으로 `True`로 설정되어 있음\n
         ``sideText``(str)                                                           : 텍스트박스의 선 사이에 들어갈 텍스트, 기본적으로 `""`로 설정되어 있음\n
         ``sideTextPos``(list[str("over", "under"), str("left", "middle", "right")]) : sideText가 들어갈 위치, 기본적으로 `["over", "middle"]`로 설정되어 있음\n
+        ``coverSideText``(bool)                                                     : sideText 양 옆을 텍스트박스가 감쌀지에 대한 여부, 기본적으로 `False`로 설정되어 있음\n
         """
         if not len(Inp) and alwaysReturnBox:       Inp = "..."
         elif not len(Inp) and not alwaysReturnBox: return ""
@@ -56,16 +60,16 @@ def TextBox(
         FixedLine:str         = ""
 
         if coverSideText: sideText = f"{Line[LineType][2][1]}{sideText}{Line[LineType][2][0]}"
-        if AMLS:          maxLine  = max(map(lambda l: checkActualLen(escapeAnsi(l)), chain(Texts, [sideText])))
+        if AMLS:          maxLine  = max(map(lambda l: checkActualLen(escapeAnsi(l)), chain(Texts,[sideText])))
 
         if sideText and sideTextPos[0] == "over":
             style = {
-                "left"   : f"{sideText}{Line[LineType][3][0]*((maxLine+fullAddWidth)-checkActualLen(escapeAnsi(sideText)))}",
-                "middle" : f"{Line[LineType][3][0]*(ceil(int(((maxLine+fullAddWidth)-checkActualLen(escapeAnsi(sideText)))/2)))}{sideText}{Line[LineType][3][0]*(ceil(int(((maxLine+fullAddWidth)-checkActualLen(escapeAnsi(sideText)))/2)))}{Line[LineType][3][0]if(maxLine+fullAddWidth+checkActualLen(escapeAnsi(sideText)))%2 else ''}",
-                "right"  : f"{Line[LineType][3][0]*((maxLine+fullAddWidth)-checkActualLen(escapeAnsi(sideText)))}{sideText}"
+                "left"   : f"{sideText}{coverColor}{Line[LineType][3][0]*((maxLine+fullAddWidth)-checkActualLen(escapeAnsi(sideText)))}",
+                "middle" : f"{Line[LineType][3][0]*(ceil(int(((maxLine+fullAddWidth)-checkActualLen(escapeAnsi(sideText)))/2)))}{sideText}{coverColor}{Line[LineType][3][0]*(ceil(int(((maxLine+fullAddWidth)-checkActualLen(escapeAnsi(sideText)))/2)))}{Line[LineType][3][0]if(maxLine+fullAddWidth+checkActualLen(escapeAnsi(sideText)))%2 else ''}",
+                "right"  : f"{Line[LineType][3][0]*((maxLine+fullAddWidth)-checkActualLen(escapeAnsi(sideText)))}{sideText}{coverColor}"
                 }[sideTextPos[1]]
-            FixedLine = f"{Line[LineType][0][0]}{style}{Line[LineType][0][1]}\n"
-        else: FixedLine = f"{Line[LineType][0][0]}{Line[LineType][3][0]*(maxLine+fullAddWidth)}{Line[LineType][0][1]}\n"
+            FixedLine = f"{coverColor}{Line[LineType][0][0]}{style}{Line[LineType][0][1]}\n"
+        else: FixedLine = f"{coverColor}{Line[LineType][0][0]}{Line[LineType][3][0]*(maxLine+fullAddWidth)}{Line[LineType][0][1]}\n"
         Display += "\n"*outDistance+FixedLine+(f"{Line[LineType][3][1]}{fillChar*(maxLine+fullAddWidth)}{Line[LineType][3][1]}\n")*inDistance
         for textLine in Texts:
             space = checkActualLen(escapeAnsi(textLine))
@@ -93,12 +97,12 @@ def TextBox(
 
         if sideText and sideTextPos[0] == "under":
             style = {
-                "left"   : f"{sideText}{Line[LineType][3][0]*((maxLine+fullAddWidth)-checkActualLen(escapeAnsi(sideText)))}",
-                "middle" : f"{Line[LineType][3][0]*(ceil(int(((maxLine+fullAddWidth)-checkActualLen(escapeAnsi(sideText)))/2)))}{sideText}{Line[LineType][3][0]*(ceil(int(((maxLine+fullAddWidth)-checkActualLen(escapeAnsi(sideText)))/2)))}{Line[LineType][3][0]if(maxLine+fullAddWidth+checkActualLen(escapeAnsi(sideText)))%2 else ''}",
-                "right"  : f"{Line[LineType][3][0]*((maxLine+fullAddWidth)-checkActualLen(escapeAnsi(sideText)))}{sideText}"
+                "left"   : f"{sideText}{coverColor}{Line[LineType][3][0]*((maxLine+fullAddWidth)-checkActualLen(escapeAnsi(sideText)))}",
+                "middle" : f"{Line[LineType][3][0]*(ceil(int(((maxLine+fullAddWidth)-checkActualLen(escapeAnsi(sideText)))/2)))}{sideText}{coverColor}{Line[LineType][3][0]*(ceil(int(((maxLine+fullAddWidth)-checkActualLen(escapeAnsi(sideText)))/2)))}{Line[LineType][3][0]if(maxLine+fullAddWidth+checkActualLen(escapeAnsi(sideText)))%2 else ''}",
+                "right"  : f"{Line[LineType][3][0]*((maxLine+fullAddWidth)-checkActualLen(escapeAnsi(sideText)))}{sideText}{coverColor}"
                 }[sideTextPos[1]]
-            FixedLine = f"{Line[LineType][1][0]}{style}{Line[LineType][1][1]}{endLine}"
-        else: FixedLine = f"{Line[LineType][1][0]}{Line[LineType][3][0]*(maxLine+fullAddWidth)}{Line[LineType][1][1]}{endLine}"
+            FixedLine = f"{Line[LineType][1][0]}{style}{Line[LineType][1][1]}{endLine}{cc['end']}"
+        else: FixedLine = f"{Line[LineType][1][0]}{Line[LineType][3][0]*(maxLine+fullAddWidth)}{Line[LineType][1][1]}{endLine}{cc['end']}"
         Display += (f"{Line[LineType][3][1]}{fillChar*(maxLine+fullAddWidth)}{Line[LineType][3][1]}\n")*inDistance+FixedLine+"\n"*outDistance
 
         if returnSizeyx: return len(Display.split("\n"))-((outDistance*2)+2), maxLine+2, Display # type: ignore
