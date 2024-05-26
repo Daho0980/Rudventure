@@ -1,8 +1,6 @@
 from random import randrange, choice
 
 from Assets.data             import comments, status
-from Assets.data.color       import cColors         as cc
-from Game.core.system.logger import addLog
 from Game.entities.player    import say
 
 
