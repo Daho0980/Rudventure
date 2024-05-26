@@ -15,12 +15,14 @@ def cinp(
         cursor:bool   =False,
         useMiddle:bool=True,
         y:int         =0,
-        x:int         =0
+        x:int         =0,
+        backGround:str=""
     ) -> str:
     if echo:   curses.echo()
     if cursor: curses.curs_set(1)
 
     if not text.isspace():
+        stdscr.addstr(backGround)
         if useMiddle: addstrMiddle(stdscr, f"{text}{end}", x=x, y=y)
         else:         stdscr.addstr(f"{text}{end}")
         stdscr.refresh()
@@ -37,13 +39,13 @@ def placeRandomBlock(block:str, ID:int, y:list, x:list, allowedBlocks:list):
     방에서 블럭 등을 랜덤하게 배치할 수 있게 만든 함수
 
     `block`(char)      : 랜덤하게 배치될 블럭의 아이콘, 무조건 기입해야 됨
-    `y`(list)          : 방의 y 최솟값과 최댓값 데이터를 포함함, 무조건 기입해야 됨
+    `y`(list)          : 방의 y 최솟값과 최댓값 데이터를 포함함, 무조건 기입해야 함
         ex) `y` = `[최솟값, 최댓값]`
 
-    `x`(list)          : 방의 x 최솟값과 최댓값 데이터를 포함함, 무조건 기입해야 됨
+    `x`(list)          : 방의 x 최솟값과 최댓값 데이터를 포함함, 무조건 기입해야 함
         ex) `x` = `[최솟값, 최댓값]`
 
-    `disallowedBlocks`(list) : 블럭을 랜덤으로 설치 시 피해야 할 블럭 설정, 무조건 기입해야 함
+    `allowedBlocks`(list) : 블럭 랜덤 설치 시 놓을 수 있는 블럭 설정, 무조건 기입해야 함
     """
     Ry, Rx = 0, 0
     while 1:

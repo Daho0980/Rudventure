@@ -1,10 +1,11 @@
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! row는 가로, column은 세로입니다 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
 import curses
+import unicodedata
 from   cusser import Cusser
 
-from Assets.data.color import cColors, customColor
-from Game.utils        import graphic             as grp
+from Assets.data.color            import cColors, customColor
+from Game.utils                   import graphic             as grp
+from Game.utils.system.sound      import play
 
 cc = cColors
 
@@ -18,7 +19,9 @@ def main(
         tag:str                           ="",
         frontTag:str                      ="",
         setArrowPos:list[int|bool]        =[-1, -1],
-        returnArrowPos:bool               = False
+        returnArrowPos:bool               = False,
+        background:(list[str]|str)        = "",
+        useClear:bool                     = False
         ):
     """
     `title`(str, list)                     : 메뉴바의 타이틀이 될 문자열, 리스트 형태로 기입 시 타이틀과 메뉴의 공백이 제거됨. 무조건 기입해야 함\n
@@ -60,7 +63,9 @@ def main(
         icon,
         maxLine, lineSpace,
         tag, frontTag,
-        setArrowPos, returnArrowPos
+        setArrowPos, returnArrowPos,
+        background,
+        useClear
         )
 
 def Change2D(subtitle, maxLine:int): # 1차원 subtitle을 2차원으로 재배열
@@ -86,7 +91,6 @@ def returnDisplay(
         title,
         subtitle,
         arrow,
-        Enter,
         maxLine,
         lineSpace,
         subtitleValues,
@@ -108,34 +112,33 @@ def returnDisplay(
     `tag`(str)                             : 상시로 메뉴 맨 아래에 생기는 문자열, 무조건 기입해야 함\n
     `frontTag`(str)                        : 상시로 메뉴 맨 위에 생기는 문자열, 무조건 기입해야 함
     """
-    positionOutput=lambda subtitle, row, column:(0,column+1)if(row==len(subtitle)-1)else(row+1,column)
+    positionOutput = lambda subtitle, row, column:(0,column+1)if(row==len(subtitle)-1)else(row+1,column)
+    checkActualLen = lambda l: sum(map(lambda char:2 if unicodedata.east_asian_width(char)in['F','W']else 1,l))
         
     def lenConverter(subtitle:list) -> list:
-        checkLen = lambda t:sum(map(lambda l:2 if ord('가')<=ord(l)<=ord('힣')else 1,t))
         output = []
         for i, row in enumerate(subtitle):
             output.append([])
-            for menu in row: output[i].append(checkLen(menu))
+            for menu in row: output[i].append(checkActualLen(menu))
         return output
 
     subtitleLen = lenConverter(subtitle)
+
     Display  = ""
-    Display += f"{cc['fg']['G1']}{frontTag}{cc['end']}\n"
-    Display += f"{title[0] if isinstance(title, list) else title}{Enter}"
-    row      = -1
-    column   = 0
+    Display += f"{cc['fg']['G1']}{frontTag}{cc['end']}\n{title}\n\n"
+
+    row, column = -1, 0
 
     for _ in range(maxLine):
         subtitleLine = ""
         for _ in range(len(subtitle)):
             row, column   = positionOutput(subtitle, row, column)
-            menuSpace     = max(subtitleLen[row]) - subtitleLen[row][column]
-            subtitleLine += f"{arrow[row][column]} {subtitle[row][column]}{' '*menuSpace}{' '*lineSpace}"
+            subtitleLine += f"{arrow[row][column]} {subtitle[row][column]}{' '*(max(subtitleLen[row])-subtitleLen[row][column])}{' '*lineSpace}"
         Display += f"{subtitleLine}\n"
     y, x = map(lambda n: round(n/2), list(stdscr.getmaxyx()))
     y    = y-round(len(list(map(lambda l:len(grp.escapeAnsi(l)), Display.split("\n"))))/2)
     x    = x-round(max(list(map(lambda l:len(grp.escapeAnsi(l)), Display.split("\n"))))/2)
-    if subtitleValues != []: Display+=f"{cc['fg']['G1']}\n{subtitleValues[(maxLine*nowSelectRow)+nowSelectColumn]}{cc['end']}"
+    if subtitleValues: Display+=f"{cc['fg']['G1']}\n{subtitleValues[(maxLine*nowSelectRow)+nowSelectColumn]}{cc['end']}"
     Display+=f"\n\n{cc['fg']['G1']}{tag}{cc['end']}\n\n"
     return Display, y, x
 
@@ -150,15 +153,13 @@ def system(
         tag,
         frontTag,
         setArrowPos,
-        returnArrowPos
+        returnArrowPos,
+        background,
+        useClear
         ):
-    stdscr = curses.initscr()
     if not isinstance(stdscr, Cusser): stdscr=Cusser(stdscr)
 
     subtitleKeys, subtitleValues = [], []
-
-    Enter:str                = '\n\n'
-    arrowColor:str           = ""
 
     if maxLine == 'max':         maxLine = len(subtitle)
     if maxLine >  len(subtitle): raise Exception('최대 세로 배열수는 subtitle 개수보다 많을 수 없습니다!')
@@ -167,8 +168,7 @@ def system(
         subtitleValues:list      = list(subtitle.values())
     else: subtitleKeys = subtitle
 
-    if   isinstance(title, list): Enter      = '\n' # title이 list면 title이랑 subtitle 사이의 공백 제거
-    elif isinstance(color, list): arrowColor = customColor(color[1], color[2], color[3], color[0]) # 세부 RGB 설정
+    if isinstance(color, list): arrowColor = customColor(color[1], color[2], color[3], color[0]) # 세부 RGB 설정
     
     subtitleKeys = Change2D(subtitleKeys, maxLine)
     if sum(setArrowPos) >= 0:
@@ -177,10 +177,9 @@ def system(
     else:
         a:int = 0
         while 1:
-            if subtitleKeys[a] == '': # a번째 subtitle이 빈칸일 때
+            if not subtitleKeys[a]: # a번째 subtitle이 빈칸일 때
                 if a == len(subtitleKeys) - 1: # 근데 그게 마지막일 때
-                    subtitleKeys, a = {'Why did you do...' : 'WHY...'}, 0 # 이스터에그 생성
-                    break
+                    a = 0; break  # 줒되기
                 else: a += 1 # 아니면 올리기
             else: break
         nowSelectColumn:int = a # 현재 세로 위치 최초 설정
@@ -199,7 +198,6 @@ def system(
                                         title,
                                         subtitleKeys,
                                         arrow,
-                                        Enter,
                                         maxLine,
                                         lineSpace,
                                         subtitleValues,
@@ -208,10 +206,12 @@ def system(
                                         tag,
                                         frontTag
                                         )
-            
+
+        stdscr.addstr(background) # type: ignore
         grp.addstrMiddle(stdscr, display, y=y, x=x)
         stdscr.refresh()
 
+        sound                                = ("system", "selector", "move")
         SNum, SNum1                          = 1, 0 # 세로, 가로 변환 정도값
         arrow[nowSelectRow][nowSelectColumn] = ' '
         key                                  = stdscr.getch()
@@ -220,6 +220,7 @@ def system(
             while 1:
                 if nowSelectColumn == 0 and nowSelectRow == 0:
                     SNum, SNum1 = 0, 0
+                    sound       = ("system", "selector", "block")
                     break
                 if nowSelectColumn-SNum < 0 and nowSelectRow > 0:
                     nowSelectColumn = maxLine - 1
@@ -229,6 +230,7 @@ def system(
                     if nowSelectColumn - SNum+1 < 0:
                         if nowSelectRow - SNum1+1 < 0:
                             SNum, SNum1 = 0, 0
+                            sound       = ("system", "selector", "block")
                             break
                         else:
                             SNum   = 0
@@ -237,11 +239,13 @@ def system(
                 else: break
             nowSelectRow    -= SNum1
             nowSelectColumn -= SNum
+            play(*sound)
 
         elif key == curses.KEY_DOWN: # sublist column값 증가
             while 1:
                 if nowSelectColumn == maxLine-1 and nowSelectRow == len(subtitleKeys)-1:
                     SNum, SNum1 = 0, 0
+                    sound       = ("system", "selector", "block")
                     break
                 if nowSelectColumn+SNum > maxLine-1: # 내렸을 때 maxLine-1보다 nowSelectColumn+SNum이 더 높을 때:
                     nowSelectColumn = 0
@@ -251,6 +255,7 @@ def system(
                     if nowSelectColumn + SNum+1 > maxLine-1: # 근데 행이 올라가면 끝나?
                         if nowSelectRow + SNum1+1 > len(subtitleKeys)-1: # 근데 열도 올라가면 끝나??
                             SNum, SNum1 = 0, 0
+                            sound       = ("system", "selector", "block")
                             break
                         else:
                             SNum   = 0
@@ -259,33 +264,46 @@ def system(
                 else: break
             nowSelectRow    += SNum1
             nowSelectColumn += SNum
+            play(*sound)
 
         elif key == curses.KEY_LEFT: # row 값 감소
             SNum1 = 1
             while 1:
                 if nowSelectRow == 0:
-                    SNum1 = 0; break
+                    SNum1 = 0
+                    sound = ("system", "selector", "block")
+                    break
                 if not subtitleKeys[nowSelectRow-SNum1][nowSelectColumn]:
                     if nowSelectRow-SNum1 <= 0:
-                        SNum1 = 0; break
+                        SNum1 = 0
+                        sound = ("system", "selector", "block")
+                        break
                     else: SNum1 += 1
                 else: break
             nowSelectRow -= SNum1
+            play(*sound)
 
         elif key == curses.KEY_RIGHT: # row 값 증가
             SNum1 = 1
             while 1:
                 if nowSelectRow == len(subtitleKeys)-1:
-                    SNum1 = 0; break
+                    SNum1 = 0
+                    sound = ("system", "selector", "block")
+                    break
                 if not subtitleKeys[nowSelectRow+SNum1][nowSelectColumn]:
                     if nowSelectRow+SNum1 >= len(subtitleKeys)-1:
-                        SNum1 = 0; break
+                        SNum1 = 0
+                        sound = ("system", "selector", "block")
+                        break
                     else: SNum1 += 1
                 else: break
             nowSelectRow += SNum1
+            play(*sound)
 
-        elif key == 10: break # enter
-    stdscr.clear(); stdscr.refresh() # 최종
+        elif key == 10:
+            play("system", "selector", "select")
+            break # enter
+    if useClear: stdscr.clear(); stdscr.refresh() # 최종
     blankD = 0 # 공백 개수 변수 선언
     for i in range(0, nowSelectRow+1): # 처음부터 현재 위치까지 존재하는 공백 개수 확인
         blankD += subtitleKeys[i][:nowSelectColumn+1].count('') if i==nowSelectRow else subtitleKeys[i].count('')
@@ -293,9 +311,3 @@ def system(
     # 최대 라인 * 현재 가로줄 위치 + 현재 세로줄 위치 + 1 - 공백 개수
     if returnArrowPos: return (maxLine*nowSelectRow)+nowSelectColumn+1-blankD, [nowSelectColumn, nowSelectRow]
     else:              return (maxLine*nowSelectRow)+nowSelectColumn+1-blankD
-    # return (
-    #     (maxLine*nowSelectRow)+nowSelectColumn+1-blankD)\
-    #     if returnArrowPos else (
-    #         ((maxLine*nowSelectRow)+nowSelectColumn+1-blankD),
-    #         [nowSelectColumn, nowSelectRow]
-    #         ) # 최대 라인 * 현재 가로줄 위치 + 현재 세로줄 위치 + 1 - 공백 개수

@@ -11,7 +11,8 @@ def reset() -> None:
                     "statusDesign"  : 1,
                     "debugScreen"   : False,
                     "showDungeonMap": 0,
-                    "frameRate"     : -1
+                    "frameRate"     : -1,
+                    "volume"        : 50
                 }
             },
             data,
@@ -27,6 +28,7 @@ def load() -> None:
         s.showDungeonMap = data["system"]["showDungeonMap"]
         s.frameRate      = data["system"]["frameRate"]
         s.frame          = 1/data["system"]["frameRate"] if data["system"]["frameRate"] else 0
+        s.volume         = data["system"]["volume"]
 
 def save() -> None:
     with open(f"{s.TFP}config{s.s}data.json", 'w') as data:
@@ -37,7 +39,8 @@ def save() -> None:
                     "statusDesign"  : s.statusDesign,
                     "debugScreen"   : s.debugScreen,
                     "showDungeonMap": s.showDungeonMap,
-                    "frameRate"     : s.frameRate
+                    "frameRate"     : s.frameRate,
+                    "volume"        : s.volume
                 }
             },
             data,

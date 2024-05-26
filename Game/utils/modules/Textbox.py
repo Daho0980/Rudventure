@@ -42,6 +42,7 @@ def TextBox(
         ``sideText``(str)                                                           : 텍스트박스의 선 사이에 들어갈 텍스트, 기본적으로 `""`로 설정되어 있음\n
         ``sideTextPos``(list[str("over", "under"), str("left", "middle", "right")]) : sideText가 들어갈 위치, 기본적으로 `["over", "middle"]`로 설정되어 있음\n
         ``coverSideText``(bool)                                                     : sideText 양 옆을 텍스트박스가 감쌀지에 대한 여부, 기본적으로 `False`로 설정되어 있음\n
+        ``coverColor``(str)                                                         : 박스와 내부 텍스트를 채울 색. 텍스트에 색이 들어가 있다면 다시 채워지지 않음. 기본적으로 `" "`로 설정되어 있음\n
         """
         if not len(Inp) and alwaysReturnBox:       Inp = "..."
         elif not len(Inp) and not alwaysReturnBox: return ""

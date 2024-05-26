@@ -6,7 +6,7 @@ from   cusser      import Cusser
 from Assets.data                                import comments, lockers, status, color
 from Game.core.system                           import quests, logger
 from Game.entities                              import entity, player
-from Game.entities.player                       import event
+from Game.entities.player                       import event, checkStatus
 from Game.scenes                                import mainSettings, mainMenu
 from Game.utils                                 import graphic
 from Game.utils.advanced                        import DungeonMaker, keyHandler
@@ -15,12 +15,13 @@ from Game.utils.modules                         import Textbox, cSelector
 from Game.utils.system                          import roomManager
 from Game.utils.system.roomManager.interactions import placeRandomOrbs
 
+from Game.utils.system.sound import play
+
 
 stdscr = Cusser(curses.initscr())
 
-quickStarter  = 0
 c, s, l       = comments, status, lockers
-pev           = event
+pev, cs       = event, checkStatus
 p, t, dgm, kh = player, Textbox, DungeonMaker, keyHandler
 ent, grp      = entity, graphic
 q             = quests
@@ -28,17 +29,9 @@ cc            = color.cColors
 
 def playerChecker():
     if not l.isDying:
-        if s.df > 0: s.dfCrack = 0
-
-        if s.hp <= int(s.Mhp*0.3) and not s.hpLow:
-            s.hpLow = True
-            logger.addLog(f"{cc['fg']['L']}\"{random.choice(c.lowHpComment)}\"{cc['end']}")
-        elif int((s.hp / s.Mhp) * 10) > 3: s.hpLow = False
-        if s.ashChip>=100:
-            s.ashChip -= 100
-            s.Mlvl    += 1
-            logger.addLog(f"{cc['fg']['G1']}재의 그릇{cc['end']}이 {cc['fg']['F']}1{cc['end']} 개 증가했습니다. (최대 레벨 {cc['fg']['G1']}{s.Mlvl-1}{cc['end']} -> {cc['fg']['F']}{s.Mlvl}{cc['end']})")
-        if s.lvl >= s.Mlvl: pev.cursedDeath()
+        cs.defCheck()
+        cs.hpCheck()
+        cs.curseCheck()
 
 def gameChecker(stdscr):
     if s.main == 1:
@@ -49,6 +42,7 @@ def gameChecker(stdscr):
             comment   = random.choice(c.defeatComment["CO"if s.lvl>=s.Mlvl else"HL"if s.hp<=0 else"HUL"])
             stdscr.nodelay(False)
 
+            play("system", "defeat")
             _, bx, deadSign = t.TextBox(
                     f"   사 망 하 셨 습 니 다   \n\n   \"{comment}\"   ",
                     Type        ="middle",
@@ -63,7 +57,7 @@ def gameChecker(stdscr):
             y, x = grp.addstrMiddle(
                 stdscr,
                 deadSign,
-                    addOnCoordinate=[-5, 0],
+                    addOnyx=[-5, 0],
                     returnEndyx    =True
                 )
             y   -= 1 # type: ignore
@@ -84,6 +78,7 @@ def gameChecker(stdscr):
             }
             achievementsValues:list[list[str|int]] = list(achievements.values())
             for num, text in enumerate(achievements):
+                play("soundEffects", "smash")
                 stdscr.addstr(f"\033[{x-FBS};{y}H{text} : {achievementsValues[num][0]}\n"); stdscr.refresh() # type: ignore
                 time.sleep(0.2)
                 y += (1+achievementsValues[num][1]) # type: ignore
@@ -107,6 +102,7 @@ def gameChecker(stdscr):
             exit(0 if the_choice-1 else 1)
 
         else:
+            play("system", "clear")
             grp.addstrMiddle(
                 stdscr,
                 cc['fg']['L']+t.TextBox(
@@ -163,7 +159,9 @@ while s.main:
         f"지 하   {cc['fg']['R']}-{s.stage}{cc['end']}   층"
         ); s.stage += 1
 
-    l.jpsf = 1
+    l.jpsf        = 1
+    quickStarter  = 0
+
     while not q.quest():
         if s.hp <= 0 or s.hunger <= 0 or not s.main: break
         if l.jpsf:
@@ -174,4 +172,4 @@ while s.main:
             time.sleep(s.frame)
         else: time.sleep(1)
     if s.hunger <= 0: s.DROD = [f"{cc['fg']['Y']}아사{cc['end']}", 'Y']
-    gameChecker(stdscr); quickStarter=0
+    gameChecker(stdscr)

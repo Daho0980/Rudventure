@@ -5,10 +5,6 @@
         ``GraphicMaker``        : 맵의 데이터에서 방 아이콘만 빼내 그래픽을 출력하기 쉽게 하기 위해 만든 함수
         ``gridMapReturn``       : `GraphicMaker`함수로 그래픽만 남은 맵이나 맵 데이터로 맵의 세부 데이터를 추가하는 함수
 
-        사용하지 않는 것들:
-            ``checkOpenDoor``(dead) : 맵 데이터를 탐색해 각 방 당 열린 문의 위치를 출력하는 함수, 현재는 사용하지 않음
-            ``showProgreess``(dead) : global 리스트인 `progress`를 이용해 `GraphicMaker`함수로 그래픽만 남은 맵에서 진행 경로를 출력하는 함수, 현재는 문이 여러 개가 될 확률이 생겼고, 별로 쓸 이유가 없으므로 현재는 사용하지 않음
-
     맵 툴 관련:
         ``initBranch``         : 처음으로 맵 데이터를 작성하고 기초를 다지는 함수, 이 프로그램의 핵심 알고리즘이 포함됨
         ``deleteBlankData``    : 맵의 데이터 중 쓸데없이 메모리만 차지하는 공백 데이터를 제거하는 함수
@@ -22,10 +18,8 @@ import random
 
 from Assets.data       import rooms, status
 from Assets.data.color import cColors      as cc
-from Game.utils        import graphic
 
-grp = graphic
-s   = status
+s = status
 
 Map       = []
 direction = {
@@ -221,7 +215,7 @@ def _initBranch(Map:list, y:int, x:int, rawPrint:bool=False, showAll:bool=False)
         exec(f"{locationData[0]}+={locationData[1]}", coordinateNamespace)
         x, y = coordinateNamespace['x'], coordinateNamespace['y']
 
-        if y > len(Map)-1 or y < 0 or x > len(Map[0])-1 or x < 0: # 맵 탈출(outOfRangeError) 방지
+        if y>len(Map)-1 or y<0 or x>len(Map[0])-1 or x<0: # 맵 탈출(outOfRangeError) 방지
             getBack(bfx, bfy)
             continue
         if Map[y][x]["roomIcon"] in roomIcons: # 방 덮어쓰기 방지
@@ -257,13 +251,11 @@ def _initBranch(Map:list, y:int, x:int, rawPrint:bool=False, showAll:bool=False)
 
         if selectRoomKind == 2: # 이벤트 방
             if nowEventRoomCount >= maxEventRoomCount: selectRoomKind = 1
-                # f"\033[32mEventroom\033[0m was changed in \033[31mnowLength:{nowLength} [{y}, {x}]\033[0m"
             else: nowEventRoomCount += 1
 
         elif selectRoomKind in [3, 5]: # 보물 방
             selectRoomKind = 3
             if nowTreasureBoxRoomCount >= maxTreasureBoxRoomCount: selectRoomKind = 1
-                # f"\033[33mTreasureBoxroom\033[0m was changed in \033[31mnowLength:{nowLength} [{y}, {x}]\033[0m"
             else: nowTreasureBoxRoomCount += 1
 
         elif selectRoomKind != 4: selectRoomKind = 1

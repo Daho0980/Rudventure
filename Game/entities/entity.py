@@ -6,9 +6,10 @@ Global Functions 중 Entity 옵션
 
 import threading, time
 
-from Assets.data       import status as s
-from Assets.data.color import cColors as cc
-from Game.core.system  import logger
+from Assets.data             import status as s
+from Assets.data.color       import cColors as cc
+from Game.core.system        import logger
+from Game.utils.system.sound import play
 
 
 def addMonster(
@@ -86,6 +87,8 @@ if s.main and not s.killAll: xps.getXP({xpType[entityType]}*{valuableName}.xpMul
         """)
         if s.main == 1 and not s.killAll:
             s.killCount += 1
+            play("player", "slash")
+            play("enemy", "dead")
             logger.addLog(f"{cc['fg']['F']}{name}{cc['end']}이(가) 죽었습니다!")
     threading.Thread(target=EntityInteraction, name=name, daemon=True).start()
     time.sleep(0.2)

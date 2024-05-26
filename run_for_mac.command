@@ -5,6 +5,7 @@ cd     "$(cd "$(dirname "$0")" && pwd -P)" || exit
 source bin/activate
 
 while true; do
+    clear
     python3 run.py
     errorCode=$?
 

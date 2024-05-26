@@ -1,15 +1,19 @@
+import re
 import random, time
 import curses
+import threading
 from   itertools import chain
 
-from Assets.data          import rooms, status
-from Assets.data.color    import cColors      as cc
-from Game.core.system     import logger
-from Game.entities.player import event
-from Game.utils.system    import xpSystem
+from Assets.data             import rooms, status
+from Assets.data.color       import cColors      as cc
+from Game.core.system        import logger
+from Game.entities.player    import event, tts, checkStatus
+from Game.utils.system       import xpSystem
+from Game.utils.system.sound import play
 
 
 s, r = status, rooms
+cs   = checkStatus
 
 def set() -> None:
     s.hp       = 10
@@ -86,6 +90,7 @@ def move(Dir, Int:int) -> None:
         case curses.KEY_RIGHT: tx += Int
 
     s.hunger -= 1
+    sound     = ("player", "move")
 
     if roomGrid[ty][tx]["id"] == -1: ty, tx = bfy, bfx
 
@@ -96,11 +101,13 @@ def move(Dir, Int:int) -> None:
         s.Dy, s.Dx = bfDy, bfDx
 
         if s.df <= 0 and s.dfCrack <= 0:
+            sound     = ("player", "armor", "crack")
             s.dfCrack = 1
             logger.addLog(f"{cc['fg']['B1']}방어구{cc['end']}가 부서졌습니다!")
+        else: sound = ("player", "hit")
 
     elif roomGrid[ty][tx]["id"] in s.enemyIds:
-
+        sound = None
         s.hitPos.append([ty, tx])
         time.sleep(0.001)
         s.hitPos.remove([ty, tx])
@@ -109,10 +116,12 @@ def move(Dir, Int:int) -> None:
         s.Dy, s.Dx = bfDy, bfDx
 
     elif roomGrid[ty][tx]["id"] == 4:
+        sound = ("object", "itemBox", "open")
         itemEvent(ty, tx)
         ty, tx = bfy, bfx
 
     elif roomGrid[ty][tx]["id"] in chain(s.orbIds["size"]["smallOne"], s.orbIds["size"]["bigOne"]):
+        sound = ("player", "getItem")
         orbId = roomGrid[ty][tx]["id"]
         orbEvent(
             Size=0 if orbId in s.orbIds["size"]["bigOne"] else 1,
@@ -130,6 +139,7 @@ def move(Dir, Int:int) -> None:
             )
 
     elif roomGrid[ty][tx]["id"] == 2:
+        sound = ("object", "door", "open")
         s.Dungeon[s.Dy][s.Dx]['room'][ty][tx]["id"] = 2
         pos = [bfy-ty, bfx-tx]
         # ┏>|y, x| : U to D   D to U  L to R   R to L
@@ -156,6 +166,7 @@ def move(Dir, Int:int) -> None:
         s.Dungeon[s.Dy][s.Dx]['isPlayerHere'] = True
 
     elif roomGrid[ty][tx]["id"] == 6:
+        sound = ("object", "box", "move")
         cx, cy = 0, 0
         Type   = 1 if Dir in [curses.KEY_LEFT, curses.KEY_RIGHT] else 0
         match Dir:
@@ -174,26 +185,39 @@ def move(Dir, Int:int) -> None:
         s.Dy, s.Dx = bfDy, bfDx
 
         if s.lvl<5:
-            ty, tx     = bfy, bfx
+            sound  = ("player", "hit")
+            ty, tx = bfy, bfx
             logger.addLog(f"{cc['fg']['L']}당신{cc['end']}은 아직 {cc['fg']['F']}자격{cc['end']}이 주어지지 않았습니다.")
-            return
-        else:        
+        else:
+            sound            = ("player", "interaction", "activate")
             s.lvl           -= 5
             s.Mxp           -= 15
+            s.xp             = 0
             roomGrid[ty][tx] = {"block" : s.ids[401], "id" : 401}
             ty, tx           = bfy, bfx
 
             logger.addLog(f"{cc['fg']['L']}당신{cc['end']}의 몸에서 {cc['fg']['F']}저주{cc['end']}가 빠져나가는 것이 느껴집니다...")
 
     elif roomGrid[ty][tx]["id"] == 401:
+        sound      = ("player", "hit")
         ty, tx     = bfy, bfx
         s.Dy, s.Dx = bfDy, bfDx
         logger.addLog(f"이 {cc['fg']['A']}신상{cc['end']}은 이미 {cc['fg']['F']}저주{cc['end']}에 물들었습니다...")
 
     elif roomGrid[ty][tx]["id"] == 900:
+        sound = ("object", "ashChip", "get")
         s.ashChip += roomGrid[ty][tx]["nbt"]["count"]
         logger.addLog(f"{cc['fg']['G1']}잿조각{cc['end']}을 {cc['fg']['G1']}{roomGrid[ty][tx]['nbt']['count']}{cc['end']}개 얻었습니다.")
+        cs.ashChipCheck()
 
     s.y, s.x                                = ty, tx
     s.Dungeon[bfDy][bfDx]['room'][bfy][bfx] = {"block" : s.ids[0],   "id" : 0  }
     s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x] = {"block" : s.ids[300], "id" : 300}
+    if sound: play(*sound)
+
+def say(text, TextColor:str='L'):
+    logger.addLog(f"{cc['fg'][TextColor]}\"{text}\"{cc['end']}")
+    threading.Thread(
+        target=lambda: tts.TTS(re.compile(r'(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]').sub('',text)),
+        daemon=True
+    ).start()

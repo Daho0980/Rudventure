@@ -1,6 +1,5 @@
-from Assets.data.color import cColors
+from Assets.data.color import cColors as _cc
 
-_cc = cColors
 
 def cMarkdown(Type:(list[int]|int)=0) -> str:
     """
@@ -75,7 +74,6 @@ LOGO:str = f"""
 / \\ /_//_/ |//_\'/ //  /_// /_\'
 
   {_cc['fg']['R']}.-  .-..  .--.  ....  .-{_cc['end']}
-
 """
 
 welcomeMessage:list[str] = []
@@ -108,6 +106,9 @@ ids:dict[int,str] = {
 
     400 : "Y", # 저주를 씻어내는 신상
     401 : "Y", # 오염된 저주를 씻어내는 신상
+
+    501 : "H", # 최대 체력 증가
+    502 : "U", # 최대 방어력 증가
 
     600 : '%', # 고통
     601 : '#', # 불안
@@ -152,7 +153,11 @@ Dungeon:list     = []
 roomLock:bool    = False
 killAll:bool     = False
 DROD:list        = [None, '']
-pauseText:str    = f"\n{cMarkdown(1)}{_cc['fg']['L']}일 시 정 지{_cc['end']}\n"
+pauseBox:str     = f"""╔═══════════════════════════════╗
+║                               ║
+║          {cMarkdown(1)}{_cc['fg']['L']}일 시 정 지{_cc['end']}          ║
+║                               ║
+╚═══════════════════════════════╝"""
 debugScreen:bool = False
 
 # Modes
@@ -170,8 +175,11 @@ maxStack:int        = 10
 onDisplay:list[str] = []
 onTime:list[int]    = []
 
-# InGame print settings
+# Ingame print settings
 frameRate:int      = -1
 frame:int|float    = 0
 statusDesign:int   = 1 # normal = 0
 showDungeonMap:int = 0 # normal = 0
+
+# Ingame sound settings
+volume = 50

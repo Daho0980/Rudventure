@@ -5,6 +5,7 @@ from Assets.data        import status    as s
 from Assets.data.color  import cColors   as cc
 from Assets.data        import lockers   as l
 from Game.core.system   import logger
+from Game.entities      import player    as p
 from Game.utils.graphic import escapeAnsi
 
 
@@ -30,17 +31,17 @@ def cursedDeath() -> None:
 
         s.DROD = [f"{cc['fg']['F']}저주받음{cc['end']}", 'F']
 
-        logger.addLog(f"{cc['fg']['L']}\"큭..\"{cc['end']}", 200)
+        p.say("큭..")
         s.ids[300]                                       = f"{cc['fg']['F']}{escapeAnsi(s.ids[300])}{cc['end']}"
         s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x]['block'] = s.ids[300]
         time.sleep(1.5)
 
         s.ids[300]                                       = f"{cc['fg']['F']}a{cc['end']}"
         s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x]['block'] = s.ids[300]
-        logger.addLog(f"{cc['fg']['L']}\"크{cc['fg']['F']}으윽...\"{cc['end']}")
+        p.say(f"크{cc['fg']['F']}으윽...")
         time.sleep(1.7)
 
-        logger.addLog(f"{cc['fg']['F']}\"크아아아아아아악!!!!!!\"{cc['end']}")
+        p.say("크아아아아아아악!!!!!!", TextColor='F')
         while s.hp!=1:
             s.hp -= 1
             time.sleep(0.15)

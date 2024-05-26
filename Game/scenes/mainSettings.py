@@ -1,10 +1,11 @@
 import random
 
-from Assets.data        import status            as s
-from Assets.data.color  import cColors           as cc
-from Game.core.system   import logger
-from Game.utils         import graphic, system
-from Game.utils.modules import cSelector, Textbox
+from Assets.data             import status            as s
+from Assets.data.color       import cColors           as cc
+from Game.core.system        import logger
+from Game.utils              import graphic, system
+from Game.utils.modules      import cSelector, Textbox
+from Game.utils.system.sound import play
 
 
 t   = Textbox
@@ -35,7 +36,7 @@ def setIconColor() -> None:
 def main(stdscr) -> None:
     if s.frame == -1:
         frameSettings = cSelector.main(
-            f"{s.LOGO}를 시작하기 전에, 프레임을 설정해주세요",
+            f"{s.LOGO}\n를 시작하기 전에, 프레임을 설정해주세요",
             {
                 "1프레임"         : "정말로요...?",
                 "30프레임 (권장)" : "표준 설정입니다.",
@@ -44,7 +45,7 @@ def main(stdscr) -> None:
             },
             [1,0,255,10],
             '@',
-            maxLine=2
+            maxLine   =2,
         )
         s.frameRate = [0,1,30,60,0][frameSettings]
         s.frame     = 1/s.frameRate if s.frameRate else 0
@@ -90,44 +91,43 @@ def main(stdscr) -> None:
                     Type        ="middle",
                     outDistance =1,
                     AMLS        =True,
-                    endLineBreak=True,
                     addWidth    =3
                     ),
-                ["네", "네"],
+                ["네", "네 히히"],
                 [1,0,255,10],
-                '@'
+                '@',
             )
             break
 
+        y,x = map(lambda n:n,stdscr.getmaxyx())
+        y,x = (y-2,x-3)
+        stdscr.clear()
         temporaryName = system.cinp(
             stdscr,
-            t.TextBox(
-                "이름을 입력해주세요",
-                Type        ="middle",
-                outDistance =1,
-                AMLS        =True,
-                endLineBreak=True,
-                addWidth    =3
-                )+f"\n>>>",
-                end   =f"{cc['fg']['Y']} ",
-                cursor=True
+            """┌─────────────────────────┐
+│   이름을 입력해주세요   │
+└─────────────────────────┘
+
+>>>""",
+                end    =f"{cc['fg']['Y']} ",
+                cursor =True
             )
         stdscr.addstr(cc['end'])
+        play("system", "selector", "select")
         stdscr.clear(); stdscr.refresh()
 
         if len(temporaryName) == 0 or len(temporaryName.split()) == 0:
             cSelector.main(
                 t.TextBox(
-                    f"이름이 {cc['fg']['R']}{s.cMarkdown([2, 3])}없거나{cc['end']} {cc['fg']['R']}{s.cMarkdown([2, 3])}공백 밖에{cc['end']} 없으면\n말하기 곤란해지실게요",
+                    f"이름이 {cc['fg']['R']}{s.cMarkdown([2, 3])}없거나{cc['end']} {cc['fg']['R']}{s.cMarkdown([2, 3])}공백 밖에 없으면{cc['end']}\n말하기 {cc['fg']['R']}{s.cMarkdown([2, 3])}곤란{cc['end']}해지실게요",
                     Type        ="middle",
                     outDistance =1,
                     AMLS        =True,
-                    endLineBreak=True,
                     addWidth    =3
                     ),
                 ["네..."],
                 [1,0,255,10],
-                '@'
+                '@',
             )
             nameChangeCount += 1
             continue
@@ -139,13 +139,12 @@ def main(stdscr) -> None:
                 f"{cc['fg']['Y']}<< {temporaryName} >>{cc['end']}\n\n이 이름이 맞습니까?",
                 Type        ="middle",
                 outDistance =1,
-                AMLS        =True, 
-                endLineBreak=True,
+                AMLS        =True,
                 addWidth    =3
                 ),
             ["네", "아니오", "", "그냥 정해주세요..."] if reTryCount >= 3 else ["네", "아니오"],
             [1,0,255,10],
-            '@'
+            '@',
         ):
             case 1: break
             case 2: reTryCount += 1; continue
@@ -153,16 +152,15 @@ def main(stdscr) -> None:
                 temporaryName = f"선택장애 {reTryCount-2}호"
                 nameSuggestions = cSelector.main(
                     t.TextBox(
-                        f"좋습니다. 그럼...\n{cc['fg']['Y']}<< {temporaryName} >>{cc['end']}\n은 어떠신가요?",
+                        f"좋습니다. 그럼...\n{cc['fg']['Y']}<< {temporaryName} >>{cc['end']}\n는 어떠신가요?",
                         Type        ="middle",
                         outDistance =1,
                         AMLS        =True,
-                        endLineBreak=True,
                         addWidth    =3
                         ),
                     ["네", "그냥 제가 할게요;"],
                     [1,0,255,10],
-                    '@'
+                    '@',
                 )
                 if   nameSuggestions == 1: break
                 elif nameSuggestions == 2: reTryCount += 1; continue
@@ -178,12 +176,12 @@ def main(stdscr) -> None:
         f"기다리느라 목 빠지는 줄 알았습니다, {s.lightName}님."
     ]
     setIconColor()
-    logger.addLog(s.welcomeMessage[random.randrange(0, len(s.welcomeMessage))])
+    logger.addLog(random.choice(s.welcomeMessage))
 
 def presetted(stdscr) -> None:
     if s.frame == -1:
         frameSettings = cSelector.main(
-            f"{s.LOGO}를 시작하기 전에, 프레임을 설정해주세요",
+            f"{s.LOGO}\n를 시작하기 전에, 프레임을 설정해주세요",
             {
                 "1프레임"         : "정말로요...?",
                 "30프레임 (권장)" : "표준 설정입니다.",
@@ -192,9 +190,9 @@ def presetted(stdscr) -> None:
             },
             [1,0,255,10],
             '@',
-            maxLine=2
+            maxLine=2,
         )
         s.frameRate = [0,1,30,60,0][frameSettings]
         s.frame     = 1/s.frameRate if s.frameRate else 0
     setIconColor()
-    logger.addLog(s.welcomeMessage[random.randrange(0, len(s.welcomeMessage))])
+    logger.addLog(random.choice(s.welcomeMessage))

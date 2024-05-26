@@ -3,11 +3,12 @@ import curses
 import socket
 from   random import choice
 
-from Assets.data                       import status, color
+from Assets.data                      import status, color
 from Game.core.system                 import configs
 from Game.scenes                      import checkColor
 from Game.utils.modules               import cSelector, Textbox
 from Game.utils.advanced.Rudconverter import load
+from Game.utils.system.sound          import play
 
 
 s, cc  = status, color.cColors
@@ -57,7 +58,7 @@ def main(stdscr) -> None:
                 "게임 종료" : "게임을 종료합니다."
             },
             [1,0,255,10],
-            '@'
+            '@',
         )
         match mainMenu:
             case 1: break
@@ -75,7 +76,7 @@ def main(stdscr) -> None:
                                 "<< 운명 인식 >>",
                                 clcDict,
                                 [1,0,255,10],
-                                '@'
+                                '@',
                             ); selectedFile = saveDatas[loadSavedData-1]
 
                             match clc.main(
@@ -89,7 +90,7 @@ def main(stdscr) -> None:
                                 ),
                                 ["네", "아니오"],
                                 [1,0,255,10],
-                                '@'
+                                '@',
                             ):
                                 case 1:
                                     setData(load(selectedFile.rstrip(".rud")))
@@ -107,7 +108,7 @@ def main(stdscr) -> None:
                                 ),
                                 {"저런..." : "아이고 이런..."},
                                 [1,0,255,10],
-                                '@'
+                                '@',
                             ); break
                     except: break
                 if s.name: break
@@ -119,11 +120,12 @@ def main(stdscr) -> None:
                             "UI 설정..."    : "게임에 표시될 UI를 설정합니다.",
                             "프레임 설정...": "게임 화면의 새로고침 빈도를 설정합니다.",
                             "게임 모드..."  : "활성화할 게임 모드를 관리합니다.",
+                            "음량 설정..."  : "게임의 음량을 설정합니다.",
                             ""              : "",
                             "완료"          : ""
                         },
                         [1,0,255,10],
-                        '@'
+                        '@',
                     )
                     match mainSettings:
                         case 1:
@@ -141,7 +143,7 @@ def main(stdscr) -> None:
                                     [1,0,255,10],
                                     '@',
                                     setArrowPos   =UISAP,
-                                    returnArrowPos=True
+                                    returnArrowPos=True,
                                 )
                                 match UISettings:
                                     case 1: s.statusDesign = 0     if s.statusDesign   else 1
@@ -167,7 +169,7 @@ def main(stdscr) -> None:
                                     '@',
                                     maxLine       =4,
                                     setArrowPos   =frameSAP,
-                                    returnArrowPos=True
+                                    returnArrowPos=True,
                                 )
                                 match frameSettings:
                                     case 1|2|4|5:
@@ -177,9 +179,9 @@ def main(stdscr) -> None:
                                         configs.save()
                                         break
                         case 3:
-                            modeSAP = [0, 0]
+                            modSAP = [0, 0]
                             while 1:
-                                modeSettings, modeSAP = clc.main(
+                                modSettings, modSAP = clc.main(
                                     "<< 게임 모드 >>",
                                     {
                                         f"겁쟁이 모드 : {s.cowardMode}" : [
@@ -187,7 +189,11 @@ def main(stdscr) -> None:
                                              "괜찮아요. 좀만 하다 보면 곧 익숙해질 겁니다." if s.cowardMode and s.ezMode else "게임에서마저도 죽는 게 두려운가 봐요?"
                                             ][s.cowardMode],
                                         f"쫄보 모드 : {s.ezMode}" : [
-                                            "활성화 시 모든 편린의 체력이 2 낮아집니다.\n또한 확률적으로 편린의 공격을 회피합니다.\n심지어 저주 제외 모든 스탯이 100% 상승합니다!\n거기에다가 공격력은 특별히 400% 상승합니다!!",
+
+"""활성화 시 모든 편린의 체력이 2 낮아집니다.
+또한 확률적으로 편린의 공격을 회피합니다.
+심지어 저주 제외 모든 스탯이 100% 상승합니다!
+거기에다가 공격력은 특별히 400% 상승합니다!!""",
                                             "이거 완전 쌩 뉴비를 위한 설정이네요.\n이 게임이 처음이신가 봐요?" if s.cowardMode and s.ezMode else choice(
                                                 [
                                                     "\"쫄보 활성화.\"",
@@ -206,16 +212,39 @@ def main(stdscr) -> None:
                                     },
                                     [1,0,255,10],
                                     '@',
-                                    setArrowPos   =modeSAP,
-                                    returnArrowPos=True
+                                    setArrowPos   =modSAP,
+                                    returnArrowPos=True,
                                 )
-                                match modeSettings:
-                                    case 1: s.cowardMode = False if s.cowardMode else True
-                                    case 2: s.ezMode     = False if s.ezMode     else True
-                                    case 3: s.publicMode = False if s.publicMode else True
+                                match modSettings:
+                                    case 1: s.cowardMode = [True,False][s.cowardMode]
+                                    case 2: s.ezMode     = [True,False][s.ezMode]
+                                    case 3: s.publicMode = [True,False][s.publicMode]
                                     case 4: break
-                        case 4: break
-            case 4: clc.main("제작중", ["화긴"], [1,0,255,10], '@')
+                        case 4:
+                            volumeSAP = [0, 0]
+                            while 1:
+                                volumeSettings, volumeSAP = clc.main(
+                                    f"<< 음량 설정 >>\n\n현재 음량 : {s.volume}%",
+                                    ["+", "-", "완료"],
+                                    [1,0,255,10],
+                                    '@',
+                                    maxLine       =1,
+                                    setArrowPos   =volumeSAP,
+                                    returnArrowPos=True,
+                                )
+                                match volumeSettings:
+                                    case 1: s.volume += 10 if s.volume < 100 else 0
+                                    case 2: s.volume -= 10 if s.volume       else 0
+                                    case 3:
+                                        configs.save()
+                                        break
+                        case 5: break
+            case 4: clc.main(
+                "제작중",
+                ["화긴"],
+                [1,0,255,10],
+                '@',
+                )
             case 5:
                 s.main = 0
                 curses.endwin()

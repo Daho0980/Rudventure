@@ -1,12 +1,13 @@
 import time
 from   random import randrange, choice
 
-from   Assets.data             import status, lockers
-from   Assets.data.color       import cColors        as cc
-from   Assets.data.comments    import TIOTAComments
-from   Game.core.system.logger import addLog
-from   Game.entities.enemy     import event          as eEvent
-from   Game.entities.player    import event
+from Assets.data             import status, lockers
+from Assets.data.color       import cColors        as cc
+from Assets.data.comments    import TIOTAComments
+from Game.core.system.logger import addLog
+from Game.entities.enemy     import event          as eEvent
+from Game.entities.player    import event, tts
+from Game.utils.system.sound import play
 
 
 l  = lockers
@@ -14,6 +15,16 @@ s  = status
 
 
 class enemy:
+    """
+    # 일개 잡몹
+    - 정처 없이 떠돎
+    - 체력은 4+(2*stage)
+    - 플레이어가 상/하/좌/우 1 칸 이내에 있다면 공격함
+    - 확률적으로 포효를 내질러 자신의 공격력이 1+(round(stage/10)) 증가함
+    - 기본적인 아이콘 -> %
+
+    - 보스방 스폰 가능
+    """
     def __init__(self, name:str, icon:str, ID:int) -> None:
         self.name     = name
         self.Dy       = 0
@@ -36,12 +47,12 @@ class enemy:
     def damaged(self) -> None:
         if s.hitPos and [self.y, self.x] in s.hitPos:
             rate:int         = randrange(1,101)
-            crit, dmg, = 0, s.atk
+            crit, dmg, sound, isHit = 0, s.atk, None, True
             if rate <= s.critRate:
-                crit = 1
+                sound, crit = "critical", 1
                 dmg  = round(eval(f"(s.atk+(s.critDMG*0.1)){choice(['+', '-'])}(s.atk*(s.critDMG*0.005))"))
             elif rate >= 90:
-                dmg = 0
+                sound, dmg, isHit = "miss", 0, False
 
             self.hp -= dmg
             if self.hp > 0:
@@ -50,6 +61,8 @@ class enemy:
                 elif crit: msg += f" {cc['fg']['L']}치명타!{cc['end']}"
                 if dmg: eEvent.hitted(self.y, self.x, self.icon, self.id)
                 addLog(msg)
+                if sound: play("enemy", "damage", sound)
+                if isHit: play("player", "slash")
 
     def start(self, sethp:int, setAtk:int, Dy:int, Dx:int, y:int, x:int) -> None:
         self.hp:int       = sethp
@@ -72,6 +85,7 @@ class enemy:
             self.y, self.x   = y, x
 
     def pDamage(self, DR:str="") -> None:
+        sound = ("enemy", "enemyHit")
         event.hitted()
         s.DROD = [f"{cc['fg']['F']}{self.name if not DR else DR}{cc['end']}", 'F']
         if s.df > 0:
@@ -79,10 +93,12 @@ class enemy:
             if s.df < 0                    : s.hp += s.df
             if round(s.df) < 0             : s.df = 0
             if s.df == 0 and s.dfCrack <= 0:
+                sound = ("player", "armor", "crack")
                 addLog(f"{cc['fg']['B1']}방어구{cc['end']}가 부서졌습니다!")
                 s.dfCrack = 1
         else: s.hp -= self.atk
 
+        play(*sound)
         addLog(f"{s.lightName}이(가) {cc['fg']['F']}{self.name}{cc['end']}({self.icon}) 에 의해 {cc['fg']['R']}{self.atk}{cc['end']}만큼의 피해를 입었습니다!")
 
     def move(self) -> None:
@@ -100,6 +116,7 @@ class enemy:
                 if self.hp > 0:
                     if randrange(1,3000) == 1215:
                         self.atk += 1+(round(s.stage/10))
+                        play("enemy", "pain", "growl")
                         addLog(f"{cc['fg']['F']}{self.name}{cc['end']}({self.icon})이 울부짖습니다!")
                         addLog(f"{cc['fg']['F']}{self.name}{cc['end']}({self.icon})의 공격력이 {cc['fg']['L']}{1+(round(s.stage/10))}{cc['end']} 상승합니다.")
                         for _ in range(3):
@@ -160,8 +177,16 @@ class enemy:
                 time.sleep(0.5)
 
 
-
 class observer(enemy):
+    """
+    # 돌격형 유닛
+    - 언제나 플레이어의 위치를 알고 쫓아옴
+    - 체력은 10+(2*stage)
+    - x값 또는 y값이 플레이어와 같다면 플레이어가 있는 방향으로 돌진함
+    - 기본적인 아이콘 -> #
+
+    - 보스방 스폰 가능
+    """
     def __init__(self, name, icon, ID): super().__init__(name, icon, ID)
 
     def start(self, sethp:int, setAtk:int, Dy:int, Dx:int, y:int, x:int) -> None: super().start(sethp, setAtk, Dy, Dx, y, x)
@@ -188,6 +213,7 @@ class observer(enemy):
                     a:int         = 0
 
                     if self.Dy == s.Dy and self.Dx == s.Dx and (self.x == s.x or self.y == s.y):
+                        play("enemy", "unrest", "targetLock")
                         if self.x == s.x:
                             Targetted()
                             if self.y < s.y: a = 0
@@ -248,7 +274,6 @@ class observer(enemy):
                     self.isFocused = False
                     self.coolTime  = 0
                 time.sleep(0.5)
-
 
 
 class mine(enemy):
@@ -322,13 +347,14 @@ class mine(enemy):
                             nowDRP['room'][self.y][self.x+1]["id"]
                         ]
                         if 300 in exPos:
+                            play("enemy", "resentment", "explosion")
                             if s.ezMode:
                                 if randrange(1,11)<8: addLog(f"{cc['fg']['F']}{self.name}{cc['end']}의 공격을 피했습니다!")
                                 else:                        enemy.pDamage(self, "폭발")
                             else: enemy.pDamage(self, "폭발")
                             explode()
                             self.xpMultiplier = 2
-                            if randrange(0,2): addLog(f"{cc['fg']['L']}\"{choice(TIOTAComments)}\"{cc['end']}")
+                            if randrange(0,2): tts.TTS(choice(TIOTAComments))
                         else: nowDRP['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id}
                     else: blink()
 
