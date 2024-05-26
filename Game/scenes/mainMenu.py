@@ -8,7 +8,6 @@ from Game.core.system                 import configs
 from Game.scenes                      import checkColor
 from Game.utils.modules               import cSelector, Textbox
 from Game.utils.advanced.Rudconverter import load
-from Game.utils.system.sound          import play
 
 
 s, cc  = status, color.cColors
@@ -58,7 +57,7 @@ def main(stdscr) -> None:
                 "게임 종료" : "게임을 종료합니다."
             },
             [1,0,255,10],
-            '@',
+            '@'
         )
         match mainMenu:
             case 1: break
@@ -76,7 +75,7 @@ def main(stdscr) -> None:
                                 "<< 운명 인식 >>",
                                 clcDict,
                                 [1,0,255,10],
-                                '@',
+                                '@'
                             ); selectedFile = saveDatas[loadSavedData-1]
 
                             match clc.main(
@@ -90,7 +89,7 @@ def main(stdscr) -> None:
                                 ),
                                 ["네", "아니오"],
                                 [1,0,255,10],
-                                '@',
+                                '@'
                             ):
                                 case 1:
                                     setData(load(selectedFile.rstrip(".rud")))
@@ -108,7 +107,7 @@ def main(stdscr) -> None:
                                 ),
                                 {"저런..." : "아이고 이런..."},
                                 [1,0,255,10],
-                                '@',
+                                '@'
                             ); break
                     except: break
                 if s.name: break
@@ -125,7 +124,7 @@ def main(stdscr) -> None:
                             "완료"          : ""
                         },
                         [1,0,255,10],
-                        '@',
+                        '@'
                     )
                     match mainSettings:
                         case 1:
@@ -143,7 +142,7 @@ def main(stdscr) -> None:
                                     [1,0,255,10],
                                     '@',
                                     setArrowPos   =UISAP,
-                                    returnArrowPos=True,
+                                    returnArrowPos=True
                                 )
                                 match UISettings:
                                     case 1: s.statusDesign = 0     if s.statusDesign   else 1
@@ -169,7 +168,7 @@ def main(stdscr) -> None:
                                     '@',
                                     maxLine       =4,
                                     setArrowPos   =frameSAP,
-                                    returnArrowPos=True,
+                                    returnArrowPos=True
                                 )
                                 match frameSettings:
                                     case 1|2|4|5:
@@ -213,12 +212,12 @@ def main(stdscr) -> None:
                                     [1,0,255,10],
                                     '@',
                                     setArrowPos   =modSAP,
-                                    returnArrowPos=True,
+                                    returnArrowPos=True
                                 )
                                 match modSettings:
-                                    case 1: s.cowardMode = [True,False][s.cowardMode]
-                                    case 2: s.ezMode     = [True,False][s.ezMode]
-                                    case 3: s.publicMode = [True,False][s.publicMode]
+                                    case 1: s.cowardMode = False if s.cowardMode else True
+                                    case 2: s.ezMode     = False if s.ezMode     else True
+                                    case 3: s.publicMode = False if s.publicMode else True
                                     case 4: break
                         case 4:
                             volumeSAP = [0, 0]

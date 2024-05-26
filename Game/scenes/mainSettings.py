@@ -45,7 +45,7 @@ def main(stdscr) -> None:
             },
             [1,0,255,10],
             '@',
-            maxLine   =2,
+            maxLine=2
         )
         s.frameRate = [0,1,30,60,0][frameSettings]
         s.frame     = 1/s.frameRate if s.frameRate else 0

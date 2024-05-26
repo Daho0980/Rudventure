@@ -23,7 +23,5 @@ def event(cmt) -> None:
         s.Dungeon[s.Dy][s.Dx]['room'][5][7] = {"block" : s.ids[4], "id" : 4}
         s.Dungeon[s.Dy][s.Dx]['room'][7][5] = {"block" : s.ids[4], "id" : 4}
         if cmt: comment = choice(c.treasureRoomComment[2])
-    if cmt:
-        # addLog(f"{cc['fg']['L']}\"{comment}\"{cc['end']}")
-        say(comment)
+    if cmt: say(comment)
     s.Dungeon[s.Dy][s.Dx]['interaction'] = True
