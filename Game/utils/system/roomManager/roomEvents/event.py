@@ -7,7 +7,6 @@ def event0() -> None:
     s.Dungeon[s.Dy][s.Dx]['interaction'] = True
 
 def event1() -> None:
-    # s.Dungeon[s.Dy][s.Dx]['room'][6][6] = {"block" : s.ids[400], "id" : 400}
     addLog(f"{cc['fg']['A']}신상{cc['end']} 주위의 한기가 {cc['fg']['L']}당신{cc['end']}을 감싸돕니다...")
     s.Dungeon[s.Dy][s.Dx]['interaction'] = True
 def event2() -> None: ...
