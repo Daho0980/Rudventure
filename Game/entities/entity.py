@@ -46,8 +46,8 @@ def addMonster(
     ashChipType:list[int]     = [1, 2, 1]
     icons:list[str]           = [s.ids[600], s.ids[601], s.ids[602]]
 
-    name:str             = kinds[entityType]
-    valuableName         = classType[entityType]
+    name:str     = kinds[entityType]
+    valuableName = classType[entityType]
 
     s.entityCount      += entityCountType[entityType]
     s.totalEntityCount += 1

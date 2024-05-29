@@ -21,11 +21,12 @@ def main() -> None:
             match data['roomType']:
                 case 1: normal.event(data)
                 case 2:
-                    choice(
-                        [
-                            event.event0,
-                            event.event1
-                        ]
-                    )()
+                    if data['eventType']<4:
+                        {
+                            0 : event.event0,
+                            1 : event.event1,
+                            2 : event.event1,
+                            3 : event.event1
+                        }[data['eventType']]()
                 case 3: treasure.event(commentP)
                 case 4: boss.event(data)

@@ -1,10 +1,11 @@
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! row는 가로, column은 세로입니다 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 import curses
 import unicodedata
-from   cusser import Cusser
+from   cusser     import Cusser
 
 from Assets.data.color            import cColors, customColor
 from Game.utils                   import graphic             as grp
+from Game.utils.modules.cSelector import macros as m
 from Game.utils.system.sound      import play
 
 cc = cColors
@@ -206,8 +207,8 @@ def system(
                                         tag,
                                         frontTag
                                         )
-
-        stdscr.addstr(background) # type: ignore
+        if background == 'v': stdscr.addstr(m.showversion(stdscr))
+        else:                 stdscr.addstr(background) # type: ignore
         grp.addstrMiddle(stdscr, display, y=y, x=x)
         stdscr.refresh()
 

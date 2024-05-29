@@ -9,7 +9,7 @@ match os.name:
         s.s             = '/'
         pythonDirectory = "/Library/Frameworks/Python.framework/Versions/3.10/lib"
 
-        sys.path = [            
+        sys.path = [
             directory,
             os.path.join(pythonDirectory, 'python310.zip'),
             os.path.join(pythonDirectory, 'python3.10'),
@@ -20,7 +20,7 @@ match os.name:
         s.s             = '\\'
         pythonDirectory = "%APPDATA%\\Local\\Programs\\Python\\Python310"
 
-        sys.path = [            
+        sys.path = [
             directory,
             os.path.join(pythonDirectory, 'python310.zip'),
             os.path.join(pythonDirectory, 'DLLs'),

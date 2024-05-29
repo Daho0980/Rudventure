@@ -7,8 +7,8 @@ from   itertools import chain
 from Assets.data             import rooms, status
 from Assets.data.color       import cColors                as cc
 from Game.core.system        import logger
-from Game.entities.player    import event, tts, checkStatus
-from Game.utils.system       import xpSystem
+from Game.entities.player    import event, checkStatus
+from Game.utils.system       import xpSystem, tts
 from Game.utils.system.sound import play
 
 
@@ -177,9 +177,24 @@ def move(Dir, Int:int) -> None:
 
         positions = [[cy, tx], [ty, cx]]
         if roomGrid[positions[Type][0]][positions[Type][1]]["id"] in s.interactableBlocks["cannotStepOn"]:
-            ty, tx     = bfy, bfx
             s.Dy, s.Dx = bfDy, bfDx
+            ty, tx     = bfy, bfx
         else: s.Dungeon[s.Dy][s.Dx]['room'][positions[Type][0]][positions[Type][1]] = {"block" : s.ids[6], "id" : 6}
+
+    elif roomGrid[ty][tx]["id"] == 20:
+        data = roomGrid[ty][tx]["nbt"]
+        event.readSign(data["texts"], data["delay"], data["voice"])
+        roomGrid[ty][tx] = {"block" : s.ids[21], "id" : 21}
+
+        s.Dy, s.Dx = bfDy, bfDx
+        ty, tx     = bfy, bfx
+
+    elif roomGrid[ty][tx]["id"] == 21:
+        sound      = ("player", "interaction", "open")
+        s.Dy, s.Dx = bfDy, bfDx
+        ty, tx     = bfy, bfx
+
+        logger.addLog(f"당신 앞에는 그저 {cc['fg']['O']}흙더미{cc['end']}가 자리를 지키고 있을 뿐입니다...")
 
     elif roomGrid[ty][tx]["id"] == 400:
         s.Dy, s.Dx = bfDy, bfDx
@@ -218,6 +233,6 @@ def move(Dir, Int:int) -> None:
 def say(text, TextColor:str='L'):
     logger.addLog(f"{cc['fg'][TextColor]}\"{text}\"{cc['end']}")
     threading.Thread(
-        target=lambda: tts.TTS(re.compile(r'(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]').sub('',text)),
+        target=lambda: tts.TTS(text),
         daemon=True
     ).start()

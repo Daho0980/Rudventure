@@ -34,7 +34,10 @@ def add() -> None:
                             s.statusDesign = 0 if s.statusDesign else 1
                             play("soundEffects", "smash")
                             addLog(f"스탯 창 디자인이 \'{['콤팩트', '코지'][s.statusDesign]}\'로 변경되었습니다.")
-                        
+                        case 66: # Shift + b
+                            s.dynamicCameraMoving = 0 if s.dynamicCameraMoving else 1
+                            play("soundEffects", "smash")
+                            addLog(f"다★이☆나★믹 카☆메★라 무☆빙이 {['꺼', '켜'][s.dynamicCameraMoving]}졌습니다.")
                         case 109: # m
                             l.useSound = False if l.useSound else True
                             play("soundEffects", "check")

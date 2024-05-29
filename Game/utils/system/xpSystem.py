@@ -12,10 +12,13 @@ def getXP(count:int=0) -> None:
         `count`(int) : xp 증가율
     """
     while s.xp + count > s.Mxp:
-        play("system", "curseUp")
-        logger.addLog(f"{cc['fg']['F']}저주가 한 층 더 깊어집니다...{cc['end']}")
         s.lvl += 1
         s.Mxp += 3
+        if s.lvl >= s.Mlvl/2:
+            s.hp -= 1
+            s.DROD = [f"{cc['fg']['F']}흡혈{cc['end']}", 'F']
+        play("system", "curseUp")
+        logger.addLog(f"{cc['fg']['F']}저주가 한 층 더 깊어집니다...{cc['end']}")
         if count > s.xp: count -= s.xp
         else:            count -= (s.Mxp-s.xp)
         s.xp = 0

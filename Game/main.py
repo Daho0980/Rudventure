@@ -159,17 +159,29 @@ while s.main:
         f"지 하   {cc['fg']['R']}-{s.stage}{cc['end']}   층"
         ); s.stage += 1
 
-    l.jpsf        = 1
-    quickStarter  = 0
+    l.jpsf       = 1
+    quickStarter = 0
 
     while not q.quest():
+        st = time.time()
+
         if s.hp <= 0 or s.hunger <= 0 or not s.main: break
         if l.jpsf:
             playerChecker()
-            grp.fieldPrint(stdscr, s.Dungeon[s.Dy][s.Dx]['room'])
-            if not quickStarter: stdscr.refresh(); quickStarter=1
+            grp.render(stdscr, s.Dungeon[s.Dy][s.Dx]['room'])
+
+            if not quickStarter:
+                stdscr.refresh()
+                quickStarter = 1
+
             roomManager.main()
-            time.sleep(s.frame)
+
+            slt = s.frame-(time.time()-st)
+            if slt>0: time.sleep(slt)
+            else:     time.sleep(0.001)
+            # time.sleep(s.frame)
+
         else: time.sleep(1)
+
     if s.hunger <= 0: s.DROD = [f"{cc['fg']['Y']}아사{cc['end']}", 'Y']
     gameChecker(stdscr)

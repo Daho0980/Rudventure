@@ -1,4 +1,5 @@
 import os
+import json
 import curses
 import socket
 from   random import choice
@@ -43,7 +44,10 @@ def setData(data):
 
 def main(stdscr) -> None:
     configs.load()
-    
+    with open(f"{s.TFP}config{s.s}version.json", 'r') as f:
+        try:    s.version = json.load(f)["version"]
+        except: s.version = "version file was missing!"
+
     checkColor.main(stdscr)
     while 1:
         mainMenu:int = clc.main(
@@ -57,7 +61,8 @@ def main(stdscr) -> None:
                 "게임 종료" : "게임을 종료합니다."
             },
             [1,0,255,10],
-            '@'
+            '@',
+            background='v'
         )
         match mainMenu:
             case 1: break

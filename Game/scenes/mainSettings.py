@@ -27,6 +27,7 @@ def setIconColor() -> None:
     s.ids[17]  = f"{cc['fg']['L']}V{cc['end']}"
     s.ids[18]  = f"{cc['fg']['Y']}O{cc['end']}"
     s.ids[19]  = f"{cc['fg']['F']}Ø{cc['end']}"
+    s.ids[21]  = f"{cc['fg']['O']}☲{cc['end']}"
     s.ids[300] = f"{cc['fg']['L']}@{cc['end']}"
     s.ids[301] = f"{cc['fg']['L']}&{cc['end']}"
     s.ids[400] = f"{cc['fg']['A']}Y{cc['end']}"

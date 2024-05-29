@@ -1,3 +1,4 @@
+from Assets.data                import status as s
 from Game.utils.modules.Textbox import TextBox
 
 def fullSizedBox(stdscr, boxColor:str) -> str:
@@ -8,3 +9,5 @@ def fullSizedBox(stdscr, boxColor:str) -> str:
         AMLS=True,
         coverColor=boxColor
     )
+
+showversion = lambda stdscr: f"\033[0;{stdscr.getmaxyx()[0]}H{s.version}"

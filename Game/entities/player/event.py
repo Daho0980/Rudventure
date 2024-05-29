@@ -1,12 +1,13 @@
 import time
 import threading
 
-from Assets.data        import status    as s
-from Assets.data.color  import cColors   as cc
-from Assets.data        import lockers   as l
-from Game.core.system   import logger
-from Game.entities      import player    as p
-from Game.utils.graphic import escapeAnsi
+from Assets.data              import status    as s
+from Assets.data.color        import cColors   as cc
+from Assets.data              import lockers   as l
+from Game.core.system         import logger
+from Game.entities            import player    as p
+from Game.utils.system.tts    import TTS
+from Game.utils.graphic       import escapeAnsi
 
 
 def hitted() -> None:
@@ -64,3 +65,19 @@ def cursedDeath() -> None:
 
     
     threading.Thread(target=event, daemon=True).start()
+
+def readSign(texts, delay, voice) -> None:
+    def target() -> None:
+        nonlocal texts, delay
+
+        for line in texts:
+            if isinstance(line, list):
+                exec(line[1])
+                logger.addLog(line[0])
+                TTS(line[0], voicePath=("object", "clayModel", "voice", voice))
+            else:
+                logger.addLog(line)
+                TTS(line, voicePath=("object", "clayModel", "voice", voice))
+            time.sleep(delay)
+    
+    threading.Thread(target=target, daemon=True).start()

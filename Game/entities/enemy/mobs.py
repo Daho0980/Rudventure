@@ -1,3 +1,4 @@
+import math
 import time
 from   random import randrange, choice
 
@@ -6,7 +7,7 @@ from Assets.data.color       import cColors        as cc
 from Assets.data.comments    import TIOTAComments
 from Game.core.system.logger import addLog
 from Game.entities.enemy     import event          as eEvent
-from Game.entities.player    import event, tts
+from Game.entities.player    import event, say
 from Game.utils.system.sound import play
 
 
@@ -209,7 +210,6 @@ class observer(enemy):
                 bfx, bfy = self.x, self.y
                 if self.hp > 0:
                     Moves, Moves1 = ["+=", "-="], ["+", "-"]
-                    canBreak:list = [4, 0]
                     a:int         = 0
 
                     if self.Dy == s.Dy and self.Dx == s.Dx and (self.x == s.x or self.y == s.y):
@@ -226,7 +226,7 @@ class observer(enemy):
                                             if randrange(1,11)<8: addLog(f"{cc['fg']['F']}{self.name}{cc['end']}의 공격을 피했습니다!")
                                             else:                        enemy.pDamage(self, choice(["충격파", "교통사고", "들이박힘"]))
                                         else: enemy.pDamage(self, choice(["충격파", "교통사고", "들이박힘"]))
-                                    if nowDRP['room'][eval(f"self.y{Moves1[a]}1")][self.x]["id"] not in canBreak: break
+                                    if nowDRP['room'][eval(f"self.y{Moves1[a]}1")][self.x]["id"] not in s.interactableBlocks["breakable"]: break
                                     nowDRP['room'][self.y][self.x] = {"block" : s.ids[0], "id" : 0}
                                     exec(f"self.y{Moves[a]}1"); nowDRP['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id}
                                 time.sleep(0.1)
@@ -243,7 +243,7 @@ class observer(enemy):
                                             if randrange(1,11)<8: addLog(f"{cc['fg']['F']}{self.name}{cc['end']}의 공격을 피했습니다!")
                                             else:                        enemy.pDamage(self, choice(["충격파", "교통사고", "들이박힘"]))
                                         else: enemy.pDamage(self, choice(["충격파", "교통사고", "들이박힘"]))
-                                    if nowDRP['room'][self.y][eval(f"self.x{Moves1[a]}1")]["id"] not in canBreak: break
+                                    if nowDRP['room'][self.y][eval(f"self.x{Moves1[a]}1")]["id"] not in s.interactableBlocks["breakable"]: break
                                     nowDRP['room'][self.y][self.x] = {"block" : s.ids[0], "id" : 0}
                                     exec(f"self.x{Moves[a]}1"); nowDRP['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id}
                                 time.sleep(0.1)
@@ -354,7 +354,7 @@ class mine(enemy):
                             else: enemy.pDamage(self, "폭발")
                             explode()
                             self.xpMultiplier = 2
-                            if randrange(0,2): tts.TTS(choice(TIOTAComments))
+                            if randrange(0,2): say(choice(TIOTAComments))
                         else: nowDRP['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id}
                     else: blink()
 

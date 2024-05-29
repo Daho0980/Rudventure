@@ -113,6 +113,41 @@ def _makeRoom(Map:list):
         for column in range(len(output[row])):
             if len(output[row][column]) > 0:
                 baseMap = copy.deepcopy(rooms.Room)
+
+                if output[row][column]['roomType'] == 3:
+                    treasureLocations     = {
+                        0 : [[6, 6]],
+                        1 : [[5, 5], [6, 6], [7, 7]],
+                        2 : [[5, 5], [5, 7], [6, 6], [7, 5], [7, 7]]
+                    }
+                    for tby, tbx in treasureLocations[output[row][column]['treasureRarity']]:
+                        baseMap[tby][tbx] = {"block" : s.ids[4], "id" : 4}
+
+                elif output[row][column]['roomType'] == 2:
+                    match output[row][column]['eventType']:
+                        case 0:
+                            status = [
+                                ['R',  f"{cc['fg']['R']}최대 체력{cc['end']}",    "s.Mhp += 1"],
+                                ['B1', f"{cc['fg']['B1']}최대 방어력{cc['end']}", "s.Mdf += 1"],
+                                ['L',  f"{cc['fg']['L']}공격력{cc['end']}",       "s.atk += 1"],
+                                ['G1', f"{cc['fg']['G1']}잿그릇{cc['end']}",      "s.Mlvl += 1; logger.addLog(f\"{cc['fg']['G1']}재의 그릇{cc['end']}이 {cc['fg']['F']}1{cc['end']} 개 증가했습니다. (최대 레벨 {cc['fg']['G1']}{s.Mlvl-1}{cc['end']} -> {cc['fg']['F']}{s.Mlvl}{cc['end']})\")"]
+                            ][random.randrange(0, 4)]
+                            baseMap[6][6] = {
+                                "block" : f"{cc['fg'][status[0]]}{s.ids[20]}{cc['end']}",
+                                "id"    : 20,
+                                "nbt" : {
+                                    "texts" : [
+                                        f"'와우, 방금 당신 1/6의 확률을 뚫고 {cc['fg'][status[0]]}저{cc['end']}를 만나셨어요!'",
+                                        "'다른 이벤트가 없어서 실망하셨다고요? 저런...'",
+                                        [f"'대신 {status[1]}과 응원을 드리겠습니다.'", status[2]],
+                                        "'그럼 화이팅!'"
+                                        ],
+                                    "delay" : 0.5,
+                                    "voice" : "clayModel"
+                                    }
+                                }
+                        case 1|2|3: baseMap[6][6] = {"block" : s.ids[400], "id" : 400}
+
                 RDP:list[int]        = list(output[row][column]["doorPos"].values())
                 GRDP:list[list[int]] = [[0, 6], [6, 12], [12, 6], [6, 0]]
 
@@ -192,12 +227,12 @@ def _initBranch(Map:list, y:int, x:int, rawPrint:bool=False, showAll:bool=False)
     global roomIcons
     global direction
 
-    nowLength                                        = 0
-    maxBranchLength                                  = random.randrange(9, 17)
-    maxEventRoomCount, nowEventRoomCount             = random.randrange(1, 3), 0
-    maxTreasureBoxRoomCount, nowTreasureBoxRoomCount = 1, 0
-    bfx, bfy                                         = 0, 0
-    possibility                                      = [['y', 1, 'U', 'D'], ['y', -1, 'D', 'U'], ['x', 1, 'L', 'R'], ['x', -1, 'R', 'L']]
+    nowLength                                     = 0
+    maxBranchLength                               = random.randrange(9, 17)
+    maxEventRoomCount, eventRoomCount          = random.randrange(1, 3), 0
+    maxTreasureBoxRoomCount, treasureBoxRoomCount = random.randrange(1, 3), 0
+    bfx, bfy                                      = 0, 0
+    possibility                                   = [['y', 1, 'U', 'D'], ['y', -1, 'D', 'U'], ['x', 1, 'L', 'R'], ['x', -1, 'R', 'L']]
 
     def getBack(bfx:int, bfy:int):
         nonlocal y, x
@@ -210,7 +245,7 @@ def _initBranch(Map:list, y:int, x:int, rawPrint:bool=False, showAll:bool=False)
 #                        └─> 0:axis, 1:movement, 2:direction
         locationData        = possibility[random.randrange(0,4)]
         coordinateNamespace = {'x':x, 'y':y}
-        selectRoomKind      = 0
+        roomKind            = 0
         
         exec(f"{locationData[0]}+={locationData[1]}", coordinateNamespace)
         x, y = coordinateNamespace['x'], coordinateNamespace['y']
@@ -245,37 +280,43 @@ def _initBranch(Map:list, y:int, x:int, rawPrint:bool=False, showAll:bool=False)
         endCount = 0
 
         match random.randrange(0, 2): # 방 종류 설정
-            case 0: selectRoomKind = random.randrange(1, 4)
-            case 1: selectRoomKind = random.randrange(5, 7)
-        if maxBranchLength - nowLength == 1: selectRoomKind = 4 # 출구 & 보스방
+            case 0: roomKind = random.randrange(1, 4)
+            case 1: roomKind = random.randrange(5, 7)
+        if maxBranchLength - nowLength == 1: roomKind = 4 # 출구 & 보스방
 
-        if selectRoomKind == 2: # 이벤트 방
-            if nowEventRoomCount >= maxEventRoomCount: selectRoomKind = 1
-            else: nowEventRoomCount += 1
+        if roomKind == 2: # 이벤트 방
+            if eventRoomCount >= maxEventRoomCount: roomKind = 1
+            else:
+                eventRoomCount        += 1
+                Map[y][x]["eventType"] = random.randrange(0, 6)
 
-        elif selectRoomKind in [3, 5]: # 보물 방
-            selectRoomKind = 3
-            if nowTreasureBoxRoomCount >= maxTreasureBoxRoomCount: selectRoomKind = 1
-            else: nowTreasureBoxRoomCount += 1
+        elif roomKind in [3, 5]: # 보물 방
+            roomKind = 3
+            if treasureBoxRoomCount >= maxTreasureBoxRoomCount: roomKind = 1
+            else:
+                treasureBoxRoomCount += 1
+                rewardP               = random.randrange(1, 101)
 
-        elif selectRoomKind != 4: selectRoomKind = 1
+                if rewardP > 30:         rarity = 0
+                elif 10 <= rewardP < 30: rarity = 1
+                else:                    rarity = 2
+
+                Map[y][x]["treasureRarity"] = rarity
+
+        elif roomKind != 4: roomKind = 1
 
         # 몬스터 summonCount 설정
-        size    = 0
-        percent = random.randrange(1,101)
-
-        if percent <= 50                   : size = random.randrange(1, 5)
-        elif percent > 50 and percent <= 95: size = random.randrange(5, 7)
-        elif percent > 95                  : size = 7
+        percentage = random.randrange(1,101)
+        size       = random.randrange(1, 6) if percentage<=50 else random.randrange(6, 8) if percentage>50 and percentage<=95 else 8
 
         # 방 데이터 정리
         nowLength                                += 1
-        Map[y][x]["roomIcon"]                     = roomIcons[selectRoomKind]
-        Map[y][x]["roomType"]                     = selectRoomKind
-        Map[y][x]["isPlayerVisited"]              = 2 if selectRoomKind == 4 or showAll == True else 0
+        Map[y][x]["roomIcon"]                     = roomIcons[roomKind]
+        Map[y][x]["roomType"]                     = roomKind
+        Map[y][x]["isPlayerVisited"]              = 2 if roomKind == 4 or showAll == True else 0
         Map[y][x]["doorPos"][locationData[2]]     = 1
         Map[bfy][bfx]["doorPos"][locationData[3]] = 1
-        Map[y][x]["summonCount"]                  = 1 if selectRoomKind == 4 else 0 if selectRoomKind in [2, 3] else size
+        Map[y][x]["summonCount"]                  = 1 if roomKind == 4 else 0 if roomKind in [2, 3] else size
 
     if rawPrint == False and Map: return _GraphicMaker(Map)
     else:                         return Map

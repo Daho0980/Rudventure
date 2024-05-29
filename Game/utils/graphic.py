@@ -5,7 +5,7 @@ Global Functions 중 Graphic 옵션
     ``slowLogoPrint``(dead) : 로고를 천천히 출력하기 위해 만든 함수, 현재는 사용하지 않음
     ``endPrint``            : print() 끝에 end 붙이는거 귀찮아서 만듦
     ``statusBar``           : status, maxStatus 매개변수를 주로 활용해 게이지 바를 만들어줌
-    ``fieldPrint``          : 인게임 디스플레이 출력 함수
+    ``render``          : 인게임 디스플레이 출력 함수
 """
 import re
 import math, time
@@ -148,7 +148,7 @@ def statusBar(
 
     return Display
 
-def fieldPrint(stdscr, grid: list):
+def render(stdscr, grid: list):
     """
     메인 디스플레이 출력 함수
 
@@ -182,8 +182,8 @@ def fieldPrint(stdscr, grid: list):
     Display.append(addstrMiddle(
         stdscr,
         buffer,
-        y        =round(y/2)-round(len([len(escapeAnsi(l)) for l in buffer.split("\n")])/2),
-        x        =round(x/2)-(round(max([len(escapeAnsi(l)) for l in GFD])/2)+1),
+        y        =round(y/2)-round(len([len(escapeAnsi(l)) for l in buffer.split("\n")])/2)-(s.y-6) if s.dynamicCameraMoving else round(y/2)-round(len([len(escapeAnsi(l)) for l in buffer.split("\n")])/2),
+        x        =round(x/2)-(round(max([len(escapeAnsi(l)) for l in GFD])/2)+1)-(s.x-6)            if s.dynamicCameraMoving else round(x/2)-(round(max([len(escapeAnsi(l)) for l in GFD])/2)+1),
         returnStr=True
     ))
 

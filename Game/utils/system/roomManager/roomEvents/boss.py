@@ -15,8 +15,7 @@ def event(data) -> None:
         s.Dungeon[s.Dy][s.Dx]['room'][6][6] = {"block" : s.ids[0], "id" : 0}
         changeDoorPosBlock(1, data)
     elif not s.entityCount and s.roomLock:
-
-        s.roomLock = False
+        s.roomLock                           = False
         s.Dungeon[s.Dy][s.Dx]['room'][6][6]  = {"block" : s.ids[5], "id" : 5}
         s.Dungeon[s.Dy][s.Dx]['interaction'] = True
         placeRandomOrbs(multiple=2)

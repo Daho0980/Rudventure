@@ -26,6 +26,7 @@ def cMarkdown(Type:(list[int]|int)=0) -> str:
 
     return output
 
+version:str|int = "???"
 
 # status
 name:str         = ""
@@ -100,6 +101,8 @@ ids:dict[int,str] = {
     17 : "V",  # 큰 공격력 구슬
     18 : "O",  # 큰 허기 구슬
     19 : "Ø",  # 큰 저주 구슬
+    20 : "☲",  # 토용
+    21 : "☲",  # 죽은 토용
 
     300 : "@", # 0, 255, 10 & 플레이어 1
     301 : "&", # 0, 255, 10 & 플레이어 2
@@ -134,8 +137,9 @@ orbIds:dict[str,dict[str,list[int]]] = {
 stepableBlocks:list[int]               = [0, 4, 7]
 interactableBlocks:dict[str,list[int]] = {
     "canStepOn"    : [4, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 900],
-    "cannotStepOn" : [-1, 1, 2, 3, 5, 6, 400, 401, 600, 601, 602],
-    "explodable"   : [0, 4, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 400, 401, 900]
+    "cannotStepOn" : [-1, 1, 2, 3, 5, 6, 300, 301, 400, 401, 600, 601, 602],
+    "explodable"   : [0, 4, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 400, 401, 900],
+    "breakable"    : [0, 4, 7, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 501, 502, 900]
 }
 
 enemyIds:list[int] = [600, 601, 602]
@@ -176,8 +180,11 @@ onDisplay:list[str] = []
 onTime:list[int]    = []
 
 # Ingame print settings
-frameRate:int      = -1
-frame:int|float    = 0
+frameRate:int   = -1
+frame:int|float = 0
+
+dynamicCameraMoving:int = 0 # normal = 0
+
 statusDesign:int   = 1 # normal = 0
 showDungeonMap:int = 0 # normal = 0
 
