@@ -1,95 +1,20 @@
-"""
-Global Functions 중 Graphic 옵션
-
-    ``clear``               : 화면을 모두 정리함, OS에 따라 달라짐
-    ``slowLogoPrint``(dead) : 로고를 천천히 출력하기 위해 만든 함수, 현재는 사용하지 않음
-    ``endPrint``            : print() 끝에 end 붙이는거 귀찮아서 만듦
-    ``statusBar``           : status, maxStatus 매개변수를 주로 활용해 게이지 바를 만들어줌
-    ``render``          : 인게임 디스플레이 출력 함수
-"""
-import re
-import math, time
+import os
+import math
 import psutil
-import unicodedata
 
-from Assets.data             import status, lockers
-from Assets.data.color       import cColors        as cc
-from Game.utils.advanced     import DungeonMaker   as dgm
-from Game.utils.modules      import Textbox
-from Game.utils.system.sound import play
+from Assets.data         import status, lockers
+from Assets.data.color   import cColors        as cc
+from Game.utils.advanced import DungeonMaker   as dgm
+from Game.utils.modules  import Textbox
+
+from Game.utils.graphics import (
+    escapeAnsi,
+    addstrMiddle,
+    checkActualLen
+    )
+
 
 s, l = status, lockers
-
-escapeAnsi    =lambda l:re.compile(r'(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]').sub('',l)
-checkActualLen=lambda l:sum(map(lambda char:2 if unicodedata.east_asian_width(char)in['F','W']else 1,l))
-
-def addstrMiddle(
-        stdscr,
-        string:str,
-        y:int            =0,
-        x:int            =0,
-        addOnyx:list[int]=[0,0],
-        returnEndyx:bool =False,
-        returnStr:bool   =False
-        ) -> str: # type: ignore
-    lines:list[int] = list(map(lambda l: len(escapeAnsi(l)), string.split("\n")))
-    y, x = (y,x)if y+x else map(
-        lambda c:c[0]-round([len(lines)/2,max(lines)/2][c[1]]),
-        list(zip(map(lambda n:round(n/2),list(stdscr.getmaxyx())),[0,1]))
-        )
-    y, x = y+addOnyx[0], x+addOnyx[1]+1
-    output:str = ''.join(
-        [
-            escc for line in zip(
-                [f"\033[{x};{_}H" for _ in range(y-1, y+(len(lines)))],
-                string.split("\n")
-                ) for escc in line
-            ]
-        )
-    if not returnStr: stdscr.addstr(output)
-
-    if       returnEndyx and     returnStr: return output, y+len(string.split("\n")), x # type: ignore
-    elif not returnEndyx and     returnStr: return output
-    elif     returnEndyx and not returnStr: return y+len(string.split("\n")), x # type: ignore
-
-def showStage(stdscr, stageName:str):
-    """
-    `stageName`(str): 현재 스테이지의 이름
-    """
-    stdscr.clear()
-    addstrMiddle(
-        stdscr,
-        Textbox.TextBox(
-            f"{cc['fg']['R']}나 락{cc['end']}",
-            Type        ="middle",
-            inDistance  =1,
-            maxLine=int(checkActualLen(stageName)/2)+1,
-            endLineBreak=True,
-            LineType    ="double",
-            addWidth    =3
-            )
-        ); stdscr.refresh()
-    play("soundEffects", "smash")
-    time.sleep(1.6)
-    stdscr.clear()
-
-    addstrMiddle(
-        stdscr,
-        Textbox.TextBox(
-            f"{cc['fg']['R']}나 락{cc['end']}\n\n{stageName}",
-            Type        ="middle",
-            inDistance  =1,
-            outDistance =3,
-            AMLS        =True,
-            endLineBreak=True,
-            LineType    ="double",
-            addWidth    =3
-            )
-        ); stdscr.refresh()
-    play("soundEffects", "smash")
-    time.sleep(1.6)
-    play("soundEffects", "smash")
-    stdscr.clear(); stdscr.refresh()
 
 def statusBar(
         status:int,
@@ -121,8 +46,8 @@ def statusBar(
         `usePrecentage`: 퍼센테이지를 표시함. 기본적으로 `False`로 설정되어 있음\n
         `showEmptyCell`: 게이지 바 내 비어있는 셀을 출력할지에 대한 여부, 기본적으로 `True`로 설정되어 있음
     """
-    color          = cc['fg']['R']  if not color          else color
-    emptyCellColor = cc['fg']['G1'] if not emptyCellColor else emptyCellColor
+    color          = color          or cc['fg']['R']
+    emptyCellColor = emptyCellColor or cc['fg']['G1']
 
     barTypes:dict[str,list[str]] = {
         "Normal" :     ["[", "]"],
@@ -131,22 +56,22 @@ def statusBar(
         "Curved" :     ["(", ")"]
     }
 
-    maxStatus = status if not maxStatus else maxStatus
+    maxStatus = maxStatus or status
 
-    Display:str          = ""
+    Display:list         = []
     spaceLen:str         = " "*space
     statusForDisplay:int = 0
 
-    Display += f"{f'{statusName} ' if len(statusName)>0 else ''} {spaceLen}{frontTag} {cc['fg']['G1']}{barTypes[barType][0]}{color}"
+    Display.append(f"{f'{statusName} ' if len(statusName)>0 else ''} {spaceLen}{frontTag} {cc['fg']['G1']}{barTypes[barType][0]}{color}")
     if usePercentage:
         status, maxStatus = round((status/maxStatus)*10), 10
     elif not usePercentage: statusForDisplay = maxStatus if status > maxStatus else status
     
-    Display += f"{'|'*statusForDisplay+emptyCellColor+'|'*((maxStatus-statusForDisplay) if showEmptyCell else 0)}{cc['fg']['G1']}{barTypes[barType][1]}{cc['end']}"
-    if status - maxStatus > 0: Display += f" {color}+{status-maxStatus}{cc['end']}"
-    Display += f"{',' if len(backTag)>0 and showComma else ''} {backTag}"+("\n"if end else "")
+    Display.append(f"{'|'*statusForDisplay+emptyCellColor+'|'*((maxStatus-statusForDisplay) if showEmptyCell else 0)}{cc['fg']['G1']}{barTypes[barType][1]}{cc['end']}")
+    if status - maxStatus > 0: Display.append(f" {color}+{status-maxStatus}{cc['end']}")
+    Display.append(f"{',' if len(backTag)>0 and showComma else ''} {backTag}"+("\n"if end else ""))
 
-    return Display
+    return ''.join(Display)
 
 def render(stdscr, grid: list):
     """
@@ -253,11 +178,12 @@ TextBox.Line_\n"""+statusBar(
     Display.append(addstrMiddle(stdscr, logText, y=y-(1 if not len(s.onDisplay) else len(s.onDisplay)), x=0, returnStr=True))
 
     # Debug Mode
-    if s.debugScreen:
+    if s.debugConsole:
         by, bx, debugText = Textbox.TextBox(
             f"""Python version : {s.pythonVersion.major}.{s.pythonVersion.minor}.{s.pythonVersion.micro}
 Window size : {stdscr.getmaxyx()}
 Memory usage : {psutil.Process().memory_info().rss/2**20: .2f} MB
+CPU count : {psutil.cpu_count()}
 Number of threads : {psutil.Process().num_threads()}
 
 Dx : {s.Dx}, Dy : {s.Dy}, x : {s.x}, y : {s.y}

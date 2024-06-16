@@ -9,7 +9,7 @@ def reset() -> None:
             {
                 "system": {
                     "statusDesign"  : 1,
-                    "debugScreen"   : False,
+                    "debugConsole"   : False,
                     "showDungeonMap": 0,
                     "frameRate"     : -1,
                     "volume"        : 50
@@ -24,7 +24,7 @@ def load() -> None:
         data = json.load(f)
 
         s.statusDesign   = data["system"]["statusDesign"]
-        s.debugScreen    = data["system"]["debugScreen"]
+        s.debugConsole    = data["system"]["debugConsole"]
         s.showDungeonMap = data["system"]["showDungeonMap"]
         s.frameRate      = data["system"]["frameRate"]
         s.frame          = 1/data["system"]["frameRate"] if data["system"]["frameRate"] else 0
@@ -37,7 +37,7 @@ def save() -> None:
             {
                 "system": {
                     "statusDesign"  : s.statusDesign,
-                    "debugScreen"   : s.debugScreen,
+                    "debugConsole"   : s.debugConsole,
                     "showDungeonMap": s.showDungeonMap,
                     "frameRate"     : s.frameRate,
                     "volume"        : s.volume

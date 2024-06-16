@@ -27,9 +27,9 @@ def add() -> None:
                             s.showDungeonMap = 0 if s.showDungeonMap else 1
                             play("soundEffects", "smash")
                         case 68: # Shift + d
-                            s.debugScreen = False if s.debugScreen else True
+                            s.debugConsole = False if s.debugConsole else True
                             play("soundEffects", "smash")
-                            addLog(f"디버그 모드가 {s.debugScreen}(으)로 변경되었습니다.")
+                            addLog(f"디버그 모드가 {s.debugConsole}(으)로 변경되었습니다.")
                         case 83: # Shift + s
                             s.statusDesign = 0 if s.statusDesign else 1
                             play("soundEffects", "smash")
@@ -61,6 +61,8 @@ def add() -> None:
                 if key == 32: # Space
                     l.pause = False if l.pause else True
                     play("soundEffects", "smash")
+                
+                await asyncio.sleep(0.005)
             else: await asyncio.sleep(1)
 
     threading.Thread(name="keyHandler",target=lambda: curses.wrapper(lambda stdscr: asyncio.run(interactions(stdscr)))).start()

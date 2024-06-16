@@ -1,8 +1,8 @@
 import curses
 import random
 
-from   Assets.data        import status
-from   Game.utils.graphic import escapeAnsi, addstrMiddle
+from   Assets.data         import status
+from   Game.utils.graphics import escapeAnsi, addstrMiddle
 
 
 s  = status

@@ -59,7 +59,7 @@ def save() -> int:
         'entityCount', 'totalEntityCount', 'hitPos',
         'option',
         'maxStack', 'onDisplay', 'onTime',
-        'debugScreen',
+        'debugConsole',
         'frame', 'frameRate',
         'showDungeonMap', 'statusDesign',
         'lightName'

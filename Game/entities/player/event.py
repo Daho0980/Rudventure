@@ -7,7 +7,7 @@ from Assets.data              import lockers   as l
 from Game.core.system         import logger
 from Game.entities            import player    as p
 from Game.utils.system.tts    import TTS
-from Game.utils.graphic       import escapeAnsi
+from Game.utils.graphics      import escapeAnsi
 
 
 def hitted() -> None:

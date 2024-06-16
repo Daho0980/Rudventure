@@ -1,7 +1,7 @@
 {
     "system": {
         "statusDesign": 1,
-        "debugScreen": false,
+        "debugConsole": false,
         "showDungeonMap": 0,
         "frameRate": -1,
         "volume": 50

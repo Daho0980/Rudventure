@@ -1,14 +1,16 @@
 import os
 import json
+import time
 import curses
 import socket
 from   random import choice
 
-from Assets.data                      import status, color
+from Assets.data                      import status, color, UIPreview
 from Game.core.system                 import configs
 from Game.scenes                      import checkColor
 from Game.utils.modules               import cSelector, Textbox
 from Game.utils.advanced.Rudconverter import load
+from Game.utils.graphics              import animation, addstrMiddle
 
 
 s, cc  = status, color.cColors
@@ -49,6 +51,8 @@ def main(stdscr) -> None:
         except: s.version = "version file was missing!"
 
     checkColor.main(stdscr)
+    y, x = stdscr.getmaxyx()
+    animation.box.forward(stdscr, y-3, x-2, "double")
     while 1:
         mainMenu:int = clc.main(
             s.LOGO,
@@ -62,7 +66,7 @@ def main(stdscr) -> None:
             },
             [1,0,255,10],
             '@',
-            background='v'
+            background=['[fullSizeBox]', '[version]']
         )
         match mainMenu:
             case 1: break
@@ -121,68 +125,141 @@ def main(stdscr) -> None:
                     mainSettings:int = clc.main(
                         "<< 설정 >>",
                         {
-                            "UI 설정..."    : "게임에 표시될 UI를 설정합니다.",
-                            "프레임 설정...": "게임 화면의 새로고침 빈도를 설정합니다.",
+                            "그래픽 설정...": "전반적인 그래픽을 설정합니다.",
                             "게임 모드..."  : "활성화할 게임 모드를 관리합니다.",
                             "음량 설정..."  : "게임의 음량을 설정합니다.",
                             ""              : "",
                             "완료"          : ""
                         },
                         [1,0,255,10],
-                        '@'
+                        '@',
+                        background=['[fullSizeBox]', '[version]']
                     )
                     match mainSettings:
                         case 1:
-                            UISAP = [0, 0]
                             while 1:
-                                UISettings, UISAP = clc.main(
-                                    "<< UI 설정 >>",
+                                graphicSettings = clc.main(
+                                    "<< 그래픽 설정 >>",
                                     {
-                                        f"현재 스탯 UI : {['콤팩트', '코지'][s.statusDesign]}" : "좌상단에 표시될 스탯의 디자인을 변경합니다.\n인게임에서 Shift + s 키로 변경할 수 있습니다.",
-                                        f"디버그 모드  : {s.debugScreen}"                      : "우중단에 표시될 디버그 스크린 표시 여부입니다.\n인게임에서 Shift + d 키로 변경할 수 있습니다.",
-                                        f"맵 표시      : {bool(s.showDungeonMap)}"             : "우상단에 표시될 던전 맵 표시 여부입니다.\n인게임에서 Tab키로 변경할 수 있습니다.",
-                                        ""                                                     : "",
-                                        "완료"                                                 : ""
+                                        "UI 설정..."          : "게임에 표시될 UI를 설정합니다.",
+                                        "프레임 설정..."      : "게임 화면의 새로고침 빈도를 설정합니다.",
+                                        "터미널 화면 조정..." : "게임을 가장 이상적으로 즐기기 위해\n터미널의 크기를 재조정합니다.",
+                                        ""                    : "",
+                                        "완료"                : ""
                                     },
                                     [1,0,255,10],
                                     '@',
-                                    setArrowPos   =UISAP,
-                                    returnArrowPos=True
+                                    background=['[fullSizeBox]', '[version]']
                                 )
-                                match UISettings:
-                                    case 1: s.statusDesign = 0     if s.statusDesign   else 1
-                                    case 2: s.debugScreen  = False if s.debugScreen    else True
-                                    case 3: s.showDungeonMap = 0   if s.showDungeonMap else 1
-                                    case 4:
-                                        configs.save()
-                                        break
-                        case 2:
-                            frameSAP = [0, 0]
-                            while 1:
-                                frameSettings, frameSAP = clc.main(
-                                    f"<< 프레임 설정 >>\n\n현재 프레임 : {'MAX' if not s.frameRate else '설정되지 않음' if s.frameRate==-1 else s.frameRate}",
-                                    {
-                                        "1프레임"         : "정말로요...?",
-                                        "30프레임 (권장)" : "표준 설정입니다.",
-                                        ""                : "",
-                                        "완료"            : "",
-                                        "60프레임"        : "더 쾌적하게 플레이할 수 있습니다.\n하지만 안타깝게도 눈에 띄는 변화는 찾아볼 수 없겠군요 :(",
-                                        "MAX"             : "최대한 빠르게 새로고침합니다.\n화면이 [심하게] 깜빡거릴 수 있습니다."
-                                    },
-                                    [1,0,255,10],
-                                    '@',
-                                    maxLine       =4,
-                                    setArrowPos   =frameSAP,
-                                    returnArrowPos=True
-                                )
-                                match frameSettings:
-                                    case 1|2|4|5:
-                                        s.frameRate = [0,1,30,0,60,0][frameSettings]
-                                        s.frame     = 1/s.frameRate if s.frameRate else 0
+                                match graphicSettings:
+                                    case 1:
+                                        UISAP = [0, 0]
+                                        while 1:
+                                            UISettings, UISAP = clc.main(
+                                                "<< UI 설정 >>",
+                                                {
+                                                    f"현재 스탯 UI : {['콤팩트', '코지'][s.statusDesign]}" : "좌상단에 표시될 스탯의 디자인을 변경합니다.",
+                                                    f"디버그 콘솔  : {s.debugConsole}"                      : "우중단에 표시될 디버그 스크린 표시 여부입니다.",
+                                                    f"맵 표시      : {bool(s.showDungeonMap)}"             : "우상단에 표시될 던전 맵 표시 여부입니다.",
+                                                    ""                                                     : "",
+                                                    "완료"                                                 : ""
+                                                },
+                                                [1,0,255,10],
+                                                '@',
+                                                setArrowPos   =UISAP,
+                                                returnArrowPos=True,
+                                                background=[
+                                                    UIPreview.status[s.statusDesign],
+                                                    UIPreview.status["introduction"],
+                                                    addstrMiddle(
+                                                        stdscr,
+                                                        UIPreview.dungeonMap[s.showDungeonMap],
+                                                        x        =stdscr.getmaxyx()[1]-(21 if s.showDungeonMap else 29),
+                                                        y        =2,
+                                                        returnStr=True
+                                                    ),
+                                                    addstrMiddle(
+                                                        stdscr,
+                                                        UIPreview.dungeonMap["introduction"],
+                                                        x        =stdscr.getmaxyx()[1]-63,
+                                                        y        =13 if s.showDungeonMap else 3,
+                                                        returnStr=True
+                                                    ),
+                                                    addstrMiddle(
+                                                        stdscr,
+                                                        UIPreview.debugConsole[s.debugConsole],
+                                                        x        =stdscr.getmaxyx()[1]-(30 if s.debugConsole else 38),
+                                                        y        =round(stdscr.getmaxyx()[0]/2)-(5 if s.debugConsole else 0),
+                                                        returnStr=True
+                                                    ),
+                                                    addstrMiddle(
+                                                        stdscr,
+                                                        UIPreview.debugConsole["introduction"],
+                                                        x        =stdscr.getmaxyx()[1]-55,
+                                                        y        =round(stdscr.getmaxyx()[0]/2)+(6 if s.debugConsole else 1),
+                                                        returnStr=True
+                                                    ),
+                                                    '[version]'
+                                                ]
+                                            )
+                                            match UISettings:
+                                                case 1: s.statusDesign = 0     if s.statusDesign   else 1
+                                                case 2: s.debugConsole  = False if s.debugConsole    else True
+                                                case 3: s.showDungeonMap = 0   if s.showDungeonMap else 1
+                                                case 4:
+                                                    configs.save()
+                                                    break
+                                    case 2:
+                                        frameSAP = [0, 0]
+                                        while 1:
+                                            frameSettings, frameSAP = clc.main(
+                                                f"<< 프레임 설정 >>\n\n현재 프레임 : {'MAX' if not s.frameRate else '설정되지 않음' if s.frameRate==-1 else s.frameRate}",
+                                                {
+                                                    "1프레임"         : "정말로요...?",
+                                                    "30프레임 (권장)" : "표준 설정입니다.",
+                                                    ""                : "",
+                                                    "완료"            : "",
+                                                    "60프레임"        : "더 쾌적하게 플레이할 수 있습니다.\n하지만 안타깝게도 눈에 띄는 변화는 찾아볼 수 없겠군요 :(",
+                                                    "MAX"             : "최대한 빠르게 새로고침합니다.\n화면이 [심하게] 깜빡거릴 수 있습니다."
+                                                },
+                                                [1,0,255,10],
+                                                '@',
+                                                maxLine       =4,
+                                                setArrowPos   =frameSAP,
+                                                background=['[fullSizeBox]', '[version]'],
+                                                returnArrowPos=True
+                                            )
+                                            match frameSettings:
+                                                case 1|2|4|5:
+                                                    s.frameRate = [0,1,30,0,60,0][frameSettings]
+                                                    s.frame     = 1/s.frameRate if s.frameRate else 0
+                                                case 3:
+                                                    configs.save()
+                                                    break
                                     case 3:
-                                        configs.save()
-                                        break
-                        case 3:
+                                        while 1:
+                                            y, x       = stdscr.getmaxyx()
+                                            screenType = 0 if y<s.sss['minimum'][0] or x<s.sss['minimum'][1] else 1 if s.sss['minimum'][0]<=y<s.sss['recommended'][0] and s.sss['minimum'][1]<=x<s.sss['recommended'][1] else 2
+                                            baseColor  = [cc['fg']['R'], cc['fg']['Y'], cc['fg']['L']][screenType]
+
+                                            animation.box.forward(stdscr, y-3, x-2, "double", boxColor=baseColor)
+                                            terminalSizeSettings = clc.main(
+                                                f"""
+{[cc['fg']['R']+f'터미널 크기의', cc['fg']['Y']+f'최소 조건이 충족되었습니다.', cc['fg']['L']+f'현재 가장 이상적인 조건을'][screenType]}
+{['최소 조건이 충족되지 않았습니다!', '하지만 권장 조건을 충족하려면 여기서 더 늘려야 합니다.', '사용하고 있습니다!'][screenType]}
+
+
+<< 터미널 화면 조정 >>""",
+                                                [f"{baseColor}완료{cc['end']}", "", f"{baseColor}다시 측정하기{cc['end']}"],
+                                                baseColor,
+                                                '@',
+                                                background=[f"[fullSizeBox]{{'lineType':'double', 'boxColor':'{baseColor}'}}"]
+                                            )
+                                            match terminalSizeSettings:
+                                                case 1: break
+                                                case 2: continue
+                                    case 4: break
+                        case 2:
                             modSAP = [0, 0]
                             while 1:
                                 modSettings, modSAP = clc.main(
@@ -217,6 +294,7 @@ def main(stdscr) -> None:
                                     [1,0,255,10],
                                     '@',
                                     setArrowPos   =modSAP,
+                                    background=['[fullSizeBox]', '[version]'],
                                     returnArrowPos=True
                                 )
                                 match modSettings:
@@ -224,32 +302,42 @@ def main(stdscr) -> None:
                                     case 2: s.ezMode     = False if s.ezMode     else True
                                     case 3: s.publicMode = False if s.publicMode else True
                                     case 4: break
-                        case 4:
+                        case 3:
                             volumeSAP = [0, 0]
+                            volumeRate = 1
                             while 1:
                                 volumeSettings, volumeSAP = clc.main(
                                     f"<< 음량 설정 >>\n\n현재 음량 : {s.volume}%",
-                                    ["+", "-", "완료"],
+                                    ["+", "", "", "-", "", "", "완료", "", f"음량 변화량 : {volumeRate}"],
                                     [1,0,255,10],
                                     '@',
-                                    maxLine       =1,
+                                    maxLine       =3,
                                     setArrowPos   =volumeSAP,
+                                    background    =['[fullSizeBox]', '[version]'],
                                     returnArrowPos=True,
                                 )
                                 match volumeSettings:
-                                    case 1: s.volume += 10 if s.volume < 100 else 0
-                                    case 2: s.volume -= 10 if s.volume       else 0
+                                    case 1:
+                                        s.volume += volumeRate
+                                        if s.volume > 100: s.volume = 100
+                                    case 2:
+                                        s.volume -= volumeRate
+                                        if s.volume < 0: s.volume = 0
                                     case 3:
                                         configs.save()
                                         break
-                        case 5: break
+                                    case 4:
+                                        volumeRate += 1 if volumeRate < 50 else 0
+                        case 4: break
             case 4: clc.main(
                 "제작중",
                 ["화긴"],
                 [1,0,255,10],
                 '@',
+                background=['[fullSizeBox]', '[version]'],
                 )
             case 5:
+                animation.box.reverse(stdscr, y-3, x-2, "double")
                 s.main = 0
                 curses.endwin()
                 exit(1)

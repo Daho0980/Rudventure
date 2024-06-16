@@ -3,10 +3,8 @@ from   math           import ceil
 from   itertools      import chain
 
 from Assets.data.color import cColors as cc
+from Game.utils.graphics import escapeAnsi, checkActualLen
 
-
-escapeAnsi     = lambda l: re.compile(r'(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]').sub('',l)
-checkActualLen = lambda l: sum(map(lambda char:2 if unicodedata.east_asian_width(char)in['F','W']else 1,l))
 
 def TextBox(
         Inp:str,

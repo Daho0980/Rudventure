@@ -8,14 +8,18 @@ from Game.core.system                           import quests, logger
 from Game.entities                              import entity, player
 from Game.entities.player                       import event, checkStatus
 from Game.scenes                                import mainSettings, mainMenu
-from Game.utils                                 import graphic
 from Game.utils.advanced                        import DungeonMaker, keyHandler
 from Game.utils.advanced.Rudconverter           import save
+from Game.utils.graphics                        import addstrMiddle
 from Game.utils.modules                         import Textbox, cSelector
 from Game.utils.system                          import roomManager
 from Game.utils.system.roomManager.interactions import placeRandomOrbs
+from Game.utils.system.sound                    import play
 
-from Game.utils.system.sound import play
+from Game.utils.graphics import (
+    stageRenderer,
+    displayRenderer
+)
 
 
 stdscr = Cusser(curses.initscr())
@@ -23,7 +27,7 @@ stdscr = Cusser(curses.initscr())
 c, s, l       = comments, status, lockers
 pev, cs       = event, checkStatus
 p, t, dgm, kh = player, Textbox, DungeonMaker, keyHandler
-ent, grp      = entity, graphic
+ent           = entity
 q             = quests
 cc            = color.cColors
 
@@ -54,7 +58,7 @@ def gameChecker(stdscr):
                     coverColor=cc['fg']['F'] if s.lvl>=s.Mlvl else cc['fg']['R'],
                     returnSizeyx=True
                     )
-            y, x = grp.addstrMiddle(
+            y, x = addstrMiddle(
                 stdscr,
                 deadSign,
                     addOnyx=[-5, 0],
@@ -103,7 +107,7 @@ def gameChecker(stdscr):
 
         else:
             play("system", "clear")
-            grp.addstrMiddle(
+            addstrMiddle(
                 stdscr,
                 cc['fg']['L']+t.TextBox(
                     f"   지 배   성 공   \n\n   \"{random.choice(c.victoryComment[int((s.hp/s.Mhp)*3)])}\"   ",
@@ -154,7 +158,7 @@ while s.main:
     p.start(4, 4, 6, 6)
     placeRandomOrbs()
 
-    grp.showStage(
+    stageRenderer.showStage(
         stdscr,
         f"지 하   {cc['fg']['R']}-{s.stage}{cc['end']}   층"
         ); s.stage += 1
@@ -167,19 +171,19 @@ while s.main:
 
         if s.hp <= 0 or s.hunger <= 0 or not s.main: break
         if l.jpsf:
-            playerChecker()
-            grp.render(stdscr, s.Dungeon[s.Dy][s.Dx]['room'])
+            displayRenderer.render(stdscr, s.Dungeon[s.Dy][s.Dx]['room'])
+            if not l.pause:
+                playerChecker()
 
-            if not quickStarter:
-                stdscr.refresh()
-                quickStarter = 1
+                if not quickStarter:
+                    stdscr.refresh()
+                    quickStarter = 1
 
-            roomManager.main()
+                roomManager.main()
 
             slt = s.frame-(time.time()-st)
             if slt>0: time.sleep(slt)
             else:     time.sleep(0.001)
-            # time.sleep(s.frame)
 
         else: time.sleep(1)
 

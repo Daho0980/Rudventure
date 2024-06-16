@@ -3,7 +3,8 @@ import random
 from   PIL      import Image, ImageDraw, ImageFont
 from   datetime import datetime
 
-from Assets.data import status as s
+from Assets.data         import status as s
+from Game.utils.graphics import escapeAnsi
 
 
 ftColors:dict = {
@@ -31,7 +32,6 @@ image = Image.new("RGB", (x, y), (0, 0, 0))
 draw  = ImageDraw.Draw(image)
 font  = ImageFont.truetype(f"{s.TFP}Assets{s.s}fonts{s.s}DungGeunMo.ttf", 20)
 
-escapeAnsi     = lambda line: re.compile(r'(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]').sub('', line)
 stringInserter = lambda ol, il, index: ol[:index]+il+ol[index:]
 
 def textObfuscator(text, r=1) -> str:

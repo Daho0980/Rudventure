@@ -5,32 +5,33 @@ from Assets.data import status, lockers
 
 s, l = status, lockers
 
-def addLog(text, time=50) -> None:
+def add(text, duration):
+    s.onDisplay.append(text)
+    s.onTime.append(duration)
+
+def addLog(text, duration:int=50) -> None:
     """
     게임 내 최하단에 출력되는 로그를 작성하는 함수
 
         `text`(str) : 로그의 내용, 무조건 기입해야 함.
         `time`(int) : 로그가 표시될 시간, 1초는 10으로 계산함, 기본적으로 `50`으로 설정되어 있음.
     """
-    def add():
-        nonlocal text
-        s.onDisplay.append(text)
-        s.onTime.append   (time)
 
-    def remove():
-        del s.onDisplay[0]
-        del s.onTime   [0]
+    if   len(s.onDisplay)  < s.maxStack: add(text, duration)
+    elif len(s.onDisplay) >= s.maxStack:
+        s.onDisplay.pop(0)
+        s.onTime.pop(0)
+        add(text, duration)
 
-    if len(s.onDisplay) < s.maxStack   : add()
-    elif len(s.onDisplay) >= s.maxStack: remove(); add()
-
-def clear() -> None: s.onDisplay, s.onTime = [], []
+def clear() -> None:
+    s.onDisplay.clear()
+    s.onTime.clear()
 
 def logChecker() -> None:
     while s.main:
         if l.jpsf and not l.pause:
             time.sleep(0.1)
-            if len(s.onTime) > 0: s.onTime = list(map(lambda t: t-1, s.onTime))
+            if s.onTime: s.onTime = list(map(lambda t: t-1, s.onTime))
             while 0 in s.onTime:
                 del s.onDisplay[s.onTime.index(0)]
                 del s.onTime   [s.onTime.index(0)]

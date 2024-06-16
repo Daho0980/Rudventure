@@ -1,11 +1,12 @@
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! row는 가로, column은 세로입니다 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+import copy
 import curses
 import unicodedata
 from   cusser     import Cusser
 
 from Assets.data.color            import cColors, customColor
-from Game.utils                   import graphic             as grp
-from Game.utils.modules.cSelector import macros as m
+from Game.utils.graphics          import addstrMiddle, escapeAnsi
+from Game.utils.modules.cSelector import macros                  as m
 from Game.utils.system.sound      import play
 
 cc = cColors
@@ -21,7 +22,7 @@ def main(
         frontTag:str                      ="",
         setArrowPos:list[int|bool]        =[-1, -1],
         returnArrowPos:bool               = False,
-        background:(list[str]|str)        = "",
+        background:list[str]              = [""],
         useClear:bool                     = False
         ):
     """
@@ -137,8 +138,8 @@ def returnDisplay(
             subtitleLine += f"{arrow[row][column]} {subtitle[row][column]}{' '*(max(subtitleLen[row])-subtitleLen[row][column])}{' '*lineSpace}"
         Display += f"{subtitleLine}\n"
     y, x = map(lambda n: round(n/2), list(stdscr.getmaxyx()))
-    y    = y-round(len(list(map(lambda l:len(grp.escapeAnsi(l)), Display.split("\n"))))/2)
-    x    = x-round(max(list(map(lambda l:len(grp.escapeAnsi(l)), Display.split("\n"))))/2)
+    y    = y-round(len(list(map(lambda l:len(escapeAnsi(l)), Display.split("\n"))))/2)
+    x    = x-round(max(list(map(lambda l:len(escapeAnsi(l)), Display.split("\n"))))/2)
     if subtitleValues: Display+=f"{cc['fg']['G1']}\n{subtitleValues[(maxLine*nowSelectRow)+nowSelectColumn]}{cc['end']}"
     Display+=f"\n\n{cc['fg']['G1']}{tag}{cc['end']}\n\n"
     return Display, y, x
@@ -169,7 +170,7 @@ def system(
         subtitleValues:list      = list(subtitle.values())
     else: subtitleKeys = subtitle
 
-    if isinstance(color, list): arrowColor = customColor(color[1], color[2], color[3], color[0]) # 세부 RGB 설정
+    arrowColor = customColor(color[1], color[2], color[3], color[0]) if isinstance(color, list) else color
     
     subtitleKeys = Change2D(subtitleKeys, maxLine)
     if sum(setArrowPos) >= 0:
@@ -207,9 +208,17 @@ def system(
                                         tag,
                                         frontTag
                                         )
-        if background == 'v': stdscr.addstr(m.showversion(stdscr))
-        else:                 stdscr.addstr(background) # type: ignore
-        grp.addstrMiddle(stdscr, display, y=y, x=x)
+        backgroundBuffer = copy.deepcopy(background)
+        for count, textData in enumerate(backgroundBuffer):
+            if   textData == '[version]': backgroundBuffer[count] = m.showversion(stdscr)
+            elif textData.startswith('[fullSizeBox]'):
+                if len(textData) > 13:
+                    data = eval(textData[13:])
+                    backgroundBuffer[count] = m.fullSizedBox(stdscr, lineType=data['lineType'], boxColor=data['boxColor'])
+                else:
+                    backgroundBuffer[count] = m.fullSizedBox(stdscr)
+        stdscr.addstr(''.join(backgroundBuffer)) # type: ignore
+        addstrMiddle(stdscr, display, y=y, x=x)
         stdscr.refresh()
 
         sound                                = ("system", "selector", "move")

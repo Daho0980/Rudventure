@@ -3,13 +3,12 @@ import random
 from Assets.data             import status            as s
 from Assets.data.color       import cColors           as cc
 from Game.core.system        import logger
-from Game.utils              import graphic, system
+from Game.utils              import system
 from Game.utils.modules      import cSelector, Textbox
 from Game.utils.system.sound import play
 
 
-t   = Textbox
-grp = graphic
+t = Textbox
 
 def setIconColor() -> None:
     s.ids[4]   = f"{cc['fg']['Y']}É{cc['end']}"

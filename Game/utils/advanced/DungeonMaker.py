@@ -16,8 +16,8 @@ import re
 import copy
 import random
 
-from Assets.data       import rooms, status
-from Assets.data.color import cColors      as cc
+from Assets.data         import rooms, status
+from Assets.data.color   import cColors      as cc
 
 s = status
 
@@ -37,8 +37,6 @@ roomIcons = [
     ]
 
 # ---------- Graphic section ----------
-escapeAnsi = lambda line: re.compile(r'(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]').sub('', line)
-
 def _GraphicMaker(MapData:list):
     """
     맵의 데이터에서 방 아이콘만 빼내 그래픽을 출력하기 쉽게 하기 위해 만든 함수

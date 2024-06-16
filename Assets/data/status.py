@@ -162,7 +162,7 @@ pauseBox:str     = f"""╔══════════════════
 ║          {cMarkdown(1)}{_cc['fg']['L']}일 시 정 지{_cc['end']}          ║
 ║                               ║
 ╚═══════════════════════════════╝"""
-debugScreen:bool = False
+debugConsole:bool = False
 
 # Modes
 cowardMode:bool  = False
@@ -190,3 +190,12 @@ showDungeonMap:int = 0 # normal = 0
 
 # Ingame sound settings
 volume = 50
+
+# Terminal screen size table
+# 'S'creen'S'ize'S'
+# I know. This variable name looks so f**king silly.
+# But the name before that was too long.
+sss = {
+    "minimum"     : (47, 108),
+    "recommended" : (55, 168)
+}
