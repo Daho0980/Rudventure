@@ -158,9 +158,9 @@ def main(stdscr) -> None:
                                             UISettings, UISAP = clc.main(
                                                 "<< UI 설정 >>",
                                                 {
-                                                    f"현재 스탯 UI : {['콤팩트', '코지'][s.statusDesign]}" : "좌상단에 표시될 스탯의 디자인을 변경합니다.",
-                                                    f"디버그 콘솔  : {s.debugConsole}"                      : "우중단에 표시될 디버그 스크린 표시 여부입니다.",
-                                                    f"맵 표시      : {bool(s.showDungeonMap)}"             : "우상단에 표시될 던전 맵 표시 여부입니다.",
+                                                    f"현재 스탯 UI : {['콤팩트', '코지'][s.statusDesign]}" : "좌상단에 표시될 스탯의 디자인을\n변경합니다.",
+                                                    f"디버그 콘솔  : {s.debugConsole}"                      : "우중단에 표시될 디버그 스크린\n표시 여부입니다.",
+                                                    f"맵 표시      : {bool(s.showDungeonMap)}"             : "우상단에 표시될 던전 맵\n표시 여부입니다.",
                                                     ""                                                     : "",
                                                     "완료"                                                 : ""
                                                 },
@@ -169,8 +169,6 @@ def main(stdscr) -> None:
                                                 setArrowPos   =UISAP,
                                                 returnArrowPos=True,
                                                 background=[
-                                                    UIPreview.status[s.statusDesign],
-                                                    UIPreview.status["introduction"],
                                                     addstrMiddle(
                                                         stdscr,
                                                         UIPreview.dungeonMap[s.showDungeonMap],
@@ -183,6 +181,21 @@ def main(stdscr) -> None:
                                                         UIPreview.dungeonMap["introduction"],
                                                         x        =stdscr.getmaxyx()[1]-63,
                                                         y        =13 if s.showDungeonMap else 3,
+                                                        returnStr=True
+                                                    ),
+                                                    addstrMiddle(
+                                                        stdscr,
+                                                        UIPreview.status[s.statusDesign],
+                                                        x        =0,
+                                                        y        =1,
+                                                        addOnyx=[1,0],
+                                                        returnStr=True
+                                                    ),
+                                                    addstrMiddle(
+                                                        stdscr,
+                                                        UIPreview.status["introduction"],
+                                                        x        =0,
+                                                        y        =12 if s.statusDesign else 10,
                                                         returnStr=True
                                                     ),
                                                     addstrMiddle(
