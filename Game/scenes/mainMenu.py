@@ -36,6 +36,7 @@ def setData(data):
     s.Mhp            = data['Mhp']
     s.Mdf            = data['Mdf']
     s.Mxp            = data['Mxp']
+    s.Mlvl           = data['Mlvl']
 
     s.stage          = data['stage']
     s.killCount      = data['killCount']
