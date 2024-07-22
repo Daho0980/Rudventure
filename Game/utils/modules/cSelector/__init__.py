@@ -1,13 +1,12 @@
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! row는 가로, column은 세로입니다 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 import copy
 import curses
-import unicodedata
-from   cusser     import Cusser
+from   cusser import Cusser
 
-from Assets.data.color            import cColors, customColor
-from Game.utils.graphics          import addstrMiddle, escapeAnsi
-from Game.utils.modules.cSelector import macros                  as m
-from Game.utils.system.sound      import play
+from Assets.data.color                         import cColors, customColor
+from Game.utils.graphics                       import addstrMiddle, escapeAnsi, actualLen
+from Game.utils.modules.cSelector              import macros                             as m
+from Game.utils.system.sound                   import play
 
 cc = cColors
 
@@ -32,7 +31,7 @@ def main(
         ```py
         {'Why did you do...' : 'WHY...'}
         ```
-        와 같은 이스터에그가 저장됨\n
+        와 같은 이스터에그가 생성됨\n
     `color`(int, list)                     : 선택된 메뉴의 하이라이트를 채울 색. 리스트 형식은 각각 RGB 순서의 int형으로 기입해야 함. 기본적으로 `0`으로 지정되어 있음\n
     `icon`(char)                            : 현재 타겟된 메뉴를 표시하는 문자열, 기본적으로 `'>'`로 지정되어 있음\n
     `maxLine`(int)                         : 메뉴가 1개 이상일 때 적용할 수 있는 column 방향의 최대 나열 갯수, 기본적으로 `'max'`로 지정되어 있음\n
@@ -114,14 +113,13 @@ def returnDisplay(
     `tag`(str)                             : 상시로 메뉴 맨 아래에 생기는 문자열, 무조건 기입해야 함\n
     `frontTag`(str)                        : 상시로 메뉴 맨 위에 생기는 문자열, 무조건 기입해야 함
     """
-    positionOutput = lambda subtitle, row, column:(0,column+1)if(row==len(subtitle)-1)else(row+1,column)
-    checkActualLen = lambda l: sum(map(lambda char:2 if unicodedata.east_asian_width(char)in['F','W']else 1,l))
+    positionOutput = lambda subtitle, row, column:(0,column+1)if(row==(len(subtitle)-1))else(row+1,column)
         
     def lenConverter(subtitle:list) -> list:
         output = []
         for i, row in enumerate(subtitle):
             output.append([])
-            for menu in row: output[i].append(checkActualLen(menu))
+            for menu in row: output[i].append(actualLen(menu))
         return output
 
     subtitleLen = lenConverter(subtitle)
@@ -163,14 +161,14 @@ def system(
 
     subtitleKeys, subtitleValues = [], []
 
-    if maxLine == 'max':         maxLine = len(subtitle)
-    if maxLine >  len(subtitle): raise Exception('최대 세로 배열수는 subtitle 개수보다 많을 수 없습니다!')
+    if maxLine == 'max':        maxLine = len(subtitle)
+    if maxLine > len(subtitle): raise Exception('최대 세로 배열수는 subtitle 개수보다 많을 수 없습니다!')
     if isinstance(subtitle, dict):
         subtitleKeys:(list|dict) = list(subtitle.keys())
         subtitleValues:list      = list(subtitle.values())
     else: subtitleKeys = subtitle
 
-    arrowColor = customColor(color[1], color[2], color[3], color[0]) if isinstance(color, list) else color
+    arrowColor = customColor(color[1], color[2], color[3], color[0]) if isinstance(color, list)else color
     
     subtitleKeys = Change2D(subtitleKeys, maxLine)
     if sum(setArrowPos) >= 0:
@@ -192,22 +190,22 @@ def system(
     while 1:
         stdscr.clear()
         arrow[nowSelectRow][nowSelectColumn] = f'{arrowColor}{icon}' # 화살표 위치 설정
-        if nowSelectRow < len(subtitleKeys)-1              : arrow[nowSelectRow+1][nowSelectColumn] = f"{cc['end']} " # 다음 가로줄이 존재할 때: 다음 가로줄의 nowSelectColumn번째 요소를 기본색, 상태로 되돌린다(색 전염 방지)
-        if nowSelectRow > 0 and nowSelectColumn < maxLine-1: arrow[0][nowSelectColumn+1]            = f"{cc['end']} " # 이전 가로줄이 존재하고 맨 아래쪽 줄이 아닐 때: 첫 가로줄의 아랫칸을 기본색, 상태로 되돌린다(색 전염 방지22)
+        if nowSelectRow < len(subtitleKeys)-1              : arrow[nowSelectRow+1][nowSelectColumn] = f"{cc['end']} " # 다음 가로줄이 존재할 때: 다음 가로줄의 nowSelectColumn번째 요소를 기본색, 상태로 되돌림(색 전염 방지)
+        if nowSelectRow > 0 and nowSelectColumn < maxLine-1: arrow[0][nowSelectColumn+1]            = f"{cc['end']} " # 이전 가로줄이 존재하고 맨 아래쪽 줄이 아닐 때: 첫 가로줄의 아랫칸을 기본색, 상태로 되돌림(색 전염 방지22)
         if nowSelectColumn + 1 < maxLine                   : arrow[nowSelectRow][nowSelectColumn+1] = f"{cc['end']} " # 현재 위치 + 1이 subtitle 최대 개수보다 적을 때: 다음칸을 기본색, 상태로 되돌린다(색 전염 방지333)
         display, y, x = returnDisplay(
-                                        stdscr,
-                                        title,
-                                        subtitleKeys,
-                                        arrow,
-                                        maxLine,
-                                        lineSpace,
-                                        subtitleValues,
-                                        nowSelectColumn,
-                                        nowSelectRow,
-                                        tag,
-                                        frontTag
-                                        )
+                                    stdscr,
+                                    title,
+                                    subtitleKeys,
+                                    arrow,
+                                    maxLine,
+                                    lineSpace,
+                                    subtitleValues,
+                                    nowSelectColumn,
+                                    nowSelectRow,
+                                    tag,
+                                    frontTag
+                                )
         backgroundBuffer = copy.deepcopy(background)
         for count, textData in enumerate(backgroundBuffer):
             if   textData == '[version]': backgroundBuffer[count] = m.showversion(stdscr)
@@ -221,14 +219,15 @@ def system(
         addstrMiddle(stdscr, display, y=y, x=x)
         stdscr.refresh()
 
-        sound                                = ("system", "selector", "move")
+        sound                                = ("")
         SNum, SNum1                          = 1, 0 # 세로, 가로 변환 정도값
         arrow[nowSelectRow][nowSelectColumn] = ' '
         key                                  = stdscr.getch()
 
         if key == curses.KEY_UP: # sublist column값 감소
+            sound = ("system", "selector", "move")
             while 1:
-                if nowSelectColumn == 0 and nowSelectRow == 0:
+                if nowSelectColumn==0 and nowSelectRow==0:
                     SNum, SNum1 = 0, 0
                     sound       = ("system", "selector", "block")
                     break
@@ -237,8 +236,8 @@ def system(
                     SNum                      = 0
                     nowSelectRow             -= 1
                 if not subtitleKeys[nowSelectRow - SNum1][nowSelectColumn - SNum]:
-                    if nowSelectColumn - SNum+1 < 0:
-                        if nowSelectRow - SNum1+1 < 0:
+                    if nowSelectColumn - (SNum+1)<0:
+                        if nowSelectRow - (SNum1+1)<0:
                             SNum, SNum1 = 0, 0
                             sound       = ("system", "selector", "block")
                             break
@@ -249,21 +248,21 @@ def system(
                 else: break
             nowSelectRow    -= SNum1
             nowSelectColumn -= SNum
-            play(*sound)
 
         elif key == curses.KEY_DOWN: # sublist column값 증가
+            sound = ("system", "selector", "move")
             while 1:
-                if nowSelectColumn == maxLine-1 and nowSelectRow == len(subtitleKeys)-1:
+                if nowSelectColumn==(maxLine-1) and nowSelectRow==(len(subtitleKeys)-1):
                     SNum, SNum1 = 0, 0
                     sound       = ("system", "selector", "block")
                     break
-                if nowSelectColumn+SNum > maxLine-1: # 내렸을 때 maxLine-1보다 nowSelectColumn+SNum이 더 높을 때:
+                if (nowSelectColumn+SNum)>(maxLine-1): # 내렸을 때 maxLine-1보다 nowSelectColumn+SNum이 더 높을 때:
                     nowSelectColumn = 0
                     SNum            = 0
                     nowSelectRow   += 1
-                if not subtitleKeys[nowSelectRow + SNum1][nowSelectColumn + SNum]: # 어어? 빈칸이네?
-                    if nowSelectColumn + SNum+1 > maxLine-1: # 근데 행이 올라가면 끝나?
-                        if nowSelectRow + SNum1+1 > len(subtitleKeys)-1: # 근데 열도 올라가면 끝나??
+                if not subtitleKeys[nowSelectRow+SNum1][nowSelectColumn+SNum]: # 어어? 빈칸이네?
+                    if (nowSelectColumn+SNum+1)>(maxLine-1): # 근데 행이 올라가면 끝나?
+                        if (nowSelectRow+SNum1+1)>(len(subtitleKeys)-1): # 근데 열도 올라가면 끝나??
                             SNum, SNum1 = 0, 0
                             sound       = ("system", "selector", "block")
                             break
@@ -274,9 +273,9 @@ def system(
                 else: break
             nowSelectRow    += SNum1
             nowSelectColumn += SNum
-            play(*sound)
 
         elif key == curses.KEY_LEFT: # row 값 감소
+            sound = ("system", "selector", "move")
             SNum1 = 1
             while 1:
                 if nowSelectRow == 0:
@@ -291,9 +290,9 @@ def system(
                     else: SNum1 += 1
                 else: break
             nowSelectRow -= SNum1
-            play(*sound)
 
         elif key == curses.KEY_RIGHT: # row 값 증가
+            sound = ("system", "selector", "move")
             SNum1 = 1
             while 1:
                 if nowSelectRow == len(subtitleKeys)-1:
@@ -308,11 +307,12 @@ def system(
                     else: SNum1 += 1
                 else: break
             nowSelectRow += SNum1
-            play(*sound)
 
         elif key == 10:
             play("system", "selector", "select")
             break # enter
+
+        play(*sound)
     if useClear: stdscr.clear(); stdscr.refresh() # 최종
     blankD = 0 # 공백 개수 변수 선언
     for i in range(0, nowSelectRow+1): # 처음부터 현재 위치까지 존재하는 공백 개수 확인

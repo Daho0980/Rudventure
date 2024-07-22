@@ -1,9 +1,11 @@
 {
-    "system": {
-        "statusDesign": 1,
-        "debugConsole": false,
-        "showDungeonMap": 0,
-        "frameRate": -1,
-        "volume": 50
-    }
+    "statusDesign": 1,
+    "debugConsole": false,
+    "showDungeonMap": 0,
+    "frameRate": -1,
+    "volume": 50,
+    "autoTerminalSize": true,
+    "checkTerminalSize": true,
+    "mtsY": 59,
+    "mtsX": 127
 }

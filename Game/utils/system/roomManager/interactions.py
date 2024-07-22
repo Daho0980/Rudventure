@@ -8,11 +8,15 @@ from Game.utils.system    import placeRandomBlock
 
 
 def changeDoorPosBlock(ID:int, data:dict) -> None:
+    c = {
+        'y' : int(len(s.Dungeon[s.Dy][s.Dx]['room'])/2),
+        'x' : int(len(s.Dungeon[s.Dy][s.Dx]['room'][0])/2)
+    }
     DPG:dict[str,list[int]] = {
-        'U' : [0,  6],
-        'R' : [6, 12],
-        'D' : [12, 6],
-        'L' : [6,  0]
+        'U' : [0, c['x']],
+        'R' : [c['y'], len(s.Dungeon[s.Dy][s.Dx]['room'][0])-1],
+        'D' : [len(s.Dungeon[s.Dy][s.Dx]['room'])-1, c['x']],
+        'L' : [c['y'], 0]
         }
         
     for i in range(len(data['doorPos'])):
@@ -20,9 +24,13 @@ def changeDoorPosBlock(ID:int, data:dict) -> None:
         if values[i] == 1:
             DPY, DPX = DPG[keys[i]][0], DPG[keys[i]][1]
 
-            s.Dungeon[s.Dy][s.Dx]['room'][DPY][DPX] = {"block" : s.ids[ID], "id" : ID}
-            if   keys[i] in ['U','D']: s.Dungeon[s.Dy][s.Dx]['room'][DPY][DPX-1], s.Dungeon[s.Dy][s.Dx]['room'][DPY][DPX+1] = {"block" : s.ids[ID], "id" : ID}, {"block" : s.ids[ID], "id" : ID}
-            elif keys[i] in ['R','L']: s.Dungeon[s.Dy][s.Dx]['room'][DPY-1][DPX], s.Dungeon[s.Dy][s.Dx]['room'][DPY+1][DPX] = {"block" : s.ids[ID], "id" : ID}, {"block" : s.ids[ID], "id" : ID}
+            s.Dungeon[s.Dy][s.Dx]['room'][DPY][DPX] = {"block" : s.ids[ID], "id" : ID, "type" : 0}
+            if   keys[i] in ['U','D']:
+                s.Dungeon[s.Dy][s.Dx]['room'][DPY][DPX-1] = {"block" : s.ids[ID], "id" : ID, "type" : 0}
+                s.Dungeon[s.Dy][s.Dx]['room'][DPY][DPX+1] = {"block" : s.ids[ID], "id" : ID, "type" : 0}
+            elif keys[i] in ['R','L']:
+                s.Dungeon[s.Dy][s.Dx]['room'][DPY-1][DPX] = {"block" : s.ids[ID], "id" : ID, "type" : 0}
+                s.Dungeon[s.Dy][s.Dx]['room'][DPY+1][DPX] = {"block" : s.ids[ID], "id" : ID, "type" : 0}
 
 def summonMonster(
         data:dict,
@@ -39,18 +47,17 @@ def summonMonster(
 
         count                                = data['summonCount']
         s.Dungeon[s.Dy][s.Dx]['summonCount'] = 0
-        monsterType                          = [[0,1,2],[0,1]][boss]
-        for _ in range(count):
+        for i in range(count):
             addMonster(
-                choice(monsterType)if useRandom else monsterIndex,
+                choice([[0,1,2],[0,1]][boss])if useRandom else monsterIndex,
                 hpMultiplier,
                 atkMultiplier,
                 ashChipMultiplier,
-                Dy=s.Dy,
-                Dx=s.Dx,
-                y =[1, len(data['room'])-2   ],
-                x =[1, len(data['room'][0])-2],
-                useRoomLock=True if _==count-1 else False
+                Dy         =s.Dy,
+                Dx         =s.Dx,
+                y          =[1, len(data['room'])-2   ],
+                x          =[1, len(data['room'][0])-2],
+                useRoomLock=True if i == (count-1)else False
                 )
     threading.Thread(target=event, daemon=True).start()
     
@@ -83,12 +90,18 @@ def placeRandomOrbs(multiple:int=1) -> None:
     }
     roomGrid = s.Dungeon[s.Dy][s.Dx]['room']
     for _ in range(randrange(2, 6)*multiple):
-        orbIDs = {"hp" : [10, 15], "def" : [11, 16], "atk" : [12, 17], "hunger" : [13, 18], "exp" : [14, 19]}
         sizeIndex = randrange(0, 2)
+        orbIDs = {
+            "hp"     : [10, 15],
+            "def"    : [11, 16],
+            "atk"    : [12, 17],
+            "hunger" : [13, 18],
+            "exp"    : [14, 19]
+            }
 
         typeIndex = None
         rate = randrange(1, 101)
-        if   rate > 0  and rate <= 45: typeIndex = "hunger"
+        if   rate <= 45:               typeIndex = "hunger"
         elif rate > 45 and rate <= 70: typeIndex = "hp"
         elif rate > 70 and rate <= 80: typeIndex = "def"
         elif rate > 80 and rate <= 85: typeIndex = "atk"
@@ -98,7 +111,8 @@ def placeRandomOrbs(multiple:int=1) -> None:
         placeRandomBlock(
             orbs['type'][typeIndex][sizeIndex],
             idIndex,
+            0,
             [1, len(roomGrid)-2],
-            [1, len(roomGrid)-2],
+            [1, len(roomGrid[0])-2],
             [0]
             )

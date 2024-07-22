@@ -1,5 +1,6 @@
 import time
 import threading
+from   copy import deepcopy
 
 from Assets.data              import status    as s
 from Assets.data.color        import cColors   as cc
@@ -81,3 +82,14 @@ def readSign(texts, delay, voice) -> None:
             time.sleep(delay)
     
     threading.Thread(target=target, daemon=True).start()
+
+def linkedInteraction(y:int, x:int, _id:int, afterData:dict, color:str):
+    for r in range(y-1, y+2):
+        for c in range(x-1, x+2):
+                    if s.Dungeon[s.Dy][s.Dx]['room'][r][c]['id'] == _id:
+                        if afterData['block'] == "same_":
+                            CData = deepcopy(afterData)
+                            CData['block'] = f"{color}{escapeAnsi(s.Dungeon[s.Dy][s.Dx]['room'][r][c]['block'])}{cc['end']}" 
+                        s.Dungeon[s.Dy][s.Dx]['room'][r][c] = CData
+                        linkedInteraction(r, c, _id, afterData, color)
+                    else: continue

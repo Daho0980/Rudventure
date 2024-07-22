@@ -1,4 +1,3 @@
-import os
 import math
 import psutil
 
@@ -10,7 +9,7 @@ from Game.utils.modules  import Textbox
 from Game.utils.graphics import (
     escapeAnsi,
     addstrMiddle,
-    checkActualLen
+    actualLen
     )
 
 
@@ -52,7 +51,7 @@ def statusBar(
     barTypes:dict[str,list[str]] = {
         "Normal" :     ["[", "]"],
         "Cursed" :     ["<", ">"],
-        "OverCursed" : ["{", "}"],
+        "FairWind" :   ["{", "}"],
         "Curved" :     ["(", ")"]
     }
 
@@ -73,7 +72,35 @@ def statusBar(
 
     return ''.join(Display)
 
-def render(stdscr, grid: list):
+def inventory():
+    step   = [[0, 3], [1, 4], [2, 5]]
+    output = []
+
+    for cellColumn in step:
+        lines = []
+        for cellIndex in cellColumn:
+            if cellIndex<len(s.inventory['cells']):
+                cell = Textbox.TextBox(
+                    ' ' if not s.inventory['cells'][cellIndex]['item'] else s.inventory['cells'][cellIndex]['block'],
+                    maxLine    =3,
+                    Type       ="middle",
+                    LineType   ="bold",
+                    sideText   =str(cellIndex+1),
+                    sideTextPos=["over", "middle"],
+                    coverColor =cc['fg']['Y'] if s.inventory['pointer'] == cellIndex else cc['fg']['G1'] if s.inventory['cells'][cellIndex]['disabled'] else ''
+                )
+                lines.extend(cell.split("\n"))
+        if len(lines)>3:
+            lines = [
+                f"{lines[0]}{lines[3]}",
+                f"{lines[1]}{lines[4]}",
+                f"{lines[2]}{lines[5]}"
+                ]
+        if lines: output.append(f"{lines[0]}\n{lines[1]}\n{lines[2]}\n")
+        
+    return "".join(output)
+
+def render(stdscr, grid:list):
     """
     메인 디스플레이 출력 함수
 
@@ -82,7 +109,19 @@ def render(stdscr, grid: list):
     y, x    = stdscr.getmaxyx()
     Display = []
     buffer  = ""
-    GFD     = [' '.join([d["block"] for d in row]) for row in grid]
+    GFD     = [' '.join([d["block"]for d in row])for row in grid]
+
+    # Stage
+    buffer = '\n'.join(GFD)
+    dcmy   = int(y/2)-int(len([len(escapeAnsi(l)) for l in buffer.split("\n")])/2)-(s.y-int(len(s.Dungeon[s.Dy][s.Dx]['room'])/2))
+    dcmx   = int(x/2)-(int(max([len(escapeAnsi(l)) for l in GFD])/2)+1)-(s.x-int(len(s.Dungeon[s.Dy][s.Dx]['room'][0])/2))
+    Display.append(addstrMiddle(
+        stdscr,
+        buffer,
+        y        =(2 if dcmy<2 else y if dcmy+len(s.Dungeon[s.Dy][s.Dx]['room'])>y else dcmy) if s.dynamicCameraMoving else int(y/2)-int(len([len(escapeAnsi(l))  for l in buffer.split("\n")])/2),
+        x        =(0 if dcmx<0 else x-2 if dcmx>=x-1 else dcmx)                               if s.dynamicCameraMoving else int(x/2)-(int(max([len(escapeAnsi(l)) for l in GFD])/2)+1),
+        returnStr=True
+    ))
 
     # Map
     if s.showDungeonMap:
@@ -94,30 +133,21 @@ def render(stdscr, grid: list):
             ),
             Type         ='middle',
             AMLS         =True,
-            endLineBreak =True,
             LineType     ='double',
-            sideText     ="던전 지도",
+            sideText     ="미궁 지도",
             sideTextPos  =["under", "middle"],
             coverSideText=True
         )
-        Display.append(addstrMiddle(stdscr, buffer, y=2, x=x-checkActualLen(max(buffer.split("\n"))), returnStr=True))
-
-    # Stage
-    buffer = "\n".join(GFD)
-    Display.append(addstrMiddle(
-        stdscr,
-        buffer,
-        y        =round(y/2)-round(len([len(escapeAnsi(l)) for l in buffer.split("\n")])/2)-(s.y-6) if s.dynamicCameraMoving else round(y/2)-round(len([len(escapeAnsi(l)) for l in buffer.split("\n")])/2),
-        x        =round(x/2)-(round(max([len(escapeAnsi(l)) for l in GFD])/2)+1)-(s.x-6)            if s.dynamicCameraMoving else round(x/2)-(round(max([len(escapeAnsi(l)) for l in GFD])/2)+1),
-        returnStr=True
-    ))
+        Display.append(addstrMiddle(stdscr, buffer, y=2, x=x-actualLen(buffer.split("\n")[-1]), returnStr=True))
 
     # Status
     statusText = ""
     if not s.statusDesign:
-        statusText = Textbox.TextBox(
+        statusText += Textbox.TextBox(
 f"""체력 : {cc['fg']['R']}{s.hp}/{s.Mhp}{cc['end']} | 방어력 : {cc['fg']['B1']}{s.df}/{s.Mdf}{cc['end']}
-허기 : {cc['fg']['Y']}{s.hunger if s.hunger<=100 else f'{round(s.hunger/10)}%'}{cc['end']} | 공격력 : {cc['fg']['L']}{s.atk}{cc['end']}
+허기 : {cc['fg']['Y']}{s.hunger if s.hunger<=200 else f'{round(s.hunger/20)}%'}{cc['end']} | 공격력 : {cc['fg']['L']}{s.atk}{cc['end']}
+
+풍력 : {cc['fg']['A']}{s.fairWind}/{s.MFairWind}{cc['end']}
 TextBox.Line_\nTextBox.Left_잿조각  {cc['fg']['G1']}{s.ashChip}{cc['end']}
 TextBox.Line_\n"""+statusBar(
             int((s.xp/s.Mxp)*10),
@@ -138,14 +168,19 @@ TextBox.Line_\n"""+statusBar(
         coverSideText=True
     )
     elif s.statusDesign == 1:
-        statusText = Textbox.TextBox(
+        statusText += Textbox.TextBox(
             ''.join([
                 statusBar(s.hp, statusName="체  력", maxStatus=s.Mhp),
                 statusBar(s.df, statusName="방어력", maxStatus=s.Mdf, color=cc['fg']['B1']),
                 statusBar(s.atk, statusName="공격력", maxStatus=10, color=cc['fg']['L'], showEmptyCell=False),
-                statusBar(math.ceil(s.hunger/100), statusName="허  기", maxStatus=10, color=cc['fg']['Y'],
-                          backTag=f"{cc['fg']['Y']}{s.hunger if s.hunger<=100 else f'{round(s.hunger/10)}%'}{cc['end']}"),
-                f"TextBox.Line_\n잿조각  {cc['fg']['G1']}{s.ashChip}{cc['end']}\n"
+
+                statusBar(math.ceil(s.hunger/200), statusName="허  기", maxStatus=10, color=cc['fg']['Y'],
+                        backTag=f"{cc['fg']['Y']}{s.hunger if s.hunger<=200 else f'{round(s.hunger/20)}%'}{cc['end']}"),
+
+                "\n"+statusBar(int((s.fairWind/s.MFairWind)*10), statusName="풍  력", maxStatus=10, color=cc['fg']['A'],
+                        barType="FairWind", backTag=f"{cc['fg']['A']}{s.fairWind}{cc['end']}", showComma=False),
+                        
+                f"TextBox.Line_\n잿조각  {cc['fg']['G1']}{s.ashChip}{cc['end']}\n",
                 "TextBox.Line_\nTextBox.Middle_"+statusBar(
                     int((s.xp/s.Mxp)*10),
                     maxStatus=10,
@@ -163,6 +198,7 @@ TextBox.Line_\n"""+statusBar(
             sideTextPos  =["under", "left"],
             coverSideText=True
         )
+    statusText += f"\n\n{inventory()}"
     Display.append(addstrMiddle(stdscr, statusText, y=2, x=1, returnStr=True))
 
     # Log
@@ -175,7 +211,23 @@ TextBox.Line_\n"""+statusBar(
         sideTextPos    =["over", "middle"],
         coverSideText  =True
     )
-    Display.append(addstrMiddle(stdscr, logText, y=y-(1 if not len(s.onDisplay) else len(s.onDisplay)), x=0, returnStr=True))
+    Display.append(addstrMiddle(stdscr, logText, y=y-(1 if not len(s.onDisplay) else len(s.onDisplay)), returnStr=True))
+
+    # block deskription(when use observe mode)
+    if s.blockDescription['time']:
+        maxLen        = max(map(lambda l: actualLen(escapeAnsi(l)), s.blockDescription['text'].split('\n')))
+        sideTextSpace = 6 if maxLen>6 else 0; maxLen-=sideTextSpace
+        timeGauge     = int((s.blockDescription['time']/s.blockDescription['setTime'])*maxLen)
+        blockDescriptionText = Textbox.TextBox(
+            s.blockDescription['text'],
+            AMLS           =True,
+            LineType       ='double',
+            alwaysReturnBox=False,
+            sideText       =f"{cc['fg']['Y']}{'━'*(timeGauge)}{cc['fg']['G1']}{'━'*(maxLen-timeGauge)}{cc['end']}",
+            sideTextPos    =["under", "middle"],
+            coverSideText  =True
+        ).split('\n')
+        Display.append(addstrMiddle(stdscr, '\n'.join(blockDescriptionText), y=2, x=int(x/2)-int(len(blockDescriptionText[0])/2), returnStr=True))
 
     # Debug Mode
     if s.debugConsole:
@@ -183,7 +235,6 @@ TextBox.Line_\n"""+statusBar(
             f"""Python version : {s.pythonVersion.major}.{s.pythonVersion.minor}.{s.pythonVersion.micro}
 Window size : {stdscr.getmaxyx()}
 Memory usage : {psutil.Process().memory_info().rss/2**20: .2f} MB
-CPU count : {psutil.cpu_count()}
 Number of threads : {psutil.Process().num_threads()}
 
 Dx : {s.Dx}, Dy : {s.Dy}, x : {s.x}, y : {s.y}

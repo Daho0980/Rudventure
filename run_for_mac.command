@@ -5,6 +5,15 @@ cd     "$(cd "$(dirname "$0")" && pwd -P)" || exit
 source bin/activate
 
 while true; do
+
+    configData=$(cat "config/data.json")
+
+    mtsy=$(echo "$configData" | grep -o '"mtsY" *: *[^,}]*' | awk -F ': *' '{print $2}')
+    mtsx=$(echo "$configData" | grep -o '"mtsX" *: *[^,}]*' | awk -F ': *' '{print $2}')
+
+    if [ "$(echo "$configData" | grep -o '"autoTerminalSize" *: *[^,}]*' | awk -F ': *' '{print $2}')" = "true" ] && [ "$(tput lines)" -lt "$mtsy" ] && [ "$(tput cols)" -lt "$mtsx" ]; then
+        printf "\e[8;%d;%dt" "$mtsy" "$mtsx"
+    fi
     clear
     python3 run.py
     errorCode=$?

@@ -1,7 +1,6 @@
-from random import randrange, choice
+from random import randrange
 
-from Assets.data                              import status as s
-from Assets.data                              import lockers
+from Assets.data                              import status, lockers
 from Game.utils.system.roomManager.roomEvents import (
     normal,
     event,
@@ -9,11 +8,11 @@ from Game.utils.system.roomManager.roomEvents import (
     boss
 )
 
-l = lockers
+s, l = status, lockers
 
 def main() -> None:
     if not l.isDying:
-        data:dict = s.Dungeon[s.Dy][s.Dx]
+        data = s.Dungeon[s.Dy][s.Dx]
 
         if l.jpsf and not data['interaction']:
             commentP = randrange(0, 2)

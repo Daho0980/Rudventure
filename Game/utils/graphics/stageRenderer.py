@@ -6,7 +6,7 @@ from Game.utils.system.sound import play
 
 from Game.utils.graphics import (
     addstrMiddle,
-    checkActualLen
+    actualLen
 )
 
 def showStage(stdscr, stageName:str):
@@ -20,7 +20,7 @@ def showStage(stdscr, stageName:str):
             f"{cc['fg']['R']}나 락{cc['end']}",
             Type        ="middle",
             inDistance  =1,
-            maxLine=int(checkActualLen(stageName)/2)+1,
+            maxLine     =int(actualLen(stageName)/2)+1,
             endLineBreak=True,
             LineType    ="double",
             addWidth    =3

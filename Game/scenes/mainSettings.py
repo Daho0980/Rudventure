@@ -41,13 +41,13 @@ def main(stdscr) -> None:
                 "1프레임"         : "정말로요...?",
                 "30프레임 (권장)" : "표준 설정입니다.",
                 "60프레임"        : "더 쾌적하게 플레이할 수 있습니다.\n하지만 안타깝게도 눈에 띄는 변화는 찾아볼 수 없겠군요 :(",
-                "MAX"             : "최대한 빠르게 새로고침합니다.\n화면이 [심하게] 깜빡거릴 수 있습니다."
+                "120프레임"       : "디스플레이 출력을 위한 연산량이 60프레임보다 두 배 증가합니다.\n적들의 움직임이 느려질 수 있습니다."
             },
             [1,0,255,10],
             '@',
             maxLine=2
         )
-        s.frameRate = [0,1,30,60,0][frameSettings]
+        s.frameRate = [0,1,30,60,120][frameSettings]
         s.frame     = 1/s.frameRate if s.frameRate else 0
 
     stdscr.clear()
@@ -186,13 +186,13 @@ def presetted(stdscr) -> None:
                 "1프레임"         : "정말로요...?",
                 "30프레임 (권장)" : "표준 설정입니다.",
                 "60프레임"        : "더 쾌적하게 플레이할 수 있습니다.\n하지만 안타깝게도 눈에 띄는 변화는 찾아볼 수 없겠군요 :(",
-                "MAX"             : "최대한 빠르게 새로고침합니다.\n화면이 [심하게] 깜빡거릴 수 있습니다."
+                "120프레임"       : "디스플레이 출력을 위한 연산량이 60프레임보다 두 배 증가합니다.\n적들의 움직임이 느려질 수 있습니다."
             },
             [1,0,255,10],
             '@',
             maxLine=2,
         )
-        s.frameRate = [0,1,30,60,0][frameSettings]
+        s.frameRate = [0,1,30,60,120][frameSettings]
         s.frame     = 1/s.frameRate if s.frameRate else 0
     setIconColor()
     logger.addLog(random.choice(s.welcomeMessage))

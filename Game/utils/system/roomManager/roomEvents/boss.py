@@ -1,4 +1,4 @@
-from Assets.data                     import status as s
+from Assets.data                                import status as s
 from Game.utils.system.roomManager.interactions import (
     changeDoorPosBlock,
     summonMonster,
@@ -12,11 +12,11 @@ def event(data) -> None:
             boss=True
             )
 
-        s.Dungeon[s.Dy][s.Dx]['room'][6][6] = {"block" : s.ids[0], "id" : 0}
+        s.Dungeon[s.Dy][s.Dx]['room'][11][11] = {"block" : s.ids[0], "id" : 0, "type" : 0}
         changeDoorPosBlock(1, data)
     elif not s.entityCount and s.roomLock:
         s.roomLock                           = False
-        s.Dungeon[s.Dy][s.Dx]['room'][6][6]  = {"block" : s.ids[5], "id" : 5}
+        s.Dungeon[s.Dy][s.Dx]['room'][11][11]  = {"block" : s.ids[5], "id" : 5, "type" : 0}
         s.Dungeon[s.Dy][s.Dx]['interaction'] = True
         placeRandomOrbs(multiple=2)
         changeDoorPosBlock(2, data)

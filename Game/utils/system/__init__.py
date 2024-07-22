@@ -1,8 +1,8 @@
 import curses
 import random
 
-from   Assets.data         import status
-from   Game.utils.graphics import escapeAnsi, addstrMiddle
+from Assets.data         import status
+from Game.utils.graphics import escapeAnsi, addstrMiddle
 
 
 s  = status
@@ -34,7 +34,7 @@ def cinp(
 
     return escapeAnsi(Inp)
 
-def placeRandomBlock(block:str, ID:int, y:list, x:list, allowedBlocks:list):
+def placeRandomBlock(block:str, ID:int, blockType:int, y:list[int], x:list[int], allowedBlocks:list[int]) -> None:
     """
     방에서 블럭 등을 랜덤하게 배치할 수 있게 만든 함수
 
@@ -47,13 +47,12 @@ def placeRandomBlock(block:str, ID:int, y:list, x:list, allowedBlocks:list):
 
     `allowedBlocks`(list) : 블럭 랜덤 설치 시 놓을 수 있는 블럭 설정, 무조건 기입해야 함
     """
-    Ry, Rx = 0, 0
     while 1:
         Ry, Rx = random.randrange(y[0], y[1]), random.randrange(x[0], x[1])
         if s.Dungeon[s.Dy][s.Dx]['room'][Ry][Rx]["id"] not in allowedBlocks: continue
         break
         
-    s.Dungeon[s.Dy][s.Dx]['room'][Ry][Rx] = {"block":block, "id":ID}
+    s.Dungeon[s.Dy][s.Dx]['room'][Ry][Rx] = {"block":block, "id":ID, "type":blockType}
 
 # def upgradeStatus():
 #     print(f"{s.markdown([2, 3])}Enter를 한 번 눌러주세요{cc['end']}")

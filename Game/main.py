@@ -26,18 +26,18 @@ stdscr = Cusser(curses.initscr())
 
 c, s, l       = comments, status, lockers
 pev, cs       = event, checkStatus
-p, t, dgm, kh = player, Textbox, DungeonMaker, keyHandler
+p, tb, dgm, kh = player, Textbox, DungeonMaker, keyHandler
 ent           = entity
 q             = quests
 cc            = color.cColors
 
-def playerChecker():
+def playerChecker() -> None:
     if not l.isDying:
         cs.defCheck()
         cs.hpCheck()
         cs.curseCheck()
 
-def gameChecker(stdscr):
+def gameChecker(stdscr) -> None:
     if s.main == 1:
         stdscr.clear(); stdscr.refresh()
         l.jpsf = 0
@@ -47,22 +47,22 @@ def gameChecker(stdscr):
             stdscr.nodelay(False)
 
             play("system", "defeat")
-            _, bx, deadSign = t.TextBox(
-                    f"   사 망 하 셨 습 니 다   \n\n   \"{comment}\"   ",
+            _, bx, deadSign = tb.TextBox(
+                    f"{cc['fg']['F'] if s.lvl>=s.Mlvl else cc['fg']['R']}   사 망 하 셨 습 니 다   \n\n   {cc['fg']['F'] if s.lvl>=s.Mlvl else cc['fg']['R']}\"{comment}\"   ",
                     Type        ="middle",
                     inDistance  =1,
                     outDistance =1,
                     AMLS        =True,
                     endLineBreak=True,
                     LineType    ="bold",
-                    coverColor=cc['fg']['F'] if s.lvl>=s.Mlvl else cc['fg']['R'],
+                    coverColor  =cc['fg']['F'] if s.lvl>=s.Mlvl else cc['fg']['R'],
                     returnSizeyx=True
                     )
             y, x = addstrMiddle(
                 stdscr,
                 deadSign,
-                    addOnyx=[-5, 0],
-                    returnEndyx    =True
+                    addOnyx    =[-4, 1],
+                    returnEndyx=True
                 )
             y   -= 1 # type: ignore
 
@@ -74,19 +74,19 @@ def gameChecker(stdscr):
 
             time.sleep(1)
             achievements = {
-                "            이름" : [s.lightName,                                0],
-                "            사인" : [f"{s.DROD[0]}",                             1],
-                "       내려간 층" : [f"{cc['fg']['Y']}{s.stage}{cc['end']}",     0],
-                "  죽인 편린의 수" : [f"{cc['fg']['R']}{s.killCount}{cc['end']}", 0],
-                "받은 저주의 강도" : [f"{cc['fg']['F']}{s.lvl}{cc['end']}",       0]
+                "            이름" : [s.lightName,                                1],
+                "            사인" : [f"{s.DROD[0]}",                             2],
+                "       내려간 층" : [f"{cc['fg']['Y']}{s.stage}{cc['end']}",     1],
+                "  죽인 편린의 수" : [f"{cc['fg']['R']}{s.killCount}{cc['end']}", 1],
+                "받은 저주의 강도" : [f"{cc['fg']['F']}{s.lvl}{cc['end']}",       1]
             }
             achievementsValues:list[list[str|int]] = list(achievements.values())
             for num, text in enumerate(achievements):
                 play("soundEffects", "smash")
                 stdscr.addstr(f"\033[{x-FBS};{y}H{text} : {achievementsValues[num][0]}\n"); stdscr.refresh() # type: ignore
                 time.sleep(0.2)
-                y += (1+achievementsValues[num][1]) # type: ignore
-            the_choice:int = cSelector.main(
+                y += achievementsValues[num][1]
+            theChoice:int = cSelector.main(
                 deadSign+
                 f"""
 {FBSA}            이름 : {s.lightName}
@@ -103,13 +103,13 @@ def gameChecker(stdscr):
 
             s.main = 0
             curses.endwin()
-            exit(0 if the_choice-1 else 1)
+            exit(0 if theChoice-1 else 1)
 
         else:
             play("system", "clear")
             addstrMiddle(
                 stdscr,
-                cc['fg']['L']+t.TextBox(
+                cc['fg']['L']+tb.TextBox(
                     f"   지 배   성 공   \n\n   \"{random.choice(c.victoryComment[int((s.hp/s.Mhp)*3)])}\"   ",
                     Type        ="middle",
                     inDistance  =1,
@@ -140,8 +140,9 @@ if s.name == "":
         s.df  += 5
         s.atk += 4
 
-        s.Mhp += 10
-        s.Mdf += 5
+        s.Mhp       += 10
+        s.Mdf       += 5
+        s.MFairWind += 100
 
         s.critRate += 10
         s.critDMG  += 10
@@ -153,6 +154,9 @@ kh.add()
 
 while s.main:
     if s.cowardMode: save()
+    s.MFairWind += 10
+    s.fairWind   = random.randrange(1, s.MFairWind+1)
+    
     s.Dungeon = dgm.DungeonMaker()
 
     p.start(4, 4, 6, 6)
@@ -161,14 +165,13 @@ while s.main:
     stageRenderer.showStage(
         stdscr,
         f"지 하   {cc['fg']['R']}-{s.stage}{cc['end']}   층"
-        ); s.stage += 1
+        )
+    s.stage += 1
 
     l.jpsf       = 1
     quickStarter = 0
 
     while not q.quest():
-        st = time.time()
-
         if s.hp <= 0 or s.hunger <= 0 or not s.main: break
         if l.jpsf:
             displayRenderer.render(stdscr, s.Dungeon[s.Dy][s.Dx]['room'])
@@ -181,9 +184,7 @@ while s.main:
 
                 roomManager.main()
 
-            slt = s.frame-(time.time()-st)
-            if slt>0: time.sleep(slt)
-            else:     time.sleep(0.001)
+            time.sleep(s.frame)
 
         else: time.sleep(1)
 

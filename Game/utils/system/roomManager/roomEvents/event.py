@@ -7,7 +7,7 @@ def event0() -> None:
     s.Dungeon[s.Dy][s.Dx]['interaction'] = True
 
 def event1() -> None:
-    addLog(f"{cc['fg']['A']}신상{cc['end']} 주위의 한기가 {cc['fg']['L']}당신{cc['end']}을 감싸돕니다...")
+    addLog(f"{cc['fg']['A']}신상{cc['end']} 주변으로부터 약한 순풍이 {cc['fg']['L']}당신{cc['end']}에게 불어옵니다...")
     s.Dungeon[s.Dy][s.Dx]['interaction'] = True
 def event2() -> None: ...
 def event3() -> None: ...

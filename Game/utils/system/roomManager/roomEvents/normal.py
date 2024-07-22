@@ -1,6 +1,6 @@
 from random import randrange
 
-from Assets.data                     import status    as s
+from Assets.data                     import status     as s
 from Assets.data                     import percentage as p
 from Game.utils.system.roomManager.interactions import (
     changeDoorPosBlock,

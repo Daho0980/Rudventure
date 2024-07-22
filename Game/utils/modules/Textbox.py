@@ -1,9 +1,8 @@
-import unicodedata, re
-from   math           import ceil
-from   itertools      import chain
+from   math      import ceil
+from   itertools import chain
 
-from Assets.data.color import cColors as cc
-from Game.utils.graphics import escapeAnsi, checkActualLen
+from Assets.data.color   import cColors              as cc
+from Game.utils.graphics import escapeAnsi, actualLen
 
 
 def TextBox(
@@ -42,7 +41,7 @@ def TextBox(
         ``coverSideText``(bool)                                                     : sideText 양 옆을 텍스트박스가 감쌀지에 대한 여부, 기본적으로 `False`로 설정되어 있음\n
         ``coverColor``(str)                                                         : 박스와 내부 텍스트를 채울 색. 텍스트에 색이 들어가 있다면 다시 채워지지 않음. 기본적으로 `" "`로 설정되어 있음\n
         """
-        if not len(Inp) and alwaysReturnBox:       Inp = "..."
+        if   not len(Inp) and alwaysReturnBox:     Inp = "..."
         elif not len(Inp) and not alwaysReturnBox: return ""
 
 
@@ -57,33 +56,34 @@ def TextBox(
         endLine:str           = "\n" if endLineBreak else ""
         fullAddWidth:int      = addWidth*2 if Type=='middle'else addWidth
         FixedLine:str         = ""
+        end:str               = cc['end'] if coverColor else ''
 
         if coverSideText: sideText = f"{Line[LineType][2][1]}{sideText}{Line[LineType][2][0]}"
-        if AMLS:          maxLine  = max(map(lambda l: checkActualLen(escapeAnsi(l)), chain(Texts,[sideText])))
+        if AMLS:          maxLine  = max(map(lambda l: actualLen(escapeAnsi(l)), chain(Texts,[sideText])))
 
         if sideText and sideTextPos[0] == "over":
             style = {
-                "left"   : f"{sideText}{coverColor}{Line[LineType][3][0]*((maxLine+fullAddWidth)-checkActualLen(escapeAnsi(sideText)))}",
-                "middle" : f"{Line[LineType][3][0]*(ceil(int(((maxLine+fullAddWidth)-checkActualLen(escapeAnsi(sideText)))/2)))}{sideText}{coverColor}{Line[LineType][3][0]*(ceil(int(((maxLine+fullAddWidth)-checkActualLen(escapeAnsi(sideText)))/2)))}{Line[LineType][3][0]if(maxLine+fullAddWidth+checkActualLen(escapeAnsi(sideText)))%2 else ''}",
-                "right"  : f"{Line[LineType][3][0]*((maxLine+fullAddWidth)-checkActualLen(escapeAnsi(sideText)))}{sideText}{coverColor}"
+                "left"   : f"{coverColor}{sideText}{Line[LineType][3][0]*((maxLine+fullAddWidth)-actualLen(escapeAnsi(sideText)))}",
+                "middle" : f"{coverColor}{Line[LineType][3][0]*(ceil(int(((maxLine+fullAddWidth)-actualLen(escapeAnsi(sideText)))/2)))}{sideText}{coverColor}{Line[LineType][3][0]*(ceil(int(((maxLine+fullAddWidth)-actualLen(escapeAnsi(sideText)))/2)))}{Line[LineType][3][0]if(maxLine+fullAddWidth+actualLen(escapeAnsi(sideText)))%2 else ''}",
+                "right"  : f"{coverColor}{Line[LineType][3][0]*((maxLine+fullAddWidth)-actualLen(escapeAnsi(sideText)))}{sideText}{coverColor}"
                 }[sideTextPos[1]]
-            FixedLine = f"{coverColor}{Line[LineType][0][0]}{style}{Line[LineType][0][1]}\n"
-        else: FixedLine = f"{coverColor}{Line[LineType][0][0]}{Line[LineType][3][0]*(maxLine+fullAddWidth)}{Line[LineType][0][1]}\n"
-        Display += "\n"*outDistance+FixedLine+(f"{Line[LineType][3][1]}{fillChar*(maxLine+fullAddWidth)}{Line[LineType][3][1]}\n")*inDistance
+            FixedLine = f"{coverColor}{Line[LineType][0][0]}{end}{style}{Line[LineType][0][1]}{end}\n"
+        else: FixedLine = f"{coverColor}{Line[LineType][0][0]}{Line[LineType][3][0]*(maxLine+fullAddWidth)}{Line[LineType][0][1]}{end}\n"
+        Display += "\n"*outDistance+FixedLine+(f"{coverColor}{Line[LineType][3][1]}{end}{fillChar*(maxLine+fullAddWidth)}{coverColor}{Line[LineType][3][1]}{end}\n")*inDistance
         for textLine in Texts:
-            space = checkActualLen(escapeAnsi(textLine))
+            space = actualLen(escapeAnsi(textLine))
 
             if textLine.startswith("TextBox."):
-                if textLine == "TextBox.Line_": Display += f"{Line[LineType][2][0]}{Line[LineType][3][0]*(maxLine+fullAddWidth)}{Line[LineType][2][1]}\n"
+                if textLine == "TextBox.Line_": Display += f"{coverColor}{Line[LineType][2][0]}{Line[LineType][3][0]*(maxLine+fullAddWidth)}{Line[LineType][2][1]}{end}\n"
                 elif textLine.startswith("TextBox.Middle_"):
                     space   -= 15
-                    Display += f"{Line[LineType][3][1]}{fillChar*int((maxLine-space)/2)}{textLine.lstrip('TextBox.Middle_')}{fillChar*(int((maxLine-space)/2) if not (maxLine-space)%2 else int((maxLine-space)/2)+1)}{Line[LineType][3][1]}\n"
+                    Display += f"{coverColor}{Line[LineType][3][1]}{end}{fillChar*int((maxLine-space)/2)}{textLine.lstrip('TextBox.Middle_')}{fillChar*(int((maxLine-space)/2) if not (maxLine-space)%2 else int((maxLine-space)/2)+1)}{coverColor}{Line[LineType][3][1]}{end}\n"
                 elif textLine.startswith("TextBox.Left_"):
                     space   -= 13
-                    Display += f"{Line[LineType][3][1]}{textLine.lstrip('TextBox.Left_')}{fillChar*((maxLine-space)+addWidth)}{Line[LineType][3][1]}\n"
+                    Display += f"{coverColor}{Line[LineType][3][1]}{end}{textLine.lstrip('TextBox.Left_')}{fillChar*((maxLine-space)+addWidth)}{coverColor}{Line[LineType][3][1]}{end}\n"
                 elif textLine.startswith("TextBox.Right_"):
                     space   -= 14
-                    Display += f"{Line[LineType][3][1]}{fillChar*((maxLine-space)+addWidth)}{textLine.lstrip('TextBox.Right_')}{Line[LineType][3][1]}\n"
+                    Display += f"{coverColor}{Line[LineType][3][1]}{end}{fillChar*((maxLine-space)+addWidth)}{textLine.lstrip('TextBox.Right_')}{coverColor}{Line[LineType][3][1]}{end}\n"
             else:
                 match Type:
                     case "left": BackSpace = fillChar*((maxLine-space)+addWidth)
@@ -92,17 +92,17 @@ def TextBox(
                         BackSpace  = fillChar*(int((maxLine-space)/2)+addWidth if not (maxLine-space)%2 else int((maxLine-space)/2)+1+addWidth)
                     case "right": FrontSpace = fillChar*((maxLine-space)+addWidth)
                 
-                Display += f"{Line[LineType][3][1]}{FrontSpace}{textLine}{BackSpace}{Line[LineType][3][1]}\n"
+                Display += f"{coverColor}{Line[LineType][3][1]}{end}{FrontSpace}{textLine}{BackSpace}{coverColor}{Line[LineType][3][1]}{end}\n"
 
         if sideText and sideTextPos[0] == "under":
             style = {
-                "left"   : f"{sideText}{coverColor}{Line[LineType][3][0]*((maxLine+fullAddWidth)-checkActualLen(escapeAnsi(sideText)))}",
-                "middle" : f"{Line[LineType][3][0]*(ceil(int(((maxLine+fullAddWidth)-checkActualLen(escapeAnsi(sideText)))/2)))}{sideText}{coverColor}{Line[LineType][3][0]*(ceil(int(((maxLine+fullAddWidth)-checkActualLen(escapeAnsi(sideText)))/2)))}{Line[LineType][3][0]if(maxLine+fullAddWidth+checkActualLen(escapeAnsi(sideText)))%2 else ''}",
-                "right"  : f"{Line[LineType][3][0]*((maxLine+fullAddWidth)-checkActualLen(escapeAnsi(sideText)))}{sideText}{coverColor}"
+                "left"   : f"{coverColor}{sideText}{Line[LineType][3][0]*((maxLine+fullAddWidth)-actualLen(escapeAnsi(sideText)))}",
+                "middle" : f"{coverColor}{Line[LineType][3][0]*(ceil(int(((maxLine+fullAddWidth)-actualLen(escapeAnsi(sideText)))/2)))}{sideText}{coverColor}{Line[LineType][3][0]*(ceil(int(((maxLine+fullAddWidth)-actualLen(escapeAnsi(sideText)))/2)))}{Line[LineType][3][0]if(maxLine+fullAddWidth+actualLen(escapeAnsi(sideText)))%2 else ''}",
+                "right"  : f"{coverColor}{Line[LineType][3][0]*((maxLine+fullAddWidth)-actualLen(escapeAnsi(sideText)))}{sideText}{coverColor}"
                 }[sideTextPos[1]]
-            FixedLine = f"{Line[LineType][1][0]}{style}{Line[LineType][1][1]}{endLine}{cc['end']}"
-        else: FixedLine = f"{Line[LineType][1][0]}{Line[LineType][3][0]*(maxLine+fullAddWidth)}{Line[LineType][1][1]}{endLine}{cc['end']}"
-        Display += (f"{Line[LineType][3][1]}{fillChar*(maxLine+fullAddWidth)}{Line[LineType][3][1]}\n")*inDistance+FixedLine+"\n"*outDistance
+            FixedLine = f"{coverColor}{Line[LineType][1][0]}{end}{style}{Line[LineType][1][1]}{end}{endLine}"
+        else: FixedLine = f"{coverColor}{Line[LineType][1][0]}{Line[LineType][3][0]*(maxLine+fullAddWidth)}{Line[LineType][1][1]}{end}{endLine}"
+        Display += (f"{coverColor}{Line[LineType][3][1]}{end}{fillChar*(maxLine+fullAddWidth)}{coverColor}{Line[LineType][3][1]}{end}\n")*inDistance+FixedLine+"\n"*outDistance
 
         if returnSizeyx: return len(Display.split("\n"))-((outDistance*2)+2), maxLine+2, Display # type: ignore
         else:            return Display

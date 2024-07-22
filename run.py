@@ -1,6 +1,8 @@
 #!/usr/bin/env python3.10
 import sys, os
-from   Assets.data import status as s
+
+from Assets.data import status as s
+
 
 directory = os.path.dirname(os.path.realpath(__file__))
 
@@ -36,9 +38,9 @@ if f"{pyV.major}{pyV.minor}{pyV.micro}" != "31011":
 아래 링크를 눌러 파이썬 3.10.11을 다운로드해 주세요.
 
 사이트 : https://www.python.org/downloads/release/python-31011/
-                
+
 MacOS  : https://www.python.org/ftp/python/3.10.11/python-3.10.11-macos11.pkg
-                
+
 Windows 32-bit : https://www.python.org/ftp/python/3.10.11/python-3.10.11.exe
 Windows 64-bit : https://www.python.org/ftp/python/3.10.11/python-3.10.11-amd64.exe
     """

@@ -17,7 +17,8 @@ s  = status
 
 class enemy:
     """
-    # 일개 잡몹
+    # 고통의 편린
+    - 일개 잡몹
     - 정처 없이 떠돎
     - 체력은 4+(2*stage)
     - 플레이어가 상/하/좌/우 1 칸 이내에 있다면 공격함
@@ -36,7 +37,7 @@ class enemy:
         self.atk      = 0
         self.hp       = 0
         self.coolTime = 0
-        self.stepped  = 0
+        self.stepped  = {}
 
         self.icon = icon
         self.id   = ID
@@ -44,6 +45,30 @@ class enemy:
         self.isFocused = True
         
         self.xpMultiplier = 1
+
+    def start(self, sethp:int, setAtk:int, Dy:int, Dx:int, y:int, x:int) -> None:
+        self.hp:int       = sethp
+        self.atk:int      = setAtk
+        self.Dy, self.Dx  = Dy, Dx
+        nowDRP:dict       = s.Dungeon[self.Dy][self.Dx]
+
+        if isinstance(y, list) and isinstance(x, list):
+            while 1:
+                sY = randrange(1,len(nowDRP['room'])-1)
+                sX = randrange(1,len(nowDRP['room'][0])-1)
+                if s.Dungeon[Dy][Dx]['room'][sY][sX]["id"] in s.monsterInteractableBlocks['unstepable']:
+                    continue
+                else:
+                    self.x, self.y = sX, sY
+                    eEvent.spawn(self.y, self.x, self.icon)
+                    break
+        else:
+            self.Dy, self.Dx = Dy, Dx
+            self.y, self.x   = y, x
+        
+        self.stepped = nowDRP['room'][self.y][self.x]\
+                       if   nowDRP in s.monsterInteractableBlocks['stepable']['maintainable']\
+                       else {"block" : " ", "id" : 0, "type" : 0}
 
     def damaged(self) -> None:
         if s.hitPos and [self.y, self.x] in s.hitPos:
@@ -65,26 +90,6 @@ class enemy:
                 if sound: play("enemy", "damage", sound)
                 if isHit: play("player", "slash")
 
-    def start(self, sethp:int, setAtk:int, Dy:int, Dx:int, y:int, x:int) -> None:
-        self.hp:int       = sethp
-        self.atk:int      = setAtk
-        self.Dy, self.Dx  = Dy, Dx
-        nowDRP:dict       = s.Dungeon[self.Dy][self.Dx]
-
-        if isinstance(y, list) and isinstance(x, list):
-            while 1:
-                sY  = randrange(1,len(nowDRP['room'])-1)
-                sX  = randrange(1,len(nowDRP['room'][0])-1)
-                if s.Dungeon[Dy][Dx]['room'][sY][sX]["id"] in s.interactableBlocks["cannotStepOn"]:
-                    continue
-                else:
-                    self.x, self.y = sX, sY
-                    eEvent.spawn(self.y, self.x, self.icon)
-                    break
-        else:
-            self.Dy, self.Dx = Dy, Dx
-            self.y, self.x   = y, x
-
     def pDamage(self, DR:str="") -> None:
         sound = ("enemy", "enemyHit")
         event.hitted()
@@ -102,16 +107,28 @@ class enemy:
         play(*sound)
         addLog(f"{s.lightName}이(가) {cc['fg']['F']}{self.name}{cc['end']}({self.icon}) 에 의해 {cc['fg']['R']}{self.atk}{cc['end']}만큼의 피해를 입었습니다!")
 
+    def wait(self) -> None:
+        self.coolTime -= 1
+        if self.isFocused:
+            enemy.damaged(self)
+            if self.hp <= 0: self.coolTime = 0
+            time.sleep(0.001)
+        elif not self.isFocused:
+            if[self.Dy, self.Dx] == [s.Dy, s.Dx]:
+                self.isFocused = False
+                self.coolTime  = 0
+            time.sleep(0.5)
+
     def move(self) -> None:
         nowDRP = s.Dungeon[self.Dy][self.Dx]
 
         if not self.coolTime:
             self.coolTime = int((randrange(60, 81)*10)/2) if s.publicMode else randrange(60, 81)*10
             if self.isFocused:
-                if [self.Dy, self.Dx] != [s.Dy, s.Dx]:   self.isFocused = False; return
-                if self.stepped not in s.stepableBlocks: self.stepped   = 0
-                elif nowDRP['room'][self.y][self.x]["id"] in s.stepableBlocks and nowDRP['room'][self.y][self.x]["id"] not in [4, 7]:
-                    self.stepped = nowDRP['room'][self.y][self.x]["id"]
+                if [self.Dy, self.Dx] != [s.Dy, s.Dx]:                                              self.isFocused = False; return
+                if self.stepped['id'] in s.monsterInteractableBlocks['stepable']['unmaintainable']: self.stepped   = {"block" : " ", "id" : 0, "type" : 0}
+                elif nowDRP['room'][self.y][self.x]["id"] in s.monsterInteractableBlocks['stepable']['maintainable']:
+                    self.stepped = nowDRP['room'][self.y][self.x]
                 
                 bfx, bfy = self.x, self.y
                 if self.hp > 0:
@@ -121,9 +138,9 @@ class enemy:
                         addLog(f"{cc['fg']['F']}{self.name}{cc['end']}({self.icon})이 울부짖습니다!")
                         addLog(f"{cc['fg']['F']}{self.name}{cc['end']}({self.icon})의 공격력이 {cc['fg']['L']}{1+(round(s.stage/10))}{cc['end']} 상승합니다.")
                         for _ in range(3):
-                            nowDRP['room'][self.y][self.x] = {"block" : f"{cc['fg']['F']}{self.icon}{cc['end']}", "id" : -1}; time.sleep(0.1)
-                            nowDRP['room'][self.y][self.x] = {"block" : self.icon, "id" : -1}; time.sleep(0.1)
-                        nowDRP['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id}
+                            nowDRP['room'][self.y][self.x] = {"block" : f"{cc['fg']['F']}{self.icon}{cc['end']}", "id" : -1, "type" : 1}; time.sleep(0.1)
+                            nowDRP['room'][self.y][self.x] = {"block" : self.icon, "id" : -1, "type" : 1};                                time.sleep(0.1)
+                        nowDRP['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id, "type" : 1}
 
                     exPos = [
                         nowDRP['room'][self.y-1][self.x]["id"],
@@ -133,8 +150,8 @@ class enemy:
                     ]
 
                     if 300 in exPos:
-                        nowDRP['room'][self.y][self.x] = {"block" : f"{cc['fg']['F']}{self.icon}{cc['end']}", "id" : -1}; time.sleep(0.1)
-                        nowDRP['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id}
+                        nowDRP['room'][self.y][self.x] = {"block" : f"{cc['fg']['F']}{self.icon}{cc['end']}", "id" : -1, "type" : 1}; time.sleep(0.1)
+                        nowDRP['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id, "type" : 1}
                         if s.ezMode:
                             if randrange(1,11)<8: addLog(f"{cc['fg']['F']}{self.name}{cc['end']}의 공격을 피했습니다!")
                             else:                        enemy.pDamage(self, choice(["물어뜯김", "중요 부위 손상", "쇼크"]))
@@ -144,10 +161,10 @@ class enemy:
                             moveTo:int = randrange(-1,2)
 
                             if randrange(0,2):
-                                if self.x + moveTo > len(nowDRP['room'][self.y])-1: continue
+                                if (self.x+moveTo) > len(nowDRP['room'][self.y])-1: continue
                                 self.x += moveTo
                             else:
-                                if self.y + moveTo > len(nowDRP['room'])-1: continue
+                                if (self.y+moveTo) > len(nowDRP['room'])-1: continue
                                 self.y += moveTo
 
                             if nowDRP['room'][self.y][self.x]["id"] in s.interactableBlocks['cannotStepOn']+s.enemyIds:
@@ -160,27 +177,15 @@ class enemy:
                                     else:                        enemy.pDamage(self, choice(["물어뜯김", "중요 부위 손상", "쇼크"]))
                                 else: enemy.pDamage(self, choice(["물어뜯김", "중요 부위 손상", "쇼크"]))
                             break
-                    s.Dungeon[self.Dy][self.Dx]['room'][bfy][bfx]       = {"block" : s.ids[self.stepped], "id" : self.stepped}
-                    s.Dungeon[self.Dy][self.Dx]['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id}
-        else:
-            self.coolTime -= 1
-            if self.isFocused:
-                enemy.damaged(self)
-                if self.hp > 0 and nowDRP['room'][self.y][self.x] in s.stepableBlocks+s.interactableBlocks['canStepOn']:
-                    nowDRP['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id}
-                elif self.hp <= 0: self.coolTime = 0
-                time.sleep(0.001)
-
-            elif not self.isFocused:
-                if[self.Dy, self.Dx] == [s.Dy, s.Dx]:
-                    self.isFocused = False
-                    self.coolTime  = 0
-                time.sleep(0.5)
+                    s.Dungeon[self.Dy][self.Dx]['room'][bfy][bfx]       = self.stepped
+                    s.Dungeon[self.Dy][self.Dx]['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id, "type" : 1}
+        else: enemy.wait(self)
 
 
 class observer(enemy):
     """
-    # 돌격형 유닛
+    # 불안의 편린
+    - 돌격형 유닛
     - 언제나 플레이어의 위치를 알고 쫓아옴
     - 체력은 10+(2*stage)
     - x값 또는 y값이 플레이어와 같다면 플레이어가 있는 방향으로 돌진함
@@ -197,15 +202,15 @@ class observer(enemy):
 
         def Targetted() -> None:
             for _ in range(2):
-                nowDRP['room'][self.y][self.x] = {"block" : f"{cc['fg']['F']}{self.icon}{cc['end']}", "id" : -1}; time.sleep(0.07)
-                nowDRP['room'][self.y][self.x] = {"block" : self.icon, "id" : -1}; time.sleep(0.07)
+                nowDRP['room'][self.y][self.x] = {"block" : f"{cc['fg']['F']}{self.icon}{cc['end']}", "id" : -1, "type" : 1}; time.sleep(0.07)
+                nowDRP['room'][self.y][self.x] = {"block" : self.icon, "id" : -1, "type" : 1};                                time.sleep(0.07)
 
         if not self.coolTime:
             self.coolTime = int((randrange(40, 61)*10)/2) if s.publicMode else randrange(40, 61)*10
             if self.isFocused:
-                if self.stepped not in s.stepableBlocks: self.stepped = 0
-                elif nowDRP['room'][self.y][self.x]["id"] in s.stepableBlocks and nowDRP['room'][self.y][self.x]["id"] not in [4, 7]:
-                    self.stepped = nowDRP['room'][self.y][self.x]["id"]
+                if self.stepped['id'] in s.monsterInteractableBlocks['stepable']['unmaintainable']: self.stepped = {"block" : " ", "id" : 0, "type" : 0}
+                elif nowDRP['room'][self.y][self.x]["id"] in s.monsterInteractableBlocks['stepable']['maintainable']:
+                    self.stepped = nowDRP['room'][self.y][self.x]
 
                 bfx, bfy = self.x, self.y
                 if self.hp > 0:
@@ -227,8 +232,8 @@ class observer(enemy):
                                             else:                        enemy.pDamage(self, choice(["충격파", "교통사고", "들이박힘"]))
                                         else: enemy.pDamage(self, choice(["충격파", "교통사고", "들이박힘"]))
                                     if nowDRP['room'][eval(f"self.y{Moves1[a]}1")][self.x]["id"] not in s.interactableBlocks["breakable"]: break
-                                    nowDRP['room'][self.y][self.x] = {"block" : s.ids[0], "id" : 0}
-                                    exec(f"self.y{Moves[a]}1"); nowDRP['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id}
+                                    nowDRP['room'][self.y][self.x] = {"block" : s.ids[0], "id" : 0, "type" : 0}
+                                    exec(f"self.y{Moves[a]}1"); nowDRP['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id, "type" : 1}
                                 time.sleep(0.1)
 
                         elif self.y == s.y:
@@ -244,41 +249,28 @@ class observer(enemy):
                                             else:                        enemy.pDamage(self, choice(["충격파", "교통사고", "들이박힘"]))
                                         else: enemy.pDamage(self, choice(["충격파", "교통사고", "들이박힘"]))
                                     if nowDRP['room'][self.y][eval(f"self.x{Moves1[a]}1")]["id"] not in s.interactableBlocks["breakable"]: break
-                                    nowDRP['room'][self.y][self.x] = {"block" : s.ids[0], "id" : 0}
-                                    exec(f"self.x{Moves[a]}1"); nowDRP['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id}
+                                    nowDRP['room'][self.y][self.x] = {"block" : s.ids[0], "id" : 0, "type" : 0}
+                                    exec(f"self.x{Moves[a]}1"); nowDRP['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id, "type" : 1}
                                 time.sleep(0.1)
                     else:
                         bfx, bfy = self.x, self.y
                         if randrange(0,2):
-                            self.x += 1 if self.x<s.x and nowDRP['room'][self.y][self.x+1]["id"] in s.stepableBlocks\
-                                else -1 if self.x>s.x and nowDRP['room'][self.y][self.x-1]["id"] in s.stepableBlocks\
+                            self.x += 1 if self.x<s.x and nowDRP['room'][self.y][self.x+1]["id"] in s.monsterInteractableBlocks['stepable']['total']\
+                                else -1 if self.x>s.x and nowDRP['room'][self.y][self.x-1]["id"] in s.monsterInteractableBlocks['stepable']['total']\
                                 else  0
                         else:
-                            self.y += 1 if self.y<s.y and nowDRP['room'][self.y+1][self.x]["id"] in s.stepableBlocks\
-                                else -1 if self.y>s.y and nowDRP['room'][self.y-1][self.x]["id"] in s.stepableBlocks\
+                            self.y += 1 if self.y<s.y and nowDRP['room'][self.y+1][self.x]["id"] in s.monsterInteractableBlocks['stepable']['total']\
+                                else -1 if self.y>s.y and nowDRP['room'][self.y-1][self.x]["id"] in s.monsterInteractableBlocks['stepable']['total']\
                                 else  0
-                        nowDRP['room'][bfy][bfx]       = {"block" : s.ids[0], "id" : 0}
-                        nowDRP['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id}
-                    nowDRP['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id}
-        else:
-            self.coolTime -= 1
-            if self.isFocused:
-                super().damaged()
-                if self.hp > 0 and nowDRP['room'][self.y][self.x] in s.stepableBlocks+s.interactableBlocks['canStepOn']:
-                    nowDRP['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id}
-                elif self.hp <= 0: self.coolTime = 0
-                time.sleep(0.001)
-
-            elif not self.isFocused:
-                if [self.Dy, self.Dx] == [s.Dy, s.Dx]:
-                    self.isFocused = False
-                    self.coolTime  = 0
-                time.sleep(0.5)
+                        nowDRP['room'][bfy][bfx]       = {"block" : s.ids[0], "id" : 0, "type" : 0}
+                    nowDRP['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id, "type" : 1}
+        else: super().wait()
 
 
 class mine(enemy):
     """
-    # 지뢰
+    # 원망의 편린
+    - 지뢰
     - 기본적으로 움직이지 않고 enemyCount에 합산되지 않음
     - 체력은 5+(2*stage)
     - 감지 범위는 상/하/좌/우 모두 1임. 대각선으로는 탐지 불가능
@@ -293,14 +285,12 @@ class mine(enemy):
     def move(self) -> None:
         nowDRP = s.Dungeon[self.Dy][self.Dx]
 
-        def targetted() -> None:
-            for _ in range(3):
-                nowDRP['room'][self.y][self.x] = {"block" : f"{cc['fg']['F']}{self.icon}{cc['end']}", "id" : -1}; time.sleep(0.07)
-                nowDRP['room'][self.y][self.x] = {"block" : self.icon, "id" : -1}; time.sleep(0.07)
-
         def blink() -> None:
-            nowDRP['room'][self.y][self.x] = {"block" : f"{cc['fg']['F']}{self.icon}{cc['end']}", "id" : -1}; time.sleep(0.07)
-            nowDRP['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id}; time.sleep(0.07)
+            nowDRP['room'][self.y][self.x] = {"block" : f"{cc['fg']['F']}{self.icon}{cc['end']}", "id" : -1, "type" : 1}; time.sleep(0.07)
+            nowDRP['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id, "type" : 1};                           time.sleep(0.07)
+
+        def targetted() -> None:
+            for _ in range(3): blink()
 
         def explode() -> None:
             expPs = [
@@ -310,16 +300,16 @@ class mine(enemy):
                 [self.y,self.x+1, self.y,self.x+2]
                 ]
 
-            nowDRP['room'][self.y][self.x] = {"block" : f"{cc['fg']['F']}X{cc['end']}", "id" : -1}
+            nowDRP['room'][self.y][self.x] = {"block" : f"{cc['fg']['F']}X{cc['end']}", "id" : -1, "type" : 1}
             
             for expP in expPs:
                 if nowDRP['room'][expP[0]][expP[1]]["id"] in s.interactableBlocks["explodable"]:
-                    nowDRP['room'][expP[0]][expP[1]] = {"block" : f"{cc['fg']['F']}.{cc['end']}", "id" : -1}
+                    nowDRP['room'][expP[0]][expP[1]] = {"block" : f"{cc['fg']['F']}.{cc['end']}", "id" : -1, "type" : 0}
             time.sleep(0.07)
             
             for expP in expPs:
-                if nowDRP['room'][expP[0]][expP[1]] == {"block" : f"{cc['fg']['F']}.{cc['end']}", "id" : -1}:
-                    nowDRP['room'][expP[0]][expP[1]] = {"block" : f"{cc['fg']['G1']}.{cc['end']}", "id": 0}
+                if nowDRP['room'][expP[0]][expP[1]] == {"block" : f"{cc['fg']['F']}.{cc['end']}", "id" : -1, "type" : 0}:
+                    nowDRP['room'][expP[0]][expP[1]] = {"block" : f"{cc['fg']['G1']}.{cc['end']}", "id": 0, "type" : 0}
             
             self.icon = choice(['×', 'x', 'X'])
             self.hp   = 0
@@ -355,17 +345,7 @@ class mine(enemy):
                             explode()
                             self.xpMultiplier = 2
                             if randrange(0,2): say(choice(TIOTAComments))
-                        else: nowDRP['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id}
+                        else: nowDRP['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id, "type" : 1}
                     else: blink()
 
-        else:
-            self.coolTime -= 1
-            if self.isFocused:
-                super().damaged()
-                if self.hp <= 0: self.coolTime = 0
-                time.sleep(0.001)
-            elif not self.isFocused:
-                if [self.Dy, self.Dx] == [s.Dy, s.Dx]:
-                    self.isFocused = False
-                    self.coolTime  = 0
-                time.sleep(0.5)
+        else: super().wait()

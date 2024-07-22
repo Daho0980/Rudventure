@@ -36,8 +36,8 @@ def _changeExtention(name:str, beforeExt:str=".rud", afterExt:str=".json"):
     except: return False
 
 def save() -> int:
-    Vars        = [name for name in dir(s) if not name.startswith('__')]
-    uselessVars = [
+    Vars         = [name for name in dir(s) if not name.startswith('__')]
+    negativeVars = [
         'cMarkdown',
         '_cc', 'cColors',
         'Dy', 'bfDy',
@@ -49,7 +49,7 @@ def save() -> int:
         'main',
         'LOGO',
         'ids', 'orbIds',
-        'stepableBlocks', 'interactableBlocks',
+        'monsterInteractableBlocks', 'interactableBlocks',
         'enemyIds',
         's', 'TFP', 'pythonVersion',
         'Dungeon',
@@ -72,14 +72,15 @@ def save() -> int:
         file_path = f'{s.TFP}saveData{s.s}{s.name}.json'
         saveJson  = open(file_path, 'w')
 
-        for i in uselessVars:
+        for i in negativeVars:
             if i in Vars: Vars.remove(i)
 
         data         = {}
         statusData   = {}
         for i in Vars:
             # print(i+str(type(eval(f"s.{i}"))))
-            statusData[i] = eval(f"s.{i}")
+            # statusData[i] = eval(f"s.{i}")
+            statusData[i] = getattr(s, i)
         data["status"] = statusData
 
         json.dump(data, saveJson, ensure_ascii=False)

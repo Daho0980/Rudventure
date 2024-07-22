@@ -1,4 +1,4 @@
-from Assets.data                import status as s
+from Assets.data                import status      as s
 from Game.utils.modules.Textbox import TextBox
 from Game.utils.graphics        import addstrMiddle
 
@@ -16,7 +16,7 @@ def fullSizedBox(
             LineType  =lineType,
             coverColor=boxColor
         ),
-        addOnyx=[1, 0],
+        addOnyx  =[2 if y%2 else 1, 0],
         returnStr=True
     )
 

@@ -28,8 +28,8 @@ def addMonster(
 
         `entityType`(int(0~ 1)) : 적의 타입을 정해주는 매개변수, 무조건 기입해야 함
         `initHp`(int)     : 적이 처음으로 가질 체력, 무조건 기입해야 함
-        `Dy`(int)         : 적이 소환될 던전 y값, 무조건 기입해야 함
-        `Dx`(int)         : 적이 소환될 던전 x값, 무조건 기입해야 함
+        `Dy`(int)         : 적이 소환될 미궁 y값, 무조건 기입해야 함
+        `Dx`(int)         : 적이 소환될 미궁 x값, 무조건 기입해야 함
         `y`(list)         : 적이 소환될 y값, 리스트 형태로 `[방 y 최솟값, 방 y 최댓값]`과 같이 기입해도 되지만,
             특정 위치에 소환하려면 `int`형식으로 기입해야됨
                 
@@ -80,6 +80,7 @@ if s.main ==1 and not s.killAll:
     s.Dungeon[{valuableName}.Dy][{valuableName}.Dx]['room'][{valuableName}.y][{valuableName}.x] = {{
         "block" : f"{cc['fg']['G1']}{{{valuableName}.icon}}{cc['end']}",
         "id"    : 900,
+        "type"  : 0,
         "nbt"   : {{
             "count" : {ashChipType[entityType]*acMtp}}}
         }}

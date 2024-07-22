@@ -13,7 +13,7 @@ cd desktop; git clone https://github.com/Daho0980/Rudventure.git
 
 ### Windows   
 ```
-지원 무기한 중단 - 모듈 호환성 확인 불가능
+지원 불가
 ```
 
 ## TODO   
@@ -24,7 +24,7 @@ cd desktop; git clone https://github.com/Daho0980/Rudventure.git
 - [x] 각각 엔티티 마다 개별 스레드 적용   
 - [ ] 더 많은 몬스터들   
 - [x] 디버그 모드 제작   
-- [ ] 던전 데이터 구성 방식 변경   
+- [ ] 미궁 데이터 구성 방식 변경   
 - [x] 메뉴 제작   
 - [x] 세이브 제작   
 - [ ] 아이템 및 아이템 시스템 추가   

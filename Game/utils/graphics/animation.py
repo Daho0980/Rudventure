@@ -18,7 +18,7 @@ class graphs:
             output.append(1)
 
         for i in range(1, length):
-            if sum(output)-1+i > halfLength:
+            if (sum(output)-1+i) > halfLength:
                 bifurcation = i-1
                 break
             output.append(i)

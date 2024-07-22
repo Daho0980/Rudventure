@@ -9,7 +9,7 @@ def add(text, duration):
     s.onDisplay.append(text)
     s.onTime.append(duration)
 
-def addLog(text, duration:int=50) -> None:
+def addLog(text:str, duration:int=50) -> None:
     """
     게임 내 최하단에 출력되는 로그를 작성하는 함수
 
@@ -32,9 +32,11 @@ def logChecker() -> None:
         if l.jpsf and not l.pause:
             time.sleep(0.1)
             if s.onTime: s.onTime = list(map(lambda t: t-1, s.onTime))
+            s.blockDescription['time'] -= 1 if s.blockDescription['time'] else 0
             while 0 in s.onTime:
                 del s.onDisplay[s.onTime.index(0)]
                 del s.onTime   [s.onTime.index(0)]
+            if not s.blockDescription['time']: s.blockDescription['text'] = ""
         else: time.sleep(1)
 
 threading.Thread(target=logChecker, name="logger", daemon=True).start()

@@ -1,13 +1,12 @@
 import os
 import json
-import time
 import curses
 import socket
 from   random import choice
 
 from Assets.data                      import status, color, UIPreview
 from Game.core.system                 import configs
-from Game.scenes                      import checkColor
+from Game.scenes                      import checkColor, checkTerminalSize
 from Game.utils.modules               import cSelector, Textbox
 from Game.utils.advanced.Rudconverter import load
 from Game.utils.graphics              import animation, addstrMiddle
@@ -47,11 +46,13 @@ def setData(data):
 
 def main(stdscr) -> None:
     configs.load()
+    configs.save()
     with open(f"{s.TFP}config{s.s}version.json", 'r') as f:
         try:    s.version = json.load(f)["version"]
         except: s.version = "version file was missing!"
 
     checkColor.main(stdscr)
+    checkTerminalSize.main(stdscr)
     y, x = stdscr.getmaxyx()
     animation.box.forward(stdscr, y-3, x-2, "double")
     while 1:
@@ -142,9 +143,10 @@ def main(stdscr) -> None:
                                 graphicSettings = clc.main(
                                     "<< 그래픽 설정 >>",
                                     {
-                                        "UI 설정..."          : "게임에 표시될 UI를 설정합니다.",
-                                        "프레임 설정..."      : "게임 화면의 새로고침 빈도를 설정합니다.",
-                                        "터미널 화면 조정..." : "게임을 가장 이상적으로 즐기기 위해\n터미널의 크기를 재조정합니다.",
+                                        "UI 설정..."     : "게임에 표시될 UI를 설정합니다.",
+                                        "프레임 설정..." : "게임 화면의 새로고침 빈도를 설정합니다.",
+                                        "터미널 설정..." : "터미널 창의 설정을 관리합니다.",
+                                        # "터미널 화면 조정..." : "게임을 가장 이상적으로 즐기기 위해\n터미널의 크기를 재조정합니다.",
                                         ""                    : "",
                                         "완료"                : ""
                                     },
@@ -160,8 +162,8 @@ def main(stdscr) -> None:
                                                 "<< UI 설정 >>",
                                                 {
                                                     f"현재 스탯 UI : {['콤팩트', '코지'][s.statusDesign]}" : "좌상단에 표시될 스탯의 디자인을\n변경합니다.",
-                                                    f"디버그 콘솔  : {s.debugConsole}"                      : "우중단에 표시될 디버그 스크린\n표시 여부입니다.",
-                                                    f"맵 표시      : {bool(s.showDungeonMap)}"             : "우상단에 표시될 던전 맵\n표시 여부입니다.",
+                                                    f"디버그 콘솔  : {s.debugConsole}"                      : "우중단에 표시될 디버그 콘솔\n표시 여부입니다.",
+                                                    f"맵 표시      : {bool(s.showDungeonMap)}"             : "우상단에 표시될 맵\n표시 여부입니다.",
                                                     ""                                                     : "",
                                                     "완료"                                                 : ""
                                                 },
@@ -180,23 +182,16 @@ def main(stdscr) -> None:
                                                     addstrMiddle(
                                                         stdscr,
                                                         UIPreview.dungeonMap["introduction"],
-                                                        x        =stdscr.getmaxyx()[1]-63,
+                                                        x        =stdscr.getmaxyx()[1]-55,
                                                         y        =13 if s.showDungeonMap else 3,
                                                         returnStr=True
                                                     ),
                                                     addstrMiddle(
                                                         stdscr,
-                                                        UIPreview.status[s.statusDesign],
+                                                        "".join([UIPreview.status[s.statusDesign],UIPreview.status["introduction"]]),
                                                         x        =0,
                                                         y        =1,
                                                         addOnyx=[1,0],
-                                                        returnStr=True
-                                                    ),
-                                                    addstrMiddle(
-                                                        stdscr,
-                                                        UIPreview.status["introduction"],
-                                                        x        =0,
-                                                        y        =12 if s.statusDesign else 10,
                                                         returnStr=True
                                                     ),
                                                     addstrMiddle(
@@ -209,17 +204,17 @@ def main(stdscr) -> None:
                                                     addstrMiddle(
                                                         stdscr,
                                                         UIPreview.debugConsole["introduction"],
-                                                        x        =stdscr.getmaxyx()[1]-55,
-                                                        y        =round(stdscr.getmaxyx()[0]/2)+(6 if s.debugConsole else 1),
+                                                        x        =stdscr.getmaxyx()[1]-63,
+                                                        y        =round(stdscr.getmaxyx()[0]/2)+(5 if s.debugConsole else 1),
                                                         returnStr=True
                                                     ),
                                                     '[version]'
                                                 ]
                                             )
                                             match UISettings:
-                                                case 1: s.statusDesign = 0     if s.statusDesign   else 1
-                                                case 2: s.debugConsole  = False if s.debugConsole    else True
-                                                case 3: s.showDungeonMap = 0   if s.showDungeonMap else 1
+                                                case 1: s.statusDesign   = 0     if s.statusDesign   else 1
+                                                case 2: s.debugConsole   = False if s.debugConsole   else True
+                                                case 3: s.showDungeonMap = 0     if s.showDungeonMap else 1
                                                 case 4:
                                                     configs.save()
                                                     break
@@ -240,7 +235,7 @@ def main(stdscr) -> None:
                                                 '@',
                                                 maxLine       =4,
                                                 setArrowPos   =frameSAP,
-                                                background=['[fullSizeBox]', '[version]'],
+                                                background    =['[fullSizeBox]', '[version]'],
                                                 returnArrowPos=True
                                             )
                                             match frameSettings:
@@ -251,27 +246,51 @@ def main(stdscr) -> None:
                                                     configs.save()
                                                     break
                                     case 3:
+                                        terminalSAP = [0, 0]
                                         while 1:
-                                            y, x       = stdscr.getmaxyx()
-                                            screenType = 0 if y<s.sss['minimum'][0] or x<s.sss['minimum'][1] else 1 if s.sss['minimum'][0]<=y<s.sss['recommended'][0] and s.sss['minimum'][1]<=x<s.sss['recommended'][1] else 2
-                                            baseColor  = [cc['fg']['R'], cc['fg']['Y'], cc['fg']['L']][screenType]
+                                            terminalScreenSettings, terminalSAP = clc.main(
+                                                "<< 터미널 설정 >>",
+                                                {
+                                                    "터미널 화면 조정..."                           : "게임을 가장 이상적으로 즐기기 위해 \n터미널의 크기를 재조정합니다.",
+                                                    f"터미널 크기 확인 : {s.checkTerminalSize}"     : "게임 시작 직후 터미널의 크기를 확인해\n경고 문구를 출력합니다.",
+                                                    f"터미널 크기 자동 조정 : {s.autoTerminalSize}" : "게임 시작 시 터미널 크기가 최소 기준보다\n작다면 자동으로 최소 기준으로 설정합니다.",
+                                                    ""                                              : "",
+                                                    "완료"                                          : ""
+                                                },
+                                                [1,0,255,10],
+                                                '@',
+                                                setArrowPos   =terminalSAP,
+                                                background    =['[fullSizeBox]', '[version]'],
+                                                returnArrowPos=True
+                                            )
+                                            match terminalScreenSettings:
+                                                case 1:
+                                                    while 1:
+                                                        y, x       = stdscr.getmaxyx()
+                                                        screenType = 0 if y<s.sss['minimum'][0] or x<s.sss['minimum'][1] else 1 if s.sss['minimum'][0]<=y<s.sss['recommended'][0] and s.sss['minimum'][1]<=x<s.sss['recommended'][1] else 2
+                                                        baseColor  = [cc['fg']['R'], cc['fg']['Y'], cc['fg']['L']][screenType]
 
-                                            animation.box.forward(stdscr, y-3, x-2, "double", boxColor=baseColor)
-                                            terminalSizeSettings = clc.main(
-                                                f"""
-{[cc['fg']['R']+f'터미널 크기의', cc['fg']['Y']+f'최소 조건이 충족되었습니다.', cc['fg']['L']+f'현재 가장 이상적인 조건을'][screenType]}
+                                                        animation.box.forward(stdscr, y-3, x-2, "double", boxColor=baseColor)
+                                                        terminalSizeSettings = clc.main(
+                                                            f"""
+{[cc['fg']['R']+'터미널 크기의', cc['fg']['Y']+'최소 조건이 충족되었습니다.', cc['fg']['L']+'현재 가장 이상적인 조건을'][screenType]}
 {['최소 조건이 충족되지 않았습니다!', '하지만 권장 조건을 충족하려면 여기서 더 늘려야 합니다.', '사용하고 있습니다!'][screenType]}
 
 
 << 터미널 화면 조정 >>""",
-                                                [f"{baseColor}완료{cc['end']}", "", f"{baseColor}다시 측정하기{cc['end']}"],
-                                                baseColor,
-                                                '@',
-                                                background=[f"[fullSizeBox]{{'lineType':'double', 'boxColor':'{baseColor}'}}"]
-                                            )
-                                            match terminalSizeSettings:
-                                                case 1: break
-                                                case 2: continue
+                                                            [f"{baseColor}완료{cc['end']}", "", f"{baseColor}다시 측정하기{cc['end']}"],
+                                                            baseColor,
+                                                            '@',
+                                                            background=[f"[fullSizeBox]{{'lineType':'double', 'boxColor':'{baseColor}'}}"]
+                                                        )
+                                                        match terminalSizeSettings:
+                                                            case 1: break
+                                                            case 2: continue
+                                                case 2: s.checkTerminalSize = False if s.checkTerminalSize else True
+                                                case 3: s.autoTerminalSize  = False if s.autoTerminalSize  else True
+                                                case 4:
+                                                    configs.save()
+                                                    break
                                     case 4: break
                         case 2:
                             modSAP = [0, 0]
@@ -280,7 +299,7 @@ def main(stdscr) -> None:
                                     "<< 게임 모드 >>",
                                     {
                                         f"겁쟁이 모드 : {s.cowardMode}" : [
-                                            "활성화 시 스테이지를 클리어할 때마다\n세이브 데이터가 저장됩니다.",
+                                            "활성화 시 스테이지를 클리어할 때마다\n복제된 육신이 저장됩니다.",
                                              "괜찮아요. 좀만 하다 보면 곧 익숙해질 겁니다." if s.cowardMode and s.ezMode else "게임에서마저도 죽는 게 두려운가 봐요?"
                                             ][s.cowardMode],
                                         f"쫄보 모드 : {s.ezMode}" : [

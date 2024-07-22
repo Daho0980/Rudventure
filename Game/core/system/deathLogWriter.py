@@ -1,9 +1,8 @@
-import re
 import random
 from   PIL      import Image, ImageDraw, ImageFont
 from   datetime import datetime
 
-from Assets.data         import status as s
+from Assets.data         import status    as s
 from Game.utils.graphics import escapeAnsi
 
 

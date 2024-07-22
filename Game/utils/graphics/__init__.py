@@ -5,7 +5,7 @@ import unicodedata
 _ansiCompile = re.compile(r'(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]')
 escapeAnsi   = lambda l: _ansiCompile.sub('',l)
 
-def checkActualLen(l):
+def actualLen(l):
     total_length = 0
     EAWC         = {}
 
@@ -28,8 +28,8 @@ def addstrMiddle(
         ) -> str: # type: ignore
     lines:list[int] = list(map(lambda l: len(escapeAnsi(l)), string.split("\n")))
     y, x = (y,x)if y+x else map(
-        lambda c:c[0]-round([len(lines)/2,max(lines)/2][c[1]]),
-        list(zip(map(lambda n:round(n/2),stdscr.getmaxyx()),[0,1]))
+        lambda c:c[0]-int([len(lines)/2,max(lines)/2][c[1]]),
+        list(zip(map(lambda n:int(n/2),stdscr.getmaxyx()),[0,1]))
         )
     y, x = y+addOnyx[0], x+addOnyx[1]+1
     output:str = ''.join(
