@@ -4,57 +4,77 @@ import curses
 import socket
 from   random import choice
 
-from Assets.data                      import status, color, UIPreview
+from Assets.data                      import status, color, UIPreview, comments
 from Game.core.system                 import configs
+from Game.core.system.dataLoader      import elm
 from Game.scenes                      import checkColor, checkTerminalSize
 from Game.utils.modules               import cSelector, Textbox
 from Game.utils.advanced.Rudconverter import load
-from Game.utils.graphics              import animation, addstrMiddle
+from Game.utils.graphics              import animation, anchor
 
 
-s, cc  = status, color.cColors
+s, cc, c  = status, color.cColors, comments
 clc, t = cSelector, Textbox
 
 def setData(data):
-    data = data['status']
+    statusData  = data['status']
+    commentData = data['comments']
 
-    s.name           = data['name']
-    s.lightName      = f"{cc['fg']['L']}{data['name']}{cc['end']}"
-    s.welcomeMessage = data['welcomeMessage']
+    s.name      = statusData['name']
+    s.lightName = f"{cc['fg']['L']}{statusData['name']}{cc['end']}"
 
-    s.hp             = data['hp']
-    s.df             = data['df']
-    s.atk            = data['atk']
-    s.hunger         = data['hunger']
-    s.xp             = data['xp']
-    s.lvl            = data['lvl']
-    s.critDMG        = data['critDMG']
-    s.critRate       = data['critRate']
-    s.ashChip        = data['ashChip']
+    s.hp       = statusData['hp']
+    s.df       = statusData['df']
+    s.atk      = statusData['atk']
+    s.hunger   = statusData['hunger']
+    s.xp       = statusData['xp']
+    s.lvl      = statusData['lvl']
+    s.critDMG  = statusData['critDMG']
+    s.critRate = statusData['critRate']
+    s.ashChip  = statusData['ashChip']
 
-    s.Mhp            = data['Mhp']
-    s.Mdf            = data['Mdf']
-    s.Mxp            = data['Mxp']
-    s.Mlvl           = data['Mlvl']
+    s.Mhp  = statusData['Mhp']
+    s.Mdf  = statusData['Mdf']
+    s.Mxp  = statusData['Mxp']
+    s.Mlvl = statusData['Mlvl']
 
-    s.stage          = data['stage']
-    s.killCount      = data['killCount']
+    s.stage     = statusData['stage']
+    s.killCount = statusData['killCount']
 
-    s.cowardMode     = data['cowardMode']
-    s.ezMode         = data["exMode"]
-    s.publicMode     = data['publicMode']
+    s.cowardMode = statusData['cowardMode']
+    s.ezMode     = statusData["ezMode"]
+    s.publicMode = statusData['publicMode']
+
+    s.ids[300]         = statusData['playerIcon']
+    s.playerDamageIcon = statusData['playerDamageIcon']
+    s.playerColor      = statusData['playerColor']
+    s.playerVoice      = statusData['playerVoice']
+
+    s.entityDataMaintained = statusData['entityDataMaintained']
+    
+    c.lowHpComments               = commentData['lowHpComments']
+    c.treasureRoomComments        = commentData['treasureRoomComments']
+    c.defeatComments              = commentData['defeatComments']
+    c.victoryComments             = commentData['victoryComments']
+    c.TIOTAComments               = commentData['TIOTAComments']
+    c.collideComments             = commentData['collideComments']
+    c.clayModelAnswerComments     = commentData['clayModelAnswerComments']
+    c.startComments               = commentData['startComments']
+    c.startCommentsWithCowardmode = commentData['startCommentsWithCowardmode']
+    c.loadsaveStartComments       = commentData['loadsaveStartComments']
+    c.soliloquyComments           = commentData['soliloquyComments']
+    c.enterinBattleComments       = commentData['enterinBattleComments']
 
 def main(stdscr) -> None:
     configs.load()
     configs.save()
-    with open(f"{s.TFP}config{s.s}version.json", 'r') as f:
-        try:    s.version = json.load(f)["version"]
-        except: s.version = "version file was missing!"
+    s.version = elm(f"{s.TFP}config{s.s}version.json", "version", "string")\
+                or "version file is missing!"
 
     checkColor.main(stdscr)
     checkTerminalSize.main(stdscr)
     y, x = stdscr.getmaxyx()
-    animation.box.forward(stdscr, y-3, x-2, "double")
+    animation.Box.forward(stdscr, y-3, x-2, "double")
     while 1:
         mainMenu:int = clc.main(
             s.LOGO,
@@ -78,20 +98,20 @@ def main(stdscr) -> None:
                         saveDatas = [d for d in os.listdir(f"{s.TFP}saveData") if d.endswith(".rud")]
                         clcDict   = {}
                         for data in saveDatas:
-                            name = data.rstrip(".rud")
+                            name = data.removesuffix(".rud")
                             clcDict[name] = f"{name}의 봉인된 육신입니다."
 
                         if clcDict:
-                            loadSavedData = clc.main(
+                            loadSaveData = clc.main(
                                 "<< 운명 인식 >>",
                                 clcDict,
                                 [1,0,255,10],
                                 '@'
-                            ); selectedFile = saveDatas[loadSavedData-1]
+                            ); selectedFile = saveDatas[loadSaveData-1]
 
                             match clc.main(
                                 t.TextBox(
-                                    f"정말로 이 {cc['fg']['R']}육신{cc['end']}을 선택하시겠습니까?\n\n{cc['fg']['L']}<< {selectedFile.rstrip('.rud')} >>{cc['end']}",
+                                    f"정말로 이 {cc['fg']['R']}육신{cc['end']}을 선택하시겠습니까?\n\n{cc['fg']['L']}<< {selectedFile.removesuffix('.rud')} >>{cc['end']}",
                                     Type        ="middle",
                                     outDistance =1,
                                     AMLS        =True,
@@ -103,7 +123,8 @@ def main(stdscr) -> None:
                                 '@'
                             ):
                                 case 1:
-                                    setData(load(selectedFile.rstrip(".rud")))
+                                    setData(load(selectedFile.removesuffix(".rud")))
+                                    s.isLoadfromBody = True
                                     break
                                 case 2: continue
                         else:
@@ -146,7 +167,6 @@ def main(stdscr) -> None:
                                         "UI 설정..."     : "게임에 표시될 UI를 설정합니다.",
                                         "프레임 설정..." : "게임 화면의 새로고침 빈도를 설정합니다.",
                                         "터미널 설정..." : "터미널 창의 설정을 관리합니다.",
-                                        # "터미널 화면 조정..." : "게임을 가장 이상적으로 즐기기 위해\n터미널의 크기를 재조정합니다.",
                                         ""                    : "",
                                         "완료"                : ""
                                     },
@@ -172,21 +192,21 @@ def main(stdscr) -> None:
                                                 setArrowPos   =UISAP,
                                                 returnArrowPos=True,
                                                 background=[
-                                                    addstrMiddle(
+                                                    anchor(
                                                         stdscr,
                                                         UIPreview.dungeonMap[s.showDungeonMap],
                                                         x        =stdscr.getmaxyx()[1]-(21 if s.showDungeonMap else 29),
                                                         y        =2,
                                                         returnStr=True
                                                     ),
-                                                    addstrMiddle(
+                                                    anchor(
                                                         stdscr,
                                                         UIPreview.dungeonMap["introduction"],
                                                         x        =stdscr.getmaxyx()[1]-55,
                                                         y        =13 if s.showDungeonMap else 3,
                                                         returnStr=True
                                                     ),
-                                                    addstrMiddle(
+                                                    anchor(
                                                         stdscr,
                                                         "".join([UIPreview.status[s.statusDesign],UIPreview.status["introduction"]]),
                                                         x        =0,
@@ -194,14 +214,14 @@ def main(stdscr) -> None:
                                                         addOnyx=[1,0],
                                                         returnStr=True
                                                     ),
-                                                    addstrMiddle(
+                                                    anchor(
                                                         stdscr,
                                                         UIPreview.debugConsole[s.debugConsole],
                                                         x        =stdscr.getmaxyx()[1]-(30 if s.debugConsole else 38),
                                                         y        =round(stdscr.getmaxyx()[0]/2)-(5 if s.debugConsole else 0),
                                                         returnStr=True
                                                     ),
-                                                    addstrMiddle(
+                                                    anchor(
                                                         stdscr,
                                                         UIPreview.debugConsole["introduction"],
                                                         x        =stdscr.getmaxyx()[1]-63,
@@ -270,7 +290,7 @@ def main(stdscr) -> None:
                                                         screenType = 0 if y<s.sss['minimum'][0] or x<s.sss['minimum'][1] else 1 if s.sss['minimum'][0]<=y<s.sss['recommended'][0] and s.sss['minimum'][1]<=x<s.sss['recommended'][1] else 2
                                                         baseColor  = [cc['fg']['R'], cc['fg']['Y'], cc['fg']['L']][screenType]
 
-                                                        animation.box.forward(stdscr, y-3, x-2, "double", boxColor=baseColor)
+                                                        animation.Box.forward(stdscr, y-3, x-2, "double", boxColor=baseColor)
                                                         terminalSizeSettings = clc.main(
                                                             f"""
 {[cc['fg']['R']+'터미널 크기의', cc['fg']['Y']+'최소 조건이 충족되었습니다.', cc['fg']['L']+'현재 가장 이상적인 조건을'][screenType]}
@@ -370,7 +390,7 @@ def main(stdscr) -> None:
                 background=['[fullSizeBox]', '[version]'],
                 )
             case 5:
-                animation.box.reverse(stdscr, y-3, x-2, "double")
+                animation.Box.reverse(stdscr, y-3, x-2, "double")
                 s.main = 0
                 curses.endwin()
                 exit(1)

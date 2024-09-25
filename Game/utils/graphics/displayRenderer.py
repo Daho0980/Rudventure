@@ -1,35 +1,38 @@
 import math
+import curses
 import psutil
+from   random import randrange, choices, choice
 
-from Assets.data         import status, lockers
-from Assets.data.color   import cColors        as cc
-from Game.utils.advanced import DungeonMaker   as dgm
+from Assets.data         import percentage, lockers, status
+from Assets.data.color   import cColors                    as cc
+from Game.utils.advanced import DungeonMaker               as dgm
 from Game.utils.modules  import Textbox
 
 from Game.utils.graphics import (
     escapeAnsi,
-    addstrMiddle,
-    actualLen
+    actualLen,
+    anchor
     )
 
-
 s, l = status, lockers
+per  = percentage
 
-def statusBar(
-        status:int,
-        statusName:str    ="",
-        maxStatus:int     =0,
-        color:str         ="",
-        emptyCellColor:str="",
-        barType:str       ="Normal",
-        frontTag:str      ="",
-        backTag:str       ="",
-        space:int         =0,
-        end:bool          =True,
-        showComma:bool    =True,
-        usePercentage:bool=False, 
-        showEmptyCell:bool=True,
-    ):
+
+noiseBuffer = ""
+
+def statusBar(status:int,
+              statusName:str    ="",
+              maxStatus:int     =0,
+              color:str         ="",
+              emptyCellColor:str="",
+              barType:str       ="Normal",
+              frontTag:str      ="",
+              backTag:str       ="",
+              space:int         =0,
+              end:bool          =True,
+              showComma:bool    =True,
+              usePercentage:bool=False, 
+              showEmptyCell:bool=True,    ):
     """
     게이지 바를 생성하는 함수\n\n
 
@@ -64,10 +67,10 @@ def statusBar(
     Display.append(f"{f'{statusName} ' if len(statusName)>0 else ''} {spaceLen}{frontTag} {cc['fg']['G1']}{barTypes[barType][0]}{color}")
     if usePercentage:
         status, maxStatus = round((status/maxStatus)*10), 10
-    elif not usePercentage: statusForDisplay = maxStatus if status > maxStatus else status
+    elif not usePercentage: statusForDisplay = maxStatus if status>maxStatus else status
     
     Display.append(f"{'|'*statusForDisplay+emptyCellColor+'|'*((maxStatus-statusForDisplay) if showEmptyCell else 0)}{cc['fg']['G1']}{barTypes[barType][1]}{cc['end']}")
-    if status - maxStatus > 0: Display.append(f" {color}+{status-maxStatus}{cc['end']}")
+    if status-maxStatus > 0: Display.append(f" {color}+{status-maxStatus}{cc['end']}")
     Display.append(f"{',' if len(backTag)>0 and showComma else ''} {backTag}"+("\n"if end else ""))
 
     return ''.join(Display)
@@ -100,26 +103,46 @@ def inventory():
         
     return "".join(output)
 
+def curseNoise(stdscr) -> str:
+    output = ""
+
+    y, x = stdscr.getmaxyx()
+    x -= 3
+    y -= 3
+
+    for _ in range((s.lvl-int(s.Mlvl/2))*3):
+        output += anchor(
+            stdscr,
+            f"{cc['fg']['F']}{choice(s.noisePool[choices(['pattern','character'],weights=[40,70],k=1)[0]])}{cc['end']}",
+            y        =randrange(1,y+1),
+            x        =randrange(1,x+1),
+            returnStr=True
+        )
+
+    return output
+
 def render(stdscr, grid:list):
     """
     메인 디스플레이 출력 함수
 
         `grid`(list(2d)) : 맵의 그래픽 데이터가 포함됨.
     """
+    global noiseBuffer
+
     y, x    = stdscr.getmaxyx()
     Display = []
     buffer  = ""
-    GFD     = [' '.join([d["block"]for d in row])for row in grid]
+    GFD     = [' '.join([d['block']for d in row])for row in grid]
 
     # Stage
     buffer = '\n'.join(GFD)
     dcmy   = int(y/2)-int(len([len(escapeAnsi(l)) for l in buffer.split("\n")])/2)-(s.y-int(len(s.Dungeon[s.Dy][s.Dx]['room'])/2))
     dcmx   = int(x/2)-(int(max([len(escapeAnsi(l)) for l in GFD])/2)+1)-(s.x-int(len(s.Dungeon[s.Dy][s.Dx]['room'][0])/2))
-    Display.append(addstrMiddle(
+    Display.append(anchor(
         stdscr,
         buffer,
-        y        =(2 if dcmy<2 else y if dcmy+len(s.Dungeon[s.Dy][s.Dx]['room'])>y else dcmy) if s.dynamicCameraMoving else int(y/2)-int(len([len(escapeAnsi(l))  for l in buffer.split("\n")])/2),
-        x        =(0 if dcmx<0 else x-2 if dcmx>=x-1 else dcmx)                               if s.dynamicCameraMoving else int(x/2)-(int(max([len(escapeAnsi(l)) for l in GFD])/2)+1),
+        y        =(2 if dcmy<2 else y   if dcmy+len(s.Dungeon[s.Dy][s.Dx]['room'])>y else dcmy) if s.dynamicCameraMoving else int(y/2)-int(len([len(escapeAnsi(l))  for l in buffer.split("\n")])/2),
+        x        =(0 if dcmx<0 else x-2 if dcmx>=x-1                                 else dcmx) if s.dynamicCameraMoving else int(x/2)-(int(max([len(escapeAnsi(l)) for l in GFD])/2)+1),
         returnStr=True
     ))
 
@@ -138,7 +161,7 @@ def render(stdscr, grid:list):
             sideTextPos  =["under", "middle"],
             coverSideText=True
         )
-        Display.append(addstrMiddle(stdscr, buffer, y=2, x=x-actualLen(buffer.split("\n")[-1]), returnStr=True))
+        Display.append(anchor(stdscr, buffer, y=2, x=x-actualLen(buffer.split("\n")[-1]), returnStr=True))
 
     # Status
     statusText = ""
@@ -148,18 +171,9 @@ f"""체력 : {cc['fg']['R']}{s.hp}/{s.Mhp}{cc['end']} | 방어력 : {cc['fg']['B
 허기 : {cc['fg']['Y']}{s.hunger if s.hunger<=200 else f'{round(s.hunger/20)}%'}{cc['end']} | 공격력 : {cc['fg']['L']}{s.atk}{cc['end']}
 
 풍력 : {cc['fg']['A']}{s.fairWind}/{s.MFairWind}{cc['end']}
+
 TextBox.Line_\nTextBox.Left_잿조각  {cc['fg']['G1']}{s.ashChip}{cc['end']}
-TextBox.Line_\n"""+statusBar(
-            int((s.xp/s.Mxp)*10),
-            maxStatus=10,
-            end      =False,
-            color    =cc['fg']['F'],
-            barType  ="Cursed",
-            frontTag =f"{cc['fg']['F']}{s.lvl}{cc['end']}",
-            backTag  =f"{cc['fg']['F']}{s.lvl+1}{cc['end']}",
-            space    =0,  # normal = 5
-            showComma=False
-        ),
+TextBox.Line_\n저주 : {cc['fg']['F']}{s.lvl}{cc['end']}, {cc['fg']['F']}{int((s.xp/s.Mxp)*100)}%{cc['end']}""",
         Type         ="middle",
         AMLS         =True,
         LineType     ='double',
@@ -199,7 +213,7 @@ TextBox.Line_\n"""+statusBar(
             coverSideText=True
         )
     statusText += f"\n\n{inventory()}"
-    Display.append(addstrMiddle(stdscr, statusText, y=2, x=1, returnStr=True))
+    Display.append(anchor(stdscr, statusText, y=2, x=1, returnStr=True))
 
     # Log
     logText = Textbox.TextBox(
@@ -211,15 +225,15 @@ TextBox.Line_\n"""+statusBar(
         sideTextPos    =["over", "middle"],
         coverSideText  =True
     )
-    Display.append(addstrMiddle(stdscr, logText, y=y-(1 if not len(s.onDisplay) else len(s.onDisplay)), returnStr=True))
+    Display.append(anchor(stdscr, logText, y=y-(1 if not len(s.onDisplay)else len(s.onDisplay)), returnStr=True))
 
-    # block deskription(when use observe mode)
-    if s.blockDescription['time']:
-        maxLen        = max(map(lambda l: actualLen(escapeAnsi(l)), s.blockDescription['text'].split('\n')))
-        sideTextSpace = 6 if maxLen>6 else 0; maxLen-=sideTextSpace
-        timeGauge     = int((s.blockDescription['time']/s.blockDescription['setTime'])*maxLen)
-        blockDescriptionText = Textbox.TextBox(
-            s.blockDescription['text'],
+    # Info window(when use observe mode)
+    if s.infoWindow['time']:
+        maxLen        = max(map(lambda l: actualLen(escapeAnsi(l)), s.infoWindow['text'].split('\n')))
+        sideTextSpace = 6 if maxLen>6 else 0; maxLen -= sideTextSpace
+        timeGauge     = int((s.infoWindow['time']/s.infoWindow['setTime'])*maxLen)
+        infoWindowText = Textbox.TextBox(
+            s.infoWindow['text'],
             AMLS           =True,
             LineType       ='double',
             alwaysReturnBox=False,
@@ -227,7 +241,7 @@ TextBox.Line_\n"""+statusBar(
             sideTextPos    =["under", "middle"],
             coverSideText  =True
         ).split('\n')
-        Display.append(addstrMiddle(stdscr, '\n'.join(blockDescriptionText), y=2, x=int(x/2)-int(len(blockDescriptionText[0])/2), returnStr=True))
+        Display.append(anchor(stdscr, '\n'.join(infoWindowText), y=2, x=int(x/2)-int(len(infoWindowText[0])/2), returnStr=True))
 
     # Debug Mode
     if s.debugConsole:
@@ -239,7 +253,10 @@ Number of threads : {psutil.Process().num_threads()}
 
 Dx : {s.Dx}, Dy : {s.Dy}, x : {s.x}, y : {s.y}
 Number of entities : {s.entityCount}
-Number of total entities : {s.totalEntityCount}""",
+Number of enemies : {s.enemyCount}
+Number of total entities : {s.totalEntityCount}
+
+soliloquy : ({s.soliloquyCount}, {s.soliloquyRange}, {per.soliloquy['min']}, {per.soliloquy['max']})""",
             Type         ="right",
             AMLS         =True,
             LineType     ="bold",
@@ -248,10 +265,19 @@ Number of total entities : {s.totalEntityCount}""",
             sideTextPos  =["over", "right"],
             coverSideText=True
         )
-        Display.append(addstrMiddle(stdscr, debugText, y=int((y/2)-(by/2)), x=x-bx, returnStr=True)) # type:ignore
+        Display.append(anchor(stdscr, debugText, y=int((y/2)-(by/2)), x=x-bx, returnStr=True)) # type:ignore
+
+    # curse corrosion
+    if s.lvl >= (s.Mlvl/2):
+        if not l.pause:
+            if not s.currentCurseNoiseFrequency:
+                s.currentCurseNoiseFrequency = s.curseNoiseFrequency
+                noiseBuffer                  = curseNoise(stdscr)
+            s.currentCurseNoiseFrequency -= 1
+        Display.append(noiseBuffer)
 
     # Pause
-    if l.pause: Display.append(addstrMiddle(stdscr, s.pauseBox, returnStr=True))
+    if l.pause: Display.append(anchor(stdscr, s.pauseBox, returnStr=True))
 
     stdscr.erase()
     stdscr.addstr(''.join(Display))

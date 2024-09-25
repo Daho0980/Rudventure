@@ -1,12 +1,13 @@
 import curses
-import random
 import asyncio
 import threading
 
 from Assets.data             import lockers, status, color
-from Game.core.system        import blockDescription      as bd
+from Assets.data.status      import key
+from Game.core.system        import infoWindow
 from Game.core.system.logger import addLog
 from Game.entities           import player
+from Game.utils.graphics     import level
 from Game.utils.system.sound import play
 
 
@@ -18,64 +19,79 @@ def add() -> None:
     async def interactions(stdscr):
         while s.main:
             if l.jpsf:
-                key = stdscr.getch()
+                k = stdscr.getch()
                 
-                if not l.pause:
-                    if key in [curses.KEY_UP, curses.KEY_DOWN, curses.KEY_LEFT, curses.KEY_RIGHT]:
-                        match s.playerMode:
-                            case "normal":  p.move(key, 1)
-                            case "observe": p.observe(key)
-                    match key:
-                        case 9: # Tab
-                            s.showDungeonMap = 0 if s.showDungeonMap else 1
-                            play("soundEffects", "smash")
-                        case 68: # Shift + d
-                            s.debugConsole = False if s.debugConsole else True
-                            play("soundEffects", "smash")
-                            addLog(f"디버그 모드가 {['꺼', '켜'][s.debugConsole]}졌습니다.")
-                        case 83: # Shift + s
-                            s.statusDesign = 0 if s.statusDesign else 1
-                            play("soundEffects", "smash")
-                            addLog(f"스탯 창 디자인이 '{['콤팩트', '코지'][s.statusDesign]}'로 변경되었습니다.")
-                        case 66: # Shift + b
-                            s.dynamicCameraMoving = 0 if s.dynamicCameraMoving else 1
-                            play("soundEffects", "smash")
-                            addLog(f"다★이☆나★믹 카☆메★라 무☆빙이 {['꺼', '켜'][s.dynamicCameraMoving]}졌습니다.")
-                        case 77: # Shift + m
-                            l.useSound = False if l.useSound else True
-                            play("soundEffects", "check")
-                            addLog(["거기 안 들리는 거 맞죠-??", "이제 잘 들리시나요-??"][l.useSound]
-                                   if random.randrange(1,51)==50
-                                   else f"음소거{['되었습니다.', '가 풀렸습니다.'][l.useSound]}")
-                        case 109: # m
-                            s.playerMode = "observe" if s.playerMode == "normal" else "normal"
-                            color = {"observe":cc['fg']['Y'], "normal":cc['fg']['L']}[s.playerMode]
-                            play("soundEffects", "check")
-                            addLog(f"플레이어 모드가 '{color}{s.playerMode}{cc['end']}'로 변경되었습니다.")
-                        case 91: # [
-                            if s.volume:
-                                s.volume -= 10
-                                play("soundEffects", "check")
-                                addLog(f"음량 : {s.volume}%")
-                            else: addLog("이미 음량이 최저치에 도달했습니다!")
-                        case 93: # ]
-                            if s.volume < 100:
-                                s.volume += 10
-                                play("soundEffects", "check")
-                                addLog(f"음량 : {s.volume}%")
-                            else:
-                                play("soundEffects", "block")
-                                addLog("이미 음량이 최고치에 도달헀습니다!")
-                        case 49|50|51|52|53|54:
-                            if len(s.inventory['cells'])>=key-48 and not s.inventory['cells'][key-49]['disabled']:
-                                if key-49 != s.inventory['pointer']:
-                                    s.inventory['pointer'] = key-49
-                                    play("system", "selector", "select")
-                            else: play("system", "selector", "block")
+                # region Move
+                if k != -1:
+                    if not l.pause:
+                        if s.recordKey: addLog(f"keyCode : {k}")
+                        if k in [key.up, key.down, key.left, key.right]:
+                            match s.playerMode:
+                                case "normal":  p.move(k, 1)
+                                case "observe": p.observe(k)
 
-                if key == 32: # Space
-                    l.pause = False if l.pause else True
-                    play("soundEffects", "smash")
+                        match k:
+                            # region UI
+                            case key.dungeonMap:
+                                s.showDungeonMap = 0 if s.showDungeonMap else 1
+                                play("soundEffects", "smash")
+                            case key.debug:
+                                s.debugConsole = False if s.debugConsole else True
+                                play("soundEffects", "smash")
+                                addLog(f"{cc['fg']['B1']}디버그 모드{cc['end']}가 {['꺼', '켜'][s.debugConsole]}졌습니다.")
+                            case key.keyRecord:
+                                s.recordKey = False if s.recordKey else True
+                                play("soundEffects", "smash")
+                                addLog(f"{cc['fg']['B1']}키 기록 모드{cc['end']}가 {['꺼', '켜'][s.recordKey]}졌습니다. 이제부터 {cc['fg']['Y']}입력된 모든 키{cc['end']}는 게임 로그에 표시됩니다.")
+                            case key.statusUIDesign:
+                                s.statusDesign = 0 if s.statusDesign else 1
+                                play("soundEffects", "smash")
+                                addLog(f"스탯 창 디자인이 {cc['fg']['Y']}{['콤팩트', '코지'][s.statusDesign]}{cc['end']}로 변경되었습니다.")
+                            case key.cameraMove:
+                                s.dynamicCameraMoving = 0 if s.dynamicCameraMoving else 1
+                                play("soundEffects", "smash")
+                                addLog(f"{cc['fg']['B1']}다★이☆나★믹 카☆메★라 무☆빙{cc['end']}이 {['꺼', '켜'][s.dynamicCameraMoving]}졌습니다.")
+
+                            # region Sound
+                            case key.volumeDown|key.mute|key.volumeUp:
+                                sound    = "check"
+                                charType = [] if l.useSound else [".", "x", "Y", "X"]
+                                
+                                if   k==91 and s.volume:     s.volume -= 10
+                                elif k==93 and s.volume<100: s.volume += 10
+                                elif k==92:
+                                    l.useSound = False if l.useSound else True
+                                    sound      = "block"
+                                    charType   = [] if l.useSound else [".", "x", "Y", "X"]
+
+                                else: sound = "block"
+
+                                play("soundEffects", sound)
+                                infoWindow.add(
+                                    f"{cc['fg']['R']}◎{cc['end']}",
+                                    f"{cc['fg']['B1']}사운드 조절{cc['end']}",
+                                    f"   {cc['fg']['Y']}{level(s.volume,20,charType)} {f'{s.volume}%' if l.useSound else '음소거'}{cc['end']}   "
+                                )
+                                
+                            # region Game system
+                            case key.whistle:
+                                player.whistle()
+                            case key.playerMode:
+                                s.playerMode = "observe" if s.playerMode == "normal" else "normal"
+                                color = {"observe":cc['fg']['Y'], "normal":cc['fg']['L']}[s.playerMode]
+                                play("soundEffects", "check")
+                                addLog(f"플레이어 모드가 {color}{s.playerMode}{cc['end']}로 변경되었습니다.")
+                            case key.slot1|key.slot2|key.slot3|\
+                                 key.slot4|key.slot5|key.slot6:
+                                if len(s.inventory['cells'])>=k-48 and not s.inventory['cells'][k-49]['disabled']:
+                                    if k-49 != s.inventory['pointer']:
+                                        s.inventory['pointer'] = k-49
+                                        play("system", "selector", "select")
+                                else: play("system", "selector", "block")
+
+                    if k == key.pause:
+                        l.pause = False if l.pause else True
+                        play("soundEffects", "smash")
                 
                 await asyncio.sleep(0.005)
             else: await asyncio.sleep(1)

@@ -1,23 +1,45 @@
 import time
 import threading
-from   copy import deepcopy
+from   copy     import deepcopy
+from   random   import choice
 
-from Assets.data              import status    as s
-from Assets.data.color        import cColors   as cc
-from Assets.data              import lockers   as l
+from Assets.data              import status, comments
+from Assets.data.color        import cColors         as cc
+from Assets.data              import lockers         as l
 from Game.core.system         import logger
-from Game.entities            import player    as p
-from Game.utils.system.tts    import TTS
+from Game.entities            import player as p
+from Game.utils.system.tts    import TTS, TTC
 from Game.utils.graphics      import escapeAnsi
+from Game.utils.system.sound  import play # 계속 이거 지우는데 지우지마라
 
+
+s, c = status, comments
 
 def hitted() -> None:
     def event() -> None:
-        if s.ids[300] != f"{cc['fg']['R']}{escapeAnsi(s.ids[300])}{cc['end']}":
+        if s.ids[300].startswith(cc['fg']['R']):
+            s.ids[300] = escapeAnsi(s.ids[300])
+        else:
             icon:str      = s.ids[300][:]
-            character:str = escapeAnsi(icon)
+            character:str = escapeAnsi(choice(s.playerDamageIcon))
 
             s.ids[300] = f"{cc['fg']['R']}{character}{cc['end']}"
+            s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x]['block'] = s.ids[300]
+            time.sleep(0.03)
+            s.ids[300] = icon[:]
+            s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x]['block'] = s.ids[300]
+
+    threading.Thread(target=event, daemon=True).start()
+
+def defended() -> None:
+    def event() -> None:
+        if s.ids[300].startswith(cc['fg']['B1']):
+            s.ids[300] = escapeAnsi(s.ids[300])
+        else:
+            icon:str      = s.ids[300][:]
+            character:str = escapeAnsi(choice(s.playerDamageIcon))
+
+            s.ids[300] = f"{cc['fg']['B1']}{character}{cc['end']}"
             s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x]['block'] = s.ids[300]
             time.sleep(0.03)
             s.ids[300] = icon[:]
@@ -43,7 +65,7 @@ def cursedDeath() -> None:
         p.say(f"크{cc['fg']['F']}으윽...")
         time.sleep(1.7)
 
-        p.say("크아아아아아아악!!!!!!", TextColor='F')
+        p.say("크아아아아아아악!!!!!!", TextColor=cc['fg']['F'])
         while s.hp!=1:
             s.hp -= 1
             time.sleep(0.15)
@@ -67,19 +89,20 @@ def cursedDeath() -> None:
     
     threading.Thread(target=event, daemon=True).start()
 
-def readSign(texts, delay, voice) -> None:
+def readSign(texts, delay, voice, command="") -> None:
     def target() -> None:
         nonlocal texts, delay
 
         for line in texts:
             if isinstance(line, list):
                 exec(line[1])
-                logger.addLog(line[0])
+                logger.addLog(line[0], duration=max(50, TTC(line[0])))
                 TTS(line[0], voicePath=("object", "clayModel", "voice", voice))
             else:
-                logger.addLog(line)
+                logger.addLog(line, duration=max(50, TTC(line)))
                 TTS(line, voicePath=("object", "clayModel", "voice", voice))
             time.sleep(delay)
+        exec(command)
     
     threading.Thread(target=target, daemon=True).start()
 

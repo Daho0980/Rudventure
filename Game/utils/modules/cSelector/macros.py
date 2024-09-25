@@ -1,14 +1,14 @@
-from Assets.data                import status      as s
+from Assets.data                import status as s
 from Game.utils.modules.Textbox import TextBox
-from Game.utils.graphics        import addstrMiddle
+from Game.utils.graphics        import anchor
 
-def fullSizedBox(
-        stdscr,
-        lineType:str="double",
-        boxColor:str=""
-        ) -> str:
+
+def fullSizedBox(stdscr,
+                 lineType:str="double",
+                 boxColor:str=""       ) -> str:
     y, x = stdscr.getmaxyx()
-    return addstrMiddle(
+    
+    return anchor(
         stdscr,
         TextBox(
             '\n'.join([" "*(x-2)]*(y-3)),

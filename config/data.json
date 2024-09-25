@@ -4,8 +4,9 @@
     "showDungeonMap": 0,
     "frameRate": -1,
     "volume": 50,
-    "autoTerminalSize": true,
+    "autoTerminalSize": false,
     "checkTerminalSize": true,
-    "mtsY": 59,
-    "mtsX": 127
+    "mtsY": 58,
+    "mtsX": 122,
+    "clientID": 1266674287910064209
 }

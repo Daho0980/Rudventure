@@ -5,16 +5,17 @@ from Game.utils.modules      import Textbox
 from Game.utils.system.sound import play
 
 from Game.utils.graphics import (
-    addstrMiddle,
-    actualLen
+    actualLen,
+    anchor
 )
+
 
 def showStage(stdscr, stageName:str):
     """
     `stageName`(str): 현재 스테이지의 이름
     """
     stdscr.clear()
-    addstrMiddle(
+    anchor(
         stdscr,
         Textbox.TextBox(
             f"{cc['fg']['R']}나 락{cc['end']}",
@@ -30,7 +31,7 @@ def showStage(stdscr, stageName:str):
     time.sleep(1.6)
     stdscr.clear()
 
-    addstrMiddle(
+    anchor(
         stdscr,
         Textbox.TextBox(
             f"{cc['fg']['R']}나 락{cc['end']}\n\n{stageName}",

@@ -14,7 +14,7 @@ def hpCheck() -> None:
     if s.hp <= int(s.Mhp*0.3) and not s.hpLow:
         play("system", "hpLow")
         s.hpLow = True
-        p.say(random.choice(c.lowHpComment))
+        p.say(random.choice(c.lowHpComments))
     elif int((s.hp / s.Mhp) * 10) > 3: s.hpLow = False
 
 def defCheck() -> None:

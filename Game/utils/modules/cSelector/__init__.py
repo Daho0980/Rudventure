@@ -3,27 +3,34 @@ import copy
 import curses
 from   cusser import Cusser
 
-from Assets.data.color                         import cColors, customColor
-from Game.utils.graphics                       import addstrMiddle, escapeAnsi, actualLen
-from Game.utils.modules.cSelector              import macros                             as m
-from Game.utils.system.sound                   import play
+from Game.utils.modules.cSelector import macros as m
+from Game.utils.system.sound      import play
+
+from Assets.data.color import (
+    customColor,
+    cColors
+    )
+from Game.utils.graphics import (
+    escapeAnsi,
+    actualLen,
+    anchor
+    )
+
 
 cc = cColors
 
-def main(
-        title:str,
-        subtitle:(list[str]|dict[str,str])={'Why did you do...' : 'WHY...'},
-        color:(int|list[int])             =0,
-        icon:str                          ='>',
-        maxLine:(int|str)                 ="max",
-        lineSpace:int                     =1,
-        tag:str                           ="",
-        frontTag:str                      ="",
-        setArrowPos:list[int|bool]        =[-1, -1],
-        returnArrowPos:bool               = False,
-        background:list[str]              = [""],
-        useClear:bool                     = False
-        ):
+def main(title:str,
+         subtitle:(list[str]|dict[str,str])={'Why did you do...' : 'WHY...'},
+         color:(int|list[int])             =0,
+         icon:str                          ='>',
+         maxLine:(int|str)                 ="max",
+         lineSpace:int                     =1,
+         tag:str                           ="",
+         frontTag:str                      ="",
+         setArrowPos:list[int|bool]        =[-1, -1],
+         returnArrowPos:bool               = False,
+         background:list[str]              = [""],
+         useClear:bool                     = False                           ):
     """
     `title`(str, list)                     : 메뉴바의 타이틀이 될 문자열, 리스트 형태로 기입 시 타이틀과 메뉴의 공백이 제거됨. 무조건 기입해야 함\n
     `stdscr`(func)                         : 해당 모듈 외부에 있는 stdscr 사용 시 기입하는 매개변수, 기본적으로 빈 문자열로 지정되어 있음\n
@@ -57,17 +64,15 @@ def main(
         ```
     """
 
-    return curses.wrapper(
-        system,
-        title, subtitle,
-        color,
-        icon,
-        maxLine, lineSpace,
-        tag, frontTag,
-        setArrowPos, returnArrowPos,
-        background,
-        useClear
-        )
+    return curses.wrapper(system,
+                          title, subtitle,
+                          color,
+                          icon,
+                          maxLine, lineSpace,
+                          tag, frontTag,
+                          setArrowPos, returnArrowPos,
+                          background,
+                          useClear                    )
 
 def Change2D(subtitle, maxLine:int): # 1차원 subtitle을 2차원으로 재배열
     """
@@ -87,19 +92,17 @@ def Change2D(subtitle, maxLine:int): # 1차원 subtitle을 2차원으로 재배�
             newSubtitle[subListRow].append('' if subListColumn>=len(subtitle)else subtitle[subListColumn])
     return newSubtitle
 
-def returnDisplay(
-        stdscr,
-        title,
-        subtitle,
-        arrow,
-        maxLine,
-        lineSpace,
-        subtitleValues,
-        nowSelectColumn,
-        nowSelectRow,
-        tag,
-        frontTag
-        ):
+def returnDisplay(stdscr,
+                  title:str,
+                  subtitle:list,
+                  arrow:list,
+                  maxLine:int,
+                  lineSpace:int,
+                  subtitleValues:list,
+                  nowSelectColumn:int,
+                  nowSelectRow:int,
+                  tag:str,
+                  frontTag:str        ):
     """
     `title`(str, list)                     : 메뉴바의 타이틀이 될 문자열, 리스트 형태로 기입 시 타이틀과 메뉴의 공백이 제거됨, 무조건 기입해야 함\n
     `subtitle`(list(1d))                   : 메뉴바의 메뉴가 될 리스트, 무조건 기입해야 함\n
@@ -142,21 +145,19 @@ def returnDisplay(
     Display+=f"\n\n{cc['fg']['G1']}{tag}{cc['end']}\n\n"
     return Display, y, x
 
-def system(
-        stdscr,
-        title,
-        subtitle,
-        color,
-        icon,
-        maxLine,
-        lineSpace,
-        tag,
-        frontTag,
-        setArrowPos,
-        returnArrowPos,
-        background,
-        useClear
-        ):
+def system(stdscr,
+           title,
+           subtitle,
+           color,
+           icon,
+           maxLine,
+           lineSpace,
+           tag,
+           frontTag,
+           setArrowPos,
+           returnArrowPos,
+           background,
+           useClear       ):
     if not isinstance(stdscr, Cusser): stdscr=Cusser(stdscr)
 
     subtitleKeys, subtitleValues = [], []
@@ -193,19 +194,17 @@ def system(
         if nowSelectRow < len(subtitleKeys)-1              : arrow[nowSelectRow+1][nowSelectColumn] = f"{cc['end']} " # 다음 가로줄이 존재할 때: 다음 가로줄의 nowSelectColumn번째 요소를 기본색, 상태로 되돌림(색 전염 방지)
         if nowSelectRow > 0 and nowSelectColumn < maxLine-1: arrow[0][nowSelectColumn+1]            = f"{cc['end']} " # 이전 가로줄이 존재하고 맨 아래쪽 줄이 아닐 때: 첫 가로줄의 아랫칸을 기본색, 상태로 되돌림(색 전염 방지22)
         if nowSelectColumn + 1 < maxLine                   : arrow[nowSelectRow][nowSelectColumn+1] = f"{cc['end']} " # 현재 위치 + 1이 subtitle 최대 개수보다 적을 때: 다음칸을 기본색, 상태로 되돌린다(색 전염 방지333)
-        display, y, x = returnDisplay(
-                                    stdscr,
-                                    title,
-                                    subtitleKeys,
-                                    arrow,
-                                    maxLine,
-                                    lineSpace,
-                                    subtitleValues,
-                                    nowSelectColumn,
-                                    nowSelectRow,
-                                    tag,
-                                    frontTag
-                                )
+        display, y, x = returnDisplay(stdscr,
+                                     title,
+                                     subtitleKeys,
+                                     arrow,
+                                     maxLine,
+                                     lineSpace,
+                                     subtitleValues,
+                                     nowSelectColumn,
+                                     nowSelectRow,
+                                     tag,
+                                     frontTag        )
         backgroundBuffer = copy.deepcopy(background)
         for count, textData in enumerate(backgroundBuffer):
             if   textData == '[version]': backgroundBuffer[count] = m.showversion(stdscr)
@@ -216,7 +215,7 @@ def system(
                 else:
                     backgroundBuffer[count] = m.fullSizedBox(stdscr)
         stdscr.addstr(''.join(backgroundBuffer)) # type: ignore
-        addstrMiddle(stdscr, display, y=y, x=x)
+        anchor(stdscr, display, y=y, x=x)
         stdscr.refresh()
 
         sound                                = ("")

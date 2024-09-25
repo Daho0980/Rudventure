@@ -17,7 +17,7 @@ def addLog(text:str, duration:int=50) -> None:
         `time`(int) : 로그가 표시될 시간, 1초는 10으로 계산함, 기본적으로 `50`으로 설정되어 있음.
     """
 
-    if   len(s.onDisplay)  < s.maxStack: add(text, duration)
+    if   len(s.onDisplay) <  s.maxStack: add(text, duration)
     elif len(s.onDisplay) >= s.maxStack:
         s.onDisplay.pop(0)
         s.onTime.pop(0)
@@ -32,11 +32,13 @@ def logChecker() -> None:
         if l.jpsf and not l.pause:
             time.sleep(0.1)
             if s.onTime: s.onTime = list(map(lambda t: t-1, s.onTime))
-            s.blockDescription['time'] -= 1 if s.blockDescription['time'] else 0
+
+            s.infoWindow['time'] -= 1 if s.infoWindow['time'] else 0
+            if not s.infoWindow['time']: s.infoWindow['text'] = ""
+            
             while 0 in s.onTime:
                 del s.onDisplay[s.onTime.index(0)]
                 del s.onTime   [s.onTime.index(0)]
-            if not s.blockDescription['time']: s.blockDescription['text'] = ""
-        else: time.sleep(1)
+        else: time.sleep(0.5)
 
 threading.Thread(target=logChecker, name="logger", daemon=True).start()

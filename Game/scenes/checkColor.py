@@ -4,13 +4,14 @@ from Game.utils.system.sound import play
 
 
 def main(stdscr) -> None:
+    keys = list(cc['bg'].keys())
     play("soundEffects", "smash")
     cinp(
         stdscr,
         "색이 잘 보이는지 확인해주세요:\n"+f"{cc['end']}\n".join(
             [
-                ''.join([f"{cc['bg'][i]}   " for i in list(cc['bg'].keys())[:8]]),
-                ''.join([f"{cc['bg'][i]}   " for i in list(cc["bg"].keys())[8:16]])
+                ''.join([f"{cc['bg'][i]}   " for i in keys[:8]]),
+                ''.join([f"{cc['bg'][i]}   " for i in keys[8:16]])
             ]
             )+f"{cc['end']}\n\n{cc['fg']['L']}@ [Enter] 키를 눌러 확인{cc['end']}"
         )

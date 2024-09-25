@@ -1,9 +1,9 @@
 import time
 
 from Game.utils.modules  import Textbox
-from Game.utils.graphics import addstrMiddle
+from Game.utils.graphics import anchor
 
-class graphs:
+class Graphs:
     @staticmethod
     def IOAD(length:int) -> list[int]:
         """
@@ -63,28 +63,26 @@ class graphs:
             length = int(length/2)
 
         return output
-    
-class box:
+
+class Box:
     @staticmethod
-    def forward(
-            stdscr,
-            row:int,
-            column:int, 
-            lineType:str,
-            boxColor:str          ="",
-            animationType:str     ='OOAD',
-            frameDelay:float|int  =0.018,
-            connectDelay:float|int=0
-            ) -> str:
+    def forward(stdscr,
+                row:int,
+                column:int, 
+                lineType:str,
+                boxColor:str          ="",
+                animationType:str     ='OOAD',
+                frameDelay:float|int  =0.018,
+                connectDelay:float|int=0      ) -> str:
         """
         This animation can only work when the game is static.
         ex) In mainMenu, Whatever before playing the game
         """
 
         animation = {
-            'IOAD' : graphs.IOAD,
-            'OOAD' : graphs.OOAD,
-            'SOAD' : graphs.SOAD
+            'IOAD' : Graphs.IOAD,
+            'OOAD' : Graphs.OOAD,
+            'SOAD' : Graphs.SOAD
         }[animationType]
 
         r = animation(row)
@@ -92,7 +90,7 @@ class box:
 
         for i, n in enumerate(c):
             stdscr.erase()
-            addstrMiddle(
+            anchor(
                 stdscr,
                 Textbox.TextBox(
                     ''.join([" "*(n+sum(c[:i]))]),
@@ -110,7 +108,7 @@ class box:
 
         for i, n in enumerate(r):
             stdscr.erase()
-            addstrMiddle(
+            anchor(
                 stdscr,
                 Textbox.TextBox(
                     '\n'.join([" "*column]*(n+sum(r[:i]))),
@@ -127,20 +125,18 @@ class box:
         return Textbox.TextBox(((" "*column)+"\n")*row, AMLS=True, LineType=lineType)
     
     @staticmethod
-    def reverse(
-            stdscr,
-            row:int,
-            column:int, 
-            lineType:str,
-            boxColor:str          ="",
-            animationType:str     ='OOAD',
-            frameDelay:float|int  =0.018,
-            connectDelay:float|int=0
-    ) -> str:
+    def reverse(stdscr,
+                row:int,
+                column:int, 
+                lineType:str,
+                boxColor:str          ="",
+                animationType:str     ='OOAD',
+                frameDelay:float|int  =0.018,
+                connectDelay:float|int=0      ) -> str:
         animation = {
-            'IOAD' : graphs.IOAD,
-            'OOAD' : graphs.OOAD,
-            'SOAD' : graphs.SOAD
+            'IOAD' : Graphs.IOAD,
+            'OOAD' : Graphs.OOAD,
+            'SOAD' : Graphs.SOAD
         }[animationType]
 
         r = animation(row)
@@ -149,7 +145,7 @@ class box:
 
         for i, n in enumerate(r):
             stdscr.erase()
-            addstrMiddle(
+            anchor(
                 stdscr,
                 Textbox.TextBox(
                     '\n'.join([" "*column]*(n+sum(r[i+1:]))),
@@ -167,7 +163,7 @@ class box:
 
         for i, n in enumerate(c):
             stdscr.erase()
-            addstrMiddle(
+            anchor(
                 stdscr,
                 Textbox.TextBox(
                     ''.join([" "*(n+sum(c[i+1:]))]),
@@ -185,43 +181,3 @@ class box:
         stdscr.refresh()
 
         return Textbox.TextBox(((" "*column)+"\n")*row, AMLS=True, LineType=lineType)
-
-
-if __name__ == "__main__":
-    # while True:
-    #     row    = graphs.OOAD(randrange(50, 170))
-    #     column = graphs.OOAD(randrange(10, 50))
-    #     print(f"\033[32m{sum(row)}\033[0m -> {row}\n\n")
-
-    #     for i, n in enumerate(row):
-    #         system("clear")
-    #         print(
-    #             Textbox.TextBox(
-    #                 " "*(n+sum(row[:i])),
-    #                 AMLS=True,
-    #                 LineType="double",
-    #                 endLineBreak=True
-    #                 )
-    #             )
-    #         time.sleep(0.018)
-
-    #     # time.sleep(0.2)
-
-    #     for i, n in enumerate(column):
-    #         system("clear")
-    #         print(
-    #             Textbox.TextBox(
-    #                 ((" "*sum(row))+"\n")*(n+sum(column[:i])),
-    #                 AMLS=True,
-    #                 LineType="double",
-    #                 endLineBreak=True
-    #                 )
-    #             )
-    #         time.sleep(0.018)
-
-    #     time.sleep(1)
-    # print(f"IOAD len 50: {graphs.IOAD(50)}\nOOAD len 50: {graphs.OOAD(50)}\nSOAD len 50: {graphs.SOAD(50)}")
-
-    #pauseBox animation
-    print(graphs.SOAD(31))
-    print(graphs.SOAD(3))

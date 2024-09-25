@@ -1,222 +1,231 @@
 {
     "-1" : {
-        "name" : "무적 블록",
-        "dataType" : 0,
-        "explanation" : {
-            "observe" : "말 그대로 무적인 블록.\n접근할 수도, 부술 수도 없다."
-        }
+        "block" : " ",
+        "id" : -1,
+        "type" : 0
     },
     "0" : {
-        "name" : "바닥 블록",
-        "dataType" : 0,
-        "explanation" : {
-            "observe" : "미궁의 바닥을 구성하는 블록.\n마음대로 밟고 다닐 수 있다."
-        }
+        "block" : " ",
+        "id" : 0,
+        "type" : 0
     },
     "1" : {
-        "name" : "벽 블록",
-        "dataType" : 0,
-        "explanation" : {
-            "observe" : "미궁의 벽을 구성하는 블록.\n벽에 박으면 아프니 재미로 벽에\n박을 생각은 하지 않는 것이 좋다."
-        }
+        "block" : "■",
+        "id" : 1,
+        "type" : 0
     },
     "2" : {
-        "name" : "문 블록",
-        "dataType" : 0,
-        "explanation" : {
-            "observe" : "미궁을 드나들 수 있는 블록."
-        }
+        "block" : ".",
+        "id" : 2,
+        "type" : 0
     },
     "3" : {
-        "name" : "가짜 바닥 블록",
-        "dataType" : 0,
-        "explanation" : {
-            "observe" : "바닥인 척 하는 블록.\n닿으면 아프다."
-        }
+        "block" : " ",
+        "id" : 3,
+        "type" : 0
     },
     "4" : {
-        "name" : "구슬 상자 블록",
-        "dataType" : 0,
-        "explanation" : {
-            "observe" : "\u001b[;38;5;9m체력\u001b[0m/\u001b[;38;5;12m방어력\u001b[0m/\u001b[;38;5;10m공격력\u001b[0m/\u001b[;38;5;11m허기\u001b[0m/\u001b[;38;5;13m저주\u001b[0m 구슬 중\n하나가 들어있는 상자.\n안에 들어있는 구슬의 크기도 제각각이다."
-        }
+        "block" : "\u001b[;38;5;11mÉ\u001b[0m",
+        "id" : 4,
+        "type" : 0
     },
     "5" : {
-        "name" : "출구 블록",
-        "dataType" : 0,
-        "explanation" : {
-            "observe" : "현재 미궁을 탈출할 수 있는 블록.\n접근하면 다음 미궁으로 이동한다."
-        }
+        "block" : "\u001b[;38;5;9mF\u001b[0m",
+        "id" : 5,
+        "type" : 0
     },
     "6" : {
-        "name" : "상자 블록",
-        "dataType" : 0,
-        "explanation" : {
-            "observe" : "상자 블록.\n미는 것 말고는 할 수 있는 게 없다."
+        "block" : "☒",
+        "id" : 6,
+        "type" : 0,
+        "nbt" : {
+            "step" : 5
         }
     },
     "7" : {
-        "name" : "상자 표적 블록",
-        "dataType" : 0,
-        "explanation" : {
-            "observe" : "상자 블록을 둬야 하는 위치가 표시된 블록.\n두면 무슨 일이 일어날 지 모른다."
-        }
+        "block" : "\u001b[;38;5;9mX\u001b[0m",
+        "id" : 7,
+        "type" : 0
     },
     "8" : {
-        "name" : "말랑이",
-        "dataType" : 0,
-        "explanation" : {
-            "observe" : "만지면 뽈롱거린다.\n지금은 펴져 있는 상태."
+        "block" : "\u001b[;38;5;12mO\u001b[0m",
+        "id" : 8,
+        "type" : 0,
+        "nbt" : {
+            "count" : 50,
+            "command" : ""
         }
     },
     "9" : {
-        "name" : "말랑이",
-        "dataType" : 0,
-        "explanation" : {
-            "observe" : "만지면 뽈롱거린다.\n지금은 접혀져 있는 상태."
+        "block" : "\u001b[;38;5;12mo\u001b[0m",
+        "id" : 8,
+        "type" : 0,
+        "nbt" : {
+            "count" : 50,
+            "command" : ""
         }
     },
     "10" : {
-        "name" : "작은 체력 구슬",
-        "dataType" : 0,
-        "explanation" : {
-            "observe" : "작은 체력 구슬.\n먹으면 \u001b[;38;5;9m체력을 1 회복\u001b[0m한다."
-        }
+        "block" : "\u001b[;38;5;9mo\u001b[0m",
+        "id" : 10,
+        "type" : 0
     },
     "11" : {
-        "name" : "작은 방어력 구슬",
-        "dataType" : 0,
-        "explanation" : {
-            "observe" : "작은 방어력 구슬.\n먹으면 \u001b[;38;5;12m방어력을 1 회복\u001b[0m한다."
-        }
+        "block" : "\u001b[;38;5;12mq\u001b[0m",
+        "id" : 11,
+        "type" : 0
     },
     "12" : {
-        "name" : "작은 공격력 구슬",
-        "dataType" : 0,
-        "explanation" : {
-            "observe" : "작은 공격력 구슬.\n먹으면 \u001b[;38;5;10m공격력이 1 증가\u001b[0m한다."
-        }
+        "block" : "\u001b[;38;5;10mv\u001b[0m",
+        "id" : 12,
+        "type" : 0
     },
     "13" : {
-        "name" : "작은 허기 구슬",
-        "dataType" : 0,
-        "explanation" : {
-            "observe" : "작은 허기 구슬.\n먹으면 \u001b[;38;5;11m허기를 50 회복\u001b[0m한다."
-        }
+        "block" : "\u001b[;38;5;11mo\u001b[0m",
+        "id" : 13,
+        "type" : 0
     },
     "14" : {
-        "name" : "작은 저주 구슬",
-        "dataType" : 0,
-        "explanation" : {
-            "observe" : "작은 저주 구슬.\n먹으면 \u001b[;38;5;13m저주가 1 상승\u001b[0m한다."
-        }
+        "block" : "\u001b[;38;5;13mø\u001b[0m",
+        "id" : 14,
+        "type" : 0
     },
     "15" : {
-        "name" : "큰 체력 구슬",
-        "dataType" : 0,
-        "explanation" : {
-            "observe" : "큰 체력 구슬.\n먹으면 \u001b[;38;5;9m체력을 3 회복\u001b[0m한다."
-        }
+        "block" : "\u001b[;38;5;9mO\u001b[0m",
+        "id" : 15,
+        "type" : 0
     },
     "16" : {
-        "name" : "큰 방어력 구슬",
-        "dataType" : 0,
-        "explanation" : {
-            "observe" : "큰 방어력 구슬.\n먹으면 \u001b[;38;5;12m방어력을 3 회복\u001b[0m한다."
-        }
+        "block" : "\u001b[;38;5;12mQ\u001b[0m",
+        "id" : 16,
+        "type" : 0
     },
     "17" : {
-        "name" : "큰 공격력 구슬",
-        "dataType" : 0,
-        "explanation" : {
-            "observe" : "큰 공격력 구슬.\n먹으면 \u001b[;38;5;10m공격력이 2 증가\u001b[0m한다."
-        }
+        "block" : "\u001b[;38;5;10mV\u001b[0m",
+        "id" : 17,
+        "type" : 0
     },
     "18" : {
-        "name" : "큰 허기 구슬",
-        "dataType" : 0,
-        "explanation" : {
-            "observe" : "큰 허기 구슬.\n먹으면 \u001b[;38;5;11m허기를 100 회복\u001b[0m한다."
-        }
+        "block" : "\u001b[;38;5;11mO\u001b[0m",
+        "id" : 18,
+        "type" : 0
     },
     "19" : {
-        "name" : "큰 저주 구슬",
-        "dataType" : 0,
-        "explanation" : {
-            "observe" : "큰 저주 구슬.\n먹으면 \u001b[;38;5;13m저주가 5 상승\u001b[0m한다."
-        }
+        "block" : "\u001b[;38;5;13mØ\u001b[0m",
+        "id" : 19,
+        "type" : 0
     },
     "20" : {
-        "name" : "토용",
-        "dataType" : 0,
-        "explanation" : {
-            "observe" : "나락에 있던 이들의 마지막 염원이 담긴 인형.\n도움을 주거나 죽기 전 하고 싶었던 말을 내뱉고 죽어버린다."
+        "block" : "☲",
+        "id" : 20,
+        "type" : 0,
+        "nbt" : {
+            "texts" : [],
+            "command" : "",
+            "delay" : 0.5,
+            "voice" : "clayModel"
         }
     },
     "21" : {
-        "name" : "죽은 토용",
-        "dataType" : 2,
-        "explanation" : {
-            "observe" : "간단하게 빚어진 인형.",
-            "link" : "간단하게 빚어진 인형.\n이들이 \u001b[;38;5;9m살아있었다는 증거\u001b[0m는 그 어디에도 없다."
+        "block" : "\u001b[;38;5;3m☲\u001b[0m",
+        "id" : 21,
+        "type" : 0,
+        "nbt" : {
+            "link" : false
         }
     },
     "22" : {
-        "name" : "꽃",
-        "dataType" : 2,
-        "explanation" : {
-            "observe" : "미궁에 피어있는 꽃.\n어쩌다 이런 곳에 피게 되었는지는 아무도 모른다."
+        "block" : "*",
+        "id" : 22,
+        "type" : 0,
+        "nbt" : {
+            "color" : "W",
+            "step" : 1
         }
     },
     "23" : {
-        "name" : "꽃잎",
-        "dataType" : 2,
-        "explanation" : {
-            "observe" : "미궁에 피어있는 꽃의 잎.\n꽃잎 뿐이지만 여전히 아름답다.",
-            "link" : "미궁에 피어있는 꽃의 잎.\n\u001b[;38;5;9m이제는 아름답지 않다\u001b[0m."
+        "block" : ".",
+        "id" : 23,
+        "type" : 0,
+        "nbt" : {
+            "link" : false
+        }
+    },
+    "24" : {
+        "block" : "?",
+        "id" : 24,
+        "type" : 0,
+        "nbt" : {
+            "itemData" : {
+                "icon" : "?",
+                "name" : "item",
+                "id" : -1,
+                "type" : "item",
+                "nbt" : {}
+            }
         }
     },
     "25" : {
-        "name" : "구멍",
-        "dataType" : 0,
-        "explanation" : {
-            "observe" : "미궁에 나 있는 구멍.\n어디로 연결될지는 아무도 모른다."
+        "block" : " ",
+        "id" : 25,
+        "type" : 0
+    },
+    "26" : {
+        "block" : "\u001b[;38;5;3mX\u001b[0m",
+        "id" : 26,
+        "type" : 0,
+        "nbt" : {
+            "link" : false
         }
     },
+    "200" : {
+        "block" : "R",
+        "id" : 200,
+        "type" : 0,
+        "hashKey" : "A"
+    },
+    "300" : {
+        "block" : "\u001b[;38;5;10m@\u001b[0m",
+        "id" : 300,
+        "type" : 1
+    },
+    "301" : {
+        "block" : "\u001b[;38;5;11m&\u001b[0m",
+        "id" : 301,
+        "type" : 1
+    },
     "400" : {
-        "name" : "저주를 씻어내는 신상",
-        "dataType" : 0,
-        "explanation" : {
-            "observe" : "언제나 예배당 중간에 세워져 있는 신상.\n어떤 신을 기리는 것인지는 모르겠으나\n근처에 다가가면 약한 순풍이 분다.\n신상에 손을 대면 \u001b[;38;5;13m저주를 5lv 흡수\u001b[0m한다."
+        "block" : "\u001b[;38;5;14mY\u001b[0m",
+        "id" : 400,
+        "type" : 0,
+        "nbt" : {
+            "linkedInteraction" : false
         }
     },
     "401" : {
-        "name" : "오염된 저주를 씻어내는 신상",
-        "dataType" : 2,
-        "explanation" : {
-            "observe" : "저주에 물든 신상.\n저주를 머금어 짙은 보라색을 띤다.",
-            "link" : "\u001b[;38;5;9m네가 죽인 거야.\u001b[0m"
+        "block" : "\u001b[;38;5;13mY\u001b[0m",
+        "id" : 401,
+        "type" : 0,
+        "nbt" : {
+            "link" : false
         }
     },
     "501" : {
-        "name" : "대동맥",
-        "dataType" : 0,
-        "explanation" : {
-            "observe" : "누군가의 대동맥.\n큰 혈관을 중심으로 다른 혈관들이 뻗어있다.\n먹으면 \u001b[;38;5;9m최대 체력이 1 증가\u001b[0m한다."
-        }
+        "block" : "\u001b[;38;5;9mH\u001b[0m",
+        "id" : 501,
+        "type" : 0
     },
     "502" : {
-        "name" : "대정맥",
-        "dataType" : 0,
-        "explanation" : {
-            "observe" : "누군가의 대정맥.\n큰 혈관을 중심으로 다른 혈관들이 뻗어있다.\n먹으면 \u001b[;38;5;12m최대 방어력이 1 증가\u001b[0m한다."
-        }
+        "block" : "\u001b[;38;5;12mU\u001b[0m",
+        "id" : 502,
+        "type" : 0
     },
     "900" : {
-        "name" : "잿조각",
-        "dataType" : 0,
-        "explanation" : {
-            "observe" : "편린이 죽으면 남기는 결정화된 신체 조각.\n저주를 담는 그릇인 \u001b[;38;5;8m재의 그릇\u001b[0m의 재료로 사용된다."
+        "block" : "\u001b[;38;5;8m;\u001b[0m",
+        "id" : 900,
+        "type" : 0,
+        "nbt" : {
+            "count" : 0
         }
     }
 }

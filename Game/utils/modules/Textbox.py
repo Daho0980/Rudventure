@@ -1,28 +1,29 @@
 from   math      import ceil
 from   itertools import chain
 
-from Assets.data.color   import cColors              as cc
-from Game.utils.graphics import escapeAnsi, actualLen
+from Assets.data.color   import cColors as cc
+from Game.utils.graphics import (
+    escapeAnsi,
+    actualLen
+    )
 
 
-def TextBox(
-        Inp:str,
-        Type:str             ="left",
-        maxLine:int          =100,
-        fillChar:str         =" ",
-        inDistance:int       =0,
-        outDistance:int      =0,
-        addWidth:int         =0,
-        AMLS:bool            =False,
-        endLineBreak:bool    =False,
-        returnSizeyx:bool    =False,
-        LineType:str         ="normal",
-        alwaysReturnBox:bool =True,
-        sideText:str         ="",
-        sideTextPos:list[str]=["over", "middle"],
-        coverSideText:bool   =False,
-        coverColor:str       =""
-        ) -> str:
+def TextBox(Inp:str,
+            Type:str             ="left",
+            maxLine:int          =100,
+            fillChar:str         =" ",
+            inDistance:int       =0,
+            outDistance:int      =0,
+            addWidth:int         =0,
+            AMLS:bool            =False,
+            endLineBreak:bool    =False,
+            returnSizeyx:bool    =False,
+            LineType:str         ="normal",
+            alwaysReturnBox:bool =True,
+            sideText:str         ="",
+            sideTextPos:list[str]=["over", "middle"],
+            coverSideText:bool   =False,
+            coverColor:str       =""                 ) -> str:
         """
         ``Inp``(str)                                                                : 텍스트박스 내용, 줄바꿈하려면 `\\n`을 사용해야 함\n
         ``Type``(str["left", "middle", "right"])                                    : 위치 설정, 기본적으로 `"left"`로 설정되어 있음\n
@@ -54,7 +55,7 @@ def TextBox(
         Texts:list            = Inp.split("\n")
         FrontSpace, BackSpace = "", ""
         endLine:str           = "\n" if endLineBreak else ""
-        fullAddWidth:int      = addWidth*2 if Type=='middle'else addWidth
+        fullAddWidth:int      = addWidth*2 if Type=="middle"else addWidth
         FixedLine:str         = ""
         end:str               = cc['end'] if coverColor else ''
 

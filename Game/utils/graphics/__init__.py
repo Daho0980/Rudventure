@@ -2,8 +2,15 @@ import re
 import unicodedata
 
 
+charLvl = ["░", "▒", "▓", "█"]
+
 _ansiCompile = re.compile(r'(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]')
 escapeAnsi   = lambda l: _ansiCompile.sub('',l)
+
+def level(level:int, width:int=10, charType:list=[]) -> str:
+    charType = charLvl if not charType else charType
+    OLV, TLV = divmod(level, int(100/width))
+    return ((charType[3]*OLV)+(charType[round(TLV*(3/width))])+(charType[0]*(width-OLV)))[:width]
 
 def actualLen(l):
     total_length = 0
@@ -14,19 +21,17 @@ def actualLen(l):
         else:
             width      = unicodedata.east_asian_width(char)
             EAWC[char] = width
-        total_length += 2 if width in ['F', 'W'] else 1
+        total_length += 2 if width in ['F','W'] else 1
     return total_length
 
-def addstrMiddle(
-        stdscr,
-        string:str,
-        y:int            =0,
-        x:int            =0,
-        addOnyx:list[int]=[0,0],
-        returnEndyx:bool =False,
-        returnStr:bool   =False
-        ) -> str: # type: ignore
-    lines:list[int] = list(map(lambda l: len(escapeAnsi(l)), string.split("\n")))
+def anchor(stdscr,
+           string:str,
+           y:int            =0,
+           x:int            =0,
+           addOnyx:list[int]=[0,0],
+           returnEndyx:bool =False,
+           returnStr:bool   =False ) -> str: # type: ignore
+    lines:list[int] = list(map(lambda l:len(escapeAnsi(l)),string.split("\n")))
     y, x = (y,x)if y+x else map(
         lambda c:c[0]-int([len(lines)/2,max(lines)/2][c[1]]),
         list(zip(map(lambda n:int(n/2),stdscr.getmaxyx()),[0,1]))

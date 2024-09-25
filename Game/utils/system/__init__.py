@@ -2,28 +2,26 @@ import curses
 import random
 
 from Assets.data         import status
-from Game.utils.graphics import escapeAnsi, addstrMiddle
+from Game.utils.graphics import escapeAnsi, anchor
 
 
 s  = status
 
-def cinp(
-        stdscr,
-        text:str      ="",
-        end:str       ='',
-        echo:bool     =True,
-        cursor:bool   =False,
-        useMiddle:bool=True,
-        y:int         =0,
-        x:int         =0,
-        backGround:str=""
-    ) -> str:
+def cinp(stdscr,
+         text:str      ="",
+         end:str       ='',
+         echo:bool     =True,
+         cursor:bool   =False,
+         useMiddle:bool=True,
+         y:int         =0,
+         x:int         =0,
+         backGround:str="") -> str:
     if echo:   curses.echo()
     if cursor: curses.curs_set(1)
 
     if not text.isspace():
         stdscr.addstr(backGround)
-        if useMiddle: addstrMiddle(stdscr, f"{text}{end}", x=x, y=y)
+        if useMiddle: anchor(stdscr, f"{text}{end}", x=x, y=y)
         else:         stdscr.addstr(f"{text}{end}")
         stdscr.refresh()
     try:    Inp = stdscr.getstr().decode("utf-8")
@@ -34,7 +32,12 @@ def cinp(
 
     return escapeAnsi(Inp)
 
-def placeRandomBlock(block:str, ID:int, blockType:int, y:list[int], x:list[int], allowedBlocks:list[int]) -> None:
+def placeRandomBlock(block:str,
+                     ID:int,
+                     blockType:int,
+                     y:list[int],
+                     x:list[int],
+                     allowedBlocks:list[int]) -> None:
     """
     방에서 블럭 등을 랜덤하게 배치할 수 있게 만든 함수
 

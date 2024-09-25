@@ -1,6 +1,6 @@
 from Assets.data             import status
 from Assets.data.color       import cColors as cc
-from Game.core.system        import logger
+from Game.core.system.logger import addLog
 from Game.utils.system.sound import play
 
 
@@ -15,10 +15,10 @@ def getXP(count:int=0) -> None:
         s.lvl += 1
         s.Mxp += 3
         if s.lvl >= (s.Mlvl/2):
-            s.hp  -= 1
+            exec(s.statusFormula['curseBloodSucking'])
             s.DROD = [f"{cc['fg']['F']}흡혈{cc['end']}", 'F']
         play("system", "curseUp")
-        logger.addLog(f"{cc['fg']['F']}저주가 한 층 더 깊어집니다...{cc['end']}")
+        addLog(f"{cc['fg']['F']}저주가 한 층 더 깊어집니다...{cc['end']}")
         if count > s.xp: count -= s.xp
         else:            count -= (s.Mxp-s.xp)
         s.xp = 0
@@ -34,7 +34,7 @@ def loseXp(count:int=0) -> None:
     while count > 0:
         if s.xp < count:
             if not s.lvl:
-                logger.addLog(f"{cc['fg']['F']}저주{cc['end']}가 바닥났습니다!")
+                addLog(f"{cc['fg']['F']}저주{cc['end']}가 바닥났습니다!")
                 s.xp, s.Mxp, s.lvl = bfxp, bfMxp, bfLvl
                 break
             count -= s.xp
