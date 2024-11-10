@@ -1,20 +1,27 @@
 import os
-import json
 import curses
-import socket
 from   random import choice
 
-from Assets.data                      import status, color, UIPreview, comments
 from Game.core.system                 import configs
 from Game.core.system.dataLoader      import elm
 from Game.scenes                      import checkColor, checkTerminalSize
-from Game.utils.modules               import cSelector, Textbox
 from Game.utils.advanced.Rudconverter import load
 from Game.utils.graphics              import animation, anchor
 
+from Assets.data import (
+    totalGameStatus as s,
+    UIPreset        as UIP,
+    comments        as c,
 
-s, cc, c  = status, color.cColors, comments
-clc, t = cSelector, Textbox
+    color
+)
+from Game.utils.modules import (
+    cSelector as clc,
+    Textbox   as t
+    )
+
+cc = color.cColors
+
 
 def setData(data):
     statusData  = data['status']
@@ -41,9 +48,9 @@ def setData(data):
     s.stage     = statusData['stage']
     s.killCount = statusData['killCount']
 
-    s.cowardMode = statusData['cowardMode']
+    s.bodyPreservationMode = statusData['bodyPreservationMode']
     s.ezMode     = statusData["ezMode"]
-    s.publicMode = statusData['publicMode']
+    s.sanjibaMode = statusData['sanjibaMode']
 
     s.ids[300]         = statusData['playerIcon']
     s.playerDamageIcon = statusData['playerDamageIcon']
@@ -77,7 +84,7 @@ def main(stdscr) -> None:
     animation.Box.forward(stdscr, y-3, x-2, "double")
     while 1:
         mainMenu:int = clc.main(
-            s.LOGO,
+            UIP.LOGO,
             {
                 "나락 입장" : "건투를 빕니다.",
                 "운명 인식" : "운명에 갇힌 육신을 선택해 빙의합니다.",
@@ -194,21 +201,21 @@ def main(stdscr) -> None:
                                                 background=[
                                                     anchor(
                                                         stdscr,
-                                                        UIPreview.dungeonMap[s.showDungeonMap],
+                                                        UIP.dungeonMap[s.showDungeonMap],
                                                         x        =stdscr.getmaxyx()[1]-(21 if s.showDungeonMap else 29),
                                                         y        =2,
                                                         returnStr=True
                                                     ),
                                                     anchor(
                                                         stdscr,
-                                                        UIPreview.dungeonMap["introduction"],
+                                                        UIP.dungeonMap["introduction"],
                                                         x        =stdscr.getmaxyx()[1]-55,
                                                         y        =13 if s.showDungeonMap else 3,
                                                         returnStr=True
                                                     ),
                                                     anchor(
                                                         stdscr,
-                                                        "".join([UIPreview.status[s.statusDesign],UIPreview.status["introduction"]]),
+                                                        "".join([UIP.status[s.statusDesign],UIP.status["introduction"]]),
                                                         x        =0,
                                                         y        =1,
                                                         addOnyx=[1,0],
@@ -216,16 +223,16 @@ def main(stdscr) -> None:
                                                     ),
                                                     anchor(
                                                         stdscr,
-                                                        UIPreview.debugConsole[s.debugConsole],
-                                                        x        =stdscr.getmaxyx()[1]-(30 if s.debugConsole else 38),
-                                                        y        =round(stdscr.getmaxyx()[0]/2)-(5 if s.debugConsole else 0),
+                                                        UIP.debugConsole[s.debugConsole],
+                                                        x        =stdscr.getmaxyx()[1]-(34 if s.debugConsole else 38),
+                                                        y        =round(stdscr.getmaxyx()[0]/2)-(8 if s.debugConsole else 0),
                                                         returnStr=True
                                                     ),
                                                     anchor(
                                                         stdscr,
-                                                        UIPreview.debugConsole["introduction"],
+                                                        UIP.debugConsole["introduction"],
                                                         x        =stdscr.getmaxyx()[1]-63,
-                                                        y        =round(stdscr.getmaxyx()[0]/2)+(5 if s.debugConsole else 1),
+                                                        y        =round(stdscr.getmaxyx()[0]/2)+(7 if s.debugConsole else 1),
                                                         returnStr=True
                                                     ),
                                                     '[version]'
@@ -318,17 +325,16 @@ def main(stdscr) -> None:
                                 modSettings, modSAP = clc.main(
                                     "<< 게임 모드 >>",
                                     {
-                                        f"겁쟁이 모드 : {s.cowardMode}" : [
-                                            "활성화 시 스테이지를 클리어할 때마다\n복제된 육신이 저장됩니다.",
-                                             "괜찮아요. 좀만 하다 보면 곧 익숙해질 겁니다." if s.cowardMode and s.ezMode else "게임에서마저도 죽는 게 두려운가 봐요?"
-                                            ][s.cowardMode],
+                                        f"육신 보존 모드 : {s.bodyPreservationMode}" : [
+                                            "활성화 시 스테이지를 클리어할 때마다\n육신 보관소에 육신이 보존됩니다.",
+                                            "괜찮아요. 좀만 하다 보면 곧 익숙해질 겁니다."if s.bodyPreservationMode and s.ezMode else"게임에서마저도 죽는 게 두려운가 봐요?"
+                                            ][s.bodyPreservationMode],
                                         f"쫄보 모드 : {s.ezMode}" : [
-
 """활성화 시 모든 편린의 체력이 2 낮아집니다.
 또한 확률적으로 편린의 공격을 회피합니다.
 심지어 저주 제외 모든 스탯이 100% 상승합니다!
 거기에다가 공격력은 특별히 400% 상승합니다!!""",
-                                            "이거 완전 쌩 뉴비를 위한 설정이네요.\n이 게임이 처음이신가 봐요?" if s.cowardMode and s.ezMode else choice(
+                                            "이거 완전 쌩 뉴비를 위한 설정이네요.\n이 게임이 처음이신가 봐요?"if s.bodyPreservationMode and s.ezMode else choice(
                                                 [
                                                     "\"쫄보 활성화.\"",
                                                     "쫄?",         "아.. 쫄?",
@@ -337,10 +343,10 @@ def main(stdscr) -> None:
                                                 ]
                                             )
                                         ][s.ezMode],
-                                        f"\"일 반 인\" 모드 : {s.publicMode}" : [
-                                            "활성화 시 모든 편린의 쿨타임이 절반으로 줄어듭니다!",
-                                            f"일반인의 세계에 오신 것을 환영합니다,\n{socket.gethostname()}."
-                                        ][s.publicMode],
+                                        f"산지바 모드 : {s.sanjibaMode}" : [
+                                            "활성화 시 모든 나락에서의 편린의 속도가 강화됩니다!",
+                                            f"등활지옥에 당도하신 것을 환영합니다, 글라가트로프여."
+                                        ][s.sanjibaMode],
                                         ""     : "",
                                         "완료" : ""
                                     },
@@ -351,9 +357,9 @@ def main(stdscr) -> None:
                                     returnArrowPos=True
                                 )
                                 match modSettings:
-                                    case 1: s.cowardMode = False if s.cowardMode else True
+                                    case 1: s.bodyPreservationMode = False if s.bodyPreservationMode else True
                                     case 2: s.ezMode     = False if s.ezMode     else True
-                                    case 3: s.publicMode = False if s.publicMode else True
+                                    case 3: s.sanjibaMode = False if s.sanjibaMode else True
                                     case 4: break
                         case 3:
                             volumeSAP = [0, 0]

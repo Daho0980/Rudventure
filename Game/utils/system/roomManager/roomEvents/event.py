@@ -3,9 +3,7 @@ from Assets.data.color       import cColors as cc
 from Game.core.system.logger import addLog
 from Game.utils.system.sound import play
 
-from Game.utils.system.roomManager.interactions import (
-    changeDoorPosBlock
-)
+from Game.utils.system.roomManager.interactions import changeDoor
 
 
 def event0(data) -> None:
@@ -13,14 +11,14 @@ def event0(data) -> None:
         play("object", "door", "close")
         data['summonCount'] = -1
         s.roomLock          = True
-        changeDoorPosBlock(1, data)
+        changeDoor(1, data)
     if not s.enemyCount and s.roomLock:
         s.roomLock                           = False
         s.Dungeon[s.Dy][s.Dx]['interaction'] = True
-        changeDoorPosBlock(2, data)
+        changeDoor(2, data)
 
 def event1() -> None:
-    addLog(f"{cc['fg']['A']}신상{cc['end']} 주변으로부터 약한 순풍이 {cc['fg']['L']}당신{cc['end']}에게 불어옵니다...")
+    addLog(f"{cc['fg']['A']}신상{cc['end']} 주변으로부터 약한 순풍이 {cc['fg']['L']}당신{cc['end']}에게 불어옵니다...", colorKey='A')
     s.Dungeon[s.Dy][s.Dx]['interaction'] = True
 def event2() -> None: ...
 def event3() -> None: ...

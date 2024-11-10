@@ -1,8 +1,10 @@
 import threading
 from audioplayer import AudioPlayer
 
-from Assets.data import lockers as l
-from Assets.data import status  as s
+from Assets.data import (
+    status  as s,
+    lockers as l
+)
 
 
 def play(*path, loop:bool=False) -> None:

@@ -1,11 +1,23 @@
+import time
 from   pypresence import Presence
 
+from .dataLoader import elm
 from Assets.data import status as s
-from Game.core.system.dataLoader import elm
 
+
+currentStatus:dict[str,dict] = {
+    "essential" : {
+        "large_image" : "",
+        "details"     : "",
+        "state"       : ""
+    },
+    "optional" : {
+        "time" : True
+    }
+}
 
 isConnected:bool = True
-clientID         = elm(
+clientID:int     = elm(
     f"{s.TFP}config{s.s}data.json",
     "clientID",
     "number"
@@ -16,6 +28,19 @@ try:
     RPC.connect()
 except: isConnected = False
 
-def update(**variables) -> None:
+def load(large_image:str, details:str, state:str, start:bool=False) -> None:
+    currentStatus['essential']['large_image'] = large_image
+    currentStatus['essential']['details']     = details
+    currentStatus['essential']['state']       = state
+
+    currentStatus['optional']['time'] = start
+
+def update() -> bool:
     if isConnected:
-        RPC.update(**variables)
+        status = currentStatus['essential']
+        if currentStatus['optional']['time']:
+            status['start'] = int(time.time())
+            
+        RPC.update(**status)
+        return True
+    else: return False

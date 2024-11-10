@@ -1,5 +1,5 @@
-from Assets.data.status          import infoWindow
-from Game.core.system.dataLoader import elm
+from .dataLoader        import elm
+from Assets.data.status import infoWindow
 
 
 def add(icon:str,

@@ -3,10 +3,12 @@ import json
 from   zlib   import compress, decompress
 from   base64 import b64encode, b64decode
 
-from Assets.data      import comments, status
 from Game.core.system import jsonDataKeyRecover as jdkr
 
-s, c = status, comments
+from Assets.data import (
+    totalGameStatus as s,
+    comments        as c
+)
 
 
 # region Local function
@@ -33,61 +35,22 @@ def _changeExtention(name:str, beforeExt:str=".rud", afterExt:str=".json"):
 
 # region Global function
 def save() -> int:
-    Vars         = [name for name in dir(s) if not name.startswith('__')]
     commentVars  = [name for name in dir(c) if not name.startswith('__')]
-    negativeVars = [
-        'cMarkdown',
-        '_cc', 'cColors',
-        'Dy', 'bfDy',
-        'Dx', 'bfDx',
-        'x', 'bfx',
-        'y', 'bfy',
-        'hpLow', 'dfCrack',
-        'steppedBlock',
-        'main',
-        'LOGO',
-        'ids', 'orbIds',
-        'monsterInteractableBlocks', 'interactableBlocks',
-        'enemyIds',
-        's', 'TFP', 'pythonVersion',
-        'Dungeon',
-        'roomLock', 'killAll', 'clearEntity',
-        'DROD',
-        'pauseText',
-        'entityCount', 'totalEntityCount', 'hitPos',
-        'option',
-        'maxStack', 'onDisplay', 'onTime',
-        'debugConsole',
-        'frame', 'frameRate',
-        'showDungeonMap', 'statusDesign',
-        'lightName',
-        'pauseBox',
-        'sss',
-        'version',
-        'volume',
-        'playerMode',
-        'entityHashPool', 'friendlyEntity',
-        'animalIds',
-        'isLoadfromBody',
-        'soliloquyCount', 'soliloquyRange',
-        'target',
-        'types',
-        'entitySaveTrigger',
-        'noisePool',
-        'currentCurseNoiseFrequency', 'curseNoiseFrequency',
-        'enemyCount',
-        'infoWindow',
-        'key',
-        ]
-    negativeVarsforC = ["cc"]
+    
     try:
         file_path = f'{s.TFP}saveData{s.s}{s.name}.json'
         saveJson  = open(file_path, 'w')
 
-        for i in negativeVars:
-            if i in Vars: Vars.remove(i)
-        for i in negativeVarsforC:
-            if i in commentVars: commentVars.remove(i)
+        Vars = [
+            "name", "playerIcon", "playerDamageIcon", "playerColor",
+            "playerVoice",
+            "stage", "killCount", "inventory",
+            "hp", "df", "atk", "hunger", "xp", "lvl", "ashChip",
+            "fairWind", "Mhp", "Mdf", "Mxp", "Mlvl", "MFairWind",
+            "critRate", "critDMG", "evasionRate", "statusFormula",
+            "entityDataMaintained", "gameRecord",
+            "ezMode", "sanjibaMode", "bodyPreservationMode",
+        ]
 
         data        = {}
         statusData  = {}

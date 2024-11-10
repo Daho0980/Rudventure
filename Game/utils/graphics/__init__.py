@@ -50,3 +50,10 @@ def anchor(stdscr,
     if       returnEndyx and     returnStr: return output, y+len(string.split("\n")), x # type: ignore
     elif not returnEndyx and     returnStr: return output
     elif     returnEndyx and not returnStr: return y+len(string.split("\n")), x # type: ignore
+
+def joineach(mainline: list, subline: list) -> str:
+    len_diff = len(mainline)-(len(subline)+1)
+    if   len_diff > 0: subline  += ['']* len_diff
+    elif len_diff < 0: mainline += ['']*-len_diff
+
+    return ''.join([item for pair in zip(mainline, subline+[''])for item in pair])

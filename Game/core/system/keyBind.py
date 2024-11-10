@@ -1,11 +1,16 @@
-import curses
+from curses import (
+    KEY_UP,
+    KEY_RIGHT,
+    KEY_DOWN,
+    KEY_LEFT
+)
 
 
 class KeyBind:
-    up    = curses.KEY_UP
-    right = curses.KEY_RIGHT
-    down  = curses.KEY_DOWN
-    left  = curses.KEY_LEFT
+    up    = KEY_UP
+    right = KEY_RIGHT
+    down  = KEY_DOWN
+    left  = KEY_LEFT
 
     dungeonMap     = 9
     debug          = 68

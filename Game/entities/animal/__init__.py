@@ -1,15 +1,13 @@
 import time
 from   random import randrange, choice
 
-from Assets.data             import lockers, status
+from Assets.data             import status  as s
 from Assets.data.color       import cColors as cc
 from Game.core.system.logger import addLog
 from Game.entities           import event
 from Game.entities.player    import event as pEvent
 from Game.utils.system.sound import play
 
-
-l, s = lockers, status
 
 class Animal:
     def __init__(self,
@@ -105,7 +103,7 @@ class Animal:
                 elif crit:    msg += f" {cc['fg']['L']}치명타!{cc['end']}"
 
                 if dmg: event.hitted(self.y, self.x, f"{self.color}{self.icon}{cc['end']}", self.id, self.hashKey)
-                addLog(msg)
+                addLog(msg, colorKey='L')
                 if sound: play("entity", "enemy", "damage", sound)
                 if isHit: play(*attackSound)
         
@@ -143,14 +141,14 @@ class Animal:
             if s.df == 0 and s.dfCrack <= 0:
                 sound     = ("player", "armor", "crack")
                 s.dfCrack = 1
-                addLog(f"{cc['fg']['B1']}방어구{cc['end']}가 부서졌습니다!")
+                addLog(f"{cc['fg']['B1']}방어구{cc['end']}가 부서졌습니다!", colorKey='B1')
         else:
             pEvent.hitted()
             s.hp -= atk
 
         play(*attackSound)
         play(*sound)
-        addLog(f"{s.lightName}이(가) {self.color}{self.name}{cc['end']}({self.icon}) 에 의해 {cc['fg']['R']}{atk}{cc['end']}만큼의 피해를 입었습니다!")
+        addLog(f"{s.lightName}이(가) {self.color}{self.name}{cc['end']}({self.icon}) 에 의해 {cc['fg']['R']}{atk}{cc['end']}만큼의 피해를 입었습니다!", colorKey='R')
 
     def step(self, bfy:int, bfx:int) -> None:
         s.Dungeon[self.Dy][self.Dx]['room'][bfy][bfx] = self.stepped

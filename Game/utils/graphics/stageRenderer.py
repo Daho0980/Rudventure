@@ -1,13 +1,9 @@
 import time
 
-from Assets.data.color       import cColors as cc
+from .                       import actualLen, anchor
+from Assets.data.color       import cColors          as cc
 from Game.utils.modules      import Textbox
 from Game.utils.system.sound import play
-
-from Game.utils.graphics import (
-    actualLen,
-    anchor
-)
 
 
 def showStage(stdscr, stageName:str):

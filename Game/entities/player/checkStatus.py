@@ -1,20 +1,22 @@
-import random
+from random import choice
 
-from Assets.data             import comments, status
-from Assets.data.color       import cColors         as cc
-from Game.entities           import player          as p
-from Game.entities.player    import event           as pev
+from .                       import event   as pev
+from Assets.data.color       import cColors as cc
+from Game.entities           import player  as p
 from Game.core.system.logger import addLog
 from Game.utils.system.sound import play
 
-c, s = comments, status
+from Assets.data import (
+    comments as c,
+    status   as s
+)
 
 
 def hpCheck() -> None:
     if s.hp <= int(s.Mhp*0.3) and not s.hpLow:
         play("system", "hpLow")
         s.hpLow = True
-        p.say(random.choice(c.lowHpComments))
+        p.say(choice(c.lowHpComments))
     elif int((s.hp / s.Mhp) * 10) > 3: s.hpLow = False
 
 def defCheck() -> None:
@@ -25,7 +27,7 @@ def ashChipCheck() -> None:
         s.ashChip -= 100
         s.Mlvl    += 1
         play("system", "ashDiskUp")
-        addLog(f"{cc['fg']['G1']}재의 그릇{cc['end']}이 {cc['fg']['F']}1{cc['end']} 개 증가했습니다. (최대 레벨 {cc['fg']['G1']}{s.Mlvl-1}{cc['end']} -> {cc['fg']['F']}{s.Mlvl}{cc['end']})")
+        addLog(f"{cc['fg']['G1']}재의 그릇{cc['end']}이 {cc['fg']['F']}1{cc['end']} 개 증가했습니다. (최대 레벨 {cc['fg']['G1']}{s.Mlvl-1}{cc['end']} -> {cc['fg']['F']}{s.Mlvl}{cc['end']})", colorKey='G1')
 
 def curseCheck() -> None:
     if s.lvl >= s.Mlvl: pev.cursedDeath()

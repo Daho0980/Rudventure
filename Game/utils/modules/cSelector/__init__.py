@@ -3,12 +3,12 @@ import copy
 import curses
 from   cusser import Cusser
 
-from Game.utils.modules.cSelector import macros as m
-from Game.utils.system.sound      import play
+from .                       import macros as m
+from Game.utils.system.sound import play
 
 from Assets.data.color import (
     customColor,
-    cColors
+    cColors    as cc
     )
 from Game.utils.graphics import (
     escapeAnsi,
@@ -16,8 +16,6 @@ from Game.utils.graphics import (
     anchor
     )
 
-
-cc = cColors
 
 def main(title:str,
          subtitle:(list[str]|dict[str,str])={'Why did you do...' : 'WHY...'},

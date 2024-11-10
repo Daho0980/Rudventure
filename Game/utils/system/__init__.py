@@ -1,11 +1,13 @@
 import curses
 import random
 
-from Assets.data         import status
-from Game.utils.graphics import escapeAnsi, anchor
+from Assets.data import status as s
 
+from Game.utils.graphics import (
+    escapeAnsi,
+    anchor
+)
 
-s  = status
 
 def cinp(stdscr,
          text:str      ="",
@@ -15,7 +17,7 @@ def cinp(stdscr,
          useMiddle:bool=True,
          y:int         =0,
          x:int         =0,
-         backGround:str="") -> str:
+         backGround:str=""    ) -> str:
     if echo:   curses.echo()
     if cursor: curses.curs_set(1)
 

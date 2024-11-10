@@ -1,30 +1,5 @@
-from Assets.data.color import cColors as _cc
+from .color import cColors as _cc
 
-
-def cMarkdown(Type:(list[int]|int)=0) -> str:
-    """
-    list 형식으로 여러개 쓸 수 있음
-
-    `0` : 기본\n
-    `1` : 두껍게\n
-    `2` : 밑줄\n
-    `3` : 배경색과 글자색 반전 아님말고\n
-    `4` : 없음. 진짜 그냥 사라짐
-    """
-    MarkdownKinds = {
-        0 : "\033[0m", # normal (end)
-        1 : "\033[1m", # bold
-        2 : "\033[4m", # underscore
-        3 : "\033[7m", # reversal
-        4 : "\033[8m"  # invisible
-    }
-    output = ""
-
-    if isinstance(Type, list):
-        for i in Type: output += MarkdownKinds[i]
-    else: output = MarkdownKinds[Type]
-
-    return output
 
 version:str|int = "???"
 
@@ -67,7 +42,7 @@ statusFormula = {
 
 ashChip:int      = 0
 
-steppedBlock:dict = {"block":' ', "id":0, "type" : 0}
+steppedBlock:dict = {"block" : ' ', "id" : 0, "type" : 0}
 killCount:int     = 0
 
 inventory:dict   = {
@@ -76,7 +51,8 @@ inventory:dict   = {
         {"item":{}, "disabled":False},
         {"item":{}, "disabled":False}
     ], # full = 6 cells
-    "pointer" : 0
+    "pointer" : 0,
+    "max"     : 6
 }
 
 target:dict = {
@@ -105,14 +81,6 @@ playerColor = [_cc['fg']['L'], "L"]
 
 # region power
 main:int = 1
-
-LOGO:str = f"""
-  _   
- /_/     _/   _  _ _/_    _ _ 
-/ \\ /_//_/ |//_\'/ //  /_// /_\'
-
-    {_cc['fg']['R']}..  -.  -..  .  ...-{_cc['end']}
-"""
 
 # region id
 ids:dict[int,str] = {
@@ -222,17 +190,15 @@ killAll:bool     = False
 clearEntity:bool = False
 DROD:list        = [None, '']
 
-pauseBox:str     = f"""╔═══════════════════════════════╗
-║                               ║
-║          {cMarkdown(1)}{_cc['fg']['L']}일 시 정 지{_cc['end']}          ║
-║                               ║
-╚═══════════════════════════════╝"""
 debugConsole:bool = False
 
+startTime:float   = 0
+elapsedTime:float = 0
+
 # region gamemodes
-cowardMode:bool  = False
-ezMode:bool      = False
-publicMode:bool  = False
+bodyPreservationMode:bool  = False
+ezMode:bool                = False
+sanjibaMode:bool           = False
 
 # region entity
 enemyCount:int              = 0
@@ -251,6 +217,7 @@ entitySaveTrigger        = False
 maxStack:int        = 10
 onDisplay:list[str] = []
 onTime:list[int]    = []
+port:int            = -1
 
 # region block description
 infoWindow = {
@@ -263,15 +230,6 @@ infoWindow = {
 frameRate:int   = -1
 frame:int|float = 0
 
-noisePool = {
-    "pattern" : [
-        "█░▒\n░█", "░  ▒\n▓▓▒\n▒░", "█▓▒▓▓\n\n░▒", "███\n█\n░███░█",
-        "░\n\n░█░▒", "▒\n▒▒▓▒░▒▒\n     ▒▒", "▓▓▓\n▓█▓\n▓▓", "█▒█\n\n▒▓▒█\n░",
-        "█▒░▓▓█░", "██▒▒\n▓▒▒\n▒", "▓▓\n▓░░▓▓▒▓█", "           █\n▓▓██\n    ░█▒█ █",
-        "    ░\n\n░▒▒░", "▒▒\n▒█░\n   ▒ ▒", "▓▓ ▓\n\n▓█▓\n▓▓░▓█ ▓█", "   ██\n  ▒▒█ █\n░░",
-    ],
-    "character" : ["░", "▒", "▓", "█"]
-}
 currentCurseNoiseFrequency = 0
 curseNoiseFrequency        = 5
 
@@ -296,5 +254,6 @@ checkTerminalSize = None
 
 # region system
 recordKey = False
+key       = __import__("Game.core.system.keyBind", fromlist=["KeyBind"]).KeyBind()
 
-key = __import__("Game.core.system.keyBind", fromlist=["KeyBind"]).KeyBind()
+gameRecord:bool = True

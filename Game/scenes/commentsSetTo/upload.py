@@ -1,8 +1,11 @@
 from datetime import datetime
 
-from Assets.data       import status   as s
-from Assets.data       import comments as c
-from Assets.data.color import cColors  as cc
+from Assets.data.color import cColors as cc
+
+from Assets.data import (
+    totalGameStatus as s,
+    comments        as c
+)
 
 
 s.statusFormula = {

@@ -1,7 +1,7 @@
 import time
 
-from Game.utils.modules  import Textbox
-from Game.utils.graphics import anchor
+from .                  import anchor
+from Game.utils.modules import Textbox
 
 class Graphs:
     @staticmethod

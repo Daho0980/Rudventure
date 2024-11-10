@@ -1,9 +1,7 @@
 import json, os
 
-from Assets.data      import status
-from Game.core.system import discordPresence
-
-s, dp = status, discordPresence
+from Assets.data import status          as s
+from .           import discordPresence as dp
 
 
 def reset() -> None:

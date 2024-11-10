@@ -1,7 +1,8 @@
 from   math      import ceil
 from   itertools import chain
 
-from Assets.data.color   import cColors as cc
+from Assets.data.color import cColors as cc
+
 from Game.utils.graphics import (
     escapeAnsi,
     actualLen
@@ -65,7 +66,7 @@ def TextBox(Inp:str,
         if sideText and sideTextPos[0] == "over":
             style = {
                 "left"   : f"{coverColor}{sideText}{Line[LineType][3][0]*((maxLine+fullAddWidth)-actualLen(escapeAnsi(sideText)))}",
-                "middle" : f"{coverColor}{Line[LineType][3][0]*(ceil(int(((maxLine+fullAddWidth)-actualLen(escapeAnsi(sideText)))/2)))}{sideText}{coverColor}{Line[LineType][3][0]*(ceil(int(((maxLine+fullAddWidth)-actualLen(escapeAnsi(sideText)))/2)))}{Line[LineType][3][0]if(maxLine+fullAddWidth+actualLen(escapeAnsi(sideText)))%2 else ''}",
+                "middle" : f"{coverColor}{Line[LineType][3][0]*(ceil(int(((maxLine+fullAddWidth)-actualLen(escapeAnsi(sideText)))/2)))}{sideText}{coverColor}{Line[LineType][3][0]*(ceil(int(((maxLine+fullAddWidth)-actualLen(escapeAnsi(sideText)))/2)))}{Line[LineType][3][0]if(maxLine+fullAddWidth+actualLen(escapeAnsi(sideText)))%2 else''}",
                 "right"  : f"{coverColor}{Line[LineType][3][0]*((maxLine+fullAddWidth)-actualLen(escapeAnsi(sideText)))}{sideText}{coverColor}"
                 }[sideTextPos[1]]
             FixedLine = f"{coverColor}{Line[LineType][0][0]}{end}{style}{Line[LineType][0][1]}{end}\n"

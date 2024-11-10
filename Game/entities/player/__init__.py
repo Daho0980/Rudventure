@@ -4,18 +4,22 @@ import threading
 from   itertools import chain
 from   random    import randrange, choice
 
-from Assets.data             import comments, status, rooms
-from Assets.data.color       import cColors                 as cc
-from Game.core.system        import infoWindow
+from Assets.data.color       import cColors    as cc
+from Game.core.system        import infoWindow as iWin
 from Game.core.system.logger import addLog
-from Game.entities.player    import event, checkStatus
 from Game.utils.system       import xpSystem, tts
 from Game.utils.system.sound import play
 
+from Assets.data import (
+    comments as c,
+    status   as s
+)
+from Game.entities.player import (
+    checkStatus as cs,
 
-s, c, r = status, comments, rooms
-cs      = checkStatus
-bd      = infoWindow
+    event,
+)
+
 
 def set() -> None:
 
@@ -75,7 +79,7 @@ def start() -> None:
 def damage(block:str="?", atk:int=1) -> tuple:
     sound = ("player", "hit")
     event.hitted()
-    addLog(f"{s.lightName}이(가) [ {block} ] 에 의해 상처입었습니다")
+    addLog(f"{s.lightName}이(가) [ {block} ] 에 의해 상처입었습니다", colorKey='R')
 
     if s.df > 0:
         play("player", "armor", "defended")
@@ -86,7 +90,7 @@ def damage(block:str="?", atk:int=1) -> tuple:
         if s.df <= 0 and s.dfCrack <= 0:
             sound     = ("player", "armor", "crack")
             s.dfCrack = 1
-            addLog(f"{cc['fg']['B1']}방어구{cc['end']}가 부서졌습니다!")
+            addLog(f"{cc['fg']['B1']}방어구{cc['end']}가 부서졌습니다!", colorKey='B1')
     else: s.hp -= atk
 
     if s.hp <= 0: s.DROD = [f"{cc['fg']['R']}{choice(['과다출혈', '피로 과다', '졸도', '자살', '우울증'])}{cc['end']}", 'R']
@@ -162,7 +166,7 @@ def move(Dir, distance:int) -> None:
 
         if roomGrid[ty][tx]['hashKey'] in s.friendlyEntity:
             sound = ("player", "hit")
-            addLog(f"{cc['fg']['L']}우호적인 엔티티{cc['end']}는 {cc['fg']['R']}공격{cc['end']}할 수 없습니다!")
+            addLog(f"{cc['fg']['L']}우호적인 엔티티{cc['end']}는 {cc['fg']['R']}공격{cc['end']}할 수 없습니다!", colorKey='L')
         else:
             sound = None
 
@@ -233,7 +237,7 @@ def move(Dir, distance:int) -> None:
         for i in range(len(roomPos)):
             if len(s.Dungeon[roomPos[i][0]][roomPos[i][1]])                > 0 and\
                s.Dungeon[roomPos[i][0]][roomPos[i][1]]['isPlayerVisited'] == 0 and\
-               list(s.Dungeon[s.Dy][s.Dx]['doorPos'].values())[i]         == 1:
+               list(s.Dungeon[s.Dy][s.Dx]['doors'].values())[i]         == 1:
                 s.Dungeon[roomPos[i][0]][roomPos[i][1]]['isPlayerVisited'] = 1
         s.Dungeon[s.Dy][s.Dx]['isPlayerHere'] = True
 
@@ -258,8 +262,9 @@ def move(Dir, distance:int) -> None:
         addLog(
             "하하, 또 속으셨네요."\
             if   s.Dungeon[s.Dy][s.Dx]['room'][ty][tx]['nbt']['count']<0\
-            else f"{cc['fg']['B1']}{s.Dungeon[s.Dy][s.Dx]['room'][ty][tx]['nbt']['count']}{cc['end']}번 남았습니다..."
-                )
+            else f"{cc['fg']['B1']}{s.Dungeon[s.Dy][s.Dx]['room'][ty][tx]['nbt']['count']}{cc['end']}번 남았습니다...",
+            colorKey='B1'
+        )
         if s.Dungeon[s.Dy][s.Dx]['room'][ty][tx]['nbt']['count'] == 0:
             exec(s.Dungeon[s.Dy][s.Dx]['room'][ty][tx]['nbt']['command'])
         else:
@@ -296,7 +301,7 @@ def move(Dir, distance:int) -> None:
         s.Dy, s.Dx = bfDy, bfDx
         ty, tx     = bfy, bfx
 
-        addLog(f"당신 앞에는 그저 {cc['fg']['O']}흙더미{cc['end']}가 자리를 지키고 있을 뿐입니다...")
+        addLog(f"당신 앞에는 그저 {cc['fg']['O']}흙더미{cc['end']}가 자리를 지키고 있을 뿐입니다...", colorKey='O')
 
     elif blockID == 22:
         if roomGrid[ty][tx]['nbt']['step']:
@@ -329,9 +334,12 @@ def move(Dir, distance:int) -> None:
         if s.lvl<5:
             sound  = ("player", "hit")
             ty, tx = bfy, bfx
-            addLog(f"{cc['fg']['L']}당신{cc['end']}은 아직 {cc['fg']['F']}자격{cc['end']}이 주어지지 않았습니다.")
+            addLog(f"{cc['fg']['L']}당신{cc['end']}은 아직 {cc['fg']['F']}자격{cc['end']}이 주어지지 않았습니다.", colorKey='A')
         else:
             sound  = ("player", "interaction", "activate")
+
+            s.Dungeon[s.Dy][s.Dx]['roomIcon'] = ['Y', 'F']
+
             commentType = ""
 
             if s.lvl>(s.Mlvl/2): commentType += "middle"
@@ -353,14 +361,14 @@ def move(Dir, distance:int) -> None:
                     }
             ty, tx = bfy, bfx
 
-            addLog(f"{cc['fg']['L']}당신{cc['end']}의 몸에서 {cc['fg']['F']}저주{cc['end']}가 빠져나가는 것이 느껴집니다...")
+            addLog(f"{cc['fg']['L']}당신{cc['end']}의 몸에서 {cc['fg']['F']}저주{cc['end']}가 빠져나가는 것이 느껴집니다...", colorKey='A')
             say(choice(c.curseDecreaseComments[commentType]))
 
     elif blockID == 401:
         sound      = ("player", "hit")
         ty, tx     = bfy, bfx
         s.Dy, s.Dx = bfDy, bfDx
-        addLog(f"이 {cc['fg']['A']}신상{cc['end']}은 이미 {cc['fg']['F']}저주{cc['end']}에 물들었습니다...")
+        addLog(f"이 {cc['fg']['A']}신상{cc['end']}은 이미 {cc['fg']['F']}저주{cc['end']}에 물들었습니다...", colorKey='F')
 
     elif blockID in [501, 502]:
         sound = ("player", "getItem")
@@ -371,7 +379,7 @@ def move(Dir, distance:int) -> None:
         count = roomGrid[ty][tx]["nbt"]["count"]
         if count:
             s.ashChip += count
-            addLog(f"{cc['fg']['G1']}잿조각{cc['end']}을 {cc['fg']['G1']}{count}{cc['end']}개 얻었습니다.")
+            addLog(f"{cc['fg']['G1']}잿조각{cc['end']}을 {cc['fg']['G1']}{count}{cc['end']}개 얻었습니다.", colorKey='G1')
             cs.ashChipCheck()
 
     s.y, s.x                                = ty, tx
@@ -400,7 +408,7 @@ def observe(Dir) -> None:
             if rawBlockData['hashKey'] in s.friendlyEntity:
                 rawBlockData['nbt'] = {"link" : True}
 
-    data = bd.dataLoader(
+    data = iWin.dataLoader(
         rawBlockData['id'],
         s.types[rawBlockData['type']],
         rawBlockData
@@ -419,7 +427,7 @@ def observe(Dir) -> None:
         "explanation" : ""
         ""
         }
-    bd.add(
+    iWin.add(
         data['icon'],
         data['blockName'],
         data['status'],
@@ -432,8 +440,9 @@ def observe(Dir) -> None:
 def say(text, TextColor:str="pc") -> None:
     addLog(
         f"{s.playerColor[0] if TextColor=='pc'else TextColor}\"{text}\"{cc['end']}",
-        duration=max(50, tts.TTC(text))
-        )
+        duration=max(50, tts.TTC(text)),
+        colorKey=s.playerColor[1]
+    )
     threading.Thread(
         target=lambda: tts.TTS(text, voicePath=("player", "voice", s.playerVoice)),
         daemon=True
@@ -444,5 +453,5 @@ def whistle() -> None:
     if s.target['hashKey']:
         s.target['attackable'] = True
         s.target['command']    = True
-        addLog(f"{cc['fg']['L']}타겟{cc['end']}을 {cc['fg']['R']}집중 공격 대상{cc['end']}으로 설정합니다!")
-    else: addLog("아무런 일도 일어나지 않았습니다...")
+        addLog(f"{cc['fg']['L']}타겟{cc['end']}을 {cc['fg']['R']}집중 공격 대상{cc['end']}으로 설정합니다!", colorKey='L')
+    else: addLog("아무런 일도 일어나지 않았습니다...", colorKey='L')

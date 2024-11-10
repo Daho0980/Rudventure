@@ -69,7 +69,7 @@ def main(Map:list,
                 [y, x] in p:
                 Map[y][x] = {
                     "roomIcon"        : rData[4],
-                    "doorPos"         : Map[y][x]['doorPos'],
+                    "doors"         : Map[y][x]['doors'],
                     "roomType"        : 4,
                     "isPlayerHere"    : False,
                     "isPlayerVisited" : 2,
@@ -114,9 +114,10 @@ def main(Map:list,
         # 몬스터 summonCount 설정
         SCP  = randrange(1,101)
         size = randrange(1, 6)\
-            if SCP<=per.monsterSpawnSize['small']\
-            else randrange(6, 8) if SCP> per.monsterSpawnSize["small"]\
-                 and SCP<=per.monsterSpawnSize['medium']\
+                if SCP<=per.monsterSpawnSize['small']\
+            else randrange(6, 8)\
+                if  SCP> per.monsterSpawnSize["small"]\
+                and SCP<=per.monsterSpawnSize['medium']\
             else 8
 
         # 방 데이터 정리
@@ -124,8 +125,8 @@ def main(Map:list,
         Map[y][x]['roomIcon']                     = rData[roomKind]
         Map[y][x]['roomType']                     = roomKind
         Map[y][x]['isPlayerVisited']              = 2 if roomKind == 4 or showAll == True else 0
-        Map[y][x]['doorPos'][locationData[2]]     = 1
-        Map[bfy][bfx]['doorPos'][locationData[3]] = 1
+        Map[y][x]['doors'][locationData[2]]     = 1
+        Map[bfy][bfx]['doors'][locationData[3]] = 1
         Map[y][x]['summonCount']                  = 1 if roomKind == 4 else 0 if roomKind in [2, 3] else size
 
     if rawPrint == False and Map: return graphicMaker(Map)

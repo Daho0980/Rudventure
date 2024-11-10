@@ -2,18 +2,24 @@ import time
 from   random    import randrange, choices, choice
 from   threading import Thread
 
-from Assets.data                 import comments, lockers, status
-from Assets.data.color           import cColors                  as cc
+from .                           import Animal
+from Assets.data.color           import cColors     as cc
 from Game.entities.algorithms    import AStar, OPath
-from Game.entities.animal        import Animal
-from Game.entities               import player, event
 from Game.utils.system.tts       import TTS, TTC
 from Game.utils.system.sound     import play
 from Game.core.system.logger     import addLog
 from Game.core.system.dataLoader import obj
 
-s, c, l = status, comments, lockers
-p       = player
+from Assets.data import (
+    comments as c,
+    lockers  as l, 
+    status   as s
+)
+from Game.entities import (
+    player as p,
+
+    event
+)
 
 
 cry = [
@@ -340,8 +346,9 @@ class Cat(Animal):
         ) -> None:
         addLog(
             f"{self.color}\"{text}\"{cc['end']}",
-            duration=max(50, TTC(text))
-            )
+            duration=max(50, TTC(text)),
+            colorKey=self.colorKey
+        )
         Thread(
             target=lambda: TTS(
                 text,
@@ -410,7 +417,7 @@ class Cat(Animal):
 
                         if not self.monsterTargetHashKey:
                             self.getStress(2)
-                            addLog(f"{self.color}{self.name}{cc['end']}이/가 사냥감을 찾았습니다...")
+                            addLog(f"{self.color}{self.name}{cc['end']}이/가 사냥감을 찾았습니다...", colorKey=self.colorKey)
                             self.chattering()
 
                         if self.combo:
@@ -484,7 +491,7 @@ class Cat(Animal):
                         case "attack":
                             if not self.attackPlayerCooltime: self.attackPlayerCooltime = randrange(7,16)
 
-                            addLog(f"{self.color}{self.name}{cc['end']}이/가 당신을 노려봅니다...")
+                            addLog(f"{self.color}{self.name}{cc['end']}이/가 당신을 노려봅니다...", colorKey=self.colorKey)
                             self.chattering()
 
                             while 1:
@@ -668,7 +675,7 @@ class Cat(Animal):
                                 return
 
                             self.actionCount -= 1
-                            addLog(f"{self.color}{self.name}{cc['end']}이/가 그루밍 중입니다...")
+                            addLog(f"{self.color}{self.name}{cc['end']}이/가 그루밍 중입니다...", colorKey=self.colorKey)
                             target = choices(
                                 ["leg", "side", "tail"],
                                 list(self.ashWeight.values()),
@@ -716,7 +723,7 @@ class Cat(Animal):
 
                 # region rest
                 case "rest":
-                    addLog(f"{self.color}{self.name}{cc['end']}이/가 자고 있습니다...")
+                    addLog(f"{self.color}{self.name}{cc['end']}이/가 자고 있습니다...", colorKey=self.colorKey)
                     stress = 0
                     while self.stressLvl!=1 and self.stressPt!=0:
                         if self.checkPWRest(stress): break

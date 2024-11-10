@@ -1,24 +1,31 @@
 import math
-import curses
+import time
 import psutil
 from   random import randrange, choices, choice
 
-from Assets.data         import percentage, lockers, status
-from Assets.data.color   import cColors                    as cc
-from Game.utils.advanced import DungeonMaker               as dgm
-from Game.utils.modules  import Textbox
+from Assets.data.color           import cColors as cc
+from Game.core.system.structures import Conveyor
+from Game.utils.advanced         import DungeonMaker as dgm
+from Game.utils.modules          import Textbox
 
-from Game.utils.graphics import (
+from Assets.data import (
+    totalGameStatus as s,
+    percentage      as p,
+    UIPreset        as UIP,
+    lockers         as l
+)
+from . import (
     escapeAnsi,
     actualLen,
     anchor
-    )
-
-s, l = status, lockers
-per  = percentage
+)
 
 
 noiseBuffer = ""
+
+logCache:Conveyor = Conveyor(1, True)
+
+s.startTime         = time.perf_counter()
 
 def statusBar(status:int,
               statusName:str    ="",
@@ -106,14 +113,12 @@ def inventory():
 def curseNoise(stdscr) -> str:
     output = ""
 
-    y, x = stdscr.getmaxyx()
-    x -= 3
-    y -= 3
+    y, x = map(lambda i: i-3, stdscr.getmaxyx())
 
     for _ in range((s.lvl-int(s.Mlvl/2))*3):
         output += anchor(
             stdscr,
-            f"{cc['fg']['F']}{choice(s.noisePool[choices(['pattern','character'],weights=[40,70],k=1)[0]])}{cc['end']}",
+            f"{cc['fg']['F']}{choice(UIP.noisePool[choices(['pattern','character'],weights=[40,70],k=1)[0]])}{cc['end']}",
             y        =randrange(1,y+1),
             x        =randrange(1,x+1),
             returnStr=True
@@ -128,6 +133,7 @@ def render(stdscr, grid:list):
         `grid`(list(2d)) : 맵의 그래픽 데이터가 포함됨.
     """
     global noiseBuffer
+    global elapsedTime
 
     y, x    = stdscr.getmaxyx()
     Display = []
@@ -149,10 +155,9 @@ def render(stdscr, grid:list):
     # Map
     if s.showDungeonMap:
         buffer = Textbox.TextBox(
-            dgm.gridMapReturn(
+            dgm.centerGridMapReturn(
                 s.Dungeon,
-                blank =1,
-                center=True
+                blank =1
             ),
             Type         ='middle',
             AMLS         =True,
@@ -216,15 +221,20 @@ TextBox.Line_\n저주 : {cc['fg']['F']}{s.lvl}{cc['end']}, {cc['fg']['F']}{int((
     Display.append(anchor(stdscr, statusText, y=2, x=1, returnStr=True))
 
     # Log
-    logText = Textbox.TextBox(
-        "\n".join(s.onDisplay),
-        maxLine        =x-3,
-        LineType       ='double',
-        alwaysReturnBox=False,
-        sideText       ="로그",
-        sideTextPos    =["over", "middle"],
-        coverSideText  =True
-    )
+    logHash = hash('0'.join(s.onDisplay)+f"{y}{x}")
+    if logHash == logCache.key()[0]:
+        logText = logCache[logHash]
+    else:
+        logText = Textbox.TextBox(
+            "\n".join(s.onDisplay),
+            maxLine        =x-3,
+            LineType       ='double',
+            alwaysReturnBox=False,
+            sideText       ="로그",
+            sideTextPos    =["over", "middle"],
+            coverSideText  =True
+        )
+        logCache[logHash] = logText
     Display.append(anchor(stdscr, logText, y=y-(1 if not len(s.onDisplay)else len(s.onDisplay)), returnStr=True))
 
     # Info window(when use observe mode)
@@ -250,13 +260,15 @@ TextBox.Line_\n저주 : {cc['fg']['F']}{s.lvl}{cc['end']}, {cc['fg']['F']}{int((
 Window size : {stdscr.getmaxyx()}
 Memory usage : {psutil.Process().memory_info().rss/2**20: .2f} MB
 Number of threads : {psutil.Process().num_threads()}
+Port : {s.port}
 
 Dx : {s.Dx}, Dy : {s.Dy}, x : {s.x}, y : {s.y}
 Number of entities : {s.entityCount}
 Number of enemies : {s.enemyCount}
 Number of total entities : {s.totalEntityCount}
+soliloquy : ({s.soliloquyCount}, {s.soliloquyRange}, {p.soliloquy['min']}, {p.soliloquy['max']})
 
-soliloquy : ({s.soliloquyCount}, {s.soliloquyRange}, {per.soliloquy['min']}, {per.soliloquy['max']})""",
+Elapsed time : {s.elapsedTime:.2f}""",
             Type         ="right",
             AMLS         =True,
             LineType     ="bold",
@@ -277,7 +289,8 @@ soliloquy : ({s.soliloquyCount}, {s.soliloquyRange}, {per.soliloquy['min']}, {pe
         Display.append(noiseBuffer)
 
     # Pause
-    if l.pause: Display.append(anchor(stdscr, s.pauseBox, returnStr=True))
+    if l.pause: Display.append(anchor(stdscr, UIP.pauseBox, returnStr=True))
+    else:       s.elapsedTime = time.perf_counter()-s.startTime
 
     stdscr.erase()
     stdscr.addstr(''.join(Display))

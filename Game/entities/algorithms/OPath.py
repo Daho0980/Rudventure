@@ -1,6 +1,6 @@
 import os
-import time
 import math
+import time
 
 
 def main(radius, center):
@@ -69,7 +69,7 @@ if __name__ == '__main__':
 
     while 1:
         radius =3
-        center = (
+        center =(
             randrange(10, 20),
             randrange(10, 20)
             )

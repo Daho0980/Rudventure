@@ -1,19 +1,21 @@
 import time
 import threading
 from   copy     import deepcopy
-from   random   import choice
+from   random   import choice, randrange
 
-from Assets.data              import status, comments
-from Assets.data.color        import cColors         as cc
-from Assets.data              import lockers         as l
+from Assets.data.color        import cColors as cc
+from Assets.data              import lockers as l
 from Game.core.system         import logger
 from Game.entities            import player as p
 from Game.utils.system.tts    import TTS, TTC
 from Game.utils.graphics      import escapeAnsi
 from Game.utils.system.sound  import play # 계속 이거 지우는데 지우지마라
 
+from Assets.data import (
+    status   as s,
+    comments as c # 얘도 쓰는거임
+    )
 
-s, c = status, comments
 
 def hitted() -> None:
     def event() -> None:

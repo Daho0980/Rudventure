@@ -1,7 +1,9 @@
 from random import choice
 
-from Assets.data import status   as s
-from Assets.data import comments as c
+from Assets.data import (
+    totalGameStatus as s,
+    comments        as c
+)
 
 
 foods = [

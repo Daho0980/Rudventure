@@ -1,20 +1,43 @@
 from random import randrange, choice
 
-from Assets.data             import percentage, comments, status
 from Game.entities.player    import say
 from Game.utils.system.sound import play
 
+from Assets.data import (
+    percentage as p,
+    comments   as c,
+    status     as s
+)
 from Game.utils.system.roomManager.interactions import (
-    changeDoorPosBlock,
     placeRandomOrbs,
-    summonMonster
+    summonMonster,
+    changeDoor,
 )
 
 
-s, p, c = status, percentage, comments
+roomData:dict[tuple, str] = {
+    (1,1,0,0) : "╚",
+    (1,0,1,0) : "║",
+    (1,1,1,0) : "╠",
+    (1,0,0,1) : "╝",
+    (1,1,0,1) : "╩",
+    (1,0,1,1) : "╣",
+    (0,1,1,0) : "╔",
+    (0,1,0,1) : "═",
+    (0,1,1,1) : "╦",
+    (0,0,1,1) : "╗",
+    (1,1,1,1) : "╬",
+}
 
 def event(data) -> None:
     if data['summonCount'] > 0:
+        doorData = tuple(data['doors'].values())
+        if sum(doorData) > 1:
+            data['roomIcon'] = [
+                roomData[doorData],
+                ""
+            ]
+
         play("object", "door", "close")
         if randrange(1, 101) <= p.enterinBattleComment:
             say(choice(
@@ -24,9 +47,9 @@ def event(data) -> None:
             ))
         summonMonster(data)
 
-        changeDoorPosBlock(1, data)
+        changeDoor(1, data)
     elif not s.enemyCount and s.roomLock:
         s.roomLock                           = False
         s.Dungeon[s.Dy][s.Dx]['interaction'] = True
         if randrange(0, 101) > p.clearedRoomLoot: placeRandomOrbs()
-        changeDoorPosBlock(2, data)
+        changeDoor(2, data)

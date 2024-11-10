@@ -8,7 +8,7 @@ def main(stdscr) -> None:
     play("soundEffects", "smash")
     cinp(
         stdscr,
-        "색이 잘 보이는지 확인해주세요:\n"+f"{cc['end']}\n".join(
+        "색이 잘 보이는지 확인해주세요\n  "+f"{cc['end']}\n  ".join(
             [
                 ''.join([f"{cc['bg'][i]}   " for i in keys[:8]]),
                 ''.join([f"{cc['bg'][i]}   " for i in keys[8:16]])

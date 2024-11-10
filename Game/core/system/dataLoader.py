@@ -1,6 +1,11 @@
 import ijson
 from   collections import deque
 
+from .structures import Conveyor
+
+
+objCache = Conveyor(20)
+elmCache = Conveyor(20)
 
 def _setValue(dd, value, path):
     for i in path[:-1]: dd = dd[i]
@@ -11,6 +16,11 @@ def _addValue(dd, value, path):
     dd[path[-1]].append(value)
 
 def obj(path:str, target:str) -> dict:
+    global objCache
+
+    if (path,target) in objCache:
+        return objCache[(path,target)]
+
     data     = {}
     tempPath = []
     sLock    = True
@@ -55,6 +65,7 @@ def obj(path:str, target:str) -> dict:
                         if arrayDepth: arrayDepth.pop()
                         if prefix == target: break
 
+    objCache[(path,target)] = data[target]
     return data[target]
 
 def elm(path:str, target:str, Type:str):
@@ -69,8 +80,14 @@ def elm(path:str, target:str, Type:str):
         string  : str 대응
         boolean : bool 대응
     """
+    global elmCache
+
+    if (path,target,Type) in elmCache:
+        return elmCache[(path,target,Type)]
+    
     with open(path, 'r') as f:
         for prefix, event, value in ijson.parse(f):
             if (prefix, event) == (target, Type):
+                elmCache[(path,target,Type)] = value
                 return value
         return False

@@ -2,17 +2,14 @@ import time
 import threading
 from   random   import randrange, choices, choice
 
-from Game.core.system.logger import addLog
 from Game.entities.player import say
 
 from Assets.data import (
-    percentage,
-    comments,
-    lockers,
-    status
-    )
-
-s, p, c, l = status, percentage, comments, lockers
+    percentage as p,
+    comments   as c,
+    lockers    as l,
+    status     as s
+)
 
 
 def counter() -> None:

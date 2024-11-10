@@ -1,6 +1,17 @@
-from Assets.data.color import cColors as cc
+from .color import cColors as cc
 
-status = {
+from . import markdown as md
+
+
+LOGO:str = f"""
+   _   
+  /_/     _/   _  _ _/_    _ _ 
+ / \\ /_//_/ |//_\'/ //  /_// /_\'
+
+{cc['fg']['F']}L a e k o u v   S á = h ä ú v é{cc['end']}
+"""
+
+status:dict[int|str, str] = {
     0 : f"""╔═══════════════════════════╗
 ║체력 : {cc['fg']['R']}10/10{cc['end']} | 방어력 : {cc['fg']['B1']}5/5{cc['end']}║
 ║ 허기 : {cc['fg']['Y']}100%{cc['end']} | 공격력 : {cc['fg']['L']}1{cc['end']}  ║
@@ -33,16 +44,16 @@ status = {
 이 디자인을 보고 선택해주세요! (스탯 UI)"""
 }
 
-dungeonMap = {
+dungeonMap:dict[int|str, str] = {
     0 : "맵이 활성화되어 있지 않습니다",
     1 : f"""╔═══════════════════╗
+║   {cc['fg']['F']}?{cc['end']}═{cc['fg']['B1']}/{cc['end']}             ║
+║     {cc['fg']['A']}Y{cc['end']}   ╔═╗       ║
+║     ╚═══╣ ║       ║
+║         {cc['fg']['Y']}!{cc['end']}═╝       ║
+║         {cc['fg']['R']}§{cc['end']}         ║
 ║                   ║
 ║                   ║
-║     {cc['fg']['B1']}/{cc['end']}             ║
-║         {cc['fg']['F']}?{cc['end']}         ║
-║       {cc['fg']['L']}* {cc['bg']['F']}•{cc['end']}         ║
-║     • •           ║
-║   {cc['fg']['R']}§ {cc['fg']['Y']}!{cc['end']}             ║
 ║                   ║
 ║                   ║
 ╚════╣미궁 지도╠════╝
@@ -55,18 +66,23 @@ dungeonMap = {
 └──────────────────────────────────────────────────┘"""
 }
 
-debugConsole = {
+debugConsole:dict[int|str, str] = {
     0 : "디버그 콘솔이 활성화되어 있지 않습니다",
-    1 : """┏━━━━━━━━━━━━━━━┫디버그 콘솔┣┓
-┃    Python version : 3.10.11┃
-┃     Window size : (47, 108)┃
-┃    Memory usage :  39.00 MB┃
-┃      Number of threads : 13┃
-┃                            ┃
-┃Dx : 4, Dy : 4, x : 6, y : 6┃
-┃      Number of entities : 0┃
-┃Number of total entities : 0┃
-┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+    1 : """┏━━━━━━━━━━━━━━━━━━━┫디버그 콘솔┣┓
+┃        Python version : 3.10.11┃
+┃         Window size : (58, 122)┃
+┃        Memory usage :  36.00 MB┃
+┃          Number of threads : 12┃
+┃                    Port : 12345┃
+┃                                ┃
+┃    Dx : 4, Dy : 4, x : 4, y : 4┃
+┃          Number of entities : 0┃
+┃           Number of enemies : 0┃
+┃    Number of total entities : 0┃
+┃soliloquy : (325, 650, 350, 950)┃
+┃                                ┃
+┃            Elapsed time : 00.00┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 """,
     'introduction' : f"""                                                              │
                                                               │
@@ -78,4 +94,20 @@ debugConsole = {
 ┌──────────────────────────────────────────────────────────┐  │
 │ 게임 내에서 [{cc['fg']['R']}Shift{cc['end']}] + [{cc['fg']['L']}d{cc['end']}] 키를 눌러 켜고 끌 수 있습니다. ├──┘
 └──────────────────────────────────────────────────────────┘""" 
+}
+
+pauseBox:str     = f"""╔═══════════════════════════════╗
+║                               ║
+║          {md.cMarkdown(1)}{cc['fg']['L']}일 시 정 지{cc['end']}          ║
+║                               ║
+╚═══════════════════════════════╝"""
+
+noisePool = {
+    "pattern" : [
+        "█░▒\n░█", "░  ▒\n▓▓▒\n▒░", "█▓▒▓▓\n\n░▒", "███\n█\n░███░█",
+        "░\n\n░█░▒", "▒\n▒▒▓▒░▒▒\n     ▒▒", "▓▓▓\n▓█▓\n▓▓", "█▒█\n\n▒▓▒█\n░",
+        "█▒░▓▓█░", "██▒▒\n▓▒▒\n▒", "▓▓\n▓░░▓▓▒▓█", "           █\n▓▓██\n    ░█▒█ █",
+        "    ░\n\n░▒▒░", "▒▒\n▒█░\n   ▒ ▒", "▓▓ ▓\n\n▓█▓\n▓▓░▓█ ▓█", "   ██\n  ▒▒█ █\n░░",
+    ],
+    "character" : ["░", "▒", "▓", "█"]
 }

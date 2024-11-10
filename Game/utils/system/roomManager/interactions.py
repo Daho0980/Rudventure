@@ -7,7 +7,7 @@ from Game.entities.entity import addMonster
 from Game.utils.system    import placeRandomBlock
 
 
-def changeDoorPosBlock(ID:int, data:dict) -> None:
+def changeDoor(ID:int, data:dict) -> None:
     c = {
         'y' : int(len(s.Dungeon[s.Dy][s.Dx]['room'])/2),
         'x' : int(len(s.Dungeon[s.Dy][s.Dx]['room'][0])/2)
@@ -19,8 +19,8 @@ def changeDoorPosBlock(ID:int, data:dict) -> None:
         'L' : [c['y'], 0]
         }
         
-    for i in range(len(data['doorPos'])):
-        keys, values = list(data['doorPos'].keys()), list(data['doorPos'].values())
+    for i in range(len(data['doors'])):
+        keys, values = list(data['doors'].keys()), list(data['doors'].values())
         if values[i] == 1:
             DPY, DPX = DPG[keys[i]][0], DPG[keys[i]][1]
 

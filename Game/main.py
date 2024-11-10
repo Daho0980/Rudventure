@@ -3,73 +3,75 @@ import curses
 import time, random
 from   cusser      import Cusser
 
-from Game.core.system                           import discordPresence, quests, logger
-from Game.entities                              import entity, player
-from Game.entities.player                       import event, checkStatus
-from Game.scenes                                import mainSettings, mainMenu
-from Game.utils.advanced                        import DungeonMaker, keyHandler
-from Game.utils.advanced.Rudconverter           import save
-from Game.utils.graphics                        import escapeAnsi, anchor
-from Game.utils.modules                         import Textbox, cSelector
-from Game.utils.system                          import roomManager
-from Game.utils.system.sound                    import play
-from Game.utils.system.roomManager.interactions import placeRandomOrbs
+from .entities                              import entity, player
+from .entities.player                       import checkStatus           as cs
+from .scenes                                import mainSettings, mainMenu
+from .utils.advanced                        import DungeonMaker, keyHandler
+from .utils.advanced.Rudconverter           import save
+from .utils.graphics                        import escapeAnsi, anchor
+from .utils.modules                         import Textbox, cSelector
+from .utils.system                          import roomManager
+from .utils.system.sound                    import play
+from .utils.system.roomManager.interactions import placeRandomOrbs
 
 from Assets.data import (
-    comments,
-    lockers,
-    status,
-    color
-    )
-from Game.utils.graphics import (
-    stageRenderer,
-    displayRenderer
-)
+    totalGameStatus as s,
+    comments        as c,
+    lockers         as l,
 
-c, s, l        = comments, status, lockers
-pev, cs        = event, checkStatus
-p, tb, dgm, kh = player, Textbox, DungeonMaker, keyHandler
-ent            = entity
-q              = quests
-cc             = color.cColors
-dcp            = discordPresence
+    color
+)
+from .core.system import (
+    discordPresence as dp,
+    quests          as q,
+
+    logger
+)
+from .utils.graphics import (
+    displayRenderer,
+    stageRenderer
+)
 
 
 stdscr = Cusser(curses.initscr())
+
+cc = color.cColors
 
 def playerChecker() -> None:
     if not l.isDying:
         cs.defCheck()
         cs.hpCheck()
         cs.curseCheck()
+        cs.ashChipCheck()
 
 def gameChecker(stdscr) -> None:
     if s.main == 1:
         stdscr.clear(); stdscr.refresh()
         l.jpsf = 0
         if s.hp<=0 or s.hunger<=0:
-            dcp.update(
+            dp.load(
                 large_image="rudventure-icon1",
                 details    ="사망",
                 state      =f"사인 : {escapeAnsi(s.DROD[0])}"
             )
+            dp.update()
 
             s.killAll = True
             comment   = random.choice(c.defeatComments["CO"if s.lvl>=s.Mlvl else"HL"if s.hp<=0 else"HUL"])
             stdscr.nodelay(False)
 
             play("system", "defeat")
-            _, bx, deadSign = tb.TextBox(
-                    f"{cc['fg']['F'] if s.lvl>=s.Mlvl else cc['fg']['R']}   사 망 하 셨 습 니 다   \n\n   {cc['fg']['F'] if s.lvl>=s.Mlvl else cc['fg']['R']}\"{comment}\"   ",
-                    Type        ="middle",
-                    inDistance  =1,
-                    outDistance =1,
-                    AMLS        =True,
-                    endLineBreak=True,
-                    LineType    ="bold",
-                    coverColor  =cc['fg']['F'] if s.lvl>=s.Mlvl else cc['fg']['R'],
-                    returnSizeyx=True
-                    )
+            _, bx, deadSign = Textbox.TextBox(
+                f"{cc['fg']['F'] if s.lvl>=s.Mlvl else cc['fg']['R']}   사 망 하 셨 습 니 다   \n\n   {cc['fg']['F'] if s.lvl>=s.Mlvl else cc['fg']['R']}\"{comment}\"   ",
+                Type        ="middle",
+                inDistance  =1,
+                outDistance =1,
+                AMLS        =True,
+                endLineBreak=True,
+                LineType    ="bold",
+                coverColor  =cc['fg']['F'] if s.lvl>=s.Mlvl else cc['fg']['R'],
+                returnSizeyx=True
+            )
             y, x = anchor(
                 stdscr,
                 deadSign,
@@ -82,7 +84,7 @@ def gameChecker(stdscr) -> None:
             FBSA = f"\033[{f'{FBS}D'if FBS>0 else f'{abs(FBS)}C'}"
             
             stdscr.refresh()
-            import Game.core.system.deathLogWriter
+            if s.gameRecord: import Game.core.system.deathLogWriter
 
             time.sleep(1)
             achievements = {
@@ -120,15 +122,17 @@ def gameChecker(stdscr) -> None:
             exit(0 if theChoice-1 else 1)
 
         else:
-            dcp.update(
+            dp.load(
                 large_image="rudventure-icon1",
                 details    =f"나락",
                 state      ="더 깊은 곳으로 이동 중...",
             )
+            dp.update()
+
             play("system", "clear")
             anchor(
                 stdscr,
-                tb.TextBox(
+                Textbox.TextBox(
                     f"   {cc['fg']['L']}지 배   성 공{cc['end']}   \n\n   {cc['fg']['L']}\"{random.choice(c.victoryComments[int((s.hp/s.Mhp)*3)])}{cc['fg']['L']}\"{cc['end']}   ",
                     Type        ="middle",
                     inDistance  =1,
@@ -148,22 +152,18 @@ def gameChecker(stdscr) -> None:
 curses.noecho()
 curses.curs_set(0)
 
-dcp.update(
+dp.load(
     large_image="rudventure-in_settings1",
     details    ="메인 메뉴",
     state      ="탐색 중",
-    start      =int(time.time())
+    start      =True
 )
+dp.update()
 mainMenu.main(stdscr)
 
-dcp.update(
-    large_image="rudventure-icon1",
-    details    ="메인 메뉴",
-    state      ="미궁 입장 중"
-)
 if s.name == "":
     mainSettings.main(stdscr)
-    p.set()
+    player      .set()
     if s.ezMode:
         s.hp     *= 2
         s.df     *= 2
@@ -180,30 +180,42 @@ if s.name == "":
 else: mainSettings.presetted()
 
 stdscr.nodelay(True)
-kh.add()
+
+keyHandler.add()
 from Game.core.system import soliloquy
 
+logger.addLog(f"포트는 {cc['fg']['L']}{s.port}{cc['end']}입니다.", colorKey='Y')
+if not dp.isConnected:
+    logger.addLog(f"{cc['fg']['Y']}인터넷{cc['end']}에 연결되어 있지 않습니다. 게임을 다시 시작할 때까지 {cc['fg']['B1']}DiscordPresence{cc['end']}가 사용되지 않습니다.", colorKey='B1')
+
 while s.main:
-    dcp.update(
+    dp.load(
         large_image="rudventure-icon1",
         details    ="메인 메뉴",
         state      ="나락 입장 중"
     )
+    dp.update()
     
-    if s.cowardMode: s.entitySaveTrigger = True
+    if s.bodyPreservationMode and s.gameRecord: s.entitySaveTrigger = True
 
     s.MFairWind += 10
     s.fairWind   = random.randrange(1, s.MFairWind+1)
     
-    s.Dungeon = dgm.DungeonMaker()
+    s.Dungeon = DungeonMaker.DungeonMaker()
 
-    p.start()
+    player.start()
     placeRandomOrbs()
 
     if not s.stage and not s.isLoadfromBody and s.name.lower() in ["업로드", "upload"]:
-        entity.addAnimal(200, 10, 1, 3, 6, name="구름이", color=[cc['fg']['W'],'W'], friendly=True, MCBF=True, SICR=True, extraData={"loyalty":10})
-    if s.isLoadfromBody:
-        entity.loadEntities()
+        entity.addAnimal(
+            200, 10, 1, 3, 6,
+            name     ="구름이",
+            color    =[cc['fg']['W'],'W'],
+            friendly =True,
+            MCBF     =True,
+            SICR     =True,
+            extraData={"loyalty":10}      )
+    if s.isLoadfromBody: entity.loadEntities()
     
     stageRenderer.showStage(
         stdscr,
@@ -211,25 +223,26 @@ while s.main:
         )
 
     if not s.stage:
-        p.say(
+        player.say(
             random.choice(
                 c.loadsaveStartComments\
-                    if  s.cowardMode
+                    if  s.bodyPreservationMode
                     and s.isLoadfromBody\
                 else c.startCommentsWithCowardmode\
-                    if s.cowardMode\
+                    if s.bodyPreservationMode\
                 else c.startComments
             )
         )
 
-    dcp.update(
+    dp.load(
         large_image="rudventure-in_battle1",
         details    ="나락",
         state      =f"제 -{s.stage+1}층",
-        start      =int(time.time())
+        start      =True
     )
+    dp.update()
 
-    if s.cowardMode:
+    if s.bodyPreservationMode and s.gameRecord:
         save()
         s.entitySaveTrigger = False
 
@@ -249,9 +262,10 @@ while s.main:
                 if not quickStarter:
                     stdscr.refresh()
                     quickStarter = 1
+
                 roomManager.main()
             time.sleep(s.frame)
         else: time.sleep(1)
 
-    if s.hunger<=0: s.DROD = [f"{cc['fg']['Y']}아사{cc['end']}", 'Y']
+    if s.hunger <= 0: s.DROD = [f"{cc['fg']['Y']}아사{cc['end']}", 'Y']
     gameChecker(stdscr)

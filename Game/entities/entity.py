@@ -1,4 +1,3 @@
-import json
 import time
 import threading
 from   random   import randrange
@@ -112,7 +111,7 @@ if s.main and not (s.killAll or s.clearEntity):
             if sendEffect:
                 play("player", "slash")
                 play("entity", "enemy", "dead")
-                addLog(f"{cc['fg']['F']}{name}{cc['end']}이/가 죽었습니다!")
+                addLog(f"{cc['fg']['F']}{name}{cc['end']}이/가 죽었습니다!", colorKey='F')
     threading.Thread(target=EntityInteraction, name=name, daemon=True).start()
     time.sleep(0.2)
 
@@ -240,7 +239,7 @@ if s.main and not (s.killAll or s.clearEntity):
             s.killCount += 1
             play("player", "slash")
             play("entity", "enemy", "dead")
-            addLog(f"{color[0]}{name}{cc['end']}이/가 죽었습니다!")
+            addLog(f"{color[0]}{name}{cc['end']}이/가 죽었습니다!", colorKey='F')
     threading.Thread(target=EntityInteraction, name=name, daemon=True).start()
 
 def loadEntities() -> None:

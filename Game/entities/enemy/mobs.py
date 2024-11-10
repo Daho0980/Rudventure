@@ -2,18 +2,20 @@ import math # 이거 쓰는거임
 import time
 from   random import randrange, choice
 
-from Assets.data              import status, lockers
-from Assets.data.color        import cColors        as cc
+from .                        import event        as eEvent
+from Assets.data.color        import cColors      as cc
 from Assets.data.comments     import TIOTAComments
 from Game.core.system.logger  import addLog
 from Game.entities.algorithms import AStar
-from Game.entities.enemy      import event     as eEvent
 from Game.entities.player     import event, say
 from Game.utils.system.sound  import play
 from Game.utils.graphics      import escapeAnsi
 
+from Assets.data import (
+    totalGameStatus as s,
+    lockers         as l
+    )
 
-s, l = status, lockers
 
 # region Monster common code
 class Enemy:
@@ -95,14 +97,14 @@ class Enemy:
                 elif crit:    msg += f" {cc['fg']['L']}치명타!{cc['end']}"
 
                 if dmg: eEvent.hitted(self.y, self.x, self.icon, self.id, self.hashKey)
-                addLog(msg)
+                addLog(msg, colorKey='L')
                 if sound: play("entity", "enemy", "damage", sound)
                 if isHit: play(*attackSound)
 
     def attack(self, Dir:list, DR:str="") -> None:
         if randrange(1,101) <= eval(s.statusFormula['evasion']):
             play("player", "evasion")
-            addLog(f"{cc['fg']['F']}{self.name}{cc['end']}의 공격을 피했습니다!")
+            addLog(f"{cc['fg']['F']}{self.name}{cc['end']}의 공격을 피했습니다!", colorKey='A')
         else:
             sound  = ("entity", "enemy", "enemyHit")
             s.DROD = [f"{cc['fg']['F']}{self.name if not DR else DR}{cc['end']}", 'F']
@@ -122,13 +124,13 @@ class Enemy:
                 if s.df==0 and s.dfCrack<=0:
                     sound     = ("player", "armor", "crack")
                     s.dfCrack = 1
-                    addLog(f"{cc['fg']['B1']}방어구{cc['end']}가 부서졌습니다!")
+                    addLog(f"{cc['fg']['B1']}방어구{cc['end']}가 부서졌습니다!", colorKey='B1')
             else:
                 event.hitted()
                 s.hp -= self.atk
 
             play(*sound)
-            addLog(f"{s.lightName}이(가) {cc['fg']['F']}{self.name}{cc['end']}({self.icon}) 에 의해 {cc['fg']['R']}{self.atk}{cc['end']}만큼의 피해를 입었습니다!")
+            addLog(f"{s.lightName}이(가) {cc['fg']['F']}{self.name}{cc['end']}({self.icon}) 에 의해 {cc['fg']['R']}{self.atk}{cc['end']}만큼의 피해를 입었습니다!", colorKey='R')
 
     def knockback(self, Dir:list, length:int, atk:int) -> None:
         DRP = s.Dungeon[self.Dy][self.Dx]
@@ -139,7 +141,7 @@ class Enemy:
                 play("object", "wall", "hit")
                 eEvent.hitted(self.y, self.x, self.icon, self.id, self.hashKey)
                 self.hp -= atk-i
-                addLog(f"{cc['fg']['F']}{self.name}{cc['end']}이(가) {cc['fg']['L']}{atk-i}{cc['end']}만큼의 피해를 입었습니다! {cc['fg']['R']}(체력 : {self.hp}){cc['end']}")
+                addLog(f"{cc['fg']['F']}{self.name}{cc['end']}이(가) {cc['fg']['L']}{atk-i}{cc['end']}만큼의 피해를 입었습니다! {cc['fg']['R']}(체력 : {self.hp}){cc['end']}", colorKey='R')
                 return
             
             s.Dungeon[self.Dy][self.Dx]['room'][self.y][self.x] = self.stepped
@@ -175,11 +177,13 @@ class Enemy:
                 self.coolTime  = 0
             time.sleep(0.5)
 
-    def step(self, bfy:int, bfx:int) -> None:
+    def step(self, bfy:int, bfx:int, saveStepped:bool=True) -> None:
         s.Dungeon[self.Dy][self.Dx]['room'][bfy][bfx] = self.stepped
-        self.stepped = s.Dungeon[self.Dy][self.Dx]['room'][self.y][self.x]\
-                       if   s.Dungeon[self.Dy][self.Dx]['room'][self.y][self.x]['id'] in s.monsterInteractableBlocks['steppable']['maintainable']\
-                       else {"block" : " ", "id" : 0, "type" : 0}
+        if saveStepped:
+            self.stepped = s.Dungeon[self.Dy][self.Dx]['room'][self.y][self.x]\
+                                if s.Dungeon[self.Dy][self.Dx]['room'][self.y][self.x]['id'] in s.monsterInteractableBlocks['steppable']['maintainable']\
+                        else {"block" : " ", "id" : 0, "type" : 0}
+            
         s.Dungeon[self.Dy][self.Dx]['room'][self.y][self.x] = {
             "block"   : self.icon,
             "id"      : self.id,
@@ -209,7 +213,7 @@ class Pain(Enemy):
         DRP  = s.Dungeon[self.Dy][self.Dx]
 
         if not self.coolTime:
-            self.coolTime = int((randrange(60, 81)*10)/2) if s.publicMode else randrange(60, 81)*10
+            self.coolTime = int((randrange(60, 81)*10)/2) if s.sanjibaMode else randrange(60, 81)*10
             if self.isFocused:
                 if [self.Dy, self.Dx] != [s.Dy, s.Dx]: self.isFocused = False; return
                 
@@ -218,8 +222,8 @@ class Pain(Enemy):
                     if randrange(1,3000) == 1215:
                         self.atk += 1+(round(s.stage/10))
                         play("entity", "enemy", "pain", "growl")
-                        addLog(f"{cc['fg']['F']}{self.name}{cc['end']}({self.icon})이 울부짖습니다!")
-                        addLog(f"{cc['fg']['F']}{self.name}{cc['end']}({self.icon})의 공격력이 {cc['fg']['L']}{1+(round(s.stage/10))}{cc['end']} 상승합니다.")
+                        addLog(f"{cc['fg']['F']}{self.name}{cc['end']}({self.icon})이 울부짖습니다!",                                                          colorKey='F')
+                        addLog(f"{cc['fg']['F']}{self.name}{cc['end']}({self.icon})의 공격력이 {cc['fg']['L']}{1+(round(s.stage/10))}{cc['end']} 상승합니다.", colorKey='F')
                         for _ in range(3):
                             DRP['room'][self.y][self.x] = {"block" : f"{cc['fg']['F']}{self.icon}{cc['end']}", "id" : -1, "type" : 1, "hashKey" : self.hashKey}; time.sleep(0.1)
                             DRP['room'][self.y][self.x] = {"block" : self.icon, "id" : -1, "type" : 1, "hashKey" : self.hashKey};                                time.sleep(0.1)
@@ -289,12 +293,12 @@ class Unrest(Enemy):
 
         def Targetted() -> None:
             play("entity", "enemy", "unrest", "targetLock")
-            for _ in range(2):
-                DRP['room'][self.y][self.x] = {"block" : f"{cc['fg']['F']}{self.icon}{cc['end']}", "id" : -1, "type" : 1, "hashKey" : self.hashKey}; time.sleep(0.07)
-                DRP['room'][self.y][self.x] = {"block" : self.icon, "id" : -1, "type" : 1, "hashKey" : self.hashKey};                                time.sleep(0.07)
+            for _ in range(3):
+                DRP['room'][self.y][self.x] = {"block" : f"{cc['fg']['F']}{self.icon}{cc['end']}", "id" : -1, "type" : 1, "hashKey" : self.hashKey}; time.sleep(0.04)
+                DRP['room'][self.y][self.x] = {"block" : self.icon, "id" : -1, "type" : 1, "hashKey" : self.hashKey};                                time.sleep(0.04)
 
         if not self.coolTime:
-            self.coolTime = int((randrange(40, 51)*10)/2) if s.publicMode else randrange(40, 51)*10
+            self.coolTime = int((randrange(40, 51)*10)/2) if s.sanjibaMode else randrange(40, 51)*10
             if self.isFocused:
                 if [self.Dy, self.Dx] != [s.Dy, s.Dx]: self.isFocused = False; return
 
@@ -303,9 +307,12 @@ class Unrest(Enemy):
                     Moves, Moves1 = ["+=", "-="], ["+", "-"]
 
                     if (self.Dy, self.Dx)==(s.Dy, s.Dx) and (self.y==s.y or self.x==s.x):
+                        self.stepped = {"block" : s.ids[0], "id" : 0, "type" : 0}
+
                         if self.x == s.x:
-                            Targetted()
                             a = 0 if self.y<s.y else 1
+                            Targetted()
+
                             while 1:
                                 if not l.pause:
                                     if DRP['room'][eval(f"self.y{Moves1[a]}1")][self.x]["id"] == 300:
@@ -315,14 +322,15 @@ class Unrest(Enemy):
                                             ); break
                                     if DRP['room'][eval(f"self.y{Moves1[a]}1")][self.x]["id"] not in s.monsterInteractableBlocks['breakable']: break
 
-                                    DRP['room'][self.y][self.x] = {"block" : s.ids[0], "id" : 0, "type" : 0}
+                                    bfy, bfx = self.y, self.x
                                     exec(f"self.y{Moves[a]}1")
-                                    DRP['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id, "type" : 1, "hashKey" : self.hashKey}
+                                    super().step(bfy, bfx, saveStepped=False)
                                 time.sleep(0.09)
 
                         elif self.y == s.y:
-                            Targetted()
                             a = 0 if self.x<s.x else 1
+                            Targetted()
+
                             while 1:
                                 if not l.pause:
                                     if DRP['room'][self.y][eval(f"self.x{Moves1[a]}1")]["id"] == 300:
@@ -332,10 +340,12 @@ class Unrest(Enemy):
                                             ); break
                                     if DRP['room'][self.y][eval(f"self.x{Moves1[a]}1")]["id"] not in s.monsterInteractableBlocks['breakable']: break
 
-                                    DRP['room'][self.y][self.x] = {"block" : s.ids[0], "id" : 0, "type" : 0}
+                                    bfy, bfx = self.y, self.x
                                     exec(f"self.x{Moves[a]}1")
-                                    DRP['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id, "type" : 1, "hashKey" : self.hashKey}
+                                    super().step(bfy, bfx, saveStepped=False)
                                 time.sleep(0.09)
+
+                        DRP['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id, "type" : 1, "hashKey" : self.hashKey}
 
                     else:
                         if randrange(0,2):
@@ -422,7 +432,7 @@ class Resentment(Enemy):
         DRP = s.Dungeon[self.Dy][self.Dx]
             
         if not self.coolTime:
-            self.coolTime = 175 if s.publicMode else 350
+            self.coolTime = 175 if s.sanjibaMode else 350
             if self.isFocused:
                 if [self.Dy, self.Dx] != [s.Dy, s.Dx]: self.isFocused = False; return
 

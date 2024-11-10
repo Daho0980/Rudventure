@@ -1,22 +1,29 @@
-import random
+from random import choice
 
-from Assets.data             import status     as s
-from Assets.data             import percentage as per
-from Assets.data.color       import cColors    as cc
+from Assets.data.color       import cColors as cc
 from Game.core.system.logger import addLog
 from Game.utils              import system
-from Game.utils.modules      import cSelector, Textbox
 from Game.utils.system.sound import play
 
+from Assets.data import (
+    totalGameStatus as s,
+    percentage      as per,
+    UIPreset        as UIP,
+    markdown        as md
+)
+from Game.utils.modules import (
+    Textbox as t,
 
-t = Textbox
+    cSelector
+)
+
 
 def setIconColor() -> None:
     s.ids[4]   = f"{cc['fg']['Y']}É{cc['end']}"
     s.ids[5]   = f"{cc['fg']['R']}F{cc['end']}"
     s.ids[7]   = f"{cc['fg']['R']}X{cc['end']}"
-    s.ids[8]   = f"{cc['fg']['B1']}{s.cMarkdown(1)}O{cc['end']}"
-    s.ids[9]   = f"{cc['fg']['B1']}{s.cMarkdown(1)}o{cc['end']}"
+    s.ids[8]   = f"{cc['fg']['B1']}{md.cMarkdown(1)}O{cc['end']}"
+    s.ids[9]   = f"{cc['fg']['B1']}{md.cMarkdown(1)}o{cc['end']}"
     s.ids[10]  = f"{cc['fg']['R']}o{cc['end']}"
     s.ids[11]  = f"{cc['fg']['B1']}q{cc['end']}"
     s.ids[12]  = f"{cc['fg']['L']}v{cc['end']}"
@@ -46,7 +53,7 @@ def setIconColor() -> None:
 def main(stdscr) -> None:
     if s.frame == -1:
         frameSettings = cSelector.main(
-            f"{s.LOGO}\n를 시작하기 전에, 프레임을 설정해주세요",
+            f"{UIP.LOGO}\n를 시작하기 전에, 프레임을 설정해주세요",
             {
                 "1프레임"         : "정말로요...?",
                 "30프레임 (권장)" : "표준 설정입니다.",
@@ -104,9 +111,9 @@ f"뇌 빼고 엔터만 치고 계신 것 같으니 특별히\n\
         if len(temporaryName) == 0 or len(temporaryName.split()) == 0:
             cSelector.main(
                 t.TextBox(
-f"이름이 {cc['fg']['R']}{s.cMarkdown([2, 3])}없거나{cc['end']} \
-{cc['fg']['R']}{s.cMarkdown([2, 3])}공백 밖에 없으면{cc['end']}\n\
-말하기 {cc['fg']['R']}{s.cMarkdown([2, 3])}곤란{cc['end']}해지실게요",
+f"이름이 {cc['fg']['R']}{md.cMarkdown([2, 3])}없거나{cc['end']} \
+{cc['fg']['R']}{md.cMarkdown([2, 3])}공백 밖에 없으면{cc['end']}\n\
+말하기 {cc['fg']['R']}{md.cMarkdown([2, 3])}곤란{cc['end']}해지실게요",
                     Type        ="middle",
                     outDistance =1,
                     AMLS        =True,
@@ -190,23 +197,24 @@ f"이름이 {cc['fg']['R']}{s.cMarkdown([2, 3])}없거나{cc['end']} \
 
     s.name      = temporaryName
     s.lightName = s.lightName  or f"{s.playerColor[0]}{temporaryName}{cc['end']}"
-    if s.cowardMode:
+    if s.bodyPreservationMode:
         addLog(
-            random.choice([
-            f"우쭈쭈, 우리 {s.cMarkdown(2)}겁. 쟁. 이.{cc['end']} {s.lightName}님 오셨군요?",
+            choice([
+            f"우쭈쭈, 우리 {md.cMarkdown(2)}겁. 쟁. 이.{cc['end']} {s.lightName}님 오셨군요?",
             f"ㅋ, ㅋㅋㅎ, ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅎㅋㅋㅋㅋㅋㅎㅋㅎㅋ",
             f"전 {cc['fg']['L']}당ㅋ신{cc['end']}이 아ㅋ주 자랑ㅋ스럽습ㅋ니다. {cc['fg']['R']}정말ㅋ로요.{cc['end']}",
             "이런... 티타임이라도 즐기면서 하시려구요?",
             f"{cc['fg']['R']}매{cc['fg']['Y']}니{cc['fg']['B1']}큐{cc['fg']['L']}어{cc['end']}라도 바르고 오시지 그랬어요. {cc['fg']['R']}당신한테 딱{cc['end']}일 텐데 말이죠.",
             f"아, 하하하! 최근에 {cc['fg']['Y']}웃을 일{cc['end']}이 없었는데, 특별히 {cc['fg']['R']}광대가 되어줘서 고맙다{cc['end']}는 말을 해주고 싶네요."
-        ])
-            )
+            ]),
+            colorKey='Y'
+        )
     setIconColor()
 
 def presetted() -> None:
     if s.frame == -1:
         frameSettings = cSelector.main(
-            f"{s.LOGO}\n를 시작하기 전에, 프레임을 설정해주세요",
+            f"{UIP.LOGO}\n를 시작하기 전에, 프레임을 설정해주세요",
             {
                 "1프레임"         : "정말로요...?",
                 "30프레임 (권장)" : "표준 설정입니다.",
@@ -221,11 +229,12 @@ def presetted() -> None:
         s.frame     = 1/s.frameRate if s.frameRate else 0
     setIconColor()
     addLog(
-        random.choice([
+        choice([
             "ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ",
             f"아, 당신이군요ㅋㅋㅋ {cc['fg']['L']}자신감{cc['end']}이 {cc['fg']['R']}너무 없어서{cc['end']} 돌아오신 줄도 몰랐네요.",
             f"그래도 육신을 불러오는 방법은 아시는 것 같아 다행이네요. {cc['fg']['L']}겁쟁이 씨{cc['end']}.",
             f"육신 관리소에 몇 구나 들어차 있는지는 모르겠다만, 그게 {cc['fg']['Y']}마지막{cc['end']}이라면 좋겠네요 ;)",
-            f"아, 벌써 죽어서 돌아오신 건가요? 잠깐 잠이나 자려고 했는데 이렇게나 {cc['fg']['R']}{s.cMarkdown([2, 3])}빠르게{cc['end']} 오실 줄은 몰랐네요."
-        ])
+            f"아, 벌써 죽어서 돌아오신 건가요? 잠깐 잠이나 자려고 했는데 이렇게나 {cc['fg']['R']}{md.cMarkdown([2, 3])}빠르게{cc['end']} 오실 줄은 몰랐네요."
+        ]),
+        colorKey='Y'
     )

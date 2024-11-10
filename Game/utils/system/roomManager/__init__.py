@@ -1,16 +1,17 @@
 from random import randrange
 
-from Assets.data import status, lockers, percentage
-
-from Game.utils.system.roomManager.roomEvents import (
+from Assets.data import (
+    status     as s,
+    lockers    as l,
+    percentage as p
+)
+from .roomEvents import (
     treasure,
     normal,
     event,
     boss
 )
 
-s, l = status, lockers
-per  = percentage
 
 def main() -> None:
     if not l.isDying:
@@ -23,5 +24,5 @@ def main() -> None:
                     match data['eventType']:
                         case 0:     event.event0(data)
                         case 1|2|3: event.event1()
-                case 3: treasure.event(True if randrange(1,101)<=per.treasureComment else False)
+                case 3: treasure.event(True if randrange(1,101)<=p.treasureComment else False)
                 case 4: boss.event(data)

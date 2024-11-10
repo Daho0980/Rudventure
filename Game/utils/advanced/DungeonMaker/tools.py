@@ -1,11 +1,13 @@
-from copy import deepcopy
 from random import randrange, choice
+from copy   import deepcopy
 
-from Assets.data       import status, rooms
-from Assets.data.color import cColors      as cc
+from Assets.data.color import cColors as cc
 
+from Assets.data import (
+    status as s,
+    rooms  as r
+)
 
-s = status
 
 def graphicMaker(MapData:list):
     """
@@ -37,18 +39,18 @@ def makeRoom(Map:list):
         for column in range(len(output[row])):
             if len(output[row][column]) > 0:
                 if output[row][column]['roomType'] == 4:
-                    baseMap = deepcopy(rooms.bigRoom)
+                    baseMap = deepcopy(r.bigRoom)
                 elif output[row][column]['roomType'] == 3:
-                    baseMap = deepcopy(rooms.treasureRoom)
+                    baseMap = deepcopy(r.treasureRoom)
                 elif output[row][column]['roomType'] == 2 and output[row][column]['eventType'] in [1,2,3]:
-                    baseMap = deepcopy(rooms.chapel)
+                    baseMap = deepcopy(r.chapel)
                 elif output[row][column]['roomType'] == 0:
-                    baseMap = deepcopy(rooms.Room)
+                    baseMap = deepcopy(r.Room)
                 else: baseMap = deepcopy(choice(
                     [
-                        rooms.Room,
-                        rooms.verticallyLongRoom,
-                        rooms.horizonallyLongRoom
+                        r.Room,
+                        r.verticallyLongRoom,
+                        r.horizonallyLongRoom
                     ]
                 ))
                 c  = {
@@ -90,7 +92,7 @@ def makeRoom(Map:list):
                                 ['L',  f"{cc['fg']['L']}공격력{cc['end']} 1",            "s.atk += 1"],
                                 [
                                     'G1', f"{cc['fg']['G1']}재의 그릇{cc['end']} 1개",
-                                    "s.Mlvl += 1; play('system', 'ashDiskUp'); addLog(f\"{cc['fg']['G1']}재의 그릇{cc['end']}이 {cc['fg']['F']}1{cc['end']} 개 증가했습니다. (최대 레벨 {cc['fg']['G1']}{s.Mlvl-1}{cc['end']} -> {cc['fg']['F']}{s.Mlvl}{cc['end']})\")"
+                                    "s.Mlvl += 1; play('system', 'ashDiskUp'); logger.addLog(f\"{cc['fg']['G1']}재의 그릇{cc['end']}이 {cc['fg']['F']}1{cc['end']} 개 증가했습니다. (최대 레벨 {cc['fg']['G1']}{s.Mlvl-1}{cc['end']} -> {cc['fg']['F']}{s.Mlvl}{cc['end']})\", colorKey='G1')"
                                 ]
                             ][randrange(0, 4)]
 
@@ -172,7 +174,7 @@ event.readSign("'하하하, 터어어어얼렸구나!!'", 0.07, "clayModel")
                             }
                         }
 
-                RDP:list[int]        = list(output[row][column]["doorPos"].values())
+                RDP:list[int]        = list(output[row][column]["doors"].values())
                 GRDP:list[list[int]] = [
                     [0, c['x']],                 # U
                     [c['y'], len(baseMap[0])-1], # R
@@ -243,7 +245,7 @@ event.readSign("'하하하, 터어어어얼렸구나!!'", 0.07, "clayModel")
                     }
 
                 dp         = [['U', 'D'], ['D', 'U'], ['L', 'R'], ['R', 'L']]
-                doorValues = list(output[row][column]['doorPos'].values())
+                doorValues = list(output[row][column]['doors'].values())
                 grd        = [
                     [R0DPG['U'], SBDPG['D']],
                     [R0DPG['D'], SBDPG['U']],
@@ -264,8 +266,8 @@ event.readSign("'하하하, 터어어어얼렸구나!!'", 0.07, "clayModel")
                 
                 for i in range(len(p)):
                         if output[p[i][0]][p[i][1]]['roomType'] != 4:
-                            output[row][column]['doorPos'][dp[i][0]]      = 1
-                            output[p[i][0]][p[i][1]]['doorPos'][dp[i][1]] = 1
+                            output[row][column]['doors'][dp[i][0]]      = 1
+                            output[p[i][0]][p[i][1]]['doors'][dp[i][1]] = 1
 
                             output[row][column]['room'][grd[i][0][0]][grd[i][0][1]]      = {"block":s.ids[2], "id":2, "type":0}
                             output[p[i][0]][p[i][1]]['room'][grd[i][1][0]][grd[i][1][1]] = {"block":s.ids[2], "id":2, "type":0}
