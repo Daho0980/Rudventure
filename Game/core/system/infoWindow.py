@@ -1,5 +1,5 @@
-from .dataLoader        import elm
-from Assets.data.status import infoWindow
+from .dataLoader                 import elm
+from Assets.data.totalGameStatus import infoWindow
 
 
 def add(icon:str,

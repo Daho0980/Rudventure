@@ -1,6 +1,6 @@
 import heapq
 
-from Assets.data import status as s
+from Assets.data import totalGameStatus as s
 
 
 def heuristic(a, b):

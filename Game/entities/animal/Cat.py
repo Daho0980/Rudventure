@@ -11,9 +11,9 @@ from Game.core.system.logger     import addLog
 from Game.core.system.dataLoader import obj
 
 from Assets.data import (
-    comments as c,
-    lockers  as l, 
-    status   as s
+    totalGameStatus as s,
+    comments        as c,
+    lockers         as l
 )
 from Game.entities import (
     player as p,

@@ -1,7 +1,7 @@
 import curses
 import random
 
-from Assets.data import status as s
+from Assets.data import totalGameStatus as s
 
 from Game.utils.graphics import (
     escapeAnsi,

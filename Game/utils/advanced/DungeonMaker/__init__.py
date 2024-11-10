@@ -1,5 +1,5 @@
-from Assets.data         import status  as s
-from Assets.data.color   import cColors as cc
+from Assets.data         import totalGameStatus as s
+from Assets.data.color   import cColors         as cc
 from Game.utils.graphics import joineach
 
 from .roomData   import data as rData

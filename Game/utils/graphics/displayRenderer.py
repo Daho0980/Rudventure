@@ -133,7 +133,6 @@ def render(stdscr, grid:list):
         `grid`(list(2d)) : 맵의 그래픽 데이터가 포함됨.
     """
     global noiseBuffer
-    global elapsedTime
 
     y, x    = stdscr.getmaxyx()
     Display = []

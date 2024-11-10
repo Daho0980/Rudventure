@@ -12,8 +12,8 @@ from Game.utils.graphics      import escapeAnsi
 from Game.utils.system.sound  import play # 계속 이거 지우는데 지우지마라
 
 from Assets.data import (
-    status   as s,
-    comments as c # 얘도 쓰는거임
+    totalGameStatus as s,
+    comments        as c # 얘도 쓰는거임
     )
 
 

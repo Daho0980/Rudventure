@@ -7,8 +7,8 @@ from Game.core.system.logger import addLog
 from Game.utils.system.sound import play
 
 from Assets.data import (
-    comments as c,
-    status   as s
+    totalGameStatus as s,
+    comments        as c
 )
 
 

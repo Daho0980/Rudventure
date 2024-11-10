@@ -2,16 +2,16 @@ import curses
 import asyncio
 import threading
 
-from Assets.data.status      import key
-from Game.core.system        import infoWindow
-from Game.core.system.logger import addLog
-from Game.entities           import player
-from Game.utils.graphics     import level
-from Game.utils.system.sound import play
+from Assets.data.totalGameStatus import key
+from Game.core.system            import infoWindow
+from Game.core.system.logger     import addLog
+from Game.entities               import player
+from Game.utils.graphics         import level
+from Game.utils.system.sound     import play
 
 from Assets.data import (
-    lockers as l,
-    status  as s,
+    totalGameStatus as s,
+    lockers         as l,
 
     color
 )

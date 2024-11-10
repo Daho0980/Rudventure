@@ -3,8 +3,8 @@ from random import choice
 from Game.entities.player import say
 
 from Assets.data import (
-    comments as c,
-    status   as s
+    totalGameStatus as s,
+    comments        as c
 )
 
 

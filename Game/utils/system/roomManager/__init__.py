@@ -1,9 +1,9 @@
 from random import randrange
 
 from Assets.data import (
-    status     as s,
-    lockers    as l,
-    percentage as p
+    totalGameStatus as s,
+    percentage      as p,
+    lockers         as l
 )
 from .roomEvents import (
     treasure,

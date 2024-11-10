@@ -4,8 +4,8 @@ from copy   import deepcopy
 from Assets.data.color import cColors as cc
 
 from Assets.data import (
-    status as s,
-    rooms  as r
+    totalGameStatus as s,
+    rooms           as r
 )
 
 

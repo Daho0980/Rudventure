@@ -5,10 +5,10 @@ from   random   import randrange, choices, choice
 from Game.entities.player import say
 
 from Assets.data import (
-    percentage as p,
-    comments   as c,
-    lockers    as l,
-    status     as s
+    totalGameStatus as s,
+    percentage      as p,
+    comments        as c,
+    lockers         as l
 )
 
 

@@ -4,9 +4,9 @@ from Game.entities.player    import say
 from Game.utils.system.sound import play
 
 from Assets.data import (
-    percentage as p,
-    comments   as c,
-    status     as s
+    totalGameStatus as s,
+    percentage      as p,
+    comments        as c
 )
 from Game.utils.system.roomManager.interactions import (
     placeRandomOrbs,

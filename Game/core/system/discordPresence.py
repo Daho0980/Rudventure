@@ -2,7 +2,7 @@ import time
 from   pypresence import Presence
 
 from .dataLoader import elm
-from Assets.data import status as s
+from Assets.data import totalGameStatus as s
 
 
 currentStatus:dict[str,dict] = {

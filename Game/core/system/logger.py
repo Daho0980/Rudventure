@@ -8,8 +8,8 @@ from Assets.data.color   import cColors   as cc
 from Game.utils.graphics import escapeAnsi
 
 from Assets.data import (
-    status  as s,
-    lockers as l
+    totalGameStatus as s,
+    lockers         as l
 )
 
 

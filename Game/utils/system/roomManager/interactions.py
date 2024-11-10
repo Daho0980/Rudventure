@@ -1,8 +1,8 @@
 import threading
 from   random   import randrange, choice
 
-from Assets.data          import status    as s
-from Assets.data.color    import cColors   as cc
+from Assets.data          import totalGameStatus as s
+from Assets.data.color    import cColors         as cc
 from Game.entities.entity import addMonster
 from Game.utils.system    import placeRandomBlock
 

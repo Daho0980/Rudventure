@@ -2,8 +2,8 @@ import threading
 from audioplayer import AudioPlayer
 
 from Assets.data import (
-    status  as s,
-    lockers as l
+    totalGameStatus as s,
+    lockers         as l
 )
 
 

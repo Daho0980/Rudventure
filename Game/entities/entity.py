@@ -2,8 +2,8 @@ import time
 import threading
 from   random   import randrange
 
-from Assets.data                 import status  as s
-from Assets.data.color           import cColors as cc
+from Assets.data                 import totalGameStatus as s
+from Assets.data.color           import cColors         as cc
 from Game.core.system.logger     import addLog
 from Game.core.system.dataLoader import obj
 from Game.utils.system.sound     import play
