@@ -1,4 +1,4 @@
-from Assets.data                import status as s
+from Assets.data                import totalGameStatus as s
 from Game.utils.modules.Textbox import TextBox
 from Game.utils.graphics        import anchor
 

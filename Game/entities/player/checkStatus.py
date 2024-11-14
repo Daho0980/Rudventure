@@ -27,7 +27,7 @@ def ashChipCheck() -> None:
         s.ashChip -= 100
         s.Mlvl    += 1
         play("system", "ashDiskUp")
-        addLog(f"{cc['fg']['G1']}재의 그릇{cc['end']}이 {cc['fg']['F']}1{cc['end']} 개 증가했습니다. (최대 레벨 {cc['fg']['G1']}{s.Mlvl-1}{cc['end']} -> {cc['fg']['F']}{s.Mlvl}{cc['end']})", colorKey='G1')
+        addLog(f"{cc['fg']['G1']}재의 그릇{cc['end']}의 수가 증가했습니다. (그릇의 수 {cc['fg']['G1']}{s.Mlvl-1}{cc['end']} -> {cc['fg']['F']}{s.Mlvl}{cc['end']})", colorKey='G1')
 
 def curseCheck() -> None:
     if s.lvl >= s.Mlvl: pev.cursedDeath()

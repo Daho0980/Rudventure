@@ -70,11 +70,14 @@ def addMonster(entityID:int,
         exec(f"""
 import time
              
-from   Assets.data         import lockers, status
 from   Game.entities.enemy import mobs
-from   Game.utils.system   import xpSystem        as xps
-
-l, s = lockers, status
+from   Game.utils.system   import xpSystem as xps
+             
+from Assets.data import (
+    totalGameStatus as s,
+    lockers         as l
+)
+             
              
 {mClass} = mobs.{mClass}("{name}", "{icon}", {mID}, "{hashKey}")
 {mClass}.start({((hp-2 if s.ezMode else hp)*hpMtp)+((s.stage-1)*2)}, {((atk)*atkMtp)+(s.stage-1)}, {Dy}, {Dx}, {y}, {x})
@@ -176,11 +179,16 @@ def addAnimal(entityID:int,
 
     def EntityInteraction() -> None:
         exec(f"""
-from   Assets.data          import lockers, status
+import time
+
 from   Game.entities.animal import {entity}
 from   Game.utils.system    import xpSystem as xps
 
-l, s = lockers, status
+from Assets.data import (
+    totalGameStatus as s,
+    lockers         as l
+)
+
              
 {entity} = {entity}.{entity}(
     "{entity}", "{name}", "{icon}", {entityID},

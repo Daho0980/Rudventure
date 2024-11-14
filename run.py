@@ -1,7 +1,7 @@
 #!/usr/bin/env python3.10
 import sys, os
 
-from Assets.data import status as s
+from Assets.data import totalGameStatus as s
 
 
 directory = os.path.dirname(os.path.realpath(__file__))
