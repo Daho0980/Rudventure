@@ -3,6 +3,7 @@ import time
 from   random import randrange, choice
 
 from .                        import event        as eEvent
+from .status                  import cooltimes
 from Assets.data.color        import cColors      as cc
 from Assets.data.comments     import TIOTAComments
 from Game.core.system.logger  import addLog
@@ -205,7 +206,11 @@ class Pain(Enemy):
 
     - 보스방 스폰 가능
     """
-    def __init__(self, name, icon, ID, hashKey): super().__init__(name, icon, ID, hashKey)
+    def __init__(self, name, icon, ID, hashKey):
+        super().__init__(name, icon, ID, hashKey)
+        self.coolTimes = cooltimes.Pain()
+
+        if s.sanjibaMode: self.coolTimes.divideHalf()
 
     def start(self, setHp:int, setAtk:int, Dy:int, Dx:int, y:int, x:int) -> None: super().start(setHp, setAtk, Dy, Dx, y, x)
 
@@ -213,7 +218,8 @@ class Pain(Enemy):
         DRP  = s.Dungeon[self.Dy][self.Dx]
 
         if not self.coolTime:
-            self.coolTime = int((randrange(60, 81)*10)/2) if s.sanjibaMode else randrange(60, 81)*10
+            # self.coolTime = int((randrange(60, 81)*10)/2) if s.sanjibaMode else randrange(60, 81)*10
+            self.coolTime = randrange(*self.coolTimes.turnEnd)
             if self.isFocused:
                 if [self.Dy, self.Dx] != [s.Dy, s.Dx]: self.isFocused = False; return
                 
@@ -284,21 +290,28 @@ class Unrest(Enemy):
 
     - 보스방 스폰 가능
     """
-    def __init__(self, name, icon, ID, hashKey): super().__init__(name, icon, ID, hashKey)
+    def __init__(self, name, icon, ID, hashKey):
+        super().__init__(name, icon, ID, hashKey)
+        self.coolTimes = cooltimes.Unrest()
+
+        if s.sanjibaMode: self.coolTimes.divideHalf()
 
     def start(self, setHp:int, setAtk:int, Dy:int, Dx:int, y:int, x:int) -> None: super().start(setHp, setAtk, Dy, Dx, y, x)
+
+    def Targetted(self, DRP) -> None:
+        play("entity", "enemy", "unrest", "targetLock")
+        for _ in range(3):
+            DRP['room'][self.y][self.x] = {"block" : f"{cc['fg']['F']}{self.icon}{cc['end']}", "id" : -1, "type" : 1, "hashKey" : self.hashKey}
+            time.sleep(self.coolTimes.targetted)
+            DRP['room'][self.y][self.x] = {"block" : self.icon, "id" : -1, "type" : 1, "hashKey" : self.hashKey}
+            time.sleep(self.coolTimes.targetted)
 
     def move(self) -> None:
         DRP = s.Dungeon[self.Dy][self.Dx]
 
-        def Targetted() -> None:
-            play("entity", "enemy", "unrest", "targetLock")
-            for _ in range(3):
-                DRP['room'][self.y][self.x] = {"block" : f"{cc['fg']['F']}{self.icon}{cc['end']}", "id" : -1, "type" : 1, "hashKey" : self.hashKey}; time.sleep(0.04)
-                DRP['room'][self.y][self.x] = {"block" : self.icon, "id" : -1, "type" : 1, "hashKey" : self.hashKey};                                time.sleep(0.04)
-
         if not self.coolTime:
-            self.coolTime = int((randrange(40, 51)*10)/2) if s.sanjibaMode else randrange(40, 51)*10
+            # self.coolTime = int((randrange(40, 51)*10)/2) if s.sanjibaMode else randrange(40, 51)*10
+            self.coolTime = randrange(*self.coolTimes.turnEnd)
             if self.isFocused:
                 if [self.Dy, self.Dx] != [s.Dy, s.Dx]: self.isFocused = False; return
 
@@ -311,7 +324,7 @@ class Unrest(Enemy):
 
                         if self.x == s.x:
                             a = 0 if self.y<s.y else 1
-                            Targetted()
+                            self.Targetted(DRP)
 
                             while 1:
                                 if not l.pause:
@@ -325,11 +338,11 @@ class Unrest(Enemy):
                                     bfy, bfx = self.y, self.x
                                     exec(f"self.y{Moves[a]}1")
                                     super().step(bfy, bfx, saveStepped=False)
-                                time.sleep(0.09)
+                                time.sleep(self.coolTimes.rush)
 
                         elif self.y == s.y:
                             a = 0 if self.x<s.x else 1
-                            Targetted()
+                            self.Targetted(DRP)
 
                             while 1:
                                 if not l.pause:
@@ -343,7 +356,7 @@ class Unrest(Enemy):
                                     bfy, bfx = self.y, self.x
                                     exec(f"self.x{Moves[a]}1")
                                     super().step(bfy, bfx, saveStepped=False)
-                                time.sleep(0.09)
+                                time.sleep(self.coolTimes.rush)
 
                         DRP['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id, "type" : 1, "hashKey" : self.hashKey}
 
@@ -372,7 +385,13 @@ class Resentment(Enemy):
     
     - 보스방에서는 스폰되지 않음.
     """
-    def __init__(self, name, icon, ID, hashKey): super().__init__(name, icon, ID, hashKey)
+    def __init__(self, name, icon, ID, hashKey):
+        super().__init__(name, icon, ID, hashKey)
+        self.coolTimes = cooltimes.Resentment()
+
+        if s.sanjibaMode:
+            self.coolTimes.divideHalf()
+            addLog(str(self.coolTimes.blink), duration=1000)
 
     def start(self,
               setHp:int,
@@ -384,13 +403,15 @@ class Resentment(Enemy):
     ) -> None: super().start(setHp, setAtk, Dy, Dx, y, x)
 
     def blink(self, DRP) -> None:
-        DRP['room'][self.y][self.x] = {"block" : f"{cc['fg']['F']}{self.icon}{cc['end']}", "id" : -1, "type" : 1, "hashKey" : self.hashKey}; time.sleep(0.07)
-        DRP['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id, "type" : 1, "hashKey" : self.hashKey};                           time.sleep(0.07)
+        DRP['room'][self.y][self.x] = {"block" : f"{cc['fg']['F']}{self.icon}{cc['end']}", "id" : -1, "type" : 1, "hashKey" : self.hashKey}
+        time.sleep(self.coolTimes.blink)
+        DRP['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id, "type" : 1, "hashKey" : self.hashKey}
+        time.sleep(self.coolTimes.blink)
 
     def targetted(self, DRP) -> None:
         for _ in range(3): self.blink(DRP)
 
-    def explode(self, DRP) -> None:
+    def explotion(self, DRP) -> None:
         expPs = [
             [self.y-1,self.x],
             [self.y+1,self.x],
@@ -412,7 +433,7 @@ class Resentment(Enemy):
                         "count" : 0
                     }
                     }
-        time.sleep(0.07)
+        time.sleep(self.coolTimes.explotion)
             
         for expP in expPs:
             if DRP['room'][expP[0]][expP[1]] == {"block" : f"{cc['fg']['F']}.{cc['end']}", "id" : -1, "type" : 0}:
@@ -432,7 +453,7 @@ class Resentment(Enemy):
         DRP = s.Dungeon[self.Dy][self.Dx]
             
         if not self.coolTime:
-            self.coolTime = 175 if s.sanjibaMode else 350
+            self.coolTime = self.coolTimes.turnEnd
             if self.isFocused:
                 if [self.Dy, self.Dx] != [s.Dy, s.Dx]: self.isFocused = False; return
 
@@ -454,7 +475,7 @@ class Resentment(Enemy):
                             play("entity", "enemy", "resentment", "explosion")
                             self.attack([0, 0], "폭발")
                             
-                            self.explode(DRP)
+                            self.explotion(DRP)
                             self.xpMultiplier = 2
                             if randrange(0,2): say(choice(TIOTAComments))
                         else: DRP['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id, "type" : 1, "hashKey" : self.hashKey}

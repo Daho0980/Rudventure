@@ -7,20 +7,20 @@ from Game.utils.graphics import escapeAnsi
 
 
 ftColors:dict = {
-        "B" :  (0,0,0),
-        "M" :  (116,19,13),
-        "G" :  (56,125,33),
-        "O" :  (127,127,38),
-        "N" :  (0,0,122),
-        "P" :  (116,19,123),
-        "T" :  (56,125,126),
+        "B" :  (0  ,0  ,0  ),
+        "M" :  (116,19 ,13 ),
+        "G" :  (56 ,125,33 ),
+        "O" :  (127,127,38 ),
+        "N" :  (0  ,0  ,122),
+        "P" :  (116,19 ,123),
+        "T" :  (56 ,125,126),
         "S" :  (185,185,185),
         "G1" : (127,127,127),
-        "R" :  (234,51,35),
-        "L" :  (117,251,76),
-        "Y" :  (255,255,85),
-        "B1" : (0,0,245),
-        "F" :  (234,51,247),
+        "R" :  (234,51 ,35 ),
+        "L" :  (117,251,76 ),
+        "Y" :  (255,255,85 ),
+        "B1" : (0,  0  ,245),
+        "F" :  (234,51 ,247),
         "A" :  (117,251,253),
         "W" :  (243,243,243),
 
@@ -73,17 +73,17 @@ curse:str = "Qupldeði hijaįo katwaįzΩjim-halað hijaði jizok qil, qupldeði
 noise:str = f"{curse}{textObfuscator(curse, r=9)}"
 line:str  = "━"*100
 
-draw.text((80, 182),  text,                  font=font, fill=(214,222,235)      ) # text
-draw.text((200, 350), s.name,                font=font, fill=ftColors[s.playerColor[1]]      ) # name
-draw.text((200, 371), escapeAnsi(s.DROD[0]), font=font, fill=ftColors[s.DROD[1]]) # deadReason
-draw.text((250, 413), str(s.stage),          font=font, fill=ftColors['Y']      ) # stage
-draw.text((300, 434), str(s.killCount),      font=font, fill=ftColors['R']      ) # killCount
-draw.text((320, 455), str(s.lvl),            font=font, fill=ftColors['F']      ) # level
+draw.text((80 , 182), text,                  font=font, fill=(214,222,235)             ) # text
+draw.text((200, 350), s.name,                font=font, fill=ftColors[s.playerColor[1]]) # name
+draw.text((200, 371), escapeAnsi(s.DROD[0]), font=font, fill=ftColors[s.DROD[1]]       ) # deadReason
+draw.text((250, 413), str(s.stage),          font=font, fill=ftColors['Y']             ) # stage
+draw.text((300, 434), str(s.killCount),      font=font, fill=ftColors['R']             ) # killCount
+draw.text((320, 455), str(s.lvl),            font=font, fill=ftColors['F']             ) # level
 
-draw.text((0, 595),  noise, font=font, fill=(214,222,235)) # downside bar
+draw.text((0, 595 ), noise, font=font, fill=(214,222,235)) # downside bar
 draw.text((0, -108), noise, font=font, fill=(214,222,235)) # upside bar
-draw.text((0, 100),  line,  font=font, fill=(214,222,235)) # downside line
-draw.text((0, 575),  line,  font=font, fill=(214,222,235)) # upside line
+draw.text((0, 100 ), line,  font=font, fill=(214,222,235)) # downside line
+draw.text((0, 575 ), line,  font=font, fill=(214,222,235)) # upside line
 
 if s.ezMode:
     draw.text((255, 515), "with", font=font, fill=(214, 222, 235))

@@ -3,7 +3,8 @@ import json
 from   zlib   import compress, decompress
 from   base64 import b64encode, b64decode
 
-from Game.core.system import jsonDataKeyRecover as jdkr
+from Game.core.system        import jsonDataKeyRecover as jdkr
+from Game.core.system.logger import addLog
 
 from Assets.data import (
     totalGameStatus as s,
@@ -42,7 +43,7 @@ def save() -> int:
         saveJson  = open(file_path, 'w')
 
         Vars = [
-            "name", "playerIcon", "playerDamageIcon", "playerColor",
+            "name", "playerDamageIcon", "playerColor",
             "playerVoice",
             "stage", "killCount", "inventory",
             "hp", "df", "atk", "hunger", "xp", "lvl", "ashChip",
@@ -79,7 +80,9 @@ def save() -> int:
         with open(file_path, 'w') as encodeFile:
             for line in encodeData: encodeFile.write(f"{line}\n")
         _changeExtention(f"{s.TFP}saveData{s.s}{s.name}", beforeExt=".json", afterExt=".rud")
-    except: return 0
+    except Exception as e:
+        addLog(f"세이브 저장에 실패했습니다 : {e}")
+        return 0
     else:   return 1
 
 def load(name:str):

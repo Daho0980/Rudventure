@@ -68,8 +68,8 @@ if __name__ == '__main__':
     from random import randrange
 
     while 1:
-        radius =3
-        center =(
+        radius = 3
+        center = (
             randrange(10, 20),
             randrange(10, 20)
             )
