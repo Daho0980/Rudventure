@@ -16,4 +16,4 @@ def play(*path, loop:bool=False) -> None:
             ).play(loop=loop, block=True),
             name  ="sound",
             daemon=True
-            ).start()
+        ).start()
