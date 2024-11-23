@@ -1,18 +1,16 @@
 # -*- coding: utf-8 -*-
-import curses
-import time, random
-from   cusser      import Cusser
+import time ; import curses ; import random
+from   cusser                 import Cusser
 
-from .entities                              import entity, player
-from .entities.player                       import checkStatus           as cs
-from .scenes                                import mainSettings, mainMenu
-from .utils.advanced                        import DungeonMaker, keyHandler
-from .utils.advanced.Rudconverter           import save
-from .utils.graphics                        import escapeAnsi, anchor
-from .utils.modules                         import Textbox, cSelector
-from .utils.system                          import roomManager
-from .utils.system.sound                    import play
-from .utils.system.roomManager.interactions import placeRandomOrbs
+from .entities                    import entity, player
+from .entities.player             import checkStatus           as cs
+from .scenes                      import mainSettings, mainMenu
+from .utils.advanced              import DungeonMaker, keyHandler
+from .utils.advanced.Rudconverter import save
+from .utils.graphics              import escapeAnsi, anchor
+from .utils.modules               import Textbox, cSelector
+from .utils.system                import roomManager
+from .utils.system.sound          import play
 
 from Assets.data import (
     totalGameStatus as s,
@@ -30,6 +28,9 @@ from .core.system import (
 from .utils.graphics import (
     displayRenderer,
     stageRenderer
+)
+from .utils.system.roomManager.interactions import (
+    placeRandomOrbs
 )
 
 
@@ -57,7 +58,7 @@ def gameChecker(stdscr) -> None:
             dp.update()
 
             s.killAll = True
-            comment   = random.choice(c.defeatComments["CO"if s.lvl>=s.Mlvl else"HL"if s.hp<=0 else"HUL"])
+            comment   = random.choice(c.defeat["CO"if s.lvl>=s.Mlvl else"HL"if s.hp<=0 else"HUL"])
             stdscr.nodelay(False)
 
             play("system", "defeat")
@@ -133,7 +134,7 @@ def gameChecker(stdscr) -> None:
             anchor(
                 stdscr,
                 Textbox.TextBox(
-                    f"   {cc['fg']['L']}지 배   성 공{cc['end']}   \n\n   {cc['fg']['L']}\"{random.choice(c.victoryComments[int((s.hp/s.Mhp)*3)])}{cc['fg']['L']}\"{cc['end']}   ",
+                    f"   {cc['fg']['L']}지 배   성 공{cc['end']}   \n\n   {cc['fg']['L']}\"{random.choice(c.victory[int((s.hp/s.Mhp)*3)])}{cc['fg']['L']}\"{cc['end']}   ",
                     Type        ="middle",
                     inDistance  =1,
                     outDistance =1,
@@ -182,7 +183,10 @@ else: mainSettings.presetted()
 stdscr.nodelay(True)
 
 keyHandler.add()
-from Game.core.system import soliloquy
+from Game.core.system import (
+    frameCounter,
+    soliloquy
+)
 
 logger.addLog(f"포트는 {cc['fg']['L']}{s.port}{cc['end']}입니다.", colorKey='Y')
 if not dp.isConnected:
@@ -215,7 +219,9 @@ while s.main:
             MCBF     =True,
             SICR     =True,
             extraData={"loyalty":10}      )
-    if s.isLoadfromBody: entity.loadEntities()
+    elif s.isLoadfromBody and not l.isSaveLoaded:
+        l.isSaveLoaded = True
+        entity.loadEntities()
     
     stageRenderer.showStage(
         stdscr,
@@ -225,12 +231,12 @@ while s.main:
     if not s.stage:
         player.say(
             random.choice(
-                c.loadsaveStartComments\
+                c.loadsaveStart\
                     if  s.bodyPreservationMode
                     and s.isLoadfromBody\
-                else c.startCommentsWithCowardmode\
+                else c.startWithCowardmode\
                     if s.bodyPreservationMode\
-                else c.startComments
+                else c.start
             )
         )
 
@@ -255,7 +261,8 @@ while s.main:
     while not q.quest():
         if s.hp<=0 or s.hunger<=0 or not s.main: break
         if l.jpsf:
-            displayRenderer.render(stdscr, s.Dungeon[s.Dy][s.Dx]['room'])
+            a_render = time.perf_counter()
+            displayRenderer.render(stdscr)
             if not l.pause:
                 playerChecker()
 
@@ -264,7 +271,8 @@ while s.main:
                     quickStarter = 1
 
                 roomManager.main()
-            time.sleep(s.frame)
+            
+            time.sleep(max((s.frame-(time.perf_counter()-a_render)), 0))
         else: time.sleep(1)
 
     if s.hunger <= 0: s.DROD = [f"{cc['fg']['Y']}아사{cc['end']}", 'Y']

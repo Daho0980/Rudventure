@@ -1,4 +1,5 @@
-import json, os
+import os
+import json
 
 from Assets.data import totalGameStatus as s
 from .           import discordPresence as dp

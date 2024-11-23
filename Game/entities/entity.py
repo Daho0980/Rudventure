@@ -1,13 +1,15 @@
-import time
-import threading
-from   random   import randrange
+import time ; import threading
+from   random import randrange
 
-from Assets.data                 import totalGameStatus as s
 from Assets.data.color           import cColors         as cc
 from Game.core.system.logger     import addLog
 from Game.core.system.dataLoader import obj
 from Game.utils.system.sound     import play
 from Game.utils.advanced         import hashGenerator
+
+from Assets.data import (
+    totalGameStatus as s
+)
 
 
 extraParameters = lambda data: ','.join(f"{k}={v}" for k, v in data.items())

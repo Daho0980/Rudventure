@@ -1,7 +1,5 @@
-import math
-import time
-import psutil
-from   random import randrange, choices, choice
+import math ; import time ; import psutil
+from   random               import randrange, choices, choice
 
 from Assets.data.color           import cColors as cc
 from Game.core.system.structures import Conveyor
@@ -25,7 +23,7 @@ noiseBuffer = ""
 
 logCache:Conveyor = Conveyor(1, True)
 
-s.startTime         = time.perf_counter()
+s.startTime = time.perf_counter()
 
 def statusBar(status:int,
               statusName:str    ="",
@@ -126,13 +124,15 @@ def curseNoise(stdscr) -> str:
 
     return output
 
-def render(stdscr, grid:list):
+def render(stdscr):
     """
     메인 디스플레이 출력 함수
 
         `grid`(list(2d)) : 맵의 그래픽 데이터가 포함됨.
     """
     global noiseBuffer
+
+    grid = s.Dungeon[s.Dy][s.Dx]['room']
 
     y, x    = stdscr.getmaxyx()
     Display = []
@@ -267,7 +267,8 @@ Number of enemies : {s.enemyCount}
 Number of total entities : {s.totalEntityCount}
 soliloquy : ({s.soliloquyCount}, {s.soliloquyRange}, {p.soliloquy['min']}, {p.soliloquy['max']})
 
-Elapsed time : {s.elapsedTime:.2f}""",
+Elapsed time : {s.elapsedTime:.2f}
+FPS : {s.currentFrame}""",
             Type         ="right",
             AMLS         =True,
             LineType     ="bold",
@@ -293,3 +294,4 @@ Elapsed time : {s.elapsedTime:.2f}""",
 
     stdscr.erase()
     stdscr.addstr(''.join(Display))
+    s.elapsedFrame += 1

@@ -1,6 +1,5 @@
-import time
-import threading
-from   random   import randrange, choices, choice
+import time ; import threading
+from   random import randrange, choices, choice
 
 from Game.entities.player import say
 
@@ -20,8 +19,8 @@ def counter() -> None:
             if s.soliloquyCount == s.soliloquyRange:
                 say(choices(
                     [
-                        choice(c.soliloquyComments['ELS']),
-                        choice(c.soliloquyComments[
+                        choice(c.soliloquy['ELS']),
+                        choice(c.soliloquy[
                             choice([
                                 "HL"  if s.hpLow==True          else "ELS",
                                 "HUL" if round(s.hunger/20)<=30 else "ELS",

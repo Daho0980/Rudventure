@@ -1,6 +1,5 @@
-import curses
-import asyncio
-import threading
+import curses ; import asyncio
+import               threading
 
 from Assets.data.totalGameStatus import key
 from Game.core.system            import infoWindow

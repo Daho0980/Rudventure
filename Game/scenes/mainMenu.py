@@ -1,10 +1,8 @@
-import os
-import curses
+import os   ; import curses
 from   random import choice
 
 from Game.core.system                 import configs
 from Game.core.system.dataLoader      import elm
-from Game.scenes                      import checkColor, checkTerminalSize
 from Game.utils.advanced.Rudconverter import load
 from Game.utils.graphics              import animation, anchor
 
@@ -14,6 +12,10 @@ from Assets.data import (
     comments        as c,
 
     color
+)
+from Game.scenes import (
+    checkTerminalSize,
+    checkColor
 )
 from Game.utils.modules import (
     cSelector as clc,
@@ -49,8 +51,8 @@ def setData(data):
     s.killCount = statusData['killCount']
 
     s.bodyPreservationMode = statusData['bodyPreservationMode']
-    s.ezMode     = statusData["ezMode"]
-    s.sanjibaMode = statusData['sanjibaMode']
+    s.ezMode               = statusData['ezMode']
+    s.sanjibaMode          = statusData['sanjibaMode']
 
     s.ids[300]         = statusData['playerIcon']
     s.playerDamageIcon = statusData['playerDamageIcon']
@@ -59,18 +61,20 @@ def setData(data):
 
     s.entityDataMaintained = statusData['entityDataMaintained']
     
-    c.lowHpComments               = commentData['lowHpComments']
-    c.treasureRoomComments        = commentData['treasureRoomComments']
-    c.defeatComments              = commentData['defeatComments']
-    c.victoryComments             = commentData['victoryComments']
-    c.TIOTAComments               = commentData['TIOTAComments']
-    c.collideComments             = commentData['collideComments']
-    c.clayModelAnswerComments     = commentData['clayModelAnswerComments']
-    c.startComments               = commentData['startComments']
-    c.startCommentsWithCowardmode = commentData['startCommentsWithCowardmode']
-    c.loadsaveStartComments       = commentData['loadsaveStartComments']
-    c.soliloquyComments           = commentData['soliloquyComments']
-    c.enterinBattleComments       = commentData['enterinBattleComments']
+    c.lowHp               = commentData['lowHp']
+    c.treasureRoom        = commentData['treasureRoom']
+    c.defeat              = commentData['defeat']
+    c.victory             = commentData['victory']
+    c.TIOTA               = commentData['TIOTA']
+    c.collide             = commentData['collide']
+    c.clayModelAnswer     = commentData['clayModelAnswer']
+    c.start               = commentData['start']
+    c.startWithCowardmode = commentData['startWithCowardmode']
+    c.loadsaveStart       = commentData['loadsaveStart']
+    c.soliloquy           = commentData['soliloquy']
+    c.enterinBattle       = commentData['enterinBattle']
+    c.curseDecrease       = commentData['curseDecrease']
+    c.getOrb              = commentData['getOrb']
 
 def main(stdscr) -> None:
     configs.load()

@@ -45,8 +45,6 @@ def main(start, targetID, positiveID):
     
     return None
 
-import heapq
-
 def forHashKey(start, hashKey, positiveID):
     grid = s.Dungeon[s.Dy][s.Dx]['room']
 
@@ -76,10 +74,10 @@ def forHashKey(start, hashKey, positiveID):
             if (0 <= nextNode[0] < len(grid) and 0 <= nextNode[1] < len(grid[0]))\
                and (grid[nextNode[0]][nextNode[1]]['id'] in positiveID\
                     or (
-                            grid[nextNode[0]][nextNode[1]]['type']       ==1
-                            and nextNode                                 !=(s.y,s.x)
-                            and grid[nextNode[0]][nextNode[1]]['hashKey']==hashKey
-                        )\
+                        grid[nextNode[0]][nextNode[1]]['type']       ==1
+                        and nextNode                                 !=(s.y,s.x)
+                        and grid[nextNode[0]][nextNode[1]]['hashKey']==hashKey
+                    )\
                     or nextNode == start
                 ):
                 newCost = costSoFar[current] + 1

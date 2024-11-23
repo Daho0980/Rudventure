@@ -1,5 +1,4 @@
-import os
-import json
+import os   ; import json
 from   zlib   import compress, decompress
 from   base64 import b64encode, b64decode
 

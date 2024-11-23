@@ -1,8 +1,5 @@
-import time
-import socket
-import threading
-# from   ast      import literal_eval as eval
-from   random   import randrange
+import time ;   import socket ; import threading
+from   random                   import randrange
 
 from Assets.data.color   import cColors   as cc
 from Game.utils.graphics import escapeAnsi
@@ -45,8 +42,7 @@ class Server:
                             exec(data[1])
                             self.sendData(conn, addr, str(("RCC.REC", 'True')))
 
-                        except:
-                            self.sendData(conn, addr, str(("RCC.REC", 'False')))
+                        except: self.sendData(conn, addr, str(("RCC.REC", 'False')))
 
                         continue
                     
@@ -55,6 +51,7 @@ class Server:
                         continue
                     
                 addLog(escapeAnsi(f"{data[0]} : {data[1]}"))
+                
         except Exception as e: addLog(f"{cc['fg']['Y']}{':'.join(map(str, addr))}{cc['end']} 통신 에러 발생 : {e}", colorKey='Y')
         finally:
             conn.close()

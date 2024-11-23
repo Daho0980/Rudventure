@@ -1,8 +1,11 @@
 from random import randrange
 
-from Assets.data                               import percentage  as per
 from Game.utils.advanced.DungeonMaker.tools    import graphicMaker
 from Game.utils.advanced.DungeonMaker.roomData import data        as rData
+
+from Assets.data import (
+    percentage as per
+)
 
 
 direction = {

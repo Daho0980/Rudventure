@@ -5,3 +5,5 @@ inputLock:bool = False
 useSound:bool  = True
 
 isDying:bool   = False
+
+isSaveLoaded:bool = False

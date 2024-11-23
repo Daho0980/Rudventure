@@ -53,17 +53,18 @@ def TextBox(Inp:str,
                     "double" : {0:["╔", "╗"], 1:["╚", "╝"], 2:["╠", "╣"], 3:["═", "║"]},
                     "bold"   : {0:["┏", "┓"], 1:["┗", "┛"], 2:["┣", "┫"], 3:["━", "┃"]}
                     }
-        Texts:list            = Inp.split("\n")
-        FrontSpace, BackSpace = "", ""
-        endLine:str           = "\n" if endLineBreak else ""
-        fullAddWidth:int      = addWidth*2 if Type=="middle"else addWidth
-        FixedLine:str         = ""
-        end:str               = cc['end'] if coverColor else ''
+        Texts        = Inp.split("\n")
+        FrontSpace   = ""
+        BackSpace    = ""
+        endLine      = "\n" if endLineBreak else ""
+        fullAddWidth = addWidth*2 if Type=="middle"else addWidth
+        FixedLine    = ""
+        end          = cc['end'] if coverColor else ''
 
         if coverSideText: sideText = f"{Line[LineType][2][1]}{sideText}{Line[LineType][2][0]}"
         if AMLS:          maxLine  = max(map(lambda l: actualLen(escapeAnsi(l)), chain(Texts,[sideText])))
 
-        if sideText and sideTextPos[0] == "over":
+        if sideText and sideTextPos[0]=="over":
             style = {
                 "left"   : f"{coverColor}{sideText}{Line[LineType][3][0]*((maxLine+fullAddWidth)-actualLen(escapeAnsi(sideText)))}",
                 "middle" : f"{coverColor}{Line[LineType][3][0]*(ceil(int(((maxLine+fullAddWidth)-actualLen(escapeAnsi(sideText)))/2)))}{sideText}{coverColor}{Line[LineType][3][0]*(ceil(int(((maxLine+fullAddWidth)-actualLen(escapeAnsi(sideText)))/2)))}{Line[LineType][3][0]if(maxLine+fullAddWidth+actualLen(escapeAnsi(sideText)))%2 else''}",
@@ -96,7 +97,7 @@ def TextBox(Inp:str,
                 
                 Display += f"{coverColor}{Line[LineType][3][1]}{end}{FrontSpace}{textLine}{BackSpace}{coverColor}{Line[LineType][3][1]}{end}\n"
 
-        if sideText and sideTextPos[0] == "under":
+        if sideText and sideTextPos[0]=="under":
             style = {
                 "left"   : f"{coverColor}{sideText}{Line[LineType][3][0]*((maxLine+fullAddWidth)-actualLen(escapeAnsi(sideText)))}",
                 "middle" : f"{coverColor}{Line[LineType][3][0]*(ceil(int(((maxLine+fullAddWidth)-actualLen(escapeAnsi(sideText)))/2)))}{sideText}{coverColor}{Line[LineType][3][0]*(ceil(int(((maxLine+fullAddWidth)-actualLen(escapeAnsi(sideText)))/2)))}{Line[LineType][3][0]if(maxLine+fullAddWidth+actualLen(escapeAnsi(sideText)))%2 else ''}",

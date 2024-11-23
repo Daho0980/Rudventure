@@ -1,5 +1,4 @@
-import re
-import curses
+import re        ; import curses
 from   collections import defaultdict
 
 from Chat import (

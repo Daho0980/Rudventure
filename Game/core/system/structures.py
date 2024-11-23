@@ -38,7 +38,8 @@ class Conveyor(OrderedDict):
                 self.popitem()
 
         self.size = size
-    
+
+
 if __name__ == '__main__':
     a = Conveyor(3)
     a['1'] = 0

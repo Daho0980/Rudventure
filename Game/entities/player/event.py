@@ -1,15 +1,14 @@
-import time
-import threading
-from   copy     import deepcopy
-from   random   import choice, randrange
+import time ; import threading
+from   copy   import deepcopy
+from   random import choice, randrange # randrange 쓰는거임
 
 from Assets.data.color        import cColors as cc
 from Assets.data              import lockers as l
 from Game.core.system         import logger
-from Game.entities            import player as p
+from Game.entities            import player  as p
 from Game.utils.system.tts    import TTS, TTC
 from Game.utils.graphics      import escapeAnsi
-from Game.utils.system.sound  import play # 계속 이거 지우는데 지우지마라
+from Game.utils.system.sound  import play # 이거 씀
 
 from Assets.data import (
     totalGameStatus as s,

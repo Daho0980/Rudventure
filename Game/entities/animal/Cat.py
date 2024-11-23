@@ -516,7 +516,7 @@ class Cat(Animal):
                                             ("entity", "animal", "cat", "slash"),
                                             "장난이었는데..."
                                             )
-                                        p.say(choice(c.collideComments['animal']['catAttack']))
+                                        p.say(choice(c.collide['animal']['catAttack']))
                                         self.resetAction()
                                         return
                                     else:
@@ -634,7 +634,7 @@ class Cat(Animal):
                                         play("entity", "animal", "cat", "collide")
                                         self.say(choice(catComments['attacked']))
 
-                                        if blockID == 300: p.say(choice(c.collideComments['animal']['cat']))
+                                        if blockID == 300: p.say(choice(c.collide['animal']['cat']))
                                         break
 
                                     bfy, bfx = self.y, self.x
@@ -656,7 +656,7 @@ class Cat(Animal):
                                         play("entity", "animal", "cat", "collide")
                                         self.say(choice(catComments['attacked']))
 
-                                        if blockID == 300: p.say(choice(c.collideComments['animal']['cat']))
+                                        if blockID == 300: p.say(choice(c.collide['animal']['cat']))
                                         break
 
                                     bfy, bfx       = self.y, self.x

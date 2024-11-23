@@ -17,9 +17,9 @@ from Game.utils.system.roomManager.interactions import (
 
 def event(data) -> None:
     if data['summonCount'] > 0:
+        if randrange(1,101) <= p.enterinBattle:
+            say(choice(c.enterinBattle[0]))
         play("object", "door", "close")
-        if randrange(1,101) <= p.enterinBattleComment:
-            say(choice(c.enterinBattleComments[0]))
         summonMonster(
             data, 3, 2, 10,
             boss=True
@@ -33,3 +33,4 @@ def event(data) -> None:
         s.Dungeon[s.Dy][s.Dx]['interaction']   = True
         placeRandomOrbs(multiple=2)
         changeDoor(2, data)
+        play("object", "door", "close")

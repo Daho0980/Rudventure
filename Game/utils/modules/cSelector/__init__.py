@@ -1,14 +1,14 @@
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! row는 가로, column은 세로입니다 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-import copy
-import curses
+import copy ; import curses
 from   cusser import Cusser
 
 from .                       import macros as m
 from Game.utils.system.sound import play
 
 from Assets.data.color import (
-    customColor,
-    cColors    as cc
+    cColors as cc,
+
+    customColor
     )
 from Game.utils.graphics import (
     escapeAnsi,

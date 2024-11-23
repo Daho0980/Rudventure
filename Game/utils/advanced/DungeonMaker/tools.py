@@ -108,7 +108,7 @@ def makeRoom(Map:list):
                                         [f"'대신 {status[1]}(와)과 응원을 드리겠습니다.'", status[2]],
                                         ["'그럼 화이팅!'", "s.enemyCount -= 1"]
                                         ],
-                                    "command" : "time.sleep(0.5); p.say(choice(c.clayModelAnswerComments))",
+                                    "command" : "time.sleep(0.5); p.say(choice(c.clayModelAnswer))",
                                     "delay" : 0.5,
                                     "voice" : "clayModel"
                                     }

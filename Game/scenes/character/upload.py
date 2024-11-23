@@ -8,12 +8,31 @@ from Assets.data import (
 )
 
 
+s.playerColor      = ["\033[;38;5;32m", "CU"]
+s.ids[300]         = f"{s.playerColor[0]}◑{cc['end']}"
+s.playerVoice      = "upload"
+s.playerDamageIcon = ['◐']
+
 s.statusFormula = {
     "evasion"           : "s.evasionRate+(90-s.evasionRate)*((s.Mhp-s.hp)/s.Mhp)",
     "curseBloodSucking" : "s.hp -= 1"
 }
 
-c.lowHpComments = [
+s.RPL = [
+"""if not s.stage and not s.isLoadfromBody and s.name.lower() in ["업로드", "upload"]:
+    entity.addAnimal(
+        200, 10, 1, 3, 6,
+        name     ="구름이",
+        color    =[cc['fg']['W'],'W'],
+        friendly =True,
+        MCBF     =True,
+        SICR     =True,
+        extraData={"loyalty":10}      )
+if s.isLoadfromBody:
+    entity.loadEntities()"""
+]
+
+c.lowHp = [
     "나 곧 뒤질듯 ㅋㅋ.",
     "한쪽 귀가 안들리는데?",
     "어지럽고 토할 것 같군. 아주 좋아.",
@@ -28,7 +47,7 @@ c.lowHpComments = [
     "힝.",
 ]
 
-c.treasureRoomComments = {
+c.treasureRoom = {
     0 : [
         "ㅋㅋ 실화냐.",
         "? 1개?",
@@ -52,7 +71,7 @@ c.treasureRoomComments = {
     ]
 }
 
-c.defeatComments = {
+c.defeat = {
     "HL" : [
         f"보고 피하면 쉬움 ㅋㅋ. -업로드 (2008 ~ {datetime.today().year})",
         "망겜.",
@@ -81,7 +100,7 @@ c.defeatComments = {
     ]
 }
 
-c.victoryComments = {
+c.victory = {
     0 : [
         "ㅋㅋ 이걸 사네.",
         "어케 살음?",
@@ -112,7 +131,7 @@ c.victoryComments = {
     ]
 }
 
-c.TIOTAComments = [
+c.TIOTA = [
     "으, 끈적해.",
     "이이.",
     "뭐임? ㅋㅋ.",
@@ -120,7 +139,7 @@ c.TIOTAComments = [
     "아잇.",
 ]
 
-c.collideComments = {
+c.collide = {
     "animal" : {
         "cat" : [
             "왜~?",
@@ -142,7 +161,7 @@ c.collideComments = {
     }
 }
 
-c.clayModelAnswerComments = [
+c.clayModelAnswer = [
     "오 개꿀.",
     "묘하게 생겼네.",
     "오예.",
@@ -151,7 +170,7 @@ c.clayModelAnswerComments = [
     "선물 좋구만.",
 ]
 
-c.startComments = [
+c.start = [
     "좋은 아침.",
     "매우 엄청나게 졸리군.",
     "내 이어폰 어디갔지?",
@@ -160,20 +179,20 @@ c.startComments = [
     "여기 이상한 냄새나."
 ]
 
-c.startCommentsWithCowardmode = [
+c.startWithCowardmode = [
     "응!",
     "그래!",
     "에라이.",
 ]
 
-c.loadsaveStartComments = [
+c.loadsaveStart = [
     "또 여기야?",
     "또?",
     "눈 아파.",
     "좀 닥쳐봐. 손톱 다 뽑아서 루브르 박물관에 전시하기 전에.",
 ]
 
-c.soliloquyComments = {
+c.soliloquy = {
     "HL" : [
         "시야가 흐릿한데...",
         "...",
@@ -204,7 +223,7 @@ c.soliloquyComments = {
     ],
 }
 
-c.enterinBattleComments = {
+c.enterinBattle = {
     0 : [
         "덤벼.",
         "...고작?",

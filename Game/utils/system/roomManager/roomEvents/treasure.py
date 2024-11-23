@@ -9,5 +9,5 @@ from Assets.data import (
 
 
 def event(cmt) -> None:
-    if cmt: say(choice(c.treasureRoomComments[s.Dungeon[s.Dy][s.Dx]['treasureRarity']]))
+    if cmt: say(choice(c.treasureRoom[s.Dungeon[s.Dy][s.Dx]['treasureRarity']]))
     s.Dungeon[s.Dy][s.Dx]['interaction'] = True

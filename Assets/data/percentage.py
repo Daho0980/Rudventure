@@ -15,4 +15,5 @@ soliloquy = {
     "max" : 950
 }
 
-enterinBattleComment:int = 20
+enterinBattle:int = 20
+getOrb:int        = 40

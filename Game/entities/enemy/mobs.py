@@ -5,7 +5,7 @@ from   random import randrange, choice
 from .                        import event        as eEvent
 from .status                  import cooltimes
 from Assets.data.color        import cColors      as cc
-from Assets.data.comments     import TIOTAComments
+from Assets.data.comments     import TIOTA
 from Game.core.system.logger  import addLog
 from Game.entities.algorithms import AStar
 from Game.entities.player     import event, say
@@ -116,15 +116,16 @@ class Enemy:
 
             if s.df > 0:
                 event.defended()
-                play("player", "armor", "defended")
+                sound = ("player", "armor", "defended")
                 self.knockback(Dir, randrange(1,3), s.atk)
                 s.df -= 1
                 if s.df == 0: s.hp -= int(self.atk/2)
                 else:         s.hp -= int(self.atk/3)
 
                 if s.df==0 and s.dfCrack<=0:
-                    sound     = ("player", "armor", "crack")
+                    sound     = ("player", "armor", "armorCrack")
                     s.dfCrack = 1
+                    play("player", "armor", "crack")
                     addLog(f"{cc['fg']['B1']}방어구{cc['end']}가 부서졌습니다!", colorKey='B1')
             else:
                 event.hitted()
@@ -477,7 +478,7 @@ class Resentment(Enemy):
                             
                             self.explotion(DRP)
                             self.xpMultiplier = 2
-                            if randrange(0,2): say(choice(TIOTAComments))
+                            if randrange(0,2): say(choice(TIOTA))
                         else: DRP['room'][self.y][self.x] = {"block" : self.icon, "id" : self.id, "type" : 1, "hashKey" : self.hashKey}
                     else: self.blink(DRP)
 

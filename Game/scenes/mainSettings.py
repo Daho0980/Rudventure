@@ -58,14 +58,15 @@ def main(stdscr) -> None:
                 "1프레임"         : "정말로요...?",
                 "30프레임 (권장)" : "표준 설정입니다.",
                 "60프레임"        : "더 쾌적하게 플레이할 수 있습니다.\n하지만 안타깝게도 눈에 띄는 변화는 찾아볼 수 없겠군요 :(",
-                "120프레임"       : "디스플레이 출력을 위한 연산량이 60프레임보다 두 배 증가합니다.\n적들의 움직임이 느려질 수 있습니다."
+                "120프레임"       : "디스플레이 출력을 위한 연산량이 60프레임보다 두 배 증가합니다."
             },
             [1,0,255,10],
             '@',
             maxLine=2
         )
-        s.frameRate = [0,1,30,60,120][frameSettings]
-        s.frame     = 1/s.frameRate if s.frameRate else 0
+        s.frameRate = [1,30,60,120][frameSettings-1]
+        s.frame     = 1/s.frameRate
+        s.frame    -= 0.0017
 
     stdscr.clear()
     nameChangeCount:int = 0
@@ -143,38 +144,22 @@ f"이름이 {cc['fg']['R']}{md.cMarkdown([2, 3])}없거나{cc['end']} \
             case 1:
                 match temporaryName.lower():
                     case "레포"|"repo":
-                        s.ids[300]         = f"\033[;38;5;92mᓩ{cc['end']}"
-                        s.playerDamageIcon = list(map(chr, range(5124, 5184)))
-                        s.playerVoice      = "repo"
-                        s.playerColor      = ["\033[;38;5;92m", "CR"]
+                        from Game.scenes.character import repo
 
                         match len(temporaryName):
                             case 2:
                                 s.lightName = f"{s.playerColor[0]}{temporaryName[0]}\033[;38;5;220m{temporaryName[1]}{cc['end']}"
                             case 4:
                                 s.lightName = f"{s.playerColor[0]}{temporaryName[:2]}\033[;38;5;214m{temporaryName[2]}\033[;38;5;220m{temporaryName[3]}{cc['end']}"
-                        
-                        per.treasureComment = 100
-                        per.soliloquy       = {
-                            "min" : 150,
-                            "max" : 450
-                        }
-
-                        from Game.scenes.commentsSetTo import repo
 
                     case "업로드"|"upload":
-                        s.ids[300]         = f"\033[;38;5;32m◑{cc['end']}"
-                        s.playerDamageIcon = ['◐']
-                        s.playerVoice      = "upload"
-                        s.playerColor      = ["\033[;38;5;32m", "CU"]
+                        from Game.scenes.character import upload
 
                         match len(temporaryName):
                             case 3:
                                 s.lightName = f"{cc['fg']['W']}{temporaryName[0]}{s.playerColor[0]}{temporaryName[1:]}{cc['end']}"
                             case 6:
                                 s.lightName = f"{cc['fg']['W']}{temporaryName[:2]}\033[;38;5;253m{temporaryName[2]}{s.playerColor[0]}{temporaryName[3:]}{cc['end']}"
-                        
-                        from Game.scenes.commentsSetTo import upload
 
                 break
             case 2: reTryCount += 1; continue

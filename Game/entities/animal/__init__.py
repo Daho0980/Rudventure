@@ -133,14 +133,15 @@ class Animal:
         s.DROD = [f"{self.color}{DR or self.name}{cc['end']}", self.colorKey]
         if s.df > 0:
             pEvent.defended()
-            play("player", "armor", "defended")
+            sound = ("player", "armor", "defended")
             s.df -= 1
             if s.df == 0: s.hp -= int(atk/2)
             else:         s.hp -= int(atk/3)
 
             if s.df == 0 and s.dfCrack <= 0:
-                sound     = ("player", "armor", "crack")
+                sound     = ("player", "armor", "armorCrack")
                 s.dfCrack = 1
+                play("player", "armor", "crack")
                 addLog(f"{cc['fg']['B1']}방어구{cc['end']}가 부서졌습니다!", colorKey='B1')
         else:
             pEvent.hitted()

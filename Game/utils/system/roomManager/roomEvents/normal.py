@@ -38,18 +38,20 @@ def event(data) -> None:
                 ""
             ]
 
-        play("object", "door", "close")
-        if randrange(1, 101) <= p.enterinBattleComment:
+        if randrange(1, 101) <= p.enterinBattle:
             say(choice(
-                c.enterinBattleComments[5]\
+                c.enterinBattle[5]\
                 if   data['summonCount'] >= 5\
-                else c.enterinBattleComments[0]
+                else c.enterinBattle[0]
             ))
         summonMonster(data)
 
         changeDoor(1, data)
+        play("object", "door", "close")
+
     elif not s.enemyCount and s.roomLock:
         s.roomLock                           = False
         s.Dungeon[s.Dy][s.Dx]['interaction'] = True
         if randrange(0, 101) > p.clearedRoomLoot: placeRandomOrbs()
         changeDoor(2, data)
+        play("object", "door", "close")

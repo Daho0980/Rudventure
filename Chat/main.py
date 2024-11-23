@@ -1,6 +1,5 @@
-import time
-import curses
-import threading
+import time ; import curses
+import            threading
 
 from . import (
     status        as s,

@@ -1,5 +1,5 @@
 import threading
-from audioplayer import AudioPlayer
+from   audioplayer import AudioPlayer
 
 from Assets.data import (
     totalGameStatus as s,

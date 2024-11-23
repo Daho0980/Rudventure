@@ -1,10 +1,24 @@
 from random import choice
 
+from Assets.data.color import cColors as cc
+
 from Assets.data import (
     totalGameStatus as s,
+    percentage      as per,
     comments        as c
 )
 
+
+s.playerColor      = ["\033[;38;5;92m", "CR"]
+s.ids[300]         = f"{s.playerColor[0]}ᓩ{cc['end']}"
+s.playerVoice      = "repo"
+s.playerDamageIcon = list(map(chr, range(5124, 5184)))
+                        
+per.treasureComment = 100
+per.soliloquy       = {
+    "min" : 150,
+    "max" : 450
+}
 
 foods = [
     "치킨 타코",
@@ -24,7 +38,7 @@ else:         s.hp  -= 1
 """
 }
 
-c.lowHpComments = [
+c.lowHp = [
     "나 죽는다!! 죽는다고!!!",
     "으아악!!! 아퍼!!!",
     "끼에엑!!!",
@@ -39,7 +53,7 @@ c.lowHpComments = [
     "  ,ㄴ`  ",
 ]
 
-c.treasureRoomComments = {
+c.treasureRoom = {
     0 : [
         "이런 날도 있는 거지...",
         "뭣.",
@@ -63,7 +77,7 @@ c.treasureRoomComments = {
         "어라, 신기루? 이거 진짜야?",
     ]
 }
-c.defeatComments = {
+c.defeat = {
     "HL" : [
         "너무해...",
         "...",
@@ -86,7 +100,7 @@ c.defeatComments = {
         "끼우웅...",
     ]
 }
-c.victoryComments = {
+c.victory = {
     0 : [
         "휴... 새고기 신세는 간신히 피했어.",
         "이긴게 이긴게 아니야..",
@@ -118,7 +132,7 @@ c.victoryComments = {
         "이 층은 순종적인 식재료가 많았어!",
     ]
 }
-c.TIOTAComments = [
+c.TIOTA = [
     "오. 전복 내장맛이네.",
     "이거... 모아서 요리 할 수 있나?",
     "하하 내 깃털은 방수야! ...부러졌지만 말이지",
@@ -126,7 +140,7 @@ c.TIOTAComments = [
     "깃털이 또 부러진거 같아...",
 ]
 
-c.collideComments = {
+c.collide = {
     "animal" : {
         "cat" : [
             "으아? 고... 고양이?! 무서워...",
@@ -148,7 +162,7 @@ c.collideComments = {
     }
 }
 
-c.clayModelAnswerComments = [
+c.clayModelAnswer = [
     "... 나락에서 편히 잠드시길.",
     "... 고마워요. 나락에서 편히 잠드시길.",
     "... 애도를 표합니다. 나락에서 편히 잠드시길.",
@@ -156,7 +170,7 @@ c.clayModelAnswerComments = [
     "하아... 나락에서 편히 잠드시길.",
 ]
 
-c.startComments = [
+c.start = [
     "내가 안 먹어본 식재료... 이곳에는 분명 있을 거야",
     "올 블루라고 들어본 적 있어?",
     "분명 불빛 한 점 없는데 눈앞이 잘 보여... 왜일까?",
@@ -164,7 +178,7 @@ c.startComments = [
     "이곳에서는 날지 못하는 거 같아... 공기가 없는 걸까?",
 ]
 
-c.startCommentsWithCowardmode = [
+c.startWithCowardmode = [
     "칫, 그렇게 까지 말 안해도 안다고요!",
     "기분 나쁘게...",
     "쯧...",
@@ -175,7 +189,7 @@ c.startCommentsWithCowardmode = [
     "어디 계신지만 알려주신다면 그 부리를 직접 뭉게버리러 갈꺼에요...",
 ]
 
-c.loadsaveStartComments = [
+c.loadsaveStart = [
     "응애...",
     "증믈 즐그은 인사군요...",
     "나 자신을 요리하면 어떻게 되는 거지?",
@@ -184,7 +198,7 @@ c.loadsaveStartComments = [
     "머리부터 발끝까지 요리해 드리죠.",
 ]
 
-c.soliloquyComments = {
+c.soliloquy = {
     "HL" : [
         "아픈 건 싫은데...",
         "이러다 망가진 깃털의 수가 멀쩡한 깃털의 수보다 많아질 거 같아!",
@@ -235,7 +249,7 @@ c.soliloquyComments = {
     ],
 }
 
-c.enterinBattleComments = {
+c.enterinBattle = {
     0 : [
         "쓰읍... 식재료가 적어...",
         "한 끼 정도는 겨우 나오겠어.",
@@ -249,5 +263,36 @@ c.enterinBattleComments = {
         "... 아 군침 돌았어.",
         "우와! 식재료들이 이렇게 많다고? 이거 너무 좋다! 내가 먹을 음식이 더 많이 늘어나겠어!",
         "이 식재료들이 빨리 썩지 않게 보존처리만 한다면...",
+    ]
+}
+
+c.curseDecrease = {
+    "middleOver" : [
+        "흐유... 그래도 아직까지는...",
+        "안돼! 저주가 씻겨나가고 있잖아!!",
+        "만지지마 만지지마 만지지마 만지지마 만지지마 만지지마 만지지마 만지지마 만지지마",
+        "괜찮아! 더 만지지만 않으면 된다구.",
+        "기분 나빠...",
+        "그냥 만지지 않아도 되지 않을까...",
+        "아직 기분 좋아. 그러니까, 더 건들지는 말아줘...",
+        "너, 그거 하지마.",
+        "건들지마!!!!!",
+        "하, 젠장.",
+        "나, 너무 기분 나쁜데..?",
+        "우으으... 나에게서 저주를 뺏어가지마...",
+        "저주... 적어졌어...",
+        "안돼! 으아아악!!"
+    ],
+    "middleUnder" : [
+        "이건... 뭐 하는 짓이야?",
+        "...",
+        "후...",
+        "아..."
+    ],
+    "Under" : [
+        "오호... 저주가 아주 조금 씻겨나간 기분이야. 기분이 딱히 좋지는 않네.",
+        "뭐... 아주 살짝 저주가 씻겨내려간 느낌이야.",
+        "뭐지... 이 기분은...",
+        "신상... 딱히 기분 좋은 울림은 아니네."
     ]
 }

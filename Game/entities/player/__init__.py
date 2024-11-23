@@ -1,8 +1,6 @@
-import time
-import curses
-import threading
-from   itertools import chain
-from   random    import randrange, choice
+import time    ; import curses ; import threading
+from   itertools                 import chain
+from   random                    import randrange, choice
 
 from Assets.data.color       import cColors    as cc
 from Game.core.system        import infoWindow as iWin
@@ -12,6 +10,7 @@ from Game.utils.system.sound import play
 
 from Assets.data import (
     totalGameStatus as s,
+    percentage      as per,
     comments        as c
 )
 from Game.entities.player import (
@@ -82,14 +81,15 @@ def damage(block:str="?", atk:int=1) -> tuple:
     addLog(f"{s.lightName}이(가) [ {block} ] 에 의해 상처입었습니다", colorKey='R')
 
     if s.df > 0:
-        play("player", "armor", "defended")
+        sound = ("player", "armor", "defended")
         s.df -= 1
         if s.df < 0: s.hp -= int(atk/2)
         else:        s.hp -= int(atk/3)
                 
         if s.df <= 0 and s.dfCrack <= 0:
-            sound     = ("player", "armor", "crack")
+            sound     = ("player", "armor", "armorCrack")
             s.dfCrack = 1
+            play("player", "armor", "crack")
             addLog(f"{cc['fg']['B1']}방어구{cc['end']}가 부서졌습니다!", colorKey='B1')
     else: s.hp -= atk
 
@@ -105,12 +105,12 @@ def attack(ty, tx, attackSound:tuple=("player", "slash")) -> None:
     s.hitPos['data'].remove(["player", s.atk, attackSound])
 
 def itemEvent(y:int, x:int) -> None:
-    percent   = randrange(1, 101)
+    orbPer = randrange(1, 101)
 
-    if   percent > 0  and percent <= 45: typeIndex = "hunger"
-    elif percent > 45 and percent <= 70: typeIndex = "hp"
-    elif percent > 70 and percent <= 80: typeIndex = "def"
-    elif percent > 80 and percent <= 85: typeIndex = "atk"
+    if   orbPer > 0  and orbPer <= 45: typeIndex = "hunger"
+    elif orbPer > 45 and orbPer <= 70: typeIndex = "hp"
+    elif orbPer > 70 and orbPer <= 80: typeIndex = "def"
+    elif orbPer > 80 and orbPer <= 85: typeIndex = "atk"
     else: typeIndex = "exp"
 
     orbId = s.orbIds["type"][typeIndex][randrange(0, 2)]
@@ -118,20 +118,60 @@ def itemEvent(y:int, x:int) -> None:
     s.Dungeon[s.Dy][s.Dx]['room'][y][x] = {"block" : s.ids[orbId], "id" : orbId, "type" : 0}
         
 def orbEvent(Size:int, Type:int) -> None:
-    orbData   = [
-        [3,    1],
-        [3,    1],
-        [2,    1],
-        [100, 50],
-        [5,    1]
+    orbData = [
+        [1,    3],
+        [1,    3],
+        [1,    2],
+        [50, 100],
+        [1,    5]
     ]
 
-    point:int = orbData[Type][Size]
+    point   = orbData[Type][Size]
+    comment = randrange(1,101) <= per.getOrb
     match Type:
-        case 0: s.hp = s.Mhp if s.hp+point > s.Mhp else s.hp+point
-        case 1: s.df = s.Mdf if s.df+point > s.Mdf else s.df+point
+        case 0:
+            if s.hp == s.Mhp:
+                say(choice(c.getOrb['hp']['hpTooOver'][Size]))
+                return
+                
+            elif s.hp+point > s.Mhp:
+                s.hp = s.Mhp
+                say(choice(c.getOrb['hp']['hpOver'][Size]))
+                return
+            
+            s.hp += point
+            if s.hp == s.Mhp: play("system", "perfectLvlUp")
+            
+            if comment:
+                say(choice(
+                    c.getOrb['hp']['hpFull'
+                            if s.hp == s.Mhp
+                        else ['notHpLow','hpLow'][s.hpLow]
+                    ][Size]))
+                
+        case 1:
+            if s.df == s.Mdf:
+                say(choice(c.getOrb['df']['dfTooOver'][Size]))
+                return
 
-        case 2: s.atk    += point
+            if s.df+point > s.Mdf:
+                s.df = s.Mdf
+                say(choice(c.getOrb['df']['dfOver'][Size]))
+                return
+
+            s.df += point
+            if s.df == s.Mdf: play("system", "perfectLvlUp")
+
+            if comment:
+                if s.df == s.Mdf:
+                    say(choice(c.getOrb['df']['dfFull'][Size]))
+
+                elif s.df == point: say(choice(c.getOrb['df']['restorationed'][Size]))
+
+        case 2:
+            s.atk += point
+            if comment:
+                say(choice(c.getOrb['atk']['lowAtk'if s.atk<s.stage else 'hiAtk'][Size]))
         case 3: s.hunger += point
 
         case 4: xpSystem.getXP(point)
@@ -185,7 +225,7 @@ def move(Dir, distance:int) -> None:
         sound = ("player", "getItem")
         orbId = blockID
         orbEvent(
-            Size=0 if orbId in s.orbIds['size']['bigOne'] else 1,
+            Size=1 if orbId in s.orbIds['size']['bigOne'] else 0,
             Type=int(
                 list(
                     chain(
@@ -205,11 +245,11 @@ def move(Dir, distance:int) -> None:
         s.Dungeon[s.Dy][s.Dx]['room'][ty][tx]["id"] = 2
 
         pos = [bfy-ty, bfx-tx]
-        # ┏>|y, x| : U to D   D to U  L to R   R to L
+        # ┏>|y, x| : UtD DtU LtR RtL
         wayType:int = 0
-        if pos[0] == 1:    s.Dy -= 1; wayType = 0
+        if   pos[0] ==  1: s.Dy -= 1; wayType = 0
         elif pos[0] == -1: s.Dy += 1; wayType = 1
-        elif pos[1] == 1:  s.Dx -= 1; wayType = 2
+        elif pos[1] ==  1: s.Dx -= 1; wayType = 2
         elif pos[1] == -1: s.Dx += 1; wayType = 3
 
         DWPD = {
@@ -362,7 +402,7 @@ def move(Dir, distance:int) -> None:
             ty, tx = bfy, bfx
 
             addLog(f"{cc['fg']['L']}당신{cc['end']}의 몸에서 {cc['fg']['F']}저주{cc['end']}가 빠져나가는 것이 느껴집니다...", colorKey='A')
-            say(choice(c.curseDecreaseComments[commentType]))
+            say(choice(c.curseDecrease[commentType]))
 
     elif blockID == 401:
         sound      = ("player", "hit")
