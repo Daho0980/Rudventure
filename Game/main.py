@@ -272,7 +272,7 @@ while s.main:
 
                 roomManager.main()
             
-            time.sleep(max((s.frame-(time.perf_counter()-a_render)), 0))
+            time.sleep(max((s.currFrame-(time.perf_counter()-a_render)), 0))
         else: time.sleep(1)
 
     if s.hunger <= 0: s.DROD = [f"{cc['fg']['Y']}아사{cc['end']}", 'Y']

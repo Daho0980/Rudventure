@@ -32,7 +32,6 @@ def load() -> None:
     s.debugConsole      = data["debugConsole"]
     s.showDungeonMap    = data["showDungeonMap"]
     s.frameRate         = data["frameRate"]
-    s.frame           = 1/data["frameRate"] if data["frameRate"] else 0
     s.volume            = data["volume"]
     s.autoTerminalSize  = data["autoTerminalSize"]
     s.checkTerminalSize = data["checkTerminalSize"]

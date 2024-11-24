@@ -253,14 +253,14 @@ def main(stdscr) -> None:
                                         frameSAP = [0, 0]
                                         while 1:
                                             frameSettings, frameSAP = clc.main(
-                                                f"<< 프레임 설정 >>\n\n현재 프레임 : {'MAX' if not s.frameRate else '설정되지 않음' if s.frameRate==-1 else s.frameRate}",
+                                                f"<< 프레임 설정 >>\n\n현재 프레임 : {'설정되지 않음' if s.frameRate==-1 else s.frameRate}",
                                                 {
                                                     "1프레임"         : "정말로요...?",
                                                     "30프레임 (권장)" : "표준 설정입니다.",
                                                     ""                : "",
                                                     "완료"            : "",
                                                     "60프레임"        : "더 쾌적하게 플레이할 수 있습니다.\n하지만 안타깝게도 눈에 띄는 변화는 찾아볼 수 없겠군요 :(",
-                                                    "MAX"             : "최대한 빠르게 새로고침합니다.\n화면이 [심하게] 깜빡거릴 수 있습니다."
+                                                    "120프레임"       : "더더욱 쾌적하게 플레이할 수 있습니다.\n만약 120프레임을 지원하는 모니터가 있다면 말이죠."
                                                 },
                                                 [1,0,255,10],
                                                 '@',
@@ -270,9 +270,7 @@ def main(stdscr) -> None:
                                                 returnArrowPos=True
                                             )
                                             match frameSettings:
-                                                case 1|2|4|5:
-                                                    s.frameRate = [0,1,30,0,60,0][frameSettings]
-                                                    s.frame     = 1/s.frameRate if s.frameRate else 0
+                                                case 1|2|4|5: s.frameRate = [1,30,0,60,120][frameSettings-1]
                                                 case 3:
                                                     configs.save()
                                                     break

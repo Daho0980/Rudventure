@@ -2,6 +2,7 @@ import ijson
 from   collections import deque
 
 from .structures import Conveyor
+from Assets.data import totalGameStatus as s
 
 
 objCache = Conveyor(20)
@@ -15,7 +16,13 @@ def _addValue(dd, value, path):
     for i in path[:-1]: dd = dd[i]
     dd[path[-1]].append(value)
 
+makePath = lambda *path: s.TFP + s.s.join(path)
+
 def obj(path:str, target:str) -> dict:
+    """
+    path   : json 파일의 위치
+    target : 가져올 요소의 키
+    """
     global objCache
 
     if (path,target) in objCache:
@@ -29,7 +36,7 @@ def obj(path:str, target:str) -> dict:
 
     with open(path, 'r') as f:
         for prefix, event, value in ijson.parse(f):
-            if event == "map_key" and sLock and value==target:
+            if event=="map_key"and sLock and value==target:
                 sLock = False
 
             if not sLock:
@@ -48,8 +55,8 @@ def obj(path:str, target:str) -> dict:
                         if arrayDepth and arrayDepth[-1]:
                             _addValue(data, [], tempPath)
                             tempPath.append(-1)
-                        else:
-                            _setValue(data, [], tempPath)
+
+                        else: _setValue(data, [], tempPath)
                         arrayDepth.append(1)
 
                     case "string"|"number"|"boolean":
@@ -66,6 +73,7 @@ def obj(path:str, target:str) -> dict:
                         if prefix == target: break
 
     objCache[(path,target)] = data[target]
+
     return data[target]
 
 def elm(path:str, target:str, Type:str):

@@ -1,5 +1,6 @@
 # region Frame
 frameRate:int    = -1
+currFrame:float  = 0
 frame:int|float  = 0
 renderTime:float = 0
 

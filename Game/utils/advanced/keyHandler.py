@@ -77,8 +77,7 @@ def add() -> None:
                                 )
                                 
                             # region Game system
-                            case key.whistle:
-                                player.whistle()
+                            case key.whistle: player.whistle()
                             case key.playerMode:
                                 s.playerMode = "observe" if s.playerMode=="normal" else "normal"
                                 color = {"observe":cc['fg']['Y'], "normal":cc['fg']['L']}[s.playerMode]
@@ -87,8 +86,9 @@ def add() -> None:
                                     f"플레이어 모드가 {color}{s.playerMode}{cc['end']}로 변경되었습니다.",
                                     colorKey={"observe":"Y", "normal":"L"}[s.playerMode]
                                 )
-                            case key.slot1|key.slot2|key.slot3|\
-                                 key.slot4|key.slot5|key.slot6:
+                            case key.slot1|key.slot4|\
+                                 key.slot2|key.slot5|\
+                                 key.slot3|key.slot6:
                                 if len(s.inventory['cells'])>=k-48 and not s.inventory['cells'][k-49]['disabled']:
                                     if k-49 != s.inventory['pointer']:
                                         s.inventory['pointer'] = k-49
@@ -96,7 +96,8 @@ def add() -> None:
                                 else: play("system", "selector", "block")
 
                     if k == key.pause:
-                        l.pause = False if l.pause else True
+                        l.pause     = False if l.pause else True
+                        s.currFrame = 1/3   if l.pause else s.frame
                         play("soundEffects", "smash")
                 
                 await asyncio.sleep(0.005)

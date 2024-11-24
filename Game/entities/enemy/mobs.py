@@ -2,20 +2,24 @@ import math # 이거 쓰는거임
 import time
 from   random import randrange, choice
 
-from .                        import event        as eEvent
+from .                        import event        as eEv
 from .status                  import cooltimes
 from Assets.data.color        import cColors      as cc
 from Assets.data.comments     import TIOTA
 from Game.core.system.logger  import addLog
 from Game.entities.algorithms import AStar
-from Game.entities.player     import event, say
 from Game.utils.system.sound  import play
 from Game.utils.graphics      import escapeAnsi
 
 from Assets.data import (
     totalGameStatus as s,
     lockers         as l
-    )
+)
+from Game.entities.player import (
+    event as pEv,
+    
+    say
+)
 
 
 # region Monster common code
@@ -64,7 +68,7 @@ class Enemy:
                 else:
                     self.y = sY if isinstance(y, list) else y
                     self.x = sX if isinstance(x, list) else x
-                    eEvent.spawn(self.y, self.x, self.icon)
+                    eEv.spawn(self.y, self.x, self.icon)
                     break
         else:
             self.Dy, self.Dx = Dy, Dx
@@ -97,7 +101,7 @@ class Enemy:
                 if   not dmg: msg = f"{cc['fg']['L']}공격{cc['end']}이 빗나갔습니다!"
                 elif crit:    msg += f" {cc['fg']['L']}치명타!{cc['end']}"
 
-                if dmg: eEvent.hitted(self.y, self.x, self.icon, self.id, self.hashKey)
+                if dmg: eEv.hitted(self.y, self.x, self.icon, self.id, self.hashKey)
                 addLog(msg, colorKey='L')
                 if sound: play("entity", "enemy", "damage", sound)
                 if isHit: play(*attackSound)
@@ -115,7 +119,7 @@ class Enemy:
                 s.target['attackable'] = False
 
             if s.df > 0:
-                event.defended()
+                pEv.defended()
                 sound = ("player", "armor", "defended")
                 self.knockback(Dir, randrange(1,3), s.atk)
                 s.df -= 1
@@ -128,7 +132,7 @@ class Enemy:
                     play("player", "armor", "crack")
                     addLog(f"{cc['fg']['B1']}방어구{cc['end']}가 부서졌습니다!", colorKey='B1')
             else:
-                event.hitted()
+                pEv.hitted()
                 s.hp -= self.atk
 
             play(*sound)
@@ -141,7 +145,7 @@ class Enemy:
             if DRP['room'][self.y-Dir[0]][self.x-Dir[1]]['id']\
             in s.monsterInteractableBlocks['unsteppable']:
                 play("object", "wall", "hit")
-                eEvent.hitted(self.y, self.x, self.icon, self.id, self.hashKey)
+                eEv.hitted(self.y, self.x, self.icon, self.id, self.hashKey)
                 self.hp -= atk-i
                 addLog(f"{cc['fg']['F']}{self.name}{cc['end']}이(가) {cc['fg']['L']}{atk-i}{cc['end']}만큼의 피해를 입었습니다! {cc['fg']['R']}(체력 : {self.hp}){cc['end']}", colorKey='R')
                 return

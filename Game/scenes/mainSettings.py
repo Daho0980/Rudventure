@@ -7,7 +7,6 @@ from Game.utils.system.sound import play
 
 from Assets.data import (
     totalGameStatus as s,
-    percentage      as per,
     UIPreset        as UIP,
     markdown        as md
 )
@@ -50,23 +49,27 @@ def setIconColor() -> None:
 
     s.ids[900] = f"{cc['fg']['G1']};{cc['end']}"
 
+def _setFrame():
+    frameSettings = cSelector.main(
+        f"{UIP.LOGO}\n를 시작하기 전에, 프레임을 설정해주세요",
+        {
+            "1프레임"         : "정말로요...?",
+            "30프레임 (권장)" : "표준 설정입니다.",
+            "60프레임"        : "더 쾌적하게 플레이할 수 있습니다.\n하지만 안타깝게도 눈에 띄는 변화는 찾아볼 수 없겠군요 :(",
+            "120프레임"       : "더더욱 쾌적하게 플레이할 수 있습니다.\n만약 120프레임을 지원하는 모니터가 있다면 말이죠."
+        },
+        [1,0,255,10],
+        '@',
+        maxLine=2
+    )
+    s.frameRate = [1,30,60,120][frameSettings-1]
+
 def main(stdscr) -> None:
-    if s.frame == -1:
-        frameSettings = cSelector.main(
-            f"{UIP.LOGO}\n를 시작하기 전에, 프레임을 설정해주세요",
-            {
-                "1프레임"         : "정말로요...?",
-                "30프레임 (권장)" : "표준 설정입니다.",
-                "60프레임"        : "더 쾌적하게 플레이할 수 있습니다.\n하지만 안타깝게도 눈에 띄는 변화는 찾아볼 수 없겠군요 :(",
-                "120프레임"       : "디스플레이 출력을 위한 연산량이 60프레임보다 두 배 증가합니다."
-            },
-            [1,0,255,10],
-            '@',
-            maxLine=2
-        )
-        s.frameRate = [1,30,60,120][frameSettings-1]
-        s.frame     = 1/s.frameRate
-        s.frame    -= 0.0017
+    if not s.frameRate:
+        _setFrame()
+
+    s.frame     = (1/s.frameRate)-(0.0017/(s.frameRate//60 or 1))
+    s.currFrame = s.frame
 
     stdscr.clear()
     nameChangeCount:int = 0
@@ -78,9 +81,9 @@ def main(stdscr) -> None:
             temporaryName = "이름도 못 정하는 멍청이"
             cSelector.main(
                 t.TextBox(
-f"뇌 빼고 엔터만 치고 계신 것 같으니 특별히\n\
-{cc['fg']['Y']}<< {temporaryName} >>{cc['end']}\n(으)로 정해드리겠습니다.\
-어때요, 좋죠?",
+f"""뇌 빼고 엔터만 치고 계신 것 같으니 특별히
+{cc['fg']['Y']}<< {temporaryName} >>{cc['end']}
+(으)로 정해드리겠습니다. 어때요, 좋죠?""",
                     Type        ="middle",
                     outDistance =1,
                     AMLS        =True,
@@ -197,21 +200,12 @@ f"이름이 {cc['fg']['R']}{md.cMarkdown([2, 3])}없거나{cc['end']} \
     setIconColor()
 
 def presetted() -> None:
-    if s.frame == -1:
-        frameSettings = cSelector.main(
-            f"{UIP.LOGO}\n를 시작하기 전에, 프레임을 설정해주세요",
-            {
-                "1프레임"         : "정말로요...?",
-                "30프레임 (권장)" : "표준 설정입니다.",
-                "60프레임"        : "더 쾌적하게 플레이할 수 있습니다.\n하지만 안타깝게도 눈에 띄는 변화는 찾아볼 수 없겠군요 :(",
-                "120프레임"       : "디스플레이 출력을 위한 연산량이 60프레임보다 두 배 증가합니다.\n적들의 움직임이 느려질 수 있습니다."
-            },
-            [1,0,255,10],
-            '@',
-            maxLine=2,
-        )
-        s.frameRate = [0,1,30,60,120][frameSettings]
-        s.frame     = 1/s.frameRate if s.frameRate else 0
+    if not s.frameRate:
+        _setFrame()
+
+    s.frame     = (1/s.frameRate)-(0.0017/(s.frameRate//60 or 1))
+    s.currFrame = s.frame
+
     setIconColor()
     addLog(
         choice([
@@ -219,7 +213,7 @@ def presetted() -> None:
             f"아, 당신이군요ㅋㅋㅋ {cc['fg']['L']}자신감{cc['end']}이 {cc['fg']['R']}너무 없어서{cc['end']} 돌아오신 줄도 몰랐네요.",
             f"그래도 육신을 불러오는 방법은 아시는 것 같아 다행이네요. {cc['fg']['L']}겁쟁이 씨{cc['end']}.",
             f"육신 관리소에 몇 구나 들어차 있는지는 모르겠다만, 그게 {cc['fg']['Y']}마지막{cc['end']}이라면 좋겠네요 ;)",
-            f"아, 벌써 죽어서 돌아오신 건가요? 잠깐 잠이나 자려고 했는데 이렇게나 {cc['fg']['R']}{md.cMarkdown([2, 3])}빠르게{cc['end']} 오실 줄은 몰랐네요."
+            f"아, 벌써 죽어서 돌아오신 건가요? 잠깐 잠이나 자려고 했는데 이렇게나 {cc['fg']['A']}{md.cMarkdown([2, 3])}빠르게{cc['end']} 오실 줄은 몰랐네요."
         ]),
         colorKey='Y'
     )

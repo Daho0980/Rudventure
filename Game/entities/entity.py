@@ -12,7 +12,7 @@ from Assets.data import (
 )
 
 
-extraParameters = lambda data: ','.join(f"{k}={v}" for k, v in data.items())
+extraParameters = lambda data:  ','.join(f"{k}={v}" for k, v in data.items())
 
 def addHashKey() -> str:
     while 1:
