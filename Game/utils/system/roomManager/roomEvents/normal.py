@@ -9,8 +9,8 @@ from Assets.data import (
     comments        as c
 )
 from Game.utils.system.roomManager.interactions import (
-    placeRandomOrbs,
     summonMonster,
+    randPlaceOrb,
     changeDoor,
 )
 
@@ -52,6 +52,6 @@ def event(data) -> None:
     elif not s.enemyCount and s.roomLock:
         s.roomLock                           = False
         s.Dungeon[s.Dy][s.Dx]['interaction'] = True
-        if randrange(0, 101) > p.clearedRoomLoot: placeRandomOrbs()
+        if randrange(0, 101) > p.clearedRoomLoot: randPlaceOrb()
         changeDoor(2, data)
-        play("object", "door", "close")
+        play("object", "door", "open")

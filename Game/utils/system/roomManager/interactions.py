@@ -1,92 +1,87 @@
 import threading
 from   random   import randrange, choice
 
-from Assets.data          import totalGameStatus as s
-from Assets.data.color    import cColors         as cc
-from Game.entities.entity import addMonster
-from Game.utils.system    import placeRandomBlock
+from Assets.data                 import totalGameStatus as s
+from Game.core.system.dataLoader import obj
+from Game.entities.entity        import addMonster
 
 
-def changeDoor(ID:int, data:dict) -> None:
+def changeDoor(blockID:int, data:dict) -> None:
     c = {
-        'y' : int(len(s.Dungeon[s.Dy][s.Dx]['room'])/2),
-        'x' : int(len(s.Dungeon[s.Dy][s.Dx]['room'][0])/2)
+        'y' : len(s.Dungeon[s.Dy][s.Dx]['room']   )//2,
+        'x' : len(s.Dungeon[s.Dy][s.Dx]['room'][0])//2
     }
-    DPG:dict[str,list[int]] = {
+    DPG = {
         'U' : [0, c['x']],
         'R' : [c['y'], len(s.Dungeon[s.Dy][s.Dx]['room'][0])-1],
         'D' : [len(s.Dungeon[s.Dy][s.Dx]['room'])-1, c['x']],
         'L' : [c['y'], 0]
-        }
-        
-    for i in range(len(data['doors'])):
-        keys, values = list(data['doors'].keys()), list(data['doors'].values())
-        if values[i] == 1:
-            DPY, DPX = DPG[keys[i]][0], DPG[keys[i]][1]
+    }
+    block = obj('-bb', str(blockID))
+    room  = s.Dungeon[s.Dy][s.Dx]['room']
 
-            s.Dungeon[s.Dy][s.Dx]['room'][DPY][DPX] = {"block" : s.ids[ID], "id" : ID, "type" : 0}
-            if   keys[i] in ['U','D']:
-                s.Dungeon[s.Dy][s.Dx]['room'][DPY][DPX-1] = {"block" : s.ids[ID], "id" : ID, "type" : 0}
-                s.Dungeon[s.Dy][s.Dx]['room'][DPY][DPX+1] = {"block" : s.ids[ID], "id" : ID, "type" : 0}
-            elif keys[i] in ['R','L']:
-                s.Dungeon[s.Dy][s.Dx]['room'][DPY-1][DPX] = {"block" : s.ids[ID], "id" : ID, "type" : 0}
-                s.Dungeon[s.Dy][s.Dx]['room'][DPY+1][DPX] = {"block" : s.ids[ID], "id" : ID, "type" : 0}
+    for pos, activate in zip(*map(list, zip(*data['doors'].items()))):
+        if activate:
+            DPY, DPX = DPG[pos][:2]
+
+            room[DPY][DPX] = block
+            match pos:
+                case 'U'|'D': room[DPY][DPX-1], room[DPY][DPX+1] = block, block
+                case 'R'|'L': room[DPY-1][DPX], room[DPY+1][DPX] = block, block
 
 def summonMonster(data:dict,
                   hpMultiplier:int     =1,
                   atkMultiplier:int    =1,
                   ashChipMultiplier:int=1,
-                  monsterIndex:int     =0,
+                  monsterType:int      =0,
                   useRandom:bool       =True,
                   boss:bool            =False) -> None:
     # type, hp
     def event() -> None:
-        nonlocal data
+        count = data['summonCount']
 
-        count                                = data['summonCount']
         s.Dungeon[s.Dy][s.Dx]['summonCount'] = 0
-        for i in range(count):
+        for i in range(count, 0, -1):
             addMonster(
-                choice([[0,1,2],[0,1]][boss])if useRandom else monsterIndex,
+                choice([[0,1,2],[0,1]][boss])if useRandom else monsterType,
                 hpMultiplier,
                 atkMultiplier,
                 ashChipMultiplier,
-                Dy         =s.Dy,
-                Dx         =s.Dx,
-                y          =[1, len(data['room'])-2   ],
-                x          =[1, len(data['room'][0])-2],
-                useRoomLock=True if i==(count-1)else False
-                )
+                Dy  =s.Dy,
+                Dx  =s.Dx,
+                y   =[1, len(data['room'])-2   ],
+                x   =[1, len(data['room'][0])-2],
+                lock=True if i==1 else False
+            )
+            
     threading.Thread(target=event, daemon=True).start()
     
-def placeRandomOrbs(multiple:int=1) -> None:
-    # hp -> def -> atk -> hng -> exp
-    orbs:dict = {
-        "size" : {
-            "smallOne" : [
-                f"{cc['fg']['R']}o{cc['end']}",
-                f"{cc['fg']['B1']}q{cc['end']}",
-                f"{cc['fg']['L']}v{cc['end']}",
-                f"{cc['fg']['Y']}o{cc['end']}",
-                f"{cc['fg']['F']}ø{cc['end']}"
-            ],
-            "bigOne" : [
-                f"{cc['fg']['R']}O{cc['end']}",
-                f"{cc['fg']['B1']}Q{cc['end']}",
-                f"{cc['fg']['L']}V{cc['end']}",
-                f"{cc['fg']['Y']}O{cc['end']}",
-                f"{cc['fg']['F']}Ø{cc['end']}"
-            ]
-        },
-        "type" : {
-            "hp"     : [f"{cc['fg']['R']}o{cc['end']}",  f"{cc['fg']['R']}O{cc['end']}"],
-            "def"    : [f"{cc['fg']['B1']}q{cc['end']}", f"{cc['fg']['B1']}Q{cc['end']}"],
-            "atk"    : [f"{cc['fg']['L']}v{cc['end']}",  f"{cc['fg']['L']}V{cc['end']}"],
-            "hunger" : [f"{cc['fg']['Y']}o{cc['end']}",  f"{cc['fg']['Y']}O{cc['end']}"],
-            "exp"    : [f"{cc['fg']['F']}ø{cc['end']}",  f"{cc['fg']['F']}Ø{cc['end']}"]
-        }
-    }
-    roomGrid = s.Dungeon[s.Dy][s.Dx]['room']
+def placeBlock(block:str,
+               ID:int,
+               y:list[int],
+               x:list[int],
+               allowedBlocks:list[int]) -> None:
+    """
+    방에서 블럭 등을 랜덤하게 배치할 수 있게 만든 함수
+
+    `block`(char) : 랜덤하게 배치될 블럭의 아이콘
+    `y`(list)     : 방의 y 최솟값과 최댓값 데이터
+    - `ex) y = [최솟값, 최댓값]`
+
+    `x`(list): 방의 x 최솟값과 최댓값 데이터
+    - `ex) x = [최솟값, 최댓값]`
+
+    `allowedBlocks`(list) : 블록을 놓을 수 있는 블록의 id
+    """
+    while 1:
+        Ry, Rx = randrange(y[0], y[1]), randrange(x[0], x[1])
+        if s.Dungeon[s.Dy][s.Dx]['room'][Ry][Rx]["id"] not in allowedBlocks: continue
+        break
+        
+    s.Dungeon[s.Dy][s.Dx]['room'][Ry][Rx] = obj('-bb', str(ID), block=block)
+
+def randPlaceOrb(multiple:int=1) -> None:
+    room = s.Dungeon[s.Dy][s.Dx]['room']
     for _ in range(randrange(2, 6)*multiple):
         sizeIndex = randrange(0, 2)
         orbIDs = {
@@ -99,18 +94,16 @@ def placeRandomOrbs(multiple:int=1) -> None:
 
         typeIndex = None
         rate = randrange(1, 101)
-        if   rate <= 45:               typeIndex = "hunger"
-        elif rate > 45 and rate <= 70: typeIndex = "hp"
-        elif rate > 70 and rate <= 80: typeIndex = "def"
-        elif rate > 80 and rate <= 85: typeIndex = "atk"
-        else                         : typeIndex = "exp"
+        if        rate <= 45: typeIndex = "hunger"
+        elif 45 < rate <= 70: typeIndex = "hp"
+        elif 70 < rate <= 80: typeIndex = "def"
+        elif 80 < rate <= 85: typeIndex = "atk"
+        else                : typeIndex = "exp"
 
-        idIndex = orbIDs[typeIndex][sizeIndex]
-        placeRandomBlock(
-            orbs['type'][typeIndex][sizeIndex],
-            idIndex,
-            0,
-            [1, len(roomGrid)-2],
-            [1, len(roomGrid[0])-2],
+        placeBlock(
+            s.ids[s.orbIds['type'][typeIndex][sizeIndex]],
+            orbIDs[typeIndex][sizeIndex],
+            [1, len(room)-2   ],
+            [1, len(room[0])-2],
             [0]
-            )
+        )

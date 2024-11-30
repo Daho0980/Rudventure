@@ -12,10 +12,10 @@ from Assets.data import (
 s.playerColor      = ["\033[;38;5;92m", "CR"]
 s.ids[300]         = f"{s.playerColor[0]}ᓩ{cc['end']}"
 s.playerVoice      = "repo"
-s.playerDamageIcon = list(map(chr, range(5124, 5184)))
+s.playerDamageIcon = list(map(lambda c: f"{chr(c)} ", range(5124, 5184)))
                         
 per.treasureComment = 100
-per.soliloquy       = {
+per.monologue       = {
     "min" : 150,
     "max" : 450
 }
@@ -198,7 +198,7 @@ c.loadsaveStart = [
     "머리부터 발끝까지 요리해 드리죠.",
 ]
 
-c.soliloquy = {
+c.monologue = {
     "HL" : [
         "아픈 건 싫은데...",
         "이러다 망가진 깃털의 수가 멀쩡한 깃털의 수보다 많아질 거 같아!",

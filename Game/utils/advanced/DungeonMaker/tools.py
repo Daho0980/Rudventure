@@ -1,7 +1,8 @@
 from random import randrange, choice
 from copy   import deepcopy
 
-from Assets.data.color import cColors as cc
+from Assets.data.color           import cColors as cc
+from Game.core.system.dataLoader import obj
 
 from Assets.data import (
     totalGameStatus as s,
@@ -42,17 +43,15 @@ def makeRoom(Map:list):
                     baseMap = deepcopy(r.bigRoom)
                 elif output[row][column]['roomType'] == 3:
                     baseMap = deepcopy(r.treasureRoom)
-                elif output[row][column]['roomType'] == 2 and output[row][column]['eventType'] in [1,2,3]:
+                elif output[row][column]['roomType']==2 and output[row][column]['eventType']in[1,2,3]:
                     baseMap = deepcopy(r.chapel)
                 elif output[row][column]['roomType'] == 0:
                     baseMap = deepcopy(r.Room)
-                else: baseMap = deepcopy(choice(
-                    [
-                        r.Room,
-                        r.verticallyLongRoom,
-                        r.horizonallyLongRoom
-                    ]
-                ))
+                else: baseMap = deepcopy(choice([
+                    r.Room,
+                    r.verticallyLongRoom,
+                    r.horizonallyLongRoom
+                ]))
                 c  = {
                         'y'  : int(len(baseMap)/2),
                         'ym' : int(len(baseMap)/2)-1,
@@ -81,7 +80,7 @@ def makeRoom(Map:list):
                         ]
                     }
                     for tby, tbx in treasureLocations[output[row][column]['treasureRarity']]:
-                        baseMap[tby][tbx] = {"block" : s.ids[4], "id" : 4, "type" : 0}
+                        baseMap[tby][tbx] = obj('-bb', '4')
 
                 elif output[row][column]['roomType'] == 2:
                     match output[row][column]['eventType']:
@@ -97,11 +96,10 @@ def makeRoom(Map:list):
                             ][randrange(0, 4)]
 
                             output[row][column]['roomIcon'] = [s.ids[20], status[0]]
-                            baseMap[c['y']][c['x']]         = {
-                                "block" : f"{cc['fg'][status[0]]}{s.ids[20]}{cc['end']}",
-                                "id"    : 20,
-                                "type"   : 0,
-                                "nbt"   : {
+                            baseMap[c['y']][c['x']]         = obj(
+                                '-bb', '20',
+                                block=f"{cc['fg'][status[0]]}{s.ids[20]}{cc['end']}",
+                                nbt={
                                     "texts" : [
                                         [f"'와우, 방금 당신 1/6의 확률을 뚫고 {cc['fg'][status[0]]}저{cc['end']}를 만나셨어요!'", "s.enemyCount += 1"],
                                         "'다른 이벤트가 없어서 실망하셨다고요? 저런...'",
@@ -111,18 +109,18 @@ def makeRoom(Map:list):
                                     "command" : "time.sleep(0.5); p.say(choice(c.clayModelAnswer))",
                                     "delay" : 0.5,
                                     "voice" : "clayModel"
-                                    }
                                 }
+                            )
                         case 1|2|3:
                             output[row][column]['roomIcon'] = ['Y', "A"]
 
-                            baseMap[c['ym']][c['xm']] = {"block" : f"{cc['fg']['A']}\\{cc['end']}", "id" : 400, "type" : 0,"nbt":{"linkedInteraction":True}}
-                            baseMap[c['ym']][c['x']]  = {"block" : f"{cc['fg']['A']}O{cc['end']}",  "id" : 400, "type" : 0,"nbt":{"linkedInteraction":True}}
-                            baseMap[c['ym']][c['xp']] = {"block" : f"{cc['fg']['A']}/{cc['end']}",  "id" : 400, "type" : 0,"nbt":{"linkedInteraction":True}}
-                            baseMap[c['y']][c['x']]   = {"block" : f"{cc['fg']['A']}Y{cc['end']}",  "id" : 400, "type" : 0,"nbt":{"linkedInteraction":True}}
-                            baseMap[c['yp']][c['xm']] = {"block" : f"{cc['fg']['A']}[{cc['end']}",  "id" : 400, "type" : 0,"nbt":{"linkedInteraction":True}}
-                            baseMap[c['yp']][c['x']]  = {"block" : f"{cc['fg']['A']}T{cc['end']}",  "id" : 400, "type" : 0,"nbt":{"linkedInteraction":True}}
-                            baseMap[c['yp']][c['xp']] = {"block" : f"{cc['fg']['A']}]{cc['end']}",  "id" : 400, "type" : 0,"nbt":{"linkedInteraction":True}}
+                            baseMap[c['ym']][c['xm']] = obj('-bb', '400', block=f"{cc['fg']['A']}‾\\{cc['end']}", nbt={"linkedInteraction":True})
+                            baseMap[c['ym']][c['x']]  = obj('-bb', '400', block=f"{cc['fg']['A']}ㅇ{cc['end']}",  nbt={"linkedInteraction":True})
+                            baseMap[c['ym']][c['xp']] = obj('-bb', '400', block=f"{cc['fg']['A']}/‾{cc['end']}",  nbt={"linkedInteraction":True})
+                            baseMap[c['y']][c['x']]   = obj('-bb', '400', block=f"{cc['fg']['A']}뮤{cc['end']}",  nbt={"linkedInteraction":True})
+                            baseMap[c['yp']][c['xm']] = obj('-bb', '400', block=f"{cc['fg']['A']}[ {cc['end']}",  nbt={"linkedInteraction":True})
+                            baseMap[c['yp']][c['x']]  = obj('-bb', '400', block=f"{cc['fg']['A']}ㅍ{cc['end']}",  nbt={"linkedInteraction":True})
+                            baseMap[c['yp']][c['xp']] = obj('-bb', '400', block=f"{cc['fg']['A']} ]{cc['end']}",  nbt={"linkedInteraction":True})
 
                             for _ in range(25):
                                 ty, tx = randrange(c['y']-3, c['y']+4), randrange(c['x']-3, c['x']+4)
@@ -168,7 +166,7 @@ s.Dungeon[s.Dy][s.Dx]['room'][ty][tx] = {{
     "id"    : 0,
     "type"  : 0
 }}
-event.readSign("'하하하, 터어어어얼렸구나!!'", 0.07, "clayModel")
+event.readSign("{cc['fg']['B1']}'하하하, 터어어어얼렸구나!!'{cc['end']}", 0.07, "clayModel")
 """
                                 ])
                             }
@@ -184,13 +182,13 @@ event.readSign("'하하하, 터어어어얼렸구나!!'", 0.07, "clayModel")
 
                 for DIE in range(len(RDP)):
                     if RDP[DIE] == 1:
-                        baseMap[GRDP[DIE][0]][GRDP[DIE][1]] = {"block":s.ids[2], "id":2, "type":0}
+                        baseMap[GRDP[DIE][0]][GRDP[DIE][1]] = obj('-bb', '2')
                         if DIE in [0, 2]:
-                            baseMap[GRDP[DIE][0]][GRDP[DIE][1]-1] = {"block":s.ids[2], "id":2, "type":0}
-                            baseMap[GRDP[DIE][0]][GRDP[DIE][1]+1] = {"block":s.ids[2], "id":2, "type":0}
+                            baseMap[GRDP[DIE][0]][GRDP[DIE][1]-1] = obj('-bb', '2')
+                            baseMap[GRDP[DIE][0]][GRDP[DIE][1]+1] = obj('-bb', '2')
                         elif DIE in [1, 3]:
-                            baseMap[GRDP[DIE][0]-1][GRDP[DIE][1]] = {"block":s.ids[2], "id":2, "type":0}
-                            baseMap[GRDP[DIE][0]+1][GRDP[DIE][1]] = {"block":s.ids[2], "id":2, "type":0}
+                            baseMap[GRDP[DIE][0]-1][GRDP[DIE][1]] = obj('-bb', '2')
+                            baseMap[GRDP[DIE][0]+1][GRDP[DIE][1]] = obj('-bb', '2')
 
                 output[row][column]["room"] = baseMap
 
@@ -269,25 +267,25 @@ event.readSign("'하하하, 터어어어얼렸구나!!'", 0.07, "clayModel")
                             output[row][column]['doors'][dp[i][0]]      = 1
                             output[p[i][0]][p[i][1]]['doors'][dp[i][1]] = 1
 
-                            output[row][column]['room'][grd[i][0][0]][grd[i][0][1]]      = {"block":s.ids[2], "id":2, "type":0}
-                            output[p[i][0]][p[i][1]]['room'][grd[i][1][0]][grd[i][1][1]] = {"block":s.ids[2], "id":2, "type":0}
+                            output[row][column]['room'][grd[i][0][0]][grd[i][0][1]]      = obj('-bb', '2')
+                            output[p[i][0]][p[i][1]]['room'][grd[i][1][0]][grd[i][1][1]] = obj('-bb', '2')
 
                             if dp[i][0] in ['U', 'D']:
                                 # mainRoom
-                                output[row][column]['room'][grd[i][0][0]][grd[i][0][1]-1] = {"block":s.ids[2], "id":2, "type":0}
-                                output[row][column]['room'][grd[i][0][0]][grd[i][0][1]+1] = {"block":s.ids[2], "id":2, "type":0}
+                                output[row][column]['room'][grd[i][0][0]][grd[i][0][1]-1] = obj('-bb', '2')
+                                output[row][column]['room'][grd[i][0][0]][grd[i][0][1]+1] = obj('-bb', '2')
 
                                 # subRoom
-                                output[p[i][0]][p[i][1]]['room'][grd[i][1][0]][grd[i][1][1]-1] = {"block":s.ids[2], "id":2, "type":0}
-                                output[p[i][0]][p[i][1]]['room'][grd[i][1][0]][grd[i][1][1]+1] = {"block":s.ids[2], "id":2, "type":0}
+                                output[p[i][0]][p[i][1]]['room'][grd[i][1][0]][grd[i][1][1]-1] = obj('-bb', '2')
+                                output[p[i][0]][p[i][1]]['room'][grd[i][1][0]][grd[i][1][1]+1] = obj('-bb', '2')
                             elif dp[i][0] in ['L', 'R']:
                                 # mainRoom
-                                output[row][column]['room'][grd[i][0][0]-1][grd[i][0][1]] = {"block":s.ids[2], "id":2, "type":0}
-                                output[row][column]['room'][grd[i][0][0]+1][grd[i][0][1]] = {"block":s.ids[2], "id":2, "type":0}
+                                output[row][column]['room'][grd[i][0][0]-1][grd[i][0][1]] = obj('-bb', '2')
+                                output[row][column]['room'][grd[i][0][0]+1][grd[i][0][1]] = obj('-bb', '2')
 
                                 # subRoom
-                                output[p[i][0]][p[i][1]]['room'][grd[i][1][0]-1][grd[i][1][1]] = {"block":s.ids[2], "id":2, "type":0}
-                                output[p[i][0]][p[i][1]]['room'][grd[i][1][0]+1][grd[i][1][1]] = {"block":s.ids[2], "id":2, "type":0}
+                                output[p[i][0]][p[i][1]]['room'][grd[i][1][0]-1][grd[i][1][1]] = obj('-bb', '2')
+                                output[p[i][0]][p[i][1]]['room'][grd[i][1][0]+1][grd[i][1][1]] = obj('-bb', '2')
 
     return output
 

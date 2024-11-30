@@ -10,10 +10,9 @@ clc = cSelector
 
 def main(stdscr) -> None:
     if s.checkTerminalSize:
-        y, x = stdscr.getmaxyx()
-        isy, isx = False if y < s.sss['minimum'][0] else True, False if x < s.sss['minimum'][1] else True
+        scr = list(map(lambda l:False if l[0]<s.sss['minimum'][l[1]]else True, zip(stdscr.getmaxyx(),(0,1))))
 
-        if (isy+isx)<=1:
+        if sum(scr)<=1:
             match clc.main(
                 Textbox.TextBox(
                     f"{cc['fg']['R']}무, 무슨?!{cc['end']}",
@@ -24,8 +23,9 @@ def main(stdscr) -> None:
                     coverColor  =cc['fg']['R'],
                     endLineBreak=True
                 )+f"""
-현재 터미널의 {['높이', ''][isy]}{[['와 너비가', '가'],['너비가', '']][isy][isx]}
-게임 최소 기준에 부합하지 않습니다.
+현재 터미널의 {['높이', ''][scr[0]]}{[['와 너비가', '가'],['너비가', '']][scr[0]][scr[1]]}
+게임의 최소 기준에 부합하지 않습니다.
+(최소 기준 : y{s.sss['minimum'][0]}, x{s.sss['minimum'][1]})
 
 다음부터 자동으로 재조정하시겠습니까?""",
                 ["네", "아니오", "두 번 다신 내 화면에 나오지 마쇼.\n  이건 내 마지막 경고요."],

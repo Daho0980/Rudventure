@@ -18,36 +18,36 @@ from Game.utils.modules import (
 
 
 def setIconColor() -> None:
-    s.ids[4]   = f"{cc['fg']['Y']}É{cc['end']}"
-    s.ids[5]   = f"{cc['fg']['R']}F{cc['end']}"
-    s.ids[7]   = f"{cc['fg']['R']}X{cc['end']}"
-    s.ids[8]   = f"{cc['fg']['B1']}{md.cMarkdown(1)}O{cc['end']}"
-    s.ids[9]   = f"{cc['fg']['B1']}{md.cMarkdown(1)}o{cc['end']}"
-    s.ids[10]  = f"{cc['fg']['R']}o{cc['end']}"
-    s.ids[11]  = f"{cc['fg']['B1']}q{cc['end']}"
-    s.ids[12]  = f"{cc['fg']['L']}v{cc['end']}"
-    s.ids[13]  = f"{cc['fg']['Y']}o{cc['end']}"
-    s.ids[14]  = f"{cc['fg']['F']}ø{cc['end']}"
-    s.ids[15]  = f"{cc['fg']['R']}O{cc['end']}"
-    s.ids[16]  = f"{cc['fg']['B1']}Q{cc['end']}"
-    s.ids[17]  = f"{cc['fg']['L']}V{cc['end']}"
-    s.ids[18]  = f"{cc['fg']['Y']}O{cc['end']}"
-    s.ids[19]  = f"{cc['fg']['F']}Ø{cc['end']}"
+    s.ids[4]   = f"{cc['fg']['Y']}É {cc['end']}"
+    s.ids[5]   = f"{cc['fg']['R']}F {cc['end']}"
+    s.ids[7]   = f"{cc['fg']['R']}X {cc['end']}"
+    s.ids[8]   = f"{cc['fg']['B1']}{md.cMarkdown(1)}O {cc['end']}"
+    s.ids[9]   = f"{cc['fg']['B1']}{md.cMarkdown(1)}o {cc['end']}"
+    s.ids[10]  = f"{cc['fg']['R']}o {cc['end']}"
+    s.ids[11]  = f"{cc['fg']['B1']}q {cc['end']}"
+    s.ids[12]  = f"{cc['fg']['L']}v {cc['end']}"
+    s.ids[13]  = f"{cc['fg']['Y']}o {cc['end']}"
+    s.ids[14]  = f"{cc['fg']['F']}ø {cc['end']}"
+    s.ids[15]  = f"{cc['fg']['R']}O {cc['end']}"
+    s.ids[16]  = f"{cc['fg']['B1']}Q {cc['end']}"
+    s.ids[17]  = f"{cc['fg']['L']}V {cc['end']}"
+    s.ids[18]  = f"{cc['fg']['Y']}O {cc['end']}"
+    s.ids[19]  = f"{cc['fg']['F']}Ø {cc['end']}"
 
-    s.ids[21] = f"{cc['fg']['O']}☲{cc['end']}"
+    s.ids[21] = f"{cc['fg']['O']}☲ {cc['end']}"
 
-    s.ids[26] = f"{cc['fg']['M']}X{cc['end']}"
+    s.ids[26] = f"{cc['fg']['M']}X {cc['end']}"
 
-    s.ids[300] = f"{cc['fg']['L']}@{cc['end']}" if s.ids[300]=='@' else s.ids[300]
-    s.ids[301] = f"{cc['fg']['L']}&{cc['end']}"
+    s.ids[300] = f"{cc['fg']['L']}@ {cc['end']}" if s.ids[300]=='@ ' else s.ids[300]+' '
+    s.ids[301] = f"{cc['fg']['L']}& {cc['end']}"
 
-    s.ids[400] = f"{cc['fg']['A']}Y{cc['end']}"
-    s.ids[401] = f"{cc['fg']['F']}Y{cc['end']}"
+    s.ids[400] = f"{cc['fg']['A']}Y {cc['end']}"
+    s.ids[401] = f"{cc['fg']['F']}Y {cc['end']}"
 
-    s.ids[501] = f"{cc['fg']['R']}H{cc['end']}"
-    s.ids[502] = f"{cc['fg']['B1']}U{cc['end']}"
+    s.ids[501] = f"{cc['fg']['R']}H {cc['end']}"
+    s.ids[502] = f"{cc['fg']['B1']}U {cc['end']}"
 
-    s.ids[900] = f"{cc['fg']['G1']};{cc['end']}"
+    s.ids[900] = f"{cc['fg']['G1']}; {cc['end']}"
 
 def _setFrame():
     frameSettings = cSelector.main(

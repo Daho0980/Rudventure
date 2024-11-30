@@ -1,6 +1,8 @@
 #!/bin/bash
 # shellcheck disable=SC1091
 
+echo -ne "\033]0;Rudventure\007"
+
 cd     "$(cd "$(dirname "$0")" && pwd -P)" || exit
 source bin/activate
 

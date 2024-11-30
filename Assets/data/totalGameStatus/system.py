@@ -18,7 +18,7 @@ port:int            = -1
 volume:int = 50
 
 # region Terminal
-# 'S'creen'S'ize'S' LMAO
+# The origin of this name is 'S'creen'S'ize'S' LMAO
 sss:dict[str, tuple] = {
     "minimum"     : (58, 122),
     "recommended" : (67, 195)

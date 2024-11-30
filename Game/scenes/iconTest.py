@@ -1,7 +1,7 @@
 from Assets.data.color import cColors as cc
-from Game.utils        import system
+from Game.utils.system import cinp
 
-data = {
+gameData = {
     "base" : f"""
  ╔═══════════════════╗
  ║                   ║
@@ -56,11 +56,22 @@ data = {
 """
 }
 
-def main(stdscr, icon="title") -> None:
-    while 1:
-        inp = system.cinp(
-            stdscr,
-            data[icon]+"\n\ninput 'n' to next"
-        )
-        if inp != 'n': continue
-        break
+characterData = {
+    "glagatrof" : f"{cc['fg']['L']}@{cc['end']}",
+    "repo"      : f"\033[;38;5;92mᓩ{cc['end']}",
+    "upload"    : f"\033[;38;5;32m◑{cc['end']}"
+}
+
+def main(stdscr) -> None:
+        while 1:
+            if cinp(
+                stdscr,
+                gameData[cinp(stdscr, "Which icon would you want to see? : ", clearAfter=True)]+"\n\nInput 'q' to quit. Enter to go to next session.",
+                clearAfter=True
+            ) == 'q': return
+            if cinp(
+                stdscr,
+                characterData[cinp(stdscr, "Which character would you want to see? : ", clearAfter=True)]+"\n\nInput 'q' to quit. Enter to go back to finish this session.",
+                clearAfter=True
+            ) == 'q': return
+            continue

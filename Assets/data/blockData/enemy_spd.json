@@ -7,7 +7,7 @@
         "hp"          : 4,
         "atk"         : 1,
         "entityCount" : 1,
-        "icon"        : "%",
+        "icon"        : "% ",
         "ashChip"     : 1
     },
     "1" : {
@@ -18,7 +18,7 @@
         "hp"          : 10,
         "atk"         : 2,
         "entityCount" : 1,
-        "icon"        : "#",
+        "icon"        : "# ",
         "ashChip"     : 2
     },
     "2" : {
@@ -29,7 +29,7 @@
         "hp"          : 5,
         "atk"         : 7,
         "entityCount" : 1,
-        "icon"        : "※",
+        "icon"        : "※ ",
         "ashChip"     : 1
     }
 }

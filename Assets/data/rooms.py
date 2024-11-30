@@ -1,12 +1,12 @@
 from itertools import chain
 
-from Game.core.system.dataLoader import makePath, obj
+from Game.core.system.dataLoader import obj
 
 
-dataPath:str = makePath("Assets", "data", "blockData", "block.json")
-wall:dict    = obj(dataPath, '1')
-floor:dict   = obj(dataPath, '0')
-void:dict    = obj(dataPath, '25')
+dataPath = __import__("Assets.data.totalGameStatus", fromlist=["path"]).path['blockData']['block']
+wall     = obj(dataPath, '1')
+floor    = obj(dataPath, '0')
+void     = obj(dataPath, '25')
 
 Room:list[list[dict[str,str|int|dict]]] = [
     [wall]*13, 

@@ -10,7 +10,7 @@ treasureBox = {
     "medium" : 90
 }
 
-soliloquy = {
+monologue = {
     "min" : 350,
     "max" : 950
 }

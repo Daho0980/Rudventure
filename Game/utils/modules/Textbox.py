@@ -9,6 +9,12 @@ from Game.utils.graphics import (
     )
 
 
+Line:dict[str,dict[int,list[str]]] = {
+    "normal" : {0:["┌", "┐"], 1:["└", "┘"], 2:["├", "┤"], 3:["─", "│"]},
+    "double" : {0:["╔", "╗"], 1:["╚", "╝"], 2:["╠", "╣"], 3:["═", "║"]},
+    "bold"   : {0:["┏", "┓"], 1:["┗", "┛"], 2:["┣", "┫"], 3:["━", "┃"]}
+}
+
 def TextBox(Inp:str,
             Type:str             ="left",
             maxLine:int          =100,
@@ -43,22 +49,18 @@ def TextBox(Inp:str,
         ``coverSideText``(bool)                                                     : sideText 양 옆을 텍스트박스가 감쌀지에 대한 여부, 기본적으로 `False`로 설정되어 있음\n
         ``coverColor``(str)                                                         : 박스와 내부 텍스트를 채울 색. 텍스트에 색이 들어가 있다면 다시 채워지지 않음. 기본적으로 `" "`로 설정되어 있음\n
         """
-        if   not len(Inp) and alwaysReturnBox:     Inp = "..."
+        if   not len(Inp) and     alwaysReturnBox: Inp = "..."
         elif not len(Inp) and not alwaysReturnBox: return ""
 
 
-        Display:str                        = ""
-        Line:dict[str,dict[int,list[str]]] = {
-                    "normal" : {0:["┌", "┐"], 1:["└", "┘"], 2:["├", "┤"], 3:["─", "│"]},
-                    "double" : {0:["╔", "╗"], 1:["╚", "╝"], 2:["╠", "╣"], 3:["═", "║"]},
-                    "bold"   : {0:["┏", "┓"], 1:["┗", "┛"], 2:["┣", "┫"], 3:["━", "┃"]}
-                    }
+        Display    = ""
+        FrontSpace = ""
+        BackSpace  = ""
+        FixedLine  = ""
+
         Texts        = Inp.split("\n")
-        FrontSpace   = ""
-        BackSpace    = ""
         endLine      = "\n" if endLineBreak else ""
         fullAddWidth = addWidth*2 if Type=="middle"else addWidth
-        FixedLine    = ""
         end          = cc['end'] if coverColor else ''
 
         if coverSideText: sideText = f"{Line[LineType][2][1]}{sideText}{Line[LineType][2][0]}"

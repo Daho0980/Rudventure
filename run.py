@@ -1,35 +1,35 @@
 #!/usr/bin/env python3.10
 import sys, os
 
-from Assets.data import totalGameStatus as s
+from Assets.data                 import totalGameStatus as s
+from Game.core.system.dataLoader import makePath
 
+
+s.s             = '/'
+pythonDirectory = "/Library/Frameworks/Python.framework/Versions/3.10/lib"
 
 directory = os.path.dirname(os.path.realpath(__file__))
+sys.path  = [
+    directory,
+    os.path.join(pythonDirectory, 'python310.zip'),
+    os.path.join(pythonDirectory, 'python3.10'),
+    os.path.join(pythonDirectory, 'python3.10', 'lib-dynload'),
+    os.path.join(directory, 'lib', 'python3.10', 'site-packages')
+]
+# match os.name:
+#     case 'posix':
+    # case 'nt':
+    #     s.s             = '\\'
+    #     pythonDirectory = "%APPDATA%\\Local\\Programs\\Python\\Python310"
 
-match os.name:
-    case 'posix':
-        s.s             = '/'
-        pythonDirectory = "/Library/Frameworks/Python.framework/Versions/3.10/lib"
-
-        sys.path = [
-            directory,
-            os.path.join(pythonDirectory, 'python310.zip'),
-            os.path.join(pythonDirectory, 'python3.10'),
-            os.path.join(pythonDirectory, 'python3.10', 'lib-dynload'),
-            os.path.join(directory, 'lib', 'python3.10', 'site-packages')
-        ]
-    case 'nt':
-        s.s             = '\\'
-        pythonDirectory = "%APPDATA%\\Local\\Programs\\Python\\Python310"
-
-        sys.path = [
-            directory,
-            os.path.join(pythonDirectory, 'python310.zip'),
-            os.path.join(pythonDirectory, 'DLLs'),
-            os.path.join(pythonDirectory, 'lib'),
-            pythonDirectory,
-            os.path.join(pythonDirectory, 'lib', 'site-packages')
-        ]
+    #     sys.path = [
+    #         directory,
+    #         os.path.join(pythonDirectory, 'python310.zip'),
+    #         os.path.join(pythonDirectory, 'DLLs'),
+    #         os.path.join(pythonDirectory, 'lib'),
+    #         pythonDirectory,
+    #         os.path.join(pythonDirectory, 'lib', 'site-packages')
+    #     ]
 
 pyV = sys.version_info
 
@@ -48,6 +48,9 @@ Windows 64-bit : https://www.python.org/ftp/python/3.10.11/python-3.10.11-amd64.
     exit(1)
 
 s.TFP = str(os.path.abspath(''))+s.s
+
+s.path['blockData'] = {k:makePath(*p)for k,p in s.path['blockData'].items()}
+s.path['blockInfo'] = {k:makePath(*p)for k,p in s.path['blockInfo'].items()}
 
 os.system("clear"if os.name=="posix"else"cls")
 import Game.main

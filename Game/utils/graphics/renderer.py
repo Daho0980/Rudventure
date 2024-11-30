@@ -137,7 +137,7 @@ def render(stdscr):
     y, x    = stdscr.getmaxyx()
     Display = []
     buffer  = ""
-    GFD     = [' '.join([d['block']for d in row])for row in grid]
+    GFD     = [''.join([d['block']for d in row])for row in grid]
 
     # Stage
     buffer = '\n'.join(GFD)
@@ -265,7 +265,7 @@ Dx : {s.Dx}, Dy : {s.Dy}, x : {s.x}, y : {s.y}
 Number of entities : {s.entityCount}
 Number of enemies : {s.enemyCount}
 Number of total entities : {s.totalEntityCount}
-soliloquy : ({s.soliloquyCount}, {s.soliloquyRange}, {p.soliloquy['min']}, {p.soliloquy['max']})
+monologue : ({s.monologueCount}, {s.monologueRange}, {p.monologue['min']}, {p.monologue['max']})
 
 Elapsed time : {s.elapsedTime:.2f}
 FPS : {s.currentFrame}""",

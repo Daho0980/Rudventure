@@ -162,18 +162,20 @@ class Cat(Animal):
         roomGrid = s.Dungeon[self.Dy][self.Dx]['room']
 
         play("entity", "animal", "cat", "cloudy", "cry", "long")
-        roomGrid[self.y][self.x] = {'block' : f"{cc['fg']['A']}O{cc['end']}", 'id' : -1, "type" : 0};           time.sleep(0.05)
-        roomGrid[self.y][self.x] = {'block' : f"{cc['fg']['A']}{self.icon}{cc['end']}", 'id' : -1, "type" : 0}; time.sleep(0.05)
+        roomGrid[self.y][self.x] = obj('-bb', '-1', block=f"{cc['fg']['A']}O {cc['end']}");          time.sleep(0.05)
+        roomGrid[self.y][self.x] = obj('-bb', '-1', block=f"{cc['fg']['A']}{self.icon}{cc['end']}"); time.sleep(0.05)
 
-        roomGrid[self.y][self.x] = {"block"   : f"{self.color}{self.icon}{cc['end']}",
-                                    "id"      : self.id,
-                                    "type"    : 1,
-                                    "hashKey" : self.hashKey                          }; time.sleep(0.05)
+        roomGrid[self.y][self.x] = obj(
+            '-be', str(self.id),
+            block  =f"{self.color}{self.icon}{cc['end']}",
+            id     =self.id,
+            hashKey=self.hashKey
+        ); time.sleep(0.05)
         play("entity", "animal", "cat", "teleport")
 
     def superTeleport(self) -> None:
         play("entity", "animal", "cat", "cloudy", "cry", "long")
-        event.spawn(self.y, self.x, f"{self.color}{self.icon}{cc['end']}", self.hashKey)
+        event.spawn(self.y, self.x, f"{self.color}{self.icon}{cc['end']}")
         play("entity", "animal", "cat", "teleport")
 
     def checkPlayerisHere(self) -> bool:
@@ -181,7 +183,7 @@ class Cat(Animal):
         self.resetAction()
         if self.stage != s.stage:
             self.setLoyalty()
-            self.stepped = {"block" : ' ', "id" : 0, "type" : 0}
+            self.stepped = obj('-bb', '0')
             self.stage   = s.stage
         else:
             s.Dungeon[self.Dy][self.Dx]['room'][self.y][self.x] = self.stepped
@@ -201,7 +203,7 @@ class Cat(Animal):
 
                 if blockID in s.interactableBlocks['steppable']['maintainable']:
                     self.stepped = s.Dungeon[self.Dy][self.Dx]['room'][y][x]
-                else: self.stepped = {"block" : ' ', "id" : 0, "type" : 0}
+                else: self.stepped = obj('-bb', '0')
                 
                 if self.stage != s.stage: self.superTeleport()
                 else:                     self.teleport()
@@ -364,16 +366,17 @@ class Cat(Animal):
 
         for term in map(lambda i: i/100, termArray):
             DRP = s.Dungeon[self.Dy][self.Dx]
-            DRP['room'][self.y][self.x] = {"block" : f"{cc['bg']['A']}{self.icon}{cc['end']}", "id" : -1, "type" : 1, "hashKey" : self.hashKey}; time.sleep(0.03)
-            DRP['room'][self.y][self.x] = {"block" : f"{self.color}{self.icon}{cc['end']}", "id" : -1, "type" : 1, "hashKey" : self.hashKey}
+            DRP['room'][self.y][self.x] = obj('-be', str(self.id), block=f"{cc['bg']['A']}{self.icon}{cc['end']}", hashKey=self.hashKey)
+            time.sleep(0.03)
+            DRP['room'][self.y][self.x] = obj('-be', str(self.id), block=f"{self.color}{self.icon}{cc['end']}", hashKey=self.hashKey)
             time.sleep(term)
-        DRP['room'][self.y][self.x] = {"block" : f"{self.color}{self.icon}{cc['end']}", "id" : self.id, "type" : 1, "hashKey" : self.hashKey}
+        DRP['room'][self.y][self.x] = obj('-be', str(self.id), block=f"{self.color}{self.icon}{cc['end']}", hashKey=self.hashKey)
 
     def grooming(self) -> None:
         DRP = s.Dungeon[self.Dy][self.Dx]
-        DRP['room'][self.y][self.x] = {"block" : f"{cc['bg']['A']}{self.icon}{cc['end']}", "id" : -1, "type" : 1, "hashKey" : self.hashKey}
+        DRP['room'][self.y][self.x] = obj('-be', str(self.id), block=f"{cc['bg']['A']}{self.icon}{cc['end']}", hashKey=self.hashKey)
         time.sleep(randrange(1,14)/10)
-        DRP['room'][self.y][self.x] = {"block" : f"{self.color}{self.icon}{cc['end']}", "id" : self.id, "type" : 1, "hashKey" : self.hashKey}
+        DRP['room'][self.y][self.x] = obj('-be', str(self.id), block=f"{self.color}{self.icon}{cc['end']}", hashKey=self.hashKey)
 
     def checkPWRest(self, stress) -> bool:
         if not self.checkPlayerisHere():
@@ -433,13 +436,14 @@ class Cat(Animal):
                                         (self.y, self.x),
                                         self.monsterTargetHashKey,
                                         s.interactableBlocks['steppable']['total']
-                                        )
+                                    )
+
                                 else:
                                     path = AStar.main(
                                         (self.y, self.x),
                                         s.enemyIds,
                                         s.interactableBlocks['steppable']['total']
-                                        )
+                                    )
                                     
                                 if not path:
                                     self.getStress()
@@ -709,7 +713,7 @@ class Cat(Animal):
                             self.say(choice(catComments['spitOut']))
                             s.Dungeon[self.Dy][self.Dx]['room'][ty][tx]=\
                                 obj(
-                                    f"{s.TFP}Assets{s.s}data{s.s}blockData{s.s}block.json",
+                                    '-bb',
                                     str(choices(
                                         [14, 11, 12],
                                         list(self.camouflage.values()),
@@ -727,13 +731,16 @@ class Cat(Animal):
                     stress = 0
                     while self.stressLvl!=1 and self.stressPt!=0:
                         if self.checkPWRest(stress): break
-                        s.Dungeon[self.Dy][self.Dx]['room'][self.y][self.x] = {"block" : f"{cc['bg']['A']}{self.icon}{cc['end']}", "id" : -1, "type" : 1, "hashKey" : self.hashKey}
+
+                        s.Dungeon[self.Dy][self.Dx]['room'][self.y][self.x] = obj('-be', str(self.id), block=f"{cc['bg']['A']}{self.icon}{cc['end']}", hashKey=self.hashKey)
                         if self.checkPWRest(stress): break
                         time.sleep(1.5)
                         if self.checkPWRest(stress): break
-                        s.Dungeon[self.Dy][self.Dx]['room'][self.y][self.x] = {"block" : f"{self.color}{self.icon}{cc['end']}", "id" : -1, "type" : 1, "hashKey" : self.hashKey}
+
+                        s.Dungeon[self.Dy][self.Dx]['room'][self.y][self.x] = obj('-be', str(self.id), block=f"{self.color}{self.icon}{cc['end']}", hashKey=self.hashKey)
                         if self.checkPWRest(stress): break
                         time.sleep(1.5)
+
                         self.loseStress(10); stress += 10
 
         else: self.wait()

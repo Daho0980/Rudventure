@@ -61,6 +61,8 @@ dungeonMap:dict[int|str, str] = {
     'introduction' : f"""                                                      │
                                                       │
                                                       │
+                                                      │
+                                                      │
 ┌──────────────────────────────────────────────────┐  │
 │ 게임 내에서 [{cc['fg']['R']}Tab{cc['end']}] 키를 눌러 켜고 끌 수 있습니다. ├──┘
 └──────────────────────────────────────────────────┘"""
@@ -79,13 +81,13 @@ debugConsole:dict[int|str, str] = {
 ┃          Number of entities : 0┃
 ┃           Number of enemies : 0┃
 ┃    Number of total entities : 0┃
-┃soliloquy : (325, 650, 350, 950)┃
+┃monologue : (325, 650, 350, 950)┃
 ┃                                ┃
 ┃            Elapsed time : 00.00┃
+┃                         FPS : 0┃
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 """,
     'introduction' : f"""                                                              │
-                                                              │
                                                               │
                                                               │
                                                               │

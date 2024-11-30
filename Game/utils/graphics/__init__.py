@@ -21,7 +21,7 @@ def actualLen(l):
         else:
             width      = unicodedata.east_asian_width(char)
             EAWC[char] = width
-        total_length += 2 if width in ['F','W'] else 1
+        total_length += 2 if width in['F','W']else 1
     return total_length
 
 def anchor(stdscr,

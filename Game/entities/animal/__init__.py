@@ -1,12 +1,13 @@
 import time
 from   random import randrange, choice
 
-from Assets.data             import totalGameStatus as s
-from Assets.data.color       import cColors         as cc
-from Game.core.system.logger import addLog
-from Game.entities           import event
-from Game.entities.player    import event as pEvent
-from Game.utils.system.sound import play
+from Assets.data                 import totalGameStatus as s
+from Assets.data.color           import cColors         as cc
+from Game.core.system.dataLoader import obj
+from Game.core.system.logger     import addLog
+from Game.entities               import event
+from Game.entities.player        import event as pEvent
+from Game.utils.system.sound     import play
 
 
 class Animal:
@@ -70,7 +71,7 @@ class Animal:
                 else:
                     self.y = sY if isinstance(y, list) else y
                     self.x = sX if isinstance(x, list) else x
-                    event.spawn(self.y, self.x, f"{self.color}{self.icon}{cc['end']}", self.hashKey)
+                    event.spawn(self.y, self.x, f"{self.color}{self.icon}{cc['end']}")
                     break
         else:
             self.Dy, self.Dx = Dy, Dx
@@ -78,7 +79,7 @@ class Animal:
 
         self.stepped = DRP['room'][self.y][self.x]\
                        if   DRP in s.interactableBlocks['steppable']['maintainable']\
-                       else {"block" : " ", "id" : 0, "type" : 0}
+                       else obj(s.path['blockData']['block'], '0')
         
     def damaged(self) -> None:
         if s.hitPos['pos'] and [self.y, self.x] in s.hitPos['pos']:
@@ -155,7 +156,7 @@ class Animal:
         s.Dungeon[self.Dy][self.Dx]['room'][bfy][bfx] = self.stepped
         self.stepped = s.Dungeon[self.Dy][self.Dx]['room'][self.y][self.x]\
                        if   s.Dungeon[self.Dy][self.Dx]['room'][self.y][self.x]['id'] in s.monsterInteractableBlocks['steppable']['maintainable']\
-                       else {"block" : " ", "id" : 0, "type" : 0}
+                       else obj(s.path['blockData']['block'], '0')
         s.Dungeon[self.Dy][self.Dx]['room'][self.y][self.x] = {
             "block"   : f"{self.color}{self.icon}{cc['end']}",
             "id"      : self.id,

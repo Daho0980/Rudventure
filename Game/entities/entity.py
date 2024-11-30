@@ -31,7 +31,7 @@ def addMonster(entityID:int,
                Dx:int,
                y:list|int,
                x:list|int,
-               useRoomLock:bool=False,
+               lock:bool=False,
                sendEffect:bool =True  ) -> None:
     """
     모든 적을 소환할 수 있는 함수
@@ -48,10 +48,7 @@ def addMonster(entityID:int,
         `sendEffect`(bool=True)      : 몬스터 사망 시 사망 이펙트 전송 여부, 기본적으로 `True`로\
                                        설정되어 있음
     """
-    data = obj(
-        f"{s.TFP}Game{s.s}entities{s.s}data{s.s}enemy.json",
-        str(entityID)
-    )
+    data = obj(s.path['blockData']['enemy'], str(entityID))
     hashKey = addHashKey()
 
     mClass      = data['class']
@@ -83,7 +80,7 @@ from Assets.data import (
              
 {mClass} = mobs.{mClass}("{name}", "{icon}", {mID}, "{hashKey}")
 {mClass}.start({((hp-2 if s.ezMode else hp)*hpMtp)+((s.stage-1)*2)}, {((atk)*atkMtp)+(s.stage-1)}, {Dy}, {Dx}, {y}, {x})
-if {useRoomLock}: s.roomLock = True
+if {lock}: s.roomLock = True
 
 while s.main:
     if s.killAll or s.clearEntity: break
@@ -157,10 +154,7 @@ def addAnimal(entityID:int,
         `MCBG`(bool)                   : 엔티티 유지 여부. 활성화 시 죽지 않고 계속 남아있음(던전 새로 생성 시 listIndexOutofRange 주의)
         `SICR`(bool)                   : 엔티티를 현재 주목된 방에 소환할지에 대한 여부. 활성화 시 매개변수 `Dy`, `Dx`를 무시함
     """
-    data = obj(
-        f"{s.TFP}Game{s.s}entities{s.s}data{s.s}animal.json",
-        str(entityID)
-    )
+    data = obj(s.path['blockData']['animal'], str(entityID))
     if preloadData:
         hashKey = preloadData['hashKey']
         s.entityHashPool.append(hashKey)
@@ -223,15 +217,15 @@ if s.main and not (s.killAll or s.clearEntity):
     if {endowmentOfFragment}:
         addMonster(
             0,
-            {int(hp/2)  or 1},
-            {int(atk/2) or 1},
-            {int(hp/4)  or 1},
-            Dy         =s.Dy,
-            Dx         =s.Dx,
-            y          ={entity}.y,
-            x          ={entity}.x,
-            useRoomLock=True,
-            sendEffect =False
+            {int(hp/2) or 1},
+            {int(atk/2)or 1},
+            {int(hp/4) or 1},
+            Dy        =s.Dy,
+            Dx        =s.Dx,
+            y         ={entity}.y,
+            x         ={entity}.x,
+            lock      =True,
+            sendEffect=False
             )
     else:
         s.Dungeon[{entity}.Dy][{entity}.Dx]['room'][{entity}.y][{entity}.x] = {{

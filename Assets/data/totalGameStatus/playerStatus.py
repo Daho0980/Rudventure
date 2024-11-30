@@ -39,7 +39,7 @@ statusFormula = {
 
 ashChip:int = 0
 
-steppedBlock:dict = {"block" : ' ', "id" : 0, "type" : 0}
+steppedBlock:dict = {"block" : '  ', "id" : 0, "type" : 0}
 killCount:int     = 0
 
 inventory:dict   = {
@@ -63,10 +63,10 @@ hpLow:bool  = False
 
 playerMode:str = "normal" # normal||observe
 
-soliloquyCount = 0
-soliloquyRange = 0
+monologueCount = 0
+monologueRange = 0
 
-playerDamageIcon = ['@']
+playerDamageIcon = ['@ ']
 
 playerVoice = "glagatrof"
 playerColor = [cc['fg']['L'], "L"]

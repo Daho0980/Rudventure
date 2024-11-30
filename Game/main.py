@@ -7,7 +7,7 @@ from .entities.player             import checkStatus           as cs
 from .scenes                      import mainSettings, mainMenu
 from .utils.advanced              import DungeonMaker, keyHandler
 from .utils.advanced.Rudconverter import save
-from .utils.graphics              import escapeAnsi, anchor
+from .utils.graphics              import escapeAnsi, anchor, renderer
 from .utils.modules               import Textbox, cSelector
 from .utils.system                import roomManager
 from .utils.system.sound          import play
@@ -26,11 +26,10 @@ from .core.system import (
     logger
 )
 from .utils.graphics import (
-    displayRenderer,
-    stageRenderer
+    stage
 )
 from .utils.system.roomManager.interactions import (
-    placeRandomOrbs
+    randPlaceOrb
 )
 
 
@@ -52,6 +51,7 @@ def gameChecker(stdscr) -> None:
         if s.hp<=0 or s.hunger<=0:
             dp.load(
                 large_image="rudventure-icon1",
+                small_image=s.playerColor[1],
                 details    ="사망",
                 state      =f"사인 : {escapeAnsi(s.DROD[0])}"
             )
@@ -73,16 +73,21 @@ def gameChecker(stdscr) -> None:
                 coverColor  =cc['fg']['F'] if s.lvl>=s.Mlvl else cc['fg']['R'],
                 returnSizeyx=True
             )
-            y, x = anchor(
-                stdscr,
-                deadSign,
-                    addOnyx    =[-4, 1],
-                    returnEndyx=True
+            y, x = map(
+                lambda d:d[0]+d[1], # type: ignore
+                zip(
+                    anchor(
+                        stdscr,
+                        deadSign,
+                        addOnyx    =[-4, 1],
+                        returnEndyx=True
+                    ),
+                    [-1,0]
                 )
-            y -= 1 # type: ignore
+            )
 
             FBS  = (18-int(bx/2)) # type: ignore
-            FBSA = f"\033[{f'{FBS}D'if FBS>0 else f'{abs(FBS)}C'}"
+            FBSA = f"\033[{f'{(FBS)}D'if FBS>0 else f'{abs(FBS)}C'}"
             
             stdscr.refresh()
             if s.gameRecord: import Game.core.system.deathLogWriter
@@ -98,14 +103,17 @@ def gameChecker(stdscr) -> None:
             achievementsValues = list(achievements.values())
             for num, text in enumerate(achievements):
                 play("soundEffects", "smash")
-                stdscr.addstr(f"\033[{x-FBS};{y}H{text} : {achievementsValues[num][0]}\n"); stdscr.refresh() # type: ignore
 
+                stdscr.addstr(f"\033[{x-FBS};{y}H{text} : {achievementsValues[num][0]}\n")
+                stdscr.refresh()
                 time.sleep(0.2)
+
                 y += achievementsValues[num][1]
-                curses.flushinp()
+
+            curses.flushinp()
             theChoice:int = cSelector.main(
                 deadSign+
-                f"""
+f"""
 {FBSA}            이름 : {s.lightName}
 {FBSA}            사인 : {s.DROD[0]}
 
@@ -116,7 +124,7 @@ def gameChecker(stdscr) -> None:
                 ["윤회 끝내기", "살육을 계속 즐기기"],
                 [1,0,255,10],
                 '@'
-                )
+            )
 
             s.main = 0
             curses.endwin()
@@ -125,6 +133,7 @@ def gameChecker(stdscr) -> None:
         else:
             dp.load(
                 large_image="rudventure-icon1",
+                small_image=s.playerColor[1],
                 details    =f"나락",
                 state      ="더 깊은 곳으로 이동 중...",
             )
@@ -144,10 +153,11 @@ def gameChecker(stdscr) -> None:
                     coverColor  =cc['fg']['L'],
                     )
                 ); stdscr.refresh()
+            
             logger.clear()
             s.clearEntity = True;  time.sleep(0.6)
             s.clearEntity = False; time.sleep(1.9)
-            stdscr.clear(); stdscr.refresh()
+            stdscr.refresh()
 
 
 curses.noecho()
@@ -185,7 +195,7 @@ stdscr.nodelay(True)
 keyHandler.add()
 from Game.core.system import (
     frameCounter,
-    soliloquy
+    monologue
 )
 
 logger.addLog(f"포트는 {cc['fg']['L']}{s.port}{cc['end']}입니다.", colorKey='Y')
@@ -195,6 +205,7 @@ if not dp.isConnected:
 while s.main:
     dp.load(
         large_image="rudventure-icon1",
+        small_image=s.playerColor[1],
         details    ="메인 메뉴",
         state      ="나락 입장 중"
     )
@@ -208,7 +219,7 @@ while s.main:
     s.Dungeon = DungeonMaker.DungeonMaker()
 
     player.start()
-    placeRandomOrbs()
+    randPlaceOrb()
 
     if not s.stage and not s.isLoadfromBody and s.name.lower() in ["업로드", "upload"]:
         entity.addAnimal(
@@ -223,7 +234,7 @@ while s.main:
         l.isSaveLoaded = True
         entity.loadEntities()
     
-    stageRenderer.showStage(
+    stage.showStage(
         stdscr,
         f"지 하   {cc['fg']['R']}-{s.stage+1}{cc['end']}   층"
         )
@@ -242,6 +253,7 @@ while s.main:
 
     dp.load(
         large_image="rudventure-in_battle1",
+        small_image=s.playerColor[1],
         details    ="나락",
         state      =f"제 -{s.stage+1}층",
         start      =True
@@ -262,7 +274,7 @@ while s.main:
         if s.hp<=0 or s.hunger<=0 or not s.main: break
         if l.jpsf:
             a_render = time.perf_counter()
-            displayRenderer.render(stdscr)
+            renderer.render(stdscr)
             if not l.pause:
                 playerChecker()
 
@@ -270,7 +282,7 @@ while s.main:
                     stdscr.refresh()
                     quickStarter = 1
 
-                roomManager.main()
+                roomManager.raiseRoomEvent()
             
             time.sleep(max((s.currFrame-(time.perf_counter()-a_render)), 0))
         else: time.sleep(1)

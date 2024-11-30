@@ -71,7 +71,7 @@ def setData(data):
     c.start               = commentData['start']
     c.startWithCowardmode = commentData['startWithCowardmode']
     c.loadsaveStart       = commentData['loadsaveStart']
-    c.soliloquy           = commentData['soliloquy']
+    c.monologue           = commentData['monologue']
     c.enterinBattle       = commentData['enterinBattle']
     c.curseDecrease       = commentData['curseDecrease']
     c.getOrb              = commentData['getOrb']
@@ -200,9 +200,9 @@ def main(stdscr) -> None:
                                                 },
                                                 [1,0,255,10],
                                                 '@',
-                                                setArrowPos   =UISAP,
-                                                returnArrowPos=True,
-                                                background=[
+                                                setPos     =UISAP,
+                                                getPos     =True,
+                                                background =[
                                                     anchor(
                                                         stdscr,
                                                         UIP.dungeonMap[s.showDungeonMap],
@@ -236,7 +236,7 @@ def main(stdscr) -> None:
                                                         stdscr,
                                                         UIP.debugConsole["introduction"],
                                                         x        =stdscr.getmaxyx()[1]-63,
-                                                        y        =round(stdscr.getmaxyx()[0]/2)+(7 if s.debugConsole else 1),
+                                                        y        =round(stdscr.getmaxyx()[0]/2)+(8 if s.debugConsole else 1),
                                                         returnStr=True
                                                     ),
                                                     '[version]'
@@ -264,10 +264,10 @@ def main(stdscr) -> None:
                                                 },
                                                 [1,0,255,10],
                                                 '@',
-                                                maxLine       =4,
-                                                setArrowPos   =frameSAP,
-                                                background    =['[fullSizeBox]', '[version]'],
-                                                returnArrowPos=True
+                                                maxLine    =4,
+                                                setPos     =frameSAP,
+                                                background =['[fullSizeBox]', '[version]'],
+                                                getPos     =True
                                             )
                                             match frameSettings:
                                                 case 1|2|4|5: s.frameRate = [1,30,0,60,120][frameSettings-1]
@@ -288,9 +288,9 @@ def main(stdscr) -> None:
                                                 },
                                                 [1,0,255,10],
                                                 '@',
-                                                setArrowPos   =terminalSAP,
-                                                background    =['[fullSizeBox]', '[version]'],
-                                                returnArrowPos=True
+                                                setPos     =terminalSAP,
+                                                background =['[fullSizeBox]', '[version]'],
+                                                getPos     =True
                                             )
                                             match terminalScreenSettings:
                                                 case 1:
@@ -354,9 +354,9 @@ def main(stdscr) -> None:
                                     },
                                     [1,0,255,10],
                                     '@',
-                                    setArrowPos   =modSAP,
-                                    background=['[fullSizeBox]', '[version]'],
-                                    returnArrowPos=True
+                                    setPos     =modSAP,
+                                    background =['[fullSizeBox]', '[version]'],
+                                    getPos     =True
                                 )
                                 match modSettings:
                                     case 1: s.bodyPreservationMode = False if s.bodyPreservationMode else True
@@ -372,10 +372,10 @@ def main(stdscr) -> None:
                                     ["+", "", "", "-", "", "", "완료", "", f"음량 변화량 : {volumeRate}"],
                                     [1,0,255,10],
                                     '@',
-                                    maxLine       =3,
-                                    setArrowPos   =volumeSAP,
-                                    background    =['[fullSizeBox]', '[version]'],
-                                    returnArrowPos=True,
+                                    maxLine   =3,
+                                    setPos    =volumeSAP,
+                                    background=['[fullSizeBox]', '[version]'],
+                                    getPos    =True,
                                 )
                                 match volumeSettings:
                                     case 1:

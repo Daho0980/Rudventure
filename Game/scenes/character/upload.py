@@ -11,7 +11,7 @@ from Assets.data import (
 s.playerColor      = ["\033[;38;5;32m", "CU"]
 s.ids[300]         = f"{s.playerColor[0]}◑{cc['end']}"
 s.playerVoice      = "upload"
-s.playerDamageIcon = ['◐']
+s.playerDamageIcon = ['◐ ']
 
 s.statusFormula = {
     "evasion"           : "s.evasionRate+(90-s.evasionRate)*((s.Mhp-s.hp)/s.Mhp)",
@@ -192,7 +192,7 @@ c.loadsaveStart = [
     "좀 닥쳐봐. 손톱 다 뽑아서 루브르 박물관에 전시하기 전에.",
 ]
 
-c.soliloquy = {
+c.monologue = {
     "HL" : [
         "시야가 흐릿한데...",
         "...",

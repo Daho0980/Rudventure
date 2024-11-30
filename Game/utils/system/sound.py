@@ -14,6 +14,7 @@ def play(*path, loop:bool=False) -> None:
                 f"{s.TFP}sounds{s.s}{s.s.join(path)}.wav",
                 volume=s.volume
             ).play(loop=loop, block=True),
+            
             name  ="sound",
             daemon=True
         ).start()

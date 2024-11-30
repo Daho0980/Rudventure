@@ -6,6 +6,7 @@ from Game.utils.graphics import escapeAnsi
 
 
 TCC = ['?', '!', ',', '.']
+MC  = [' ', '.', ',', '"', '\'', '·', '~']
 
 def TTS(text,
         voicePath:tuple=("player", "voice", "glagatrof"),
@@ -13,8 +14,7 @@ def TTS(text,
     if l.useSound:
         charList = escapeAnsi(text)
         for char, nextChar in zip(charList, charList[1:]+"0"):
-            if char not in [' ', '.', ',', '"', '\'', '·', '~']:
-                play(*voicePath)
+            if char not in MC: play(*voicePath)
             time.sleep(delay*4 if char in TCC and nextChar==' 'else delay)
 
 def TTC(text, delay:float|int=0.07) -> int:

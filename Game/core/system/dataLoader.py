@@ -1,12 +1,13 @@
 import ijson
+from   copy        import deepcopy
 from   collections import deque
 
 from .structures import Conveyor
 from Assets.data import totalGameStatus as s
 
 
-objCache = Conveyor(20)
-elmCache = Conveyor(20)
+objCache = Conveyor(100)
+elmCache = Conveyor(100)
 
 def _setValue(dd, value, path):
     for i in path[:-1]: dd = dd[i]
@@ -18,15 +19,24 @@ def _addValue(dd, value, path):
 
 makePath = lambda *path: s.TFP + s.s.join(path)
 
-def obj(path:str, target:str) -> dict:
+def obj(path:str, target:str, **changeData) -> dict:
     """
     path   : json 파일의 위치
     target : 가져올 요소의 키
     """
     global objCache
 
+    match path:
+        case "-bb" : path = s.path['blockData']['block']
+        case "-be" : path = s.path['blockData']['entity']
+
     if (path,target) in objCache:
-        return objCache[(path,target)]
+        data = deepcopy(objCache[(path,target)])
+
+        for key, value in changeData.items():
+            data[key] = value
+
+        return data
 
     data     = {}
     tempPath = []
@@ -73,6 +83,9 @@ def obj(path:str, target:str) -> dict:
                         if prefix == target: break
 
     objCache[(path,target)] = data[target]
+
+    for key, value in changeData.items():
+        data[target][key] = value
 
     return data[target]
 

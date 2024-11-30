@@ -2,11 +2,12 @@ import time    ; import curses ; import threading
 from   itertools                 import chain
 from   random                    import randrange, choice
 
-from Assets.data.color       import cColors    as cc
-from Game.core.system        import infoWindow as iWin
-from Game.core.system.logger import addLog
-from Game.utils.system       import xpSystem, tts
-from Game.utils.system.sound import play
+from Assets.data.color           import cColors    as cc
+from Game.core.system            import infoWindow as iWin
+from Game.core.system.logger     import addLog
+from Game.core.system.dataLoader import obj
+from Game.utils.system           import xpSystem, tts
+from Game.utils.system.sound     import play
 
 from Assets.data import (
     totalGameStatus as s,
@@ -73,7 +74,7 @@ def set() -> None:
 
 def start() -> None:
     s.y, s.x = map(lambda n: int(n/2), [len(s.Dungeon[s.Dy][s.Dx]['room']), len(s.Dungeon[s.Dy][s.Dx]['room'][0])])
-    s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x] = {"block":s.ids[300], "id":300, "type" : 1}
+    s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x] = obj('-bb', '300', block=s.ids[300])
 
 def damage(block:str="?", atk:int=1) -> tuple:
     sound = ("player", "hit")
@@ -107,15 +108,15 @@ def attack(ty, tx, attackSound:tuple=("player", "slash")) -> None:
 def itemEvent(y:int, x:int) -> None:
     orbPer = randrange(1, 101)
 
-    if   orbPer > 0  and orbPer <= 45: typeIndex = "hunger"
-    elif orbPer > 45 and orbPer <= 70: typeIndex = "hp"
-    elif orbPer > 70 and orbPer <= 80: typeIndex = "def"
-    elif orbPer > 80 and orbPer <= 85: typeIndex = "atk"
-    else: typeIndex = "exp"
+    if   0 < orbPer <= 45:  typeIndex = "hunger"
+    elif 45 < orbPer <= 70: typeIndex = "hp"
+    elif 70 < orbPer <= 80: typeIndex = "def"
+    elif 80 < orbPer <= 85: typeIndex = "atk"
+    else:                   typeIndex = "exp"
 
     orbId = s.orbIds["type"][typeIndex][randrange(0, 2)]
 
-    s.Dungeon[s.Dy][s.Dx]['room'][y][x] = {"block" : s.ids[orbId], "id" : orbId, "type" : 0}
+    s.Dungeon[s.Dy][s.Dx]['room'][y][x] = obj('-bb', str(orbId))
         
 def orbEvent(Size:int, Type:int) -> None:
     orbData = [
@@ -226,18 +227,8 @@ def move(Dir, distance:int) -> None:
         orbId = blockID
         orbEvent(
             Size=1 if orbId in s.orbIds['size']['bigOne'] else 0,
-            Type=int(
-                list(
-                    chain(
-                        s.orbIds['type']['hp'],
-                        s.orbIds['type']['def'],
-                        s.orbIds['type']['atk'],
-                        s.orbIds['type']['hunger'],
-                        s.orbIds['type']['exp']
-                        )
-                    ).index(orbId)/2
-                )
-            )
+            Type=int(list(chain(*s.orbIds['type'].values())).index(orbId)/2)
+        )
 
     elif blockID == 2:
         sound = ("object", "door", "open")
@@ -253,9 +244,9 @@ def move(Dir, distance:int) -> None:
         elif pos[1] == -1: s.Dx += 1; wayType = 3
 
         DWPD = {
-            'y'  : int(len(s.Dungeon[s.Dy][s.Dx]['room'])/2),
+            'y'  : len(s.Dungeon[s.Dy][s.Dx]['room'])//2,
             'my' : len(s.Dungeon[s.Dy][s.Dx]['room'])-2,
-            'x'  : int(len(s.Dungeon[s.Dy][s.Dx]['room'][0])/2),
+            'x'  : len(s.Dungeon[s.Dy][s.Dx]['room'][0])//2,
             'mx' : len(s.Dungeon[s.Dy][s.Dx]['room'][0])-2
         }
         wayPoint:list[list[int]] = [
@@ -263,27 +254,27 @@ def move(Dir, distance:int) -> None:
             [1,          DWPD['x']],
             [DWPD['y'], DWPD['mx']],
             [DWPD['y'],          1]
-            ]
-        ty, tx = wayPoint[wayType][0], wayPoint[wayType][1]
+        ]
+        ty, tx = wayPoint[wayType]
 
         s.Dungeon[s.Dy][s.Dx]['isPlayerVisited'] = 2
         roomPos = [
-            [s.Dy-1 if s.Dy>0 else s.Dy, s.Dx],
+            [s.Dy-1 if s.Dy>0 else s.Dy,                   s.Dx],
             [s.Dy, s.Dx+1 if s.Dx<len(s.Dungeon[0])-1 else s.Dx],
-            [s.Dy+1 if s.Dy<len(s.Dungeon)-1 else s.Dy, s.Dx],
-            [s.Dy, s.Dx-1 if s.Dx>0 else s.Dx]
-            ]
+            [s.Dy+1 if s.Dy<len(s.Dungeon)-1 else s.Dy,    s.Dx],
+            [s.Dy,                   s.Dx-1 if s.Dx>0 else s.Dx]
+        ]
             
         for i in range(len(roomPos)):
-            if len(s.Dungeon[roomPos[i][0]][roomPos[i][1]])                > 0 and\
-               s.Dungeon[roomPos[i][0]][roomPos[i][1]]['isPlayerVisited'] == 0 and\
-               list(s.Dungeon[s.Dy][s.Dx]['doors'].values())[i]         == 1:
+            if len(s.Dungeon[roomPos[i][0]][roomPos[i][1]])               >0 and\
+               s.Dungeon[roomPos[i][0]][roomPos[i][1]]['isPlayerVisited']==0 and\
+               list(s.Dungeon[s.Dy][s.Dx]['doors'].values())[i]          ==1:
                 s.Dungeon[roomPos[i][0]][roomPos[i][1]]['isPlayerVisited'] = 1
         s.Dungeon[s.Dy][s.Dx]['isPlayerHere'] = True
 
     elif blockID == 6:
         sound = ("object", "box", "move")
-        cx, cy = 0, 0
+        cy, cx = 0, 0
         Type   = 1 if Dir in [curses.KEY_LEFT, curses.KEY_RIGHT] else 0
         match Dir:
             case curses.KEY_UP:    cy = ty-distance
@@ -295,43 +286,34 @@ def move(Dir, distance:int) -> None:
         if roomGrid[positions[Type][0]][positions[Type][1]]['id'] in s.interactableBlocks['unsteppable']:
             s.Dy, s.Dx = bfDy, bfDx
             ty, tx     = bfy, bfx
-        else: s.Dungeon[s.Dy][s.Dx]['room'][positions[Type][0]][positions[Type][1]] = {"block" : s.ids[6], "id" : 6}
+        else: s.Dungeon[s.Dy][s.Dx]['room'][positions[Type][0]][positions[Type][1]] = obj('-bb', '6')
 
     elif blockID in [8, 9]:
         sound = ("object", "squishy", "squish")
         addLog(
-            "하하, 또 속으셨네요."\
-            if   s.Dungeon[s.Dy][s.Dx]['room'][ty][tx]['nbt']['count']<0\
+            f"{cc['fg']['B1']}하하, 또 속으셨네요.{cc['end']}"\
+                if s.Dungeon[s.Dy][s.Dx]['room'][ty][tx]['nbt']['count']<0\
             else f"{cc['fg']['B1']}{s.Dungeon[s.Dy][s.Dx]['room'][ty][tx]['nbt']['count']}{cc['end']}번 남았습니다...",
             colorKey='B1'
         )
         if s.Dungeon[s.Dy][s.Dx]['room'][ty][tx]['nbt']['count'] == 0:
             exec(s.Dungeon[s.Dy][s.Dx]['room'][ty][tx]['nbt']['command'])
         else:
-            tblockID = s.Dungeon[s.Dy][s.Dx]['room'][ty][tx]['id']
-            s.Dungeon[s.Dy][s.Dx]['room'][ty][tx] = {
-                "block" : s.ids[8] if tblockID == 9 else s.ids[9],
-                "id"    : 8 if tblockID == 9 else 9,
-                "type"  : 0,
-                "nbt"   : {
+            BID = s.Dungeon[s.Dy][s.Dx]['room'][ty][tx]['id']
+            s.Dungeon[s.Dy][s.Dx]['room'][ty][tx] = obj(
+                '-bb', str(8 if BID==9 else 9),
+                nbt={
                     "count"   : s.Dungeon[s.Dy][s.Dx]['room'][ty][tx]['nbt']['count']-1,
                     "command" : s.Dungeon[s.Dy][s.Dx]['room'][ty][tx]['nbt']['command']
                 }
-            }
+            )
 
         ty, tx = bfy, bfx
 
     elif blockID == 20:
         data = roomGrid[ty][tx]["nbt"]
         event.readSign(data["texts"], data["delay"], data["voice"], data["command"])
-        roomGrid[ty][tx] = {
-            "block" : s.ids[21],
-            "id"    : 21,
-            "type"  : 0,
-            "nbt"   : {
-                "link" : True
-                }
-            }
+        roomGrid[ty][tx] = obj('-bb', '21', nbt={'link' : True})
 
         s.Dy, s.Dx = bfDy, bfDx
         ty, tx     = bfy, bfx
@@ -350,22 +332,18 @@ def move(Dir, distance:int) -> None:
             for pos in [[ty-1, tx], [ty, tx+1], [ty+1, tx], [ty, tx-1]]:
                 if  not roomGrid[pos[0]][pos[1]]["id"] and\
                 not randrange(0,3):
-                    roomGrid[pos[0]][pos[1]] = {
-                        "block" : f"{cc['fg'][flowerColor]}.{cc['end']}",
-                        "id"    : 23,
-                        "type"  : 0,
-                        "nbt"   : {
-                            "link" : True
-                        }
-                    } if roomGrid[ty][tx]['nbt']['step'] == 1 else {
-                        "block" : f"{cc['fg'][flowerColor]}{choice(['*',',','.','_'])}{cc['end']}",
-                        "id"    : 22,
-                        "type"  : 0,
-                        "nbt"   : {
+                    roomGrid[pos[0]][pos[1]] = obj(
+                        '-bb', '23',
+                        block=f"{cc['fg'][flowerColor]}. {cc['end']}",
+                        nbt  ={'link' : True}
+                    ) if roomGrid[ty][tx]['nbt']['step'] == 1 else obj(
+                        '-bb', '22',
+                        block=f"{cc['fg'][flowerColor]}{choice(['* ',', ','. ','_ '])}{cc['end']}",
+                        nbt  ={
                             "color" : flowerColor,
                             "step" : roomGrid[ty][tx]['nbt']['step']-1
                         }
-                    }
+                    )
             sound = ("player", "interaction", "stepFlower")
 
     elif blockID == 400:
@@ -390,15 +368,7 @@ def move(Dir, distance:int) -> None:
 
             if roomGrid[ty][tx]['nbt']['linkedInteraction']:
                 event.linkedInteraction(ty, tx, 400, {"block" : "same_", "id" : 401, "type" : 0, "nbt":{"link" : True}}, cc['fg']['F'])
-            else:
-                roomGrid[ty][tx] = {
-                    "block" : s.ids[401],
-                    "id"    : 401,
-                    "type"  : 0,
-                    "nbt"   : {
-                        "link" : True
-                    }
-                    }
+            else: roomGrid[ty][tx] = obj('-bb', '401', nbt={'link':True})
             ty, tx = bfy, bfx
 
             addLog(f"{cc['fg']['L']}당신{cc['end']}의 몸에서 {cc['fg']['F']}저주{cc['end']}가 빠져나가는 것이 느껴집니다...", colorKey='A')
@@ -426,8 +396,8 @@ def move(Dir, distance:int) -> None:
     s.Dungeon[bfDy][bfDx]['room'][bfy][bfx] = s.steppedBlock
     s.steppedBlock = s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x]\
                      if   s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x]['id'] in s.interactableBlocks['steppable']['maintainable']\
-                     else {"block" : " ", "id" : 0, "type" : 0}
-    s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x] = {"block" : s.ids[300], "id" : 300, "type" : 1}
+                     else obj('-bb', '0')
+    s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x] = obj('-bb', '300', block=s.ids[300])
     if sound: play(*sound)
 
 def observe(Dir) -> None:
