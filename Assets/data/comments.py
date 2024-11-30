@@ -198,7 +198,7 @@ loadsaveStart:list[str] = [
     "한껏 비웃어라. 난 이곳을 부숴버릴테니."
 ]
 
-soliloquy:dict[str,list] = {
+monologue:dict[str,list] = {
     "HL" : [
         "후우.. 후우우...",
         "뼈가 거의 대부분 박살난 느낌이야.",
