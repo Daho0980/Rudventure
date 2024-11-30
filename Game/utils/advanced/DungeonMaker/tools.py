@@ -95,7 +95,7 @@ def makeRoom(Map:list):
                                 ]
                             ][randrange(0, 4)]
 
-                            output[row][column]['roomIcon'] = [s.ids[20], status[0]]
+                            output[row][column]['roomIcon'] = [s.ids[20][:1], status[0]]
                             baseMap[c['y']][c['x']]         = obj(
                                 '-bb', '20',
                                 block=f"{cc['fg'][status[0]]}{s.ids[20]}{cc['end']}",
@@ -125,11 +125,11 @@ def makeRoom(Map:list):
                             for _ in range(25):
                                 ty, tx = randrange(c['y']-3, c['y']+4), randrange(c['x']-3, c['x']+4)
 
-                                if (baseMap[ty][tx]['id'], baseMap[ty][tx]['block']) == (0, ' '):
+                                if (baseMap[ty][tx]['id'], baseMap[ty][tx]['block']) == (0, '  '):
                                     color = choice(['F', 'R', 'M'])
 
                                     baseMap[ty][tx] = {
-                                        "block" : f"{cc['fg'][color]}{choice(['*', ',', '.', '_'])}{cc['end']}",
+                                        "block" : f"{cc['fg'][color]}{choice(['* ', ', ', '. ', '_ '])}{cc['end']}",
                                         "id"    : 22,
                                         "type"  : 0,
                                         "nbt"   : {

@@ -11,18 +11,18 @@ class Cooltime:
 class Pain(Cooltime):
     turnEnd       = (600, 810)
     
-    modeException = []
+    modeException = ["modeException"]
 
 class Unrest(Cooltime):
     turnEnd       = (400, 510)
     targetted     = 0.04
     rush          = 0.09
 
-    modeException = ["rush"]
+    modeException = ["modeException", "rush"]
 
 class Resentment(Cooltime):
     turnEnd       = 350
     blink         = 0.07
     explotion     = 0.07
 
-    modeException = []
+    modeException = ["modeException"]
