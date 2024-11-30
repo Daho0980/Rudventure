@@ -1,7 +1,7 @@
 {
     "statusDesign": 1,
-    "debugConsole": true,
-    "showDungeonMap": 1,
+    "debugConsole": false,
+    "showDungeonMap": 0,
     "frameRate": 0,
     "volume": 50,
     "autoTerminalSize": false,
