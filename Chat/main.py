@@ -135,10 +135,8 @@ while True:
         ]
     ))
 
-    try:
-        key = mf.escapeAnsi(inputWin.get_wch())
-    except curses.error:
-        continue
+    try:    key = mf.escapeAnsi(inputWin.get_wch())
+    except: continue
 
     if key and isinstance(key, str):
         if key == '\n': # Enter
