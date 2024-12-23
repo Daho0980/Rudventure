@@ -6,6 +6,11 @@ echo -ne "\033]0;Rudventure\007"
 cd     "$(cd "$(dirname "$0")" && pwd -P)" || exit
 source bin/activate
 
+pathFiles=("pip" "pip3" "pip3.13" "wheel")
+for file in "${pathFiles[@]}"; do
+    sed -i '' "1s|.*|#!$PWD/bin/python3.13|" "bin/$file"
+done
+
 while true; do
 
     configData=$(cat "config/data.json")

@@ -33,4 +33,5 @@ s.path['blockData'] = {k:makePath(*p)for k,p in s.path['blockData'].items()}
 s.path['blockInfo'] = {k:makePath(*p)for k,p in s.path['blockInfo'].items()}
 
 os.system("clear"if os.name=="posix"else"cls")
+
 import Game.main

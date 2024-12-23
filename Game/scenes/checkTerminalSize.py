@@ -30,7 +30,8 @@ def main(stdscr) -> None:
 다음부터 자동으로 재조정하시겠습니까?""",
                 ["네", "아니오", "두 번 다신 내 화면에 나오지 마쇼.\n  이건 내 마지막 경고요."],
                 [1,0,255,10],
-                '@'):
+                '@'
+            ):
                 case 1:
                     s.autoTerminalSize = True
                     configs.save()
