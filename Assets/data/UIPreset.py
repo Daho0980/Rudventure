@@ -9,7 +9,7 @@ LOGO:str = f"""
   /_/     _/   _  _ _/_    _ _ 
  / \\ /_//_/ |//_\'/ //  /_// /_\'
 
-{cc['fg']['F']}L a e k o l e   S á = h ä ú v é{cc['end']}
+{cc['fg']['F']}L a e k o l é   S á = h ä ú v ë{cc['end']}
 """
 
 status:dict[int|str, str] = {
