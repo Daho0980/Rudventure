@@ -4,11 +4,12 @@ from . import markdown as md
 
 
 LOGO:str = f"""
+<< 러드벤처 - {cc['fg']['F']}저주를 경배하라{cc['end']} >>
    _   
   /_/     _/   _  _ _/_    _ _ 
  / \\ /_//_/ |//_\'/ //  /_// /_\'
 
-{cc['fg']['F']}L a e k o u v   S á = h ä ú v é{cc['end']}
+{cc['fg']['F']}L a e k o l e   S á = h ä ú v é{cc['end']}
 """
 
 status:dict[int|str, str] = {
