@@ -2,6 +2,9 @@
 # shellcheck disable=SC1091
 
 echo -ne "\033]0;Rudventure\007"
+# export PATH="/Library/Frameworks/Python.framework/Versions/3.13/bin:$PATH"
+# echo "Python version : $(python3 --version)"
+# sleep 0.5
 
 cd     "$(cd "$(dirname "$0")" && pwd -P)" || exit
 source bin/activate
