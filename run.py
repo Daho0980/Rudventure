@@ -10,9 +10,9 @@ pythonDirectory = "/Library/Frameworks/Python.framework/Versions/3.13/lib"
 directory = os.path.dirname(os.path.realpath(__file__))
 sys.path  = [
     directory,
-    os.path.join(pythonDirectory, 'python313.zip'),
-    os.path.join(pythonDirectory, 'python3.13'),
-    os.path.join(pythonDirectory, 'python3.13', 'lib-dynload'),
+    os.path.join(pythonDirectory , 'python313.zip'              ),
+    os.path.join(pythonDirectory , 'python3.13'                 ),
+    os.path.join(pythonDirectory , 'python3.13', 'lib-dynload'  ),
     os.path.join(directory, 'lib', 'python3.13', 'site-packages')
 ]
 
@@ -29,8 +29,9 @@ from Game.core.system.dataLoader import makePath
 
 s.TFP = str(os.path.abspath(''))+s.s
 
-s.path['blockData'] = {k:makePath(*p)for k,p in s.path['blockData'].items()}
-s.path['blockInfo'] = {k:makePath(*p)for k,p in s.path['blockInfo'].items()}
+s.path['blockData']        = {k:makePath(*p)for k,p in s.path['blockData'].items()}
+s.path['blockInfo']        = {k:makePath(*p)for k,p in s.path['blockInfo'].items()}
+s.path['statusEffectData'] = makePath(*s.path['statusEffectData'])
 
 os.system("clear")
 

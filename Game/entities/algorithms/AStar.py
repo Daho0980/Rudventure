@@ -15,33 +15,33 @@ def main(start, targetID, positiveID):
     cameFrom  = {}
     costSoFar = {}
     
-    cameFrom[start]  = None
+    cameFrom [start] = None
     costSoFar[start] = 0
     
     while openList:
-        _, current = heapq.heappop(openList)
+        _, curr = heapq.heappop(openList)
         
-        if grid[current[0]][current[1]]['id'] in targetID:
+        if grid[curr[0]][curr[1]]['id'] in targetID:
             path = []
-            while current:
-                path.append(current)
-                current = cameFrom[current]
+            while curr:
+                path.append(curr)
+                curr = cameFrom[curr]
             path.reverse()
             return path[1] if len(path)>1 else start
         
         for dx, dy in [(-1,0),(1,0),(0,-1),(0,1)]:
-            nextNode = (current[0] + dx, current[1] + dy)
+            nextNode = (curr[0] + dx, curr[1] + dy)
 
             if  (0 <= nextNode[0] < len(grid) and 0 <= nextNode[1] < len(grid[0]))\
             and (grid[nextNode[0]][nextNode[1]]['id'] in positiveID+targetID or nextNode==start):
-                newCost = costSoFar[current]+1
+                newCost = costSoFar[curr]+1
 
-                if nextNode not in costSoFar or newCost < costSoFar[nextNode]:
+                if nextNode not in costSoFar or newCost<costSoFar[nextNode]:
                     costSoFar[nextNode] = newCost
                     priority            = newCost+heuristic(start, nextNode)
 
                     heapq.heappush(openList, (priority, nextNode))
-                    cameFrom[nextNode] = current
+                    cameFrom[nextNode] = curr
     
     return None
 
@@ -54,33 +54,33 @@ def forHashKey(start, hashKey, positiveID):
     cameFrom  = {}
     costSoFar = {}
     
-    cameFrom[start]  = None
+    cameFrom [start] = None
     costSoFar[start] = 0
     
     while openList:
-        _, current = heapq.heappop(openList)
+        _, curr = heapq.heappop(openList)
 
-        if grid[current[0]][current[1]]['type']==1 and grid[current[0]][current[1]]['hashKey']==hashKey:
+        if grid[curr[0]][curr[1]]['type']==1 and grid[curr[0]][curr[1]]['hashKey']==hashKey:
             path = []
-            while current:
-                path.append(current)
-                current = cameFrom[current]
+            while curr:
+                path.append(curr)
+                curr = cameFrom[curr]
             path.reverse()
             return path[1] if len(path)>1 else start
         
         for dx, dy in [(-1,0),(1,0),(0,-1),(0,1)]:
-            nextNode = (current[0]+dx, current[1]+dy)
+            nextNode = (curr[0]+dx, curr[1]+dy)
             
-            if (0 <= nextNode[0] < len(grid) and 0 <= nextNode[1] < len(grid[0]))\
-               and (grid[nextNode[0]][nextNode[1]]['id'] in positiveID\
-                    or (
-                        grid[nextNode[0]][nextNode[1]]['type']       ==1
-                        and nextNode                                 !=(s.y,s.x)
-                        and grid[nextNode[0]][nextNode[1]]['hashKey']==hashKey
-                    )\
-                    or nextNode == start
-                ):
-                newCost = costSoFar[current] + 1
+            if (0<=nextNode[0]<len(grid) and 0<=nextNode[1]<len(grid[0]))\
+            and (grid[nextNode[0]][nextNode[1]]['id'] in positiveID\
+                or (
+                    grid[nextNode[0]][nextNode[1]]['type']       ==1
+                    and nextNode                                 !=(s.y,s.x)
+                    and grid[nextNode[0]][nextNode[1]]['hashKey']==hashKey
+                )\
+                or nextNode == start
+            ):
+                newCost = costSoFar[curr] + 1
 
                 if nextNode not in costSoFar\
                 or newCost < costSoFar[nextNode]:
@@ -88,6 +88,6 @@ def forHashKey(start, hashKey, positiveID):
                     priority            = newCost+heuristic(start, nextNode)
 
                     heapq.heappush(openList, (priority, nextNode))
-                    cameFrom[nextNode] = current
+                    cameFrom[nextNode] = curr
     
     return None

@@ -1,9 +1,9 @@
-jpsf:bool      = False
-yctuoh:bool    = False
-pause:bool     = False
+jpsf     :bool = False
+yctuoh   :bool = False
+pause    :bool = False
 inputLock:bool = False
-useSound:bool  = True
+useSound :bool = True
 
-isDying:bool   = False
+isDying:bool = False
 
 isSaveLoaded:bool = False

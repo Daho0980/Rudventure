@@ -1,5 +1,5 @@
 # Rudventure
-터미널에서'만' 작동하는 실시간 로그라이크 RPG 게임   
+터미널에서'만' 작동하는 실시간 로그라이크 RPG   
    
 ## 시작하기에 앞서   
    실행이 되지 않을 때는 파이썬 3.13.0이 설치되어 있는지 확인해주세요.
@@ -9,11 +9,11 @@
 ```
 cd desktop; git clone https://github.com/Daho0980/Rudventure.git
 ```
-을(를) 입력 후 'run_for_mac.command'를 클릭하여 실행   
+을 입력 후 'runGame.command'를 클릭하여 실행   
 
 ### Windows   
 ```
-지원 불가
+현재 지원 불가
 ```
 
 ## TODO   
@@ -22,7 +22,6 @@ cd desktop; git clone https://github.com/Daho0980/Rudventure.git
 - [ ] 미궁 데이터 구성 방식 변경   
 - [ ] 아이템 및 아이템 시스템   
 - [ ] 필드 매니저   
-- [ ] 마법 시스템   
 - [ ] 보스   
 - [ ] 튜토리얼   
 - [ ] 방 장식품(항아리, 바닥 장식 등등...)   

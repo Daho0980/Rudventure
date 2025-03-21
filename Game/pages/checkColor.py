@@ -23,8 +23,8 @@ def main(stdscr) -> None:
                 ''.join([f"{cc['fg'][i]}III" for i in keys[:8]]),
                 ''.join([f"{cc['fg'][i]}III" for i in keys[8:]]),
             ]
-            )+f"{cc['end']}\n\n{cc['fg']['L']}@ [Enter] 키를 눌러 확인{cc['end']}"
-        )
+        )+f"{cc['end']}\n\n{cc['fg']['L']}@ [Enter] 키를 눌러 확인{cc['end']}"
+    )
     
     play("system", "selector", "select")
     stdscr.clear(); stdscr.refresh()

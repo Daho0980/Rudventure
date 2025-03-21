@@ -1,6 +1,5 @@
-from .color import cColors as cc
-
-from . import markdown as md
+from .color import cColors  as cc
+from .      import markdown as md
 
 
 LOGO:str = f"""
@@ -59,34 +58,37 @@ dungeonMap:dict[int|str, str] = {
 ║                   ║
 ╚════╣미궁 지도╠════╝
 """,
-    'introduction' : f"""                                                      │
-                                                      │
-                                                      │
-                                                      │
-                                                      │
-┌──────────────────────────────────────────────────┐  │
-│ 게임 내에서 [{cc['fg']['R']}Tab{cc['end']}] 키를 눌러 켜고 끌 수 있습니다. ├──┘
+    'introduction' : f"""                                                     │
+┌──────────────────────────────────────────────────┐ │
+│ 게임 내에서 [{cc['fg']['R']}Tab{cc['end']}] 키를 눌러 켜고 끌 수 있습니다. ├─┘
 └──────────────────────────────────────────────────┘"""
 }
 
 debugConsole:dict[int|str, str] = {
     0 : "디버그 콘솔이 활성화되어 있지 않습니다",
-    1 : """┏━━━━━━━━━━━━━━━━━━━┫디버그 콘솔┣┓
-┃        Python version : 3.10.11┃
-┃         Window size : (58, 122)┃
-┃        Memory usage :  36.00 MB┃
-┃          Number of threads : 12┃
-┃                    Port : 12345┃
-┃                                ┃
-┃    Dx : 4, Dy : 4, x : 4, y : 4┃
-┃          Number of entities : 0┃
-┃           Number of enemies : 0┃
-┃    Number of total entities : 0┃
-┃monologue : (325, 650, 350, 950)┃
-┃                                ┃
-┃            Elapsed time : 00.00┃
-┃                         FPS : 0┃
-┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+    1 : """┏━━━━━━━━━━━━━━━┫디버그 콘솔┣┓
+┃     Python version : 3.13.0┃
+┃     Window size : (58, 122)┃
+┃    Memory usage :  36.00 MB┃
+┃      Number of threads : 12┃
+┃                Port : 12345┃
+┃                            ┃
+┃              Dx : 4, Dy : 4┃
+┃                x : 6, y : 6┃
+┃                 type : Room┃
+┃                  cell : 169┃
+┃               maxWidth : 13┃
+┃              maxHeight : 13┃
+┃           maxCharWidth : 26┃
+┃                            ┃
+┃      Number of entities : 0┃
+┃       Number of enemies : 0┃
+┃Number of total entities : 0┃
+┃ monologue : (0,950,350,950)┃
+┃                            ┃
+┃        Elapsed time : 00.00┃
+┃                     FPS : 0┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 """,
     'introduction' : f"""                                                              │
                                                               │
@@ -104,13 +106,3 @@ pauseBox:str     = f"""╔══════════════════
 ║          {md.cMarkdown(1)}{cc['fg']['L']}일 시 정 지{cc['end']}          ║
 ║                               ║
 ╚═══════════════════════════════╝"""
-
-noisePool = {
-    "pattern" : [
-        "█░▒\n░█", "░  ▒\n▓▓▒\n▒░", "█▓▒▓▓\n\n░▒", "███\n█\n░███░█",
-        "░\n\n░█░▒", "▒\n▒▒▓▒░▒▒\n     ▒▒", "▓▓▓\n▓█▓\n▓▓", "█▒█\n\n▒▓▒█\n░",
-        "█▒░▓▓█░", "██▒▒\n▓▒▒\n▒", "▓▓\n▓░░▓▓▒▓█", "           █\n▓▓██\n    ░█▒█ █",
-        "    ░\n\n░▒▒░", "▒▒\n▒█░\n   ▒ ▒", "▓▓ ▓\n\n▓█▓\n▓▓░▓█ ▓█", "   ██\n  ▒▒█ █\n░░",
-    ],
-    "character" : ["░", "▒", "▓", "█"]
-}

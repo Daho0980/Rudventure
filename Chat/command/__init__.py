@@ -1,10 +1,15 @@
 import re        ; import curses
 from   collections import defaultdict
 
+
 from Chat import (
     rules         as r,
     status        as s,
     mainFunctions as mf
+)
+from functions.grammar import (
+    attrform as af,
+    pstpos   as pp
 )
 
 from .localFunc  import *
@@ -42,13 +47,13 @@ def main(command):
     command[0] = command[0][1:]
 
     if command[0] in s.commands['globals'] and not s.serverConnection:
-        mf.sendError(f"해당 명령어('{command[0]}')는 시스템이 독립된 상태에서 사용할 수 없습니다.")
+        mf.error(f"해당 명령어('{command[0]}')는 시스템이 독립된 상태에서 사용할 수 없습니다.")
         return
     match command[0]:
         # region Locals
         case "say":
             if len(command) <= 1:
-                mf.sendError(f"{rawCommand}은/는 올바르지 않은 형식입니다.")
+                mf.error(f"{pp(rawCommand,'top')} 올바르지 않은 형식입니다.")
                 return
             
             if command[1] == "-t":
@@ -63,13 +68,13 @@ def main(command):
 
                             if None in textData.values():
                                 deniedParams = map(lambda x: f"'{x}'", [key for key, _ in textData.items() if key not in sayFuncParams])
-                                raise Exception(f"({', '.join(deniedParams)})은/는 존재하지 않는 매개변수입니다.")
+                                raise Exception(f"({pp(', '.join(deniedParams),'top')} 존재하지 않는 매개변수입니다.")
 
                         except Exception as e:
-                            mf.sendError(f"{rawData}은/는 올바르지 않은 형식입니다.", e)
+                            mf.error(f"{pp(rawData,'top')} 올바르지 않은 형식입니다.", e)
                             return
                 except Exception as e:
-                    mf.sendError(f"{rawData}은/는 올바르지 않은 형식입니다.", e)
+                    mf.error(f"{pp(rawData,'top')} 올바르지 않은 형식입니다.", e)
                     return
                 
                 command = command[:3]
@@ -96,12 +101,12 @@ def main(command):
                     command.append(allowance)
 
                 case _:
-                    mf.sendError(f"'{rawCommand}'은/는 올바르지 않은 형식입니다.")
+                    mf.error(f"'{rawCommand}'{pp(rawCommand,'top',True)} 올바르지 않은 형식입니다.")
                     return
                 
         case "clear":
             if len(command[1:]):
-                mf.sendError(f"'{rawCommand}'은/는 올바르지 않은 형식입니다.")
+                mf.error(f"'{rawCommand}'{pp(rawCommand,'top',True)} 올바르지 않은 형식입니다.")
                 return
             
             command[0] = 'clear_0'
@@ -113,7 +118,7 @@ def main(command):
         case "history":
             match len(command[1:]):
                 case 0:
-                    mf.sendError(f"'{rawCommand}'은/는 올바르지 않은 형식입니다.")
+                    mf.error(f"'{rawCommand}'{pp(rawCommand,'top',True)} 올바르지 않은 형식입니다.")
                     return
                 
                 case 1:
@@ -122,11 +127,11 @@ def main(command):
                             command[0] = 'history_0'
                             command = command[:1]
                         case "resize":
-                            mf.sendError(f"해당 명령에는 limit이 무조건 포함되어야 합니다.")
+                            mf.error(f"해당 명령에는 limit이 무조건 포함되어야 합니다.")
                             return
 
                         case _:
-                            mf.sendError(f"'{command[1]}'은/는 존재하지 않는 명령입니다.")
+                            mf.error(f"'{command[1]}'{pp(command[1],'top',True)} 존재하지 않는 명령입니다.")
                             return
 
                 case 2:
@@ -137,11 +142,11 @@ def main(command):
                             command    = command[:2]
                         
                         case _:
-                            mf.sendError(f"'{command[1]}'은/는 존재하지 않는 명령입니다.")
+                            mf.error(f"'{command[1]}'{pp(command[1],'top',True)} 존재하지 않는 명령입니다.")
                             return
 
                 case _:
-                    mf.sendError(f"'{rawCommand}'은/는 올바르지 않은 형식입니다.")
+                    mf.error(f"'{rawCommand}'{pp(rawCommand,'top',True)} 올바르지 않은 형식입니다.")
                     return
 
         case "help":
@@ -150,7 +155,7 @@ def main(command):
                 case 1:
                     command[0] = 'help_1'if command[1]in('locals','globals')else 'help_2'
                 case _: 
-                    mf.sendError(f"'{rawCommand}'은/는 올바르지 않은 형식입니다.")
+                    mf.error(f"'{rawCommand}'{pp(rawCommand,'top',True)} 올바르지 않은 형식입니다.")
                     return
                 
         case "authorization"|"auth":
@@ -160,7 +165,7 @@ def main(command):
                         case "current": command[0] = 'authorization_2'
                         case "list":    command[0] = 'authorization_3'
                         case _:
-                            mf.sendError(f"'{command[1]}'은/는 존재하지 않는 명령입니다.")
+                            mf.error(f"'{command[1]}'{pp(command[1],'top',True)} 존재하지 않는 명령입니다.")
                             return                            
 
                     command = command[:1]
@@ -170,24 +175,24 @@ def main(command):
                         case "add":    command[0] = 'authorization_0'
                         case "remove": command[0] = 'authorization_1'
                         case _:
-                            mf.sendError(f"'{command[1]}'은/는 존재하지 않는 명령입니다.")
+                            mf.error(f"'{command[1]}'{pp(command[1],'top',True)} 존재하지 않는 명령입니다.")
                             return
                     
                     if command[2] not in s.authority['STN'].keys():
-                        mf.sendError(f"'{command[2]}'은/는 존재하지 않는 권한입니다.")
+                        mf.error(f"'{command[2]}'{pp(command[2],'top',True)} 존재하지 않는 권한입니다.")
                         return
                     
                     command[1] = str(s.authority['STN'][command[2]])
                     command    = command[:2]
 
                 case _:
-                    mf.sendError(f"'{rawCommand}'은/는 올바르지 않은 형식입니다.")
+                    mf.error(f"'{rawCommand}'{pp(rawCommand,'top',True)} 올바르지 않은 형식입니다.")
                     return
                 
         # region Globals
         case "status":
             if command[2] not in playerStatus['total']:
-                mf.sendError(f"{command[2]}라는 상태는 존재하지 않습니다.")
+                mf.error(f"{af(command[2],'mod')} 상태는 존재하지 않습니다.")
                 return
             
             match len(command[1:]):
@@ -200,22 +205,22 @@ def main(command):
                             command    = command[:2]
                                 
                         case "set":
-                            mf.sendError(f"'{rawCommand}'의 다음에는 int형식의 변경값이 와야 합니다.")
+                            mf.error(f"'{rawCommand}'의 다음에는 int형식의 변경값이 와야 합니다.")
                             return
 
                         case _:
-                            mf.sendError(f"'{command[1]}'은/는 존재하지 않는 명령입니다.")
+                            mf.error(f"'{command[1]}'{pp(command[1],'top',True)} 존재하지 않는 명령입니다.")
                             return
                         
                 case 3:
                     match command[1]:
                         case "set":
                             if command[2] in playerStatus['percentage'] and (int(command[3])<0 or int(command[3])>100):
-                                mf.sendError(f"'{command[2]}'의 변경값은 100 초과이거나 0 미만일 수 없습니다.")
+                                mf.error(f"'{command[2]}'의 변경값은 100 초과이거나 0 미만일 수 없습니다.")
                                 return
                             
                             elif not isinstance(eval(command[3]), int):
-                                mf.sendError(f"변경값은 int여야만 합니다.")
+                                mf.error(f"변경값은 int여야만 합니다.")
                                 return
                             
                             command[0] = 'status_1'
@@ -225,26 +230,26 @@ def main(command):
                             command    = command[:3]
 
                         case _:
-                            mf.sendError(f"'{command[1]}'은/는 존재하지 않는 명령입니다.")
+                            mf.error(f"'{command[1]}'{pp(command[1],'top',True)} 존재하지 않는 명령입니다.")
                             return
                     
                 case _:
-                    mf.sendError(f"'{rawCommand}'은/는 올바르지 않은 형식입니다.")
+                    mf.error(f"'{rawCommand}'{pp(rawCommand,'top',True)} 올바르지 않은 형식입니다.")
                     return
 
         case _:
-            mf.sendError(f"'{command[0]}'라는 명령어는 존재하지 않습니다.")
+            mf.error(f"'{command[0]}'{af(command[0],'mod',True)} 명령어는 존재하지 않습니다.")
             return
     
 
     if 0 not in s.currentUserAuthority:
         requiredAuthorities = list(map(lambda a: s.authority['NTS'][a], set(s.commands['authorities'][command[0][:-2]][int(command[0][-1])])-set(s.currentUserAuthority)))
         if requiredAuthorities:
-            mf.sendError(f"해당 명령어를 실행할 권한이 충족되지 않았습니다.")
-            mf.sendError(f"필요한 권한 : {', '.join(requiredAuthorities)}")
+            mf.error(f"해당 명령어를 실행할 권한이 충족되지 않았습니다.")
+            mf.error(f"필요한 권한 : {', '.join(requiredAuthorities)}")
             return
     
     execute = eval(f"{command[0]}")(*command[1:])
 
     if r.command['showCommandOutput'] and execute:
-        mf.sendExplanation(f"'{rawCommand}'이/가 성공적으로 실행되었습니다.")
+        mf.explanation(f"'{rawCommand}'{pp(rawCommand,'sub',True)} 성공적으로 실행되었습니다.")

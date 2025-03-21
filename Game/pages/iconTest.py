@@ -69,9 +69,11 @@ def main(stdscr) -> None:
                 gameData[cinp(stdscr, "Which icon would you want to see? : ", clearAfter=True)]+"\n\nInput 'q' to quit. Enter to go to next session.",
                 clearAfter=True
             ) == 'q': return
+            
             if cinp(
                 stdscr,
                 characterData[cinp(stdscr, "Which character would you want to see? : ", clearAfter=True)]+"\n\nInput 'q' to quit. Enter to go back to finish this session.",
                 clearAfter=True
             ) == 'q': return
+            
             continue

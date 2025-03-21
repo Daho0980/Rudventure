@@ -30,7 +30,7 @@ def main(stdscr) -> None:
 다음부터 자동으로 재조정하시겠습니까?""",
                 ["네", "아니오", "두 번 다신 내 화면에 나오지 마쇼.\n  이건 내 마지막 경고요."],
                 [1,0,255,10],
-                '@'
+                '@)'
             ):
                 case 1:
                     s.autoTerminalSize = True
@@ -41,6 +41,7 @@ def main(stdscr) -> None:
                         f"설정이 완료되었습니다. 자동 터미널 크기\n설정 변경은 이후 설정에서 하실 수 있습니다.\n확인 시 메인 메뉴로 넘어갑니다.\n\n{cc['fg']['L']}@ [Enter]키를 눌러 확인{cc['end']}"
                     )
                     play("system", "selector", "select")
+
                 case 3:
                     s.checkTerminalSize = False
                     configs.save()
@@ -50,5 +51,7 @@ def main(stdscr) -> None:
                         f"확인되었습니다. 터미널 크기 확인은\n이후 설정에서 하실 수 있습니다.\n확인 시 메인 메뉴로 넘어갑니다.\n\n{cc['fg']['L']}@ [Enter]키를 눌러 확인{cc['end']}"
                     )
                     play("system", "selector", "select")
+
             stdscr.clear(); stdscr.refresh()
+            
             return

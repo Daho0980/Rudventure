@@ -1,8 +1,11 @@
-import math ; import time ; import psutil
-from   random               import randrange, choices, choice
+import math
+import time
+import psutil
+from   random import randrange, choices, choice
 
 from Assets.data.color           import cColors as cc
 from Game.core.system.structures import Conveyor
+from Game.entities.player        import statusEffect
 from Game.utils.advanced         import DungeonMaker as dgm
 from Game.utils.modules          import Textbox
 
@@ -25,19 +28,20 @@ logCache:Conveyor = Conveyor(1, True)
 
 s.startTime = time.perf_counter()
 
-def statusBar(status:int,
-              statusName:str    ="",
-              maxStatus:int     =0,
-              color:str         ="",
-              emptyCellColor:str="",
-              barType:str       ="Normal",
-              frontTag:str      ="",
-              backTag:str       ="",
-              space:int         =0,
-              end:bool          =True,
-              showComma:bool    =True,
-              usePercentage:bool=False, 
-              showEmptyCell:bool=True,    ):
+# region Status bar
+def statusBar(status        :int          ,
+              statusName    :str =""      ,
+              maxStatus     :int =0       ,
+              color         :str =""      ,
+              emptyCellColor:str =""      ,
+              barType       :str ="Normal",
+              frontTag      :str =""      ,
+              backTag       :str =""      ,
+              space         :int =0       ,
+              end           :bool=True    ,
+              showComma     :bool=True    ,
+              usePercentage :bool=False   , 
+              showEmptyCell :bool=True     ):
     """
     게이지 바를 생성하는 함수\n\n
 
@@ -80,6 +84,7 @@ def statusBar(status:int,
 
     return ''.join(Display)
 
+# region Inventory
 def inventory():
     step   = [[0, 3], [1, 4], [2, 5]]
     output = []
@@ -98,16 +103,19 @@ def inventory():
                     coverColor =cc['fg']['Y'] if s.inventory['pointer'] == cellIndex else cc['fg']['G1'] if s.inventory['cells'][cellIndex]['disabled'] else ''
                 )
                 lines.extend(cell.split("\n"))
+
         if len(lines)>3:
             lines = [
                 f"{lines[0]}{lines[3]}",
                 f"{lines[1]}{lines[4]}",
                 f"{lines[2]}{lines[5]}"
-                ]
+            ]
+
         if lines: output.append(f"{lines[0]}\n{lines[1]}\n{lines[2]}\n")
         
     return "".join(output)
 
+# region Curse Noise
 def curseNoise(stdscr) -> str:
     output = ""
 
@@ -116,7 +124,7 @@ def curseNoise(stdscr) -> str:
     for _ in range((s.lvl-int(s.Mlvl/2))*3):
         output += anchor(
             stdscr,
-            f"{cc['fg']['F']}{choice(UIP.noisePool[choices(['pattern','character'],weights=[40,70],k=1)[0]])}{cc['end']}",
+            f"{cc['fg']['F']}{choice(s.noisePool[choices(['pattern','character'],weights=[40,70],k=1)[0]])}{cc['end']}",
             y        =randrange(1,y+1),
             x        =randrange(1,x+1),
             returnStr=True
@@ -124,6 +132,8 @@ def curseNoise(stdscr) -> str:
 
     return output
 
+
+# region Render
 def render(stdscr):
     """
     메인 디스플레이 출력 함수
@@ -132,32 +142,46 @@ def render(stdscr):
     """
     global noiseBuffer
 
-    grid = s.Dungeon[s.Dy][s.Dx]['room']
-
+    grid    = s.Dungeon[s.Dy][s.Dx]['room']
     y, x    = stdscr.getmaxyx()
     Display = []
-    buffer  = ""
-    GFD     = [''.join([d['block']for d in row])for row in grid]
+
+    buffer = ""
+    GFD    = [''.join([d['block']for d in row])for row in grid]
 
     # Stage
     buffer = '\n'.join(GFD)
-    dcmy   = int(y/2)-int(len([len(escapeAnsi(l)) for l in buffer.split("\n")])/2)-(s.y-int(len(s.Dungeon[s.Dy][s.Dx]['room'])/2))
-    dcmx   = int(x/2)-(int(max([len(escapeAnsi(l)) for l in GFD])/2)+1)-(s.x-int(len(s.Dungeon[s.Dy][s.Dx]['room'][0])/2))
+    dcmy   = int(y/2)-int(s.roomData['maxHeight']   /2)-(s.y-int(s.roomData['maxHeight']/2))
+    dcmx   = int(x/2)-int(s.roomData['maxCharWidth']/2)-(s.x-int(s.roomData['maxWidth'] /2))
+
     Display.append(anchor(
-        stdscr,
-        buffer,
-        y        =(2 if dcmy<2 else y   if dcmy+len(s.Dungeon[s.Dy][s.Dx]['room'])>y else dcmy) if s.dynamicCameraMoving else int(y/2)-int(len([len(escapeAnsi(l))  for l in buffer.split("\n")])/2),
-        x        =(0 if dcmx<0 else x-2 if dcmx>=x-1                                 else dcmx) if s.dynamicCameraMoving else int(x/2)-(int(max([len(escapeAnsi(l)) for l in GFD])/2)+1),
+        stdscr, buffer,
+        (
+            2
+                if dcmy<2
+            else (y+2)-s.roomData['maxHeight'] 
+                if dcmy+s.roomData['maxHeight']>(y+2)
+            else dcmy
+        ) if s.dynamicCameraMoving
+        else int(y/2)-int(s.roomData['maxHeight']/2),
+
+        (
+            0
+                if dcmx<0
+            else x-s.roomData['maxCharWidth']
+                if dcmx+s.roomData['maxCharWidth']>x
+            else dcmx
+        ) if s.dynamicCameraMoving
+        else int(x/2)-int(s.roomData['maxCharWidth']/2),
+
         returnStr=True
     ))
 
     # Map
     if s.showDungeonMap:
         buffer = Textbox.TextBox(
-            dgm.centerGridMapReturn(
-                s.Dungeon,
-                blank =1
-            ),
+            dgm.centerGridMapReturn(s.Dungeon, blank=1),
+
             Type         ='middle',
             AMLS         =True,
             LineType     ='double',
@@ -185,18 +209,30 @@ TextBox.Line_\n저주 : {cc['fg']['F']}{s.lvl}{cc['end']}, {cc['fg']['F']}{int((
         sideTextPos  =["under", "left"],
         coverSideText=True
     )
+        
     elif s.statusDesign == 1:
         statusText += Textbox.TextBox(
             ''.join([
-                statusBar(s.hp, statusName="체  력", maxStatus=s.Mhp),
-                statusBar(s.df, statusName="방어력", maxStatus=s.Mdf, color=cc['fg']['B1']),
+                statusBar(s.hp,  statusName="체  력", maxStatus=s.Mhp                                       ),
+                statusBar(s.df,  statusName="방어력", maxStatus=s.Mdf, color=cc['fg']['B1']                 ),
                 statusBar(s.atk, statusName="공격력", maxStatus=10, color=cc['fg']['L'], showEmptyCell=False),
+                statusBar(
+                    math.ceil(s.hunger/200),
 
-                statusBar(math.ceil(s.hunger/200), statusName="허  기", maxStatus=10, color=cc['fg']['Y'],
-                        backTag=f"{cc['fg']['Y']}{s.hunger if s.hunger<=200 else f'{round(s.hunger/20)}%'}{cc['end']}"),
+                    statusName="허  기",
+                    maxStatus =10,
+                    color     =cc['fg']['Y'],
+                    backTag   =f"{cc['fg']['Y']}{s.hunger if s.hunger<=200 else f'{round(s.hunger/20)}%'}{cc['end']}"
+                ),
+                "\n"+statusBar(
+                    int((s.fairWind/s.MFairWind)*10),
 
-                "\n"+statusBar(int((s.fairWind/s.MFairWind)*10), statusName="풍  력", maxStatus=10, color=cc['fg']['A'],
-                        barType="FairWind", backTag=f"{cc['fg']['A']}{s.fairWind}{cc['end']}", showComma=False),
+                    statusName="풍  력",
+                    maxStatus =10,
+                    color     =cc['fg']['A'],
+                    barType   ="FairWind",
+                    backTag   =f"{cc['fg']['A']}{s.fairWind}{cc['end']}", showComma=False
+                ),
                         
                 f"TextBox.Line_\n잿조각  {cc['fg']['G1']}{s.ashChip}{cc['end']}\n",
                 "TextBox.Line_\nTextBox.Middle_"+statusBar(
@@ -216,12 +252,17 @@ TextBox.Line_\n저주 : {cc['fg']['F']}{s.lvl}{cc['end']}, {cc['fg']['F']}{int((
             sideTextPos  =["under", "left"],
             coverSideText=True
         )
+
+    # Status effect
+    statusText += f"\n\n{statusEffect.render()}"
+
+    # Inventory
     statusText += f"\n\n{inventory()}"
+
     Display.append(anchor(stdscr, statusText, y=2, x=1, returnStr=True))
 
     # Log
-    logHash = hash('0'.join(s.onDisplay)+f"{y}{x}")
-    if logHash == logCache.key()[0]:
+    if (logHash:=hash('0'.join(s.onDisplay)+f"{y}{x}")) == logCache.key()[0]:
         logText = logCache[logHash]
     else:
         logText = Textbox.TextBox(
@@ -234,15 +275,17 @@ TextBox.Line_\n저주 : {cc['fg']['F']}{s.lvl}{cc['end']}, {cc['fg']['F']}{int((
             coverSideText  =True
         )
         logCache[logHash] = logText
+
     Display.append(anchor(stdscr, logText, y=y-(1 if not len(s.onDisplay)else len(s.onDisplay)), returnStr=True))
 
-    # Info window(when use observe mode)
+    # Info window (observe mode)
     if s.infoWindow['time']:
-        maxLen        = max(map(lambda l: actualLen(escapeAnsi(l)), s.infoWindow['text'].split('\n')))
-        sideTextSpace = 6 if maxLen>6 else 0; maxLen -= sideTextSpace
-        timeGauge     = int((s.infoWindow['time']/s.infoWindow['setTime'])*maxLen)
+        maxLen         = max(map(lambda l: actualLen(escapeAnsi(l)), s.infoWindow['text'].split('\n')))
+        sideTextSpace  = 6 if maxLen>6 else 0; maxLen -= sideTextSpace
+        timeGauge      = int((s.infoWindow['time']/s.infoWindow['setTime'])*maxLen)
         infoWindowText = Textbox.TextBox(
             s.infoWindow['text'],
+
             AMLS           =True,
             LineType       ='double',
             alwaysReturnBox=False,
@@ -250,10 +293,11 @@ TextBox.Line_\n저주 : {cc['fg']['F']}{s.lvl}{cc['end']}, {cc['fg']['F']}{int((
             sideTextPos    =["under", "middle"],
             coverSideText  =True
         ).split('\n')
+
         Display.append(anchor(stdscr, '\n'.join(infoWindowText), y=2, x=int(x/2)-int(len(infoWindowText[0])/2), returnStr=True))
 
     # Debug Mode
-    if s.debugConsole:
+    if s.debug:
         by, bx, debugText = Textbox.TextBox(
             f"""Python version : {s.pythonVersion.major}.{s.pythonVersion.minor}.{s.pythonVersion.micro}
 Window size : {stdscr.getmaxyx()}
@@ -261,14 +305,18 @@ Memory usage : {psutil.Process().memory_info().rss/2**20: .2f} MB
 Number of threads : {psutil.Process().num_threads()}
 Port : {s.port}
 
-Dx : {s.Dx}, Dy : {s.Dy}, x : {s.x}, y : {s.y}
+Dx : {s.Dx}, Dy : {s.Dy}
+x : {s.x}, y : {s.y}
+{'\n'.join(map(lambda d:f"{d[0]} : {d[1]}",s.roomData.items()))}
+
 Number of entities : {s.entityCount}
 Number of enemies : {s.enemyCount}
 Number of total entities : {s.totalEntityCount}
-monologue : ({s.monologueCount}, {s.monologueRange}, {p.monologue['min']}, {p.monologue['max']})
+monologue : ({s.monologueCount},{s.monologueRange},{p.monologue['min']},{p.monologue['max']})
 
 Elapsed time : {s.elapsedTime:.2f}
 FPS : {s.currentFrame}""",
+
             Type         ="right",
             AMLS         =True,
             LineType     ="bold",
@@ -277,6 +325,7 @@ FPS : {s.currentFrame}""",
             sideTextPos  =["over", "right"],
             coverSideText=True
         )
+
         Display.append(anchor(stdscr, debugText, y=int((y/2)-(by/2)), x=x-bx, returnStr=True)) # type:ignore
 
     # curse corrosion
@@ -285,13 +334,15 @@ FPS : {s.currentFrame}""",
             if not s.currentCurseNoiseFrequency:
                 s.currentCurseNoiseFrequency = s.curseNoiseFrequency
                 noiseBuffer                  = curseNoise(stdscr)
+
             s.currentCurseNoiseFrequency -= 1
+
         Display.append(noiseBuffer)
 
     # Pause
     if l.pause: Display.append(anchor(stdscr, UIP.pauseBox, returnStr=True))
-    else:       s.elapsedTime = time.perf_counter()-s.startTime
+    else      : s.elapsedTime = time.perf_counter()-s.startTime
 
-    stdscr.erase()
+    stdscr.erase ()
     stdscr.addstr(''.join(Display))
     s.elapsedFrame += 1

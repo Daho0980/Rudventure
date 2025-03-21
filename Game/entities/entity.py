@@ -1,7 +1,8 @@
 import time ; import threading
 from   random import randrange
 
-from Assets.data.color           import cColors         as cc
+from Assets.data.color           import cColors as cc
+from functions.grammar           import pstpos  as pp
 from Game.core.system.logger     import addLog
 from Game.core.system.dataLoader import obj
 from Game.utils.system.sound     import play
@@ -12,7 +13,7 @@ from Assets.data import (
 )
 
 
-extraParameters = lambda data:  ','.join(f"{k}={v}" for k, v in data.items())
+extraParameters = lambda data: ','.join(f"{k}={v}" for k, v in data.items())
 
 def addHashKey() -> str:
     while 1:
@@ -23,16 +24,16 @@ def addHashKey() -> str:
 
     return hashKey
 
-def addMonster(entityID:int,
-               hpMtp:int,
-               atkMtp:int,
-               acMtp:int,
-               Dy:int,
-               Dx:int,
-               y:list|int,
-               x:list|int,
-               lock:bool=False,
-               sendEffect:bool =True  ) -> None:
+def addMonster(entityID  :int       ,
+               hpMtp     :int       ,
+               atkMtp    :int       ,
+               acMtp     :int       ,
+               Dy        :int       ,
+               Dx        :int       ,
+               y         :list|int  ,
+               x         :list|int  ,
+               lock      :bool=False,
+               sendEffect:bool =True ) -> None:
     """
     모든 적을 소환할 수 있는 함수
 
@@ -48,7 +49,7 @@ def addMonster(entityID:int,
         `sendEffect`(bool=True)      : 몬스터 사망 시 사망 이펙트 전송 여부, 기본적으로 `True`로\
                                        설정되어 있음
     """
-    data = obj(s.path['blockData']['enemy'], str(entityID))
+    data    = obj(s.path['blockData']['enemy'], str(entityID))
     hashKey = addHashKey()
 
     mClass      = data['class']
@@ -68,9 +69,9 @@ def addMonster(entityID:int,
     def EntityInteraction() -> None:
         exec(f"""
 import time
-             
-from   Game.entities.enemy import mobs
-from   Game.utils.system   import xpSystem as xps
+
+from Game.entities.enemy     import mobs
+from Game.utils.system       import xpSystem as xps
              
 from Assets.data import (
     totalGameStatus as s,
@@ -79,7 +80,12 @@ from Assets.data import (
              
              
 {mClass} = mobs.{mClass}("{name}", "{icon}", {mID}, "{hashKey}")
-{mClass}.start({((hp-2 if s.ezMode else hp)*hpMtp)+((s.stage-1)*2)}, {((atk)*atkMtp)+(s.stage-1)}, {Dy}, {Dx}, {y}, {x})
+{mClass}.start(
+    {((hp-2 if s.ezMode else hp)*hpMtp)+((s.stage-1)*2)},
+    {((atk)*atkMtp)+(s.stage-1)},
+    {Dy}, {Dx}, {y}, {x}
+)
+
 if {lock}: s.roomLock = True
 
 while s.main:
@@ -113,28 +119,28 @@ if s.main and not (s.killAll or s.clearEntity):
             if sendEffect:
                 play("player", "slash")
                 play("entity", "enemy", "dead")
-                addLog(f"{cc['fg']['F']}{name}{cc['end']}이/가 죽었습니다!", colorKey='F')
+                addLog(f"{cc['fg']['F']}{name}{cc['end']}{pp(name,'sub',True)} 죽었습니다!", colorKey='F')
     threading.Thread(target=EntityInteraction, name=name, daemon=True).start()
     time.sleep(0.2)
 
-def addAnimal(entityID:int,
-              hp:int,
-              atk:int,
-              y:list|int,
-              x:list|int,
-              Dy:int=0,
-              Dx:int=0,
+def addAnimal(entityID:int     ,
+              hp      :int     ,
+              atk     :int     ,
+              y       :list|int,
+              x       :list|int,
+              Dy      :int=0   ,
+              Dx      :int=0   ,
 
-              icon:str="",
-              name:str="",
-              color:list=[cc['fg']['W'], 'W'],
-              friendly:bool=False,
+              icon    :str=""                   ,
+              name    :str=""                   ,
+              color   :list=[cc['fg']['W'], 'W'],
+              friendly:bool=False               ,
 
               MCBF:bool=False,
-              SICR:bool=True,
+              SICR:bool=True ,
 
               extraData:dict  ={},
-              preloadData:dict={}              ) -> None:
+              preloadData:dict={}                ) -> None:
     """
     모든 동물을 소환할 수 있는 함수
 
@@ -158,6 +164,7 @@ def addAnimal(entityID:int,
     if preloadData:
         hashKey = preloadData['hashKey']
         s.entityHashPool.append(hashKey)
+        
     else: hashKey = addHashKey()
 
     entity      = data['entity']
@@ -177,8 +184,8 @@ def addAnimal(entityID:int,
         exec(f"""
 import time
 
-from   Game.entities.animal import {entity}
-from   Game.utils.system    import xpSystem as xps
+from Game.entities.animal    import {entity}
+from Game.utils.system       import xpSystem as xps
 
 from Assets.data import (
     totalGameStatus as s,
@@ -191,12 +198,19 @@ from Assets.data import (
     "{color[0]}", "{color[1]}",
     "{hashKey}",
     [
-        {entityID}, {hp}, {atk}, {y}, {x}, {Dy}, {Dx},
+        {entityID},
+        {hp}, {atk}, {y}, {x}, {Dy}, {Dx},
         "{icon}", "{name}", {color}, {friendly},
         {MCBF}, {SICR}
     ]
 )
-{entity}.start({hp}, {atk}, {Dy}, {Dx}, {y}, {x}, {extraParameters(extraData)})
+
+{entity}.start(
+    {hp}, {atk},
+    {Dy}, {Dx}, {y}, {x},
+    {extraParameters(extraData)}
+)
+
 if {preloadData}: {entity}.loadData({preloadData})
 
 while s.main:
@@ -220,6 +234,7 @@ if s.main and not (s.killAll or s.clearEntity):
             {int(hp/2) or 1},
             {int(atk/2)or 1},
             {int(hp/4) or 1},
+            
             Dy        =s.Dy,
             Dx        =s.Dx,
             y         ={entity}.y,
@@ -239,11 +254,13 @@ if s.main and not (s.killAll or s.clearEntity):
 """)
         s.entityHashPool.remove(hashKey)
         if hashKey in s.friendlyEntity: s.friendlyEntity.remove(hashKey)
+        
         if s.main and not (s.killAll or s.clearEntity):
             s.killCount += 1
             play("player", "slash")
             play("entity", "enemy", "dead")
-            addLog(f"{color[0]}{name}{cc['end']}이/가 죽었습니다!", colorKey='F')
+            addLog(f"{color[0]}{name}{cc['end']}{pp(name,'sub',True)} 죽었습니다!", colorKey='F')
+
     threading.Thread(target=EntityInteraction, name=name, daemon=True).start()
 
 def loadEntities() -> None:

@@ -17,7 +17,7 @@ class Server:
         s.port    = self.port
 
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.server_socket.bind((self.host, self.port))
+        self.server_socket.bind  ((self.host, self.port))
         self.server_socket.listen()
         self.connected_clients = []
 
@@ -26,6 +26,7 @@ class Server:
             conn, addr = self.server_socket.accept()
             addLog(f"{cc['fg']['Y']}{':'.join(map(str, addr))}{cc['end']} 연결됨", colorKey='Y')
             self.connected_clients.append((conn, addr))
+
             threading.Thread(target=self.clientHandler, args=(conn, addr)).start()
             time.sleep(0.1)
 
@@ -52,7 +53,7 @@ class Server:
                     
                 addLog(escapeAnsi(f"{data[0]} : {data[1]}"))
                 
-        except Exception as e: addLog(f"{cc['fg']['Y']}{':'.join(map(str, addr))}{cc['end']} 통신 에러 발생 : {e}", colorKey='Y')
+        except Exception as e: addLog(f"{cc['fg']['Y']}{':'.join(map(str, addr))}{cc['end']} 통신 오류 발생 : {e}", colorKey='Y')
         finally:
             conn.close()
             addLog(f"{cc['fg']['Y']}{':'.join(map(str, addr))}{cc['end']} 연결 종료됨", colorKey='Y')
@@ -71,7 +72,7 @@ class Server:
 
 def add(text, duration):
     s.onDisplay.append(text)
-    s.onTime.append(duration)
+    s.onTime   .append(duration)
 
 def addLog(text:str, duration:int=50, colorKey:str='E') -> None:
     """
@@ -93,7 +94,7 @@ def addLog(text:str, duration:int=50, colorKey:str='E') -> None:
 
 def clear() -> None:
     s.onDisplay.clear()
-    s.onTime.clear()
+    s.onTime   .clear()
 
 server = Server()
 

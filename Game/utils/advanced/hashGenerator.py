@@ -2,7 +2,5 @@ from string  import ascii_letters, digits
 from secrets import choice
 
 
-letterPool = ascii_letters+digits
-
-def main(length:int=6) -> str:
-    return ''.join(choice(letterPool)for _ in range(length))
+_letterPool = ascii_letters+digits
+main        = lambda length=6: ''.join(choice(_letterPool)for _ in range(length))

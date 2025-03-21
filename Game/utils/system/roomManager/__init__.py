@@ -19,11 +19,11 @@ def raiseRoomEvent() -> None:
 
         if l.jpsf and not data['interaction']:
             match data['roomType']:
-                case 1: normal.event(data)
-                case 2:
+                case "room": normal.event(data)
+                case "event":
                     match data['eventType']:
                         case 0:     event.event0(data)
                         case 1|2|3: event.event1()
                         
-                case 3: treasure.event(True if randrange(1,101)<=p.treasureComment else False)
-                case 4: boss.event(data)
+                case "treasure": treasure.event(True if randrange(1,101)<=p.treasureComment else False)
+                case "endPoint": boss    .event(data)

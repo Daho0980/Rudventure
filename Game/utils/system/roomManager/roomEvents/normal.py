@@ -33,10 +33,9 @@ def event(data) -> None:
     if data['summonCount'] > 0:
         doorData = tuple(data['doors'].values())
         if sum(doorData) > 1:
-            data['roomIcon'] = [
-                roomData[doorData],
-                ""
-            ]
+            data['roomIcon'] = [roomData[doorData], ""]
+
+        summonMonster(data['summonCount'])
 
         if randrange(1, 101) <= p.enterinBattle:
             say(choice(
@@ -44,14 +43,14 @@ def event(data) -> None:
                 if   data['summonCount'] >= 5\
                 else c.enterinBattle[0]
             ))
-        summonMonster(data)
 
-        changeDoor(1, data)
-        play("object", "door", "close")
+        changeDoor(1, data, "░░")
+        play      ("object", "door", "close")
 
     elif not s.enemyCount and s.roomLock:
         s.roomLock                           = False
         s.Dungeon[s.Dy][s.Dx]['interaction'] = True
         if randrange(0, 101) > p.clearedRoomLoot: randPlaceOrb()
+
         changeDoor(2, data)
-        play("object", "door", "open")
+        play      ("object", "door", "open")

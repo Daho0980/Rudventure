@@ -26,28 +26,28 @@ def receiveChat():
     data = s.client.receiveData()
     if data == "excepted":
         return "excepted"
-    else: addChat(data) # type: ignore
+    else: addChat(data)
 
 
-def sendError(text:str, exception:Exception|bool=False, speaker:bool=False):
+def error(text:str, exception:Exception|bool=False, speaker:bool=False):
     sender = sendChat if speaker else addChat
     sender(["Error", text, 'R'])
     if exception and r.command['showErrorOutput']:
         sender([exception.__class__.__name__, str(exception), 'R'])
 
-def sendExplanation(text:str, speaker:bool=False):
+def explanation(text:str, speaker:bool=False):
     sender = sendChat if speaker else addChat
     sender(["Explanation", text, 'G1'])
 
-def sendWarning(text:str, speaker:bool=False):
+def warning(text:str, speaker:bool=False):
     sender = sendChat if speaker else addChat
     sender(["Warning", text, 'Y'])
 
-def sendInfo(text:str, speaker:bool=False):
+def info(text:str, speaker:bool=False):
     sender = sendChat if speaker else addChat
     sender(["Info", text, 'B1'])
 
-def sendOutput(text:str, speaker:bool=False):
+def output(text:str, speaker:bool=False):
     sender = sendChat if speaker else addChat
     sender(["Output", text, 'F'])
 

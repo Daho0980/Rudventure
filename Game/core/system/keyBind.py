@@ -7,11 +7,12 @@ class KeyBind:
     down  = KEY_DOWN
     left  = KEY_LEFT
 
-    dungeonMap     = 9 # Tab
+    dungeonMap     = 9  # Tab
     debug          = 68 # Shift + D
     keyRecord      = 82 # Shift + R
     statusUIDesign = 83 # Shift + S
     cameraMove     = 67 # Shift + C
+    openChat       = 10 # Enter
 
     volumeDown = 91 # [
     volumeUp   = 93 # ]
@@ -24,3 +25,9 @@ class KeyBind:
     slot4, slot5, slot6 = 52, 53, 54 # 4, 5, 6
 
     pause = 32 # space
+
+    SE1, SE2, SE3 = 33, 64, 35 # Shift + [1, 2, 3]
+    SE4, SE5, SE6 = 36, 37, 94 # Shift + [4, 5, 6]
+    SE7, SE8, SE9 = 38, 42, 40 # Shift + [7, 8, 9]
+
+    SEUP, SEDOWN  = 45, 61 # -, =

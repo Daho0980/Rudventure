@@ -12,25 +12,27 @@ from Game.utils.graphics import (
 Line:dict[str,dict[int,list[str]]] = {
     "normal" : {0:["┌", "┐"], 1:["└", "┘"], 2:["├", "┤"], 3:["─", "│"]},
     "double" : {0:["╔", "╗"], 1:["╚", "╝"], 2:["╠", "╣"], 3:["═", "║"]},
-    "bold"   : {0:["┏", "┓"], 1:["┗", "┛"], 2:["┣", "┫"], 3:["━", "┃"]}
+    "bold"   : {0:["┏", "┓"], 1:["┗", "┛"], 2:["┣", "┫"], 3:["━", "┃"]},
+    
+    "cornerDouble" : {0:["╔", "╗"], 1:["╚", "╝"], 2:["╠", "╣"], 3:["─", "┃"]},
 }
 
-def TextBox(Inp:str,
-            Type:str             ="left",
-            maxLine:int          =100,
-            fillChar:str         =" ",
-            inDistance:int       =0,
-            outDistance:int      =0,
-            addWidth:int         =0,
-            AMLS:bool            =False,
-            endLineBreak:bool    =False,
-            returnSizeyx:bool    =False,
-            LineType:str         ="normal",
-            alwaysReturnBox:bool =True,
-            sideText:str         ="",
-            sideTextPos:list[str]=["over", "middle"],
-            coverSideText:bool   =False,
-            coverColor:str       =""                 ) -> str:
+def TextBox(Inp            :str                         ,
+            Type           :str      ="left"            ,
+            maxLine        :int      =100               ,
+            fillChar       :str      =" "               ,
+            inDistance     :int      =0                 ,
+            outDistance    :int      =0                 ,
+            addWidth       :int      =0                 ,
+            AMLS           :bool     =False             ,
+            endLineBreak   :bool     =False             ,
+            returnSizeyx   :bool     =False             ,
+            LineType       :str      ="normal"          ,
+            alwaysReturnBox:bool     =True              ,
+            sideText       :str      =""                ,
+            sideTextPos    :list[str]=["over", "middle"],
+            coverSideText  :bool     =False             ,
+            coverColor     :str      =""                 ) -> str:
         """
         ``Inp``(str)                                                                : 텍스트박스 내용, 줄바꿈하려면 `\\n`을 사용해야 함\n
         ``Type``(str["left", "middle", "right"])                                    : 위치 설정, 기본적으로 `"left"`로 설정되어 있음\n
@@ -73,7 +75,9 @@ def TextBox(Inp:str,
                 "right"  : f"{coverColor}{Line[LineType][3][0]*((maxLine+fullAddWidth)-actualLen(escapeAnsi(sideText)))}{sideText}{coverColor}"
                 }[sideTextPos[1]]
             FixedLine = f"{coverColor}{Line[LineType][0][0]}{end}{style}{Line[LineType][0][1]}{end}\n"
+
         else: FixedLine = f"{coverColor}{Line[LineType][0][0]}{Line[LineType][3][0]*(maxLine+fullAddWidth)}{Line[LineType][0][1]}{end}\n"
+
         Display += "\n"*outDistance+FixedLine+(f"{coverColor}{Line[LineType][3][1]}{end}{fillChar*(maxLine+fullAddWidth)}{coverColor}{Line[LineType][3][1]}{end}\n")*inDistance
         for textLine in Texts:
             space = actualLen(escapeAnsi(textLine))
@@ -83,18 +87,22 @@ def TextBox(Inp:str,
                 elif textLine.startswith("TextBox.Middle_"):
                     space   -= 15
                     Display += f"{coverColor}{Line[LineType][3][1]}{end}{fillChar*int((maxLine-space)/2)}{textLine.lstrip('TextBox.Middle_')}{fillChar*(int((maxLine-space)/2) if not (maxLine-space)%2 else int((maxLine-space)/2)+1)}{coverColor}{Line[LineType][3][1]}{end}\n"
+
                 elif textLine.startswith("TextBox.Left_"):
                     space   -= 13
                     Display += f"{coverColor}{Line[LineType][3][1]}{end}{textLine.lstrip('TextBox.Left_')}{fillChar*((maxLine-space)+addWidth)}{coverColor}{Line[LineType][3][1]}{end}\n"
+
                 elif textLine.startswith("TextBox.Right_"):
                     space   -= 14
                     Display += f"{coverColor}{Line[LineType][3][1]}{end}{fillChar*((maxLine-space)+addWidth)}{textLine.lstrip('TextBox.Right_')}{coverColor}{Line[LineType][3][1]}{end}\n"
+
             else:
                 match Type:
                     case "left": BackSpace = fillChar*((maxLine-space)+addWidth)
                     case "middle":
                         FrontSpace = fillChar*(int((maxLine-space)/2)+addWidth)
                         BackSpace  = fillChar*(int((maxLine-space)/2)+addWidth if not (maxLine-space)%2 else int((maxLine-space)/2)+1+addWidth)
+
                     case "right": FrontSpace = fillChar*((maxLine-space)+addWidth)
                 
                 Display += f"{coverColor}{Line[LineType][3][1]}{end}{FrontSpace}{textLine}{BackSpace}{coverColor}{Line[LineType][3][1]}{end}\n"
@@ -102,12 +110,14 @@ def TextBox(Inp:str,
         if sideText and sideTextPos[0]=="under":
             style = {
                 "left"   : f"{coverColor}{sideText}{Line[LineType][3][0]*((maxLine+fullAddWidth)-actualLen(escapeAnsi(sideText)))}",
-                "middle" : f"{coverColor}{Line[LineType][3][0]*(ceil(int(((maxLine+fullAddWidth)-actualLen(escapeAnsi(sideText)))/2)))}{sideText}{coverColor}{Line[LineType][3][0]*(ceil(int(((maxLine+fullAddWidth)-actualLen(escapeAnsi(sideText)))/2)))}{Line[LineType][3][0]if(maxLine+fullAddWidth+actualLen(escapeAnsi(sideText)))%2 else ''}",
+                "middle" : f"{coverColor}{Line[LineType][3][0]*(ceil(int(((maxLine+fullAddWidth)-actualLen(escapeAnsi(sideText)))/2)))}{sideText}{coverColor}{Line[LineType][3][0]*(ceil(int(((maxLine+fullAddWidth)-actualLen(escapeAnsi(sideText)))/2)))}{Line[LineType][3][0]if(maxLine+fullAddWidth+actualLen(escapeAnsi(sideText)))%2 else''}",
                 "right"  : f"{coverColor}{Line[LineType][3][0]*((maxLine+fullAddWidth)-actualLen(escapeAnsi(sideText)))}{sideText}{coverColor}"
                 }[sideTextPos[1]]
             FixedLine = f"{coverColor}{Line[LineType][1][0]}{end}{style}{Line[LineType][1][1]}{end}{endLine}"
+
         else: FixedLine = f"{coverColor}{Line[LineType][1][0]}{Line[LineType][3][0]*(maxLine+fullAddWidth)}{Line[LineType][1][1]}{end}{endLine}"
-        Display += (f"{coverColor}{Line[LineType][3][1]}{end}{fillChar*(maxLine+fullAddWidth)}{coverColor}{Line[LineType][3][1]}{end}\n")*inDistance+FixedLine+"\n"*outDistance
+
+        Display += ((f"{coverColor}{Line[LineType][3][1]}{end}{fillChar*(maxLine+fullAddWidth)}{coverColor}{Line[LineType][3][1]}{end}\n")*inDistance)+FixedLine+("\n"*outDistance)
 
         if returnSizeyx: return len(Display.split("\n"))-((outDistance*2)+2), maxLine+2, Display # type: ignore
         else:            return Display

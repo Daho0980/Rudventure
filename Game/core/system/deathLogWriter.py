@@ -4,7 +4,7 @@ from   datetime import datetime
 
 from Assets.data         import totalGameStatus as s
 from Game.utils.graphics import escapeAnsi
-
+ 
 
 ftColors:dict = {
         "B" :  (0  ,0  ,0  ),
@@ -30,8 +30,8 @@ ftColors:dict = {
 
 # 이미지 크기 및 배경 설정
 x, y  = 650, 700
-image = Image.new("RGB", (x, y), (0, 0, 0))
-draw  = ImageDraw.Draw(image)
+image = Image    .new     ("RGB", (x, y), (0, 0, 0))
+draw  = ImageDraw.Draw    (image)
 font  = ImageFont.truetype(f"{s.TFP}Assets{s.s}fonts{s.s}DungGeunMo.ttf", 20)
 
 stringInserter = lambda ol, il, index: ol[:index]+il+ol[index:]
@@ -69,9 +69,9 @@ text:str = f"""
      죽인 편린의 수 :
      받은 저주의 강도 :
 """
-curse:str = "Qupldeði hijaįo katwaįzΩjim-halað hijaði jizok qil, qupldeði qilði liubeź Qoliði Qupldeði ceq, kobidði Qupldeði edvitł"
+curse:str = "ⵁⵥⵣⵇ·ⵣⵛⵉⵠⵥ:ⵣⵞ ⵢⴹⴱ·ⵁⵙⵢ:ⵣⵒ ⵚⵑⵥⵗⵣⵒⵓⵍ; ⵢⴹⴱⵞ ⵣ·ⴱ·ⵣ ⵢⴹ:ⴱⵁⵉ:ⵣ ⵇ·ⵁⵉⴵⵥⵗⵣ·ⵞ ⵠⵗⴱⵉ:ⵞⵖⵢⵂⵣ ⵉ:ⵞⵒ ⵍⵁⵐⵢⵂⴱⴵⵝõⴼ:"
 noise:str = f"{curse}{textObfuscator(curse, r=9)}"
-line:str  = "━"*100
+line :str = "━"*100
 
 draw.text((80 , 182), text,                  font=font, fill=(214,222,235)             ) # text
 draw.text((200, 350), s.name,                font=font, fill=ftColors[s.playerColor[1]]) # name

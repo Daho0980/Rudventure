@@ -3,9 +3,11 @@ from copy   import deepcopy
 
 from Assets.data.color           import cColors as cc
 from Game.core.system.dataLoader import obj
+from Game.utils.system.block     import iset
 
 from Assets.data import (
     totalGameStatus as s,
+    percentage      as per,
     rooms           as r
 )
 
@@ -39,29 +41,45 @@ def makeRoom(Map:list):
     for row in range(len(output)):
         for column in range(len(output[row])):
             if len(output[row][column]) > 0:
-                if output[row][column]['roomType'] == 4:
+                if output[row][column]['roomType'] == "endPoint":
                     baseMap = deepcopy(r.bigRoom)
-                elif output[row][column]['roomType'] == 3:
+                    output[row][column]['name'] = "bigRoom"
+
+                elif output[row][column]['roomType'] == "treasure":
                     baseMap = deepcopy(r.treasureRoom)
-                elif output[row][column]['roomType']==2 and output[row][column]['eventType']in[1,2,3]:
+                    output[row][column]['name'] = "treasureRoom"
+
+                elif output[row][column]['roomType']=="event" and output[row][column]['eventType']in[1,2,3]:
                     baseMap = deepcopy(r.chapel)
-                elif output[row][column]['roomType'] == 0:
+                    output[row][column]['name'] = "chapel"
+
+                elif output[row][column]['roomType'] == "startPoint":
                     baseMap = deepcopy(r.Room)
-                else: baseMap = deepcopy(choice([
-                    r.Room,
-                    r.verticallyLongRoom,
-                    r.horizonallyLongRoom
-                ]))
+                    output[row][column]['name'] = "Room"
+
+                else:
+                    roomNum = randrange(0, 3)
+                    baseMap = deepcopy([
+                        r.Room,
+                        r.verticallyLongRoom,
+                        r.horizonallyLongRoom
+                    ][roomNum])
+                    output[row][column]['name'] = [
+                        "Room",
+                        "verticallyLongRoom",
+                        "horizonallyLongRoom"
+                    ][roomNum]
+
                 c  = {
-                        'y'  : int(len(baseMap)/2),
-                        'ym' : int(len(baseMap)/2)-1,
-                        'yp' : int(len(baseMap)/2)+1,
-                        'x'  : int(len(baseMap[0])/2),
+                        'y'  : int(len(baseMap)   /2)  ,
+                        'ym' : int(len(baseMap)   /2)-1,
+                        'yp' : int(len(baseMap)   /2)+1,
+                        'x'  : int(len(baseMap[0])/2)  ,
                         'xm' : int(len(baseMap[0])/2)-1,
                         'xp' : int(len(baseMap[0])/2)+1
                     } # 방 중심 및 주변 칸 위치 데이터
 
-                if output[row][column]['roomType'] == 3:
+                if output[row][column]['roomType'] == "treasure":
                     treasureLocations = {
                         0 : [
                             [c['y'], c['x']]
@@ -79,10 +97,12 @@ def makeRoom(Map:list):
                             [c['yp'], c['xp']]
                         ]
                     }
-                    for tby, tbx in treasureLocations[output[row][column]['treasureRarity']]:
-                        baseMap[tby][tbx] = obj('-bb', '4')
 
-                elif output[row][column]['roomType'] == 2:
+                    for tby, tbx in treasureLocations[output[row][column]['treasureRarity']]:
+                        face = choice(['l','r'])
+                        baseMap[tby][tbx] = obj('-bb', '4', block=iset(s.ids[4], Type=face), nbt={"face" : face})
+
+                elif output[row][column]['roomType'] == "event":
                     match output[row][column]['eventType']:
                         case 0:
                             status = [
@@ -98,29 +118,41 @@ def makeRoom(Map:list):
                             output[row][column]['roomIcon'] = [s.ids[20][:1], status[0]]
                             baseMap[c['y']][c['x']]         = obj(
                                 '-bb', '20',
-                                block=f"{cc['fg'][status[0]]}{s.ids[20]}{cc['end']}",
+                                block=iset(f"{cc['fg'][status[0]]}{s.ids[20]}{cc['end']}"),
                                 nbt={
                                     "texts" : [
                                         [f"'와우, 방금 당신 1/6의 확률을 뚫고 {cc['fg'][status[0]]}저{cc['end']}를 만나셨어요!'", "s.enemyCount += 1"],
                                         "'다른 이벤트가 없어서 실망하셨다고요? 저런...'",
                                         [f"'대신 {status[1]}(와)과 응원을 드리겠습니다.'", status[2]],
                                         ["'그럼 화이팅!'", "s.enemyCount -= 1"]
-                                        ],
+                                    ],
                                     "command" : "time.sleep(0.5); p.say(choice(c.clayModelAnswer))",
-                                    "delay" : 0.5,
-                                    "voice" : "clayModel"
+                                    "delay"   : 0.5,
+                                    "voice"   : "clayModel"
                                 }
                             )
-                        case 1|2|3:
-                            output[row][column]['roomIcon'] = ['Y', "A"]
 
-                            baseMap[c['ym']][c['xm']] = obj('-bb', '400', block=f"{cc['fg']['A']}‾\\{cc['end']}", nbt={"linkedInteraction":True})
-                            baseMap[c['ym']][c['x']]  = obj('-bb', '400', block=f"{cc['fg']['A']}ㅇ{cc['end']}",  nbt={"linkedInteraction":True})
-                            baseMap[c['ym']][c['xp']] = obj('-bb', '400', block=f"{cc['fg']['A']}/‾{cc['end']}",  nbt={"linkedInteraction":True})
-                            baseMap[c['y']][c['x']]   = obj('-bb', '400', block=f"{cc['fg']['A']}뮤{cc['end']}",  nbt={"linkedInteraction":True})
-                            baseMap[c['yp']][c['xm']] = obj('-bb', '400', block=f"{cc['fg']['A']}[ {cc['end']}",  nbt={"linkedInteraction":True})
-                            baseMap[c['yp']][c['x']]  = obj('-bb', '400', block=f"{cc['fg']['A']}ㅍ{cc['end']}",  nbt={"linkedInteraction":True})
-                            baseMap[c['yp']][c['xp']] = obj('-bb', '400', block=f"{cc['fg']['A']} ]{cc['end']}",  nbt={"linkedInteraction":True})
+                        case 1|2|3:
+                            if randrange(1,101) <= per.statueContamination:
+                                rNbt = [("link", False)]
+                                ctd  = True
+
+                            else:
+                                rNbt = [("linkedInteraction", True)]
+                                ctd  = False
+
+                            output[row][column]['roomIcon'] = ['Y', "F"if ctd else"A"]
+
+                            for y, x, icon in (
+                                [c['ym'], c['xm'], f"{cc['fg']['F'if ctd else'A']}‾\\{cc['end']}"],
+                                [c['ym'], c['x'] , f"{cc['fg']['F'if ctd else'A']}ㅇ{cc['end']}" ],
+                                [c['ym'], c['xp'], f"{cc['fg']['F'if ctd else'A']}/‾{cc['end']}" ],
+                                [c['y'],  c['x'] , f"{cc['fg']['F'if ctd else'A']}뮤{cc['end']}" ],
+                                [c['yp'], c['xm'], f"{cc['fg']['F'if ctd else'A']}[ {cc['end']}" ],
+                                [c['yp'], c['x'] , f"{cc['fg']['F'if ctd else'A']}ㅍ{cc['end']}" ],
+                                [c['yp'], c['xp'], f"{cc['fg']['F'if ctd else'A']} ]{cc['end']}" ],
+                            ):
+                                baseMap[y][x] = obj('-bb', '401'if ctd else'400', block=iset(icon), nbt=dict(rNbt))
 
                             for _ in range(25):
                                 ty, tx = randrange(c['y']-3, c['y']+4), randrange(c['x']-3, c['x']+4)
@@ -129,7 +161,7 @@ def makeRoom(Map:list):
                                     color = choice(['F', 'R', 'M'])
 
                                     baseMap[ty][tx] = {
-                                        "block" : f"{cc['fg'][color]}{choice(['* ', ', ', '. ', '_ '])}{cc['end']}",
+                                        "block" : iset(f"{cc['fg'][color]}{choice(['*', ',', '.', '_'])}{cc['end']}", Type='s'),
                                         "id"    : 22,
                                         "type"  : 0,
                                         "nbt"   : {
@@ -137,47 +169,51 @@ def makeRoom(Map:list):
                                             "step"  : 1
                                         }
                                     }
+
                                 else: continue
-                elif output[row][column]['roomType'] == 0:
-                    if not randrange(0,10):
-                        hasEvent = randrange(0,2)
-                        baseMap[1][1] = {
-                            "block" : s.ids[9],
-                            "id"    : 9,
-                            "type"  : 0,
-                            "nbt"   : {
+
+                elif output[row][column]['roomType']=="startPoint":
+                    if not randrange(0,6):
+                        hasEvent      = randrange(0,2)
+                        face          = choice(['l','r'])
+                        baseMap[1][1] = obj(
+                            '-bb', '9',
+                            block= iset(s.ids[9], Type=face),
+                            nbt  ={
+                                "face"    : face,
                                 "count"   : 50 if hasEvent else -1,
                                 "command" : choice([
-                                    """
+                                    f"""
 play("object", "squishy", "open")
 kind = randrange(501,503)
-s.Dungeon[s.Dy][s.Dx]['room'][ty][tx] = {
-    "block" : s.ids[kind],
+s.Dungeon[s.Dy][s.Dx]['room'][ty][tx] = {{
+    "block" : iset(s.ids[kind], Type='{face}'),
     "id"    : kind,
     "type"  : 0
-}
+}}
 """,
-f"""
+                                    f"""
 play("object", "squishy", "explosion")
 s.hp -= 5
+event.bleeding(5)
 s.DROD = ["{cc['fg']['B1']}말랑이{cc['end']}", 'B1']
 s.Dungeon[s.Dy][s.Dx]['room'][ty][tx] = {{
-    "block" : f'{cc['fg']['B1']}x{cc['end']}',
+    "block" : f'{cc['fg']['B1']}x {cc['end']}',
     "id"    : 0,
     "type"  : 0
 }}
-event.readSign("{cc['fg']['B1']}'하하하, 터어어어얼렸구나!!'{cc['end']}", 0.07, "clayModel")
+event.readSign(["{cc['fg']['B1']}'하하하, 터어어어얼렸구나!!'{cc['end']}"], 0.07, "clayModel")
 """
                                 ])
                             }
-                        }
+                        )
 
-                RDP:list[int]        = list(output[row][column]["doors"].values())
+                RDP :list[int]       = list(output[row][column]["doors"].values())
                 GRDP:list[list[int]] = [
-                    [0, c['x']],                 # U
-                    [c['y'], len(baseMap[0])-1], # R
-                    [len(baseMap)-1, c['x']],    # D
-                    [c['y'], 0]                  # L
+                    [0             ,            c['x']], # U
+                    [c['y']        , len(baseMap[0])-1], # R
+                    [len(baseMap)-1,            c['x']], # D
+                    [c['y']        ,                 0]  # L
                 ]
 
                 for DIE in range(len(RDP)):
@@ -195,12 +231,12 @@ event.readSign("{cc['fg']['B1']}'하하하, 터어어어얼렸구나!!'{cc['end'
     for row in range(len(output)):
         for column in range(len(output[row])):
             if len(output[row][column]) > 0:
-                if output[row][column] and output[row][column]['roomType'] == 4 or not randrange(0,3): continue
+                if output[row][column] and output[row][column]['roomType']=="endPoint" or not randrange(0,3): continue
 
                 p = [
-                    [row-1 if row>0 else row, column],
-                    [row+1 if row<len(output)-1 else row, column],
-                    [row, column-1 if column>0 else column],
+                    [row-1 if row>0 else row,                      column],
+                    [row+1 if row<len(output)-1 else row,          column],
+                    [row,                column-1 if column>0 else column],
                     [row, column+1 if column<len(output[0])-1 else column]
                     ]
                 for i, pos in enumerate(p):
@@ -208,13 +244,13 @@ event.readSign("{cc['fg']['B1']}'하하하, 터어어어얼렸구나!!'{cc['end'
                 
                 c = {
                     0 : {
-                        'y'  : int(len(output[row][column]['room'])/2),
-                        'my' : len(output[row][column]['room'])-1,
+                        'y'  : int(len(output[row][column]['room'])/2)   ,
+                        'my' : len(output[row][column]['room'])-1        ,
                         'x'  : int(len(output[row][column]['room'][0])/2),
                         'mx' : len(output[row][column]['room'][0])-1
                     },
                     'U' : { # subTarget 기준 D
-                        'my' : len(output[p[0][0]][p[0][1]]['room'])-1,
+                        'my' : len(output[p[0][0]][p[0][1]]['room'])-1       ,
                         'x'  : int(len(output[p[0][0]][p[0][1]]['room'][0])/2)
                     },
                     'D' : { # subTarget 기준 U
@@ -230,16 +266,16 @@ event.readSign("{cc['fg']['B1']}'하하하, 터어어어얼렸구나!!'{cc['end'
                 }
 
                 R0DPG = {
-                    'U':[0, c[0]['x']],
-                    'R':[c[0]['y'], c[0]['mx']],
-                    'D':[c[0]['my'], c[0]['x']],
-                    'L':[c[0]['y'], 0]
+                    'U':[0         ,  c[0]['x']],
+                    'R':[c[0]['y'] , c[0]['mx']],
+                    'D':[c[0]['my'],  c[0]['x']],
+                    'L':[c[0]['y'] ,          0]
                     }
                 SBDPG = {
-                    'D':[c['U']['my'], c['U']['x']],
-                    'L':[c['R']['y'], 0],
-                    'U':[0, c['D']['x']],
-                    'R':[c['L']['y'], c['L']['mx']]
+                    'D':[c['U']['my'],  c['U']['x']],
+                    'L':[c['R']['y'] ,            0],
+                    'U':[0           ,  c['D']['x']],
+                    'R':[c['L']['y'] , c['L']['mx']]
                     }
 
                 dp         = [['U', 'D'], ['D', 'U'], ['L', 'R'], ['R', 'L']]
@@ -249,13 +285,14 @@ event.readSign("{cc['fg']['B1']}'하하하, 터어어어얼렸구나!!'{cc['end'
                     [R0DPG['D'], SBDPG['U']],
                     [R0DPG['L'], SBDPG['R']],
                     [R0DPG['R'], SBDPG['L']]
-                    ]
+                ]
 
                 while [row, column] in p:
                     del dp        [p.index([row, column])]
                     del grd       [p.index([row, column])]
                     del doorValues[p.index([row, column])]
                     del p         [p.index([row, column])]
+
                 while 1 in doorValues:
                     del p         [doorValues.index(1)]
                     del dp        [doorValues.index(1)]
@@ -299,6 +336,6 @@ def deleteBlankData(grid:list):
     # 비어있는 잉여 데이터 정리
     for row in range(len(grid)):
         for column in range(len(grid[row])):
-            grid[row][column] = {} if grid[row][column]['roomType'] == None else grid[row][column]
+            grid[row][column] = {} if grid[row][column]['roomType']==None else grid[row][column]
 
     return grid

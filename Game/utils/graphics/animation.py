@@ -20,7 +20,9 @@ class Graphs:
         for i in range(1, length):
             if (sum(output)-1+i) > halfLength:
                 bifurcation = i-1
+
                 break
+
             output.append(i)
         bifurcation = bifurcation or halfLength
 
@@ -59,26 +61,25 @@ class Graphs:
             if length == 1: output.append(1); break
 
             if length%2: output.append(int(length/2)+1)
-            else:        output.append(int(length/2))
+            else       : output.append(int(length/2))
             length = int(length/2)
 
         return output
 
 class Box:
     @staticmethod
-    def forward(stdscr,
-                row:int,
-                column:int, 
-                lineType:str,
-                boxColor:str          ="",
-                animationType:str     ='OOAD',
-                frameDelay:float|int  =0.018,
-                connectDelay:float|int=0      ) -> str:
+    def forward(stdscr                        ,
+                row          :int             ,
+                column       :int             , 
+                lineType     :str             ,
+                boxColor     :str      =""    ,
+                animationType:str      ='OOAD',
+                frameDelay   :float|int=0.018 ,
+                connectDelay :float|int=0      ) -> str:
         """
         This animation can only work when the game is static.
-        ex) In mainMenu, Whatever before playing the game
+        ex) In mainMenu, whatever before playing the game
         """
-
         animation = {
             'IOAD' : Graphs.IOAD,
             'OOAD' : Graphs.OOAD,
@@ -88,12 +89,15 @@ class Box:
         r = animation(row)
         c = animation(column)
 
-        for i, n in enumerate(c):
+        totalC = 0
+        for cc in c:
+            totalC += cc
+
             stdscr.erase()
             anchor(
                 stdscr,
                 Textbox.TextBox(
-                    ''.join([" "*(n+sum(c[:i]))]),
+                    ''.join([" "*(totalC)]),
                     AMLS           =True,
                     LineType       =lineType,
                     coverColor     =boxColor,
@@ -102,16 +106,19 @@ class Box:
                 addOnyx=[1, 0]
             )
             stdscr.refresh()
-            time.sleep(frameDelay)
+            time  .sleep  (frameDelay)
         
         time.sleep(connectDelay)
 
-        for i, n in enumerate(r):
+        totalR = 0
+        for rc in r:
+            totalR += rc
+
             stdscr.erase()
             anchor(
                 stdscr,
                 Textbox.TextBox(
-                    '\n'.join([" "*column]*(n+sum(r[:i]))),
+                    '\n'.join([" "*column]*totalR),
                     AMLS           =True,
                     LineType       =lineType,
                     coverColor     =boxColor,
@@ -125,14 +132,14 @@ class Box:
         return Textbox.TextBox(((" "*column)+"\n")*row, AMLS=True, LineType=lineType)
     
     @staticmethod
-    def reverse(stdscr,
-                row:int,
-                column:int, 
-                lineType:str,
-                boxColor:str          ="",
-                animationType:str     ='OOAD',
-                frameDelay:float|int  =0.018,
-                connectDelay:float|int=0      ) -> str:
+    def reverse(stdscr                        ,
+                row          :int             ,
+                column       :int             , 
+                lineType     :str             ,
+                boxColor     :str      =""    ,
+                animationType:str      ='OOAD',
+                frameDelay   :float|int=0.018 ,
+                connectDelay :float|int=0      ) -> str:
         animation = {
             'IOAD' : Graphs.IOAD,
             'OOAD' : Graphs.OOAD,
@@ -145,6 +152,7 @@ class Box:
 
         for i, n in enumerate(r):
             stdscr.erase()
+
             anchor(
                 stdscr,
                 Textbox.TextBox(
@@ -157,6 +165,7 @@ class Box:
                 addOnyx=[1, 0]
             )
             stdscr.refresh()
+
             time.sleep(frameDelay)
 
         time.sleep(connectDelay)
@@ -175,6 +184,7 @@ class Box:
                 addOnyx=[1, 0]
             )
             stdscr.refresh()
+            
             time.sleep(frameDelay)
 
         stdscr.erase()

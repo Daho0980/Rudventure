@@ -1,3 +1,4 @@
+from re import A
 import time
 
 from Assets.data.color       import cColors as cc
@@ -21,20 +22,22 @@ def showStage(stdscr, stageName:str):
             f"{cc['fg']['R']}나 락{cc['end']}",
             Type        ="middle",
             inDistance  =1,
-            maxLine     =int(actualLen(stageName)/2)+1,
+            outDistance= 3,
+            maxLine     =int(actualLen(stageName)/2)-2, 
             endLineBreak=True,
             LineType    ="double",
             addWidth    =3
             )
         ); stdscr.refresh()
-    play("soundEffects", "smash")
-    time.sleep(1.6)
+    play        ("soundEffects", "smash")
+    time  .sleep(1.6)
     stdscr.clear()
 
     anchor(
         stdscr,
         Textbox.TextBox(
             f"{cc['fg']['R']}나 락{cc['end']}\n\n{stageName}",
+
             Type        ="middle",
             inDistance  =1,
             outDistance =3,
@@ -44,6 +47,7 @@ def showStage(stdscr, stageName:str):
             addWidth    =3
             )
         ); stdscr.refresh()
+    
     play("soundEffects", "smash")
     time.sleep(1.6)
     play("soundEffects", "smash")

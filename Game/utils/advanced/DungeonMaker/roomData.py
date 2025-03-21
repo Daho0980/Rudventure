@@ -1,7 +1,15 @@
 data = [
-    ["§", "R"],
-    ["•", ""],
-    ["*", "L"],
-    ["!", "Y"],
-    ["/", "B1"]
-    ]
+    ["§", "R" ], # startPoint
+    ["•", ""  ], # room
+    ["*", "L" ], # event
+    ["!", "Y" ], # treasure
+    ["/", "B1"]  # endPoint
+]
+
+Type = [
+    "startPoint",
+    "room"      ,
+    "event"     ,
+    "treasure"  ,
+    "endPoint"
+]

@@ -4,9 +4,11 @@ from   threading import Thread
 
 from .                           import Animal
 from Assets.data.color           import cColors     as cc
+from functions.grammar           import pstpos      as pp
 from Game.entities.algorithms    import AStar, OPath
 from Game.utils.system.tts       import TTS, TTC
 from Game.utils.system.sound     import play
+from Game.utils.system.block     import iset
 from Game.core.system.logger     import addLog
 from Game.core.system.dataLoader import obj
 
@@ -99,35 +101,35 @@ class Cat(Animal):
     """
     # region init section
     def __init__(self,
-                 tribe:str,
-                 name:str,
-                 icon:str,
-                 ID:int,
-                 color:str,
-                 colorKey:str,
-                 hashKey:str,
+                 tribe         :str,
+                 name          :str,
+                 icon          :str,
+                 ID            :int,
+                 color         :str,
+                 colorKey      :str,
+                 hashKey       :str,
                  initFuncParams:list) -> None:
         super().__init__(tribe, name, icon, 
                          ID, color, colorKey,
                          hashKey, initFuncParams)
 
     def start(self,
-              setHp:int,
-              setAtk:int,
-              Dy:int,
-              Dx:int,
-              y:list|int,
-              x:list|int,
-              loyalty:int=-1) -> None:
+              setHp  :int       ,
+              setAtk :int       ,
+              Dy     :int       ,
+              Dx     :int       ,
+              y      :list|int  ,
+              x      :list|int  ,
+              loyalty:int     =-1) -> None:
         super().start(setHp, setAtk, Dy, Dx, y, x)
         self.target        = None
         self.actionPurpose = None
         self.actionCount   = 0
 
-        self.stressLvl   = 1 # min=1, max=4
-        self.stressPt    = 0 # min=0, max=100
+        self.stressLvl = 1 # min=1, max=4
+        self.stressPt  = 0 # min=0, max=100
 
-        self.loyalty   = 0\
+        self.loyalty = 0\
                 if loyalty == -1\
             else 10\
                 if loyalty >= 10\
@@ -155,6 +157,7 @@ class Cat(Animal):
         self.monsterTargetHashKey = ""
 
         self.ignoreCommand = False
+
         self.teleport()
 
     # region tools
@@ -165,12 +168,11 @@ class Cat(Animal):
         roomGrid[self.y][self.x] = obj('-bb', '-1', block=f"{cc['fg']['A']}O {cc['end']}");          time.sleep(0.05)
         roomGrid[self.y][self.x] = obj('-bb', '-1', block=f"{cc['fg']['A']}{self.icon}{cc['end']}"); time.sleep(0.05)
 
-        roomGrid[self.y][self.x] = obj(
-            '-be', str(self.id),
+        roomGrid[self.y][self.x] = obj('-be', str(self.id),
             block  =f"{self.color}{self.icon}{cc['end']}",
             id     =self.id,
-            hashKey=self.hashKey
-        ); time.sleep(0.05)
+            hashKey=self.hashKey                           )
+        time.sleep(0.05)
         play("entity", "animal", "cat", "teleport")
 
     def superTeleport(self) -> None:
@@ -179,24 +181,25 @@ class Cat(Animal):
         play("entity", "animal", "cat", "teleport")
 
     def checkPlayerisHere(self) -> bool:
-        if (self.Dy, self.Dx) == (s.Dy, s.Dx): return True
+        if (self.Dy,self.Dx) == (s.Dy,s.Dx): return True
         self.resetAction()
+
         if self.stage != s.stage:
             self.setLoyalty()
             self.stepped = obj('-bb', '0')
             self.stage   = s.stage
-        else:
-            s.Dungeon[self.Dy][self.Dx]['room'][self.y][self.x] = self.stepped
+
+        else: s.Dungeon[self.Dy][self.Dx]['room'][self.y][self.x] = self.stepped
 
         self.coolTime    = 0
         self.Dy, self.Dx = s.Dy, s.Dx
 
         for y, x in [
-            (s.y-1,s.x),
-            (s.y,s.x+1),
-            (s.y+1,s.x),
-            (s.y,s.x-1)
-            ]:
+            (s.y-1,s.x  ),
+            (s.y,  s.x+1),
+            (s.y+1,s.x  ),
+            (s.y,  s.x-1)
+        ]:
             blockID = s.Dungeon[self.Dy][self.Dx]['room'][y][x]['id']
             if blockID in s.interactableBlocks['steppable']['total']:
                 self.y, self.x = y, x
@@ -206,20 +209,21 @@ class Cat(Animal):
                 else: self.stepped = obj('-bb', '0')
                 
                 if self.stage != s.stage: self.superTeleport()
-                else:                     self.teleport()
+                else:                     self.teleport     ()
                 return False
 
         while 1:
-            ry = randrange(1, len(s.Dungeon[self.Dy][self.Dx]['room'])-1)
+            ry = randrange(1, len(s.Dungeon[self.Dy][self.Dx]['room']   )-1)
             rx = randrange(1, len(s.Dungeon[self.Dy][self.Dx]['room'][0])-1)
             
-            if s.Dungeon[self.Dy][self.Dx]['room'][ry][rx]['id'] in s.interactableBlocks['unsteppable']:
+            if s.Dungeon[self.Dy][self.Dx]['room'][ry][rx]['id']\
+            in s.interactableBlocks['unsteppable']:
                 continue
             self.y, self.x = ry, rx
             break
 
         if self.stage != s.stage: self.superTeleport()
-        else:                     self.teleport()
+        else:                     self.teleport     ()
         return False
 
     def wait(self) -> None:
@@ -265,12 +269,13 @@ class Cat(Animal):
         tu, ou = loy-2, loy-1
         to, oo = loy+2, loy+1
 
-        self.loyalty = 10 if lvl<=2 and oo>=10\
-                else to if (lvl+self.stressPt)==0\
-                else oo if lvl<=2\
-            else 0 if lvl>2 and ou<=0\
-                else tu if lvl==4\
-                else ou if 2<lvl<4\
+        self.loyalty = 10\
+            if   lvl<=2 and oo>=10\
+            else to if (lvl+self.stressPt)==0\
+            else oo if lvl<=2\
+            else 0  if lvl>2 and ou<=0\
+            else tu if lvl==4\
+            else ou if 2<lvl<4\
             else self.loyalty
 
     # region action settings
@@ -291,7 +296,7 @@ class Cat(Animal):
             weights=[
                 actionP['else']['prob'],
                 actionP['player']['prob']
-                ],
+            ],
             k=1
         )[0]
 
@@ -303,8 +308,9 @@ class Cat(Animal):
                     weights=[
                         actionP['player']['say'][1],
                         actionP['player']['goToSide']
-                        ]if self.attackPlayerCooltime\
-                        else [
+                    ]\
+                        if self.attackPlayerCooltime\
+                    else [
                         actionP['player']['say'][0],
                         actionP['player']['goToSide'],
                         actionP['player']['attack'],
@@ -329,8 +335,8 @@ class Cat(Animal):
                 )[0]
 
                 match self.actionPurpose:
-                    case "spinAround": self.actionCount = randrange(1,6)
-                    case "move":       self.actionCount = randrange(6,21)
+                    case "spinAround": self.actionCount = randrange(1 ,6 )
+                    case "move":       self.actionCount = randrange(6 ,21)
                     case "grooming":   self.actionCount = randrange(10,21)
                 
 
@@ -343,18 +349,20 @@ class Cat(Animal):
         if self.statusData: self.statusData = {}
 
     # region functions
-    def say(self, text:str,
-            voicePath:tuple=("entity","animal","cat","cloudy","cry","short")
-        ) -> None:
+    def say(self                                                           ,
+            text     :str                                                  ,
+            voicePath:tuple=("entity","animal","cat","cloudy","cry","short")) -> None:
         addLog(
             f"{self.color}\"{text}\"{cc['end']}",
             duration=max(50, TTC(text)),
             colorKey=self.colorKey
         )
+
         Thread(
             target=lambda: TTS(
                 text,
-                voicePath=voicePath
+                voicePath=voicePath,
+                useLvl   =False
             ),
             daemon=True
         ).start()
@@ -366,22 +374,61 @@ class Cat(Animal):
 
         for term in map(lambda i: i/100, termArray):
             DRP = s.Dungeon[self.Dy][self.Dx]
-            DRP['room'][self.y][self.x] = obj('-be', str(self.id), block=f"{cc['bg']['A']}{self.icon}{cc['end']}", hashKey=self.hashKey)
+            DRP['room'][self.y][self.x] = obj(
+                '-be', str(self.id),
+                block=iset(
+                    f"{cc['bg']['A']}{self.icon}{cc['end']}",
+                    Type=self.face
+                ),
+                hashKey=self.hashKey
+            )
             time.sleep(0.03)
-            DRP['room'][self.y][self.x] = obj('-be', str(self.id), block=f"{self.color}{self.icon}{cc['end']}", hashKey=self.hashKey)
+            DRP['room'][self.y][self.x] = obj(
+                '-be', str(self.id),
+                block=iset(
+                    f"{self.color}{self.icon}{cc['end']}",
+                    Type=self.face
+                ),
+                hashKey=self.hashKey
+            )
             time.sleep(term)
-        DRP['room'][self.y][self.x] = obj('-be', str(self.id), block=f"{self.color}{self.icon}{cc['end']}", hashKey=self.hashKey)
+
+        DRP['room'][self.y][self.x] = obj(
+            '-be', str(self.id),
+            block=iset(
+                f"{self.color}{self.icon}{cc['end']}",
+                Type=self.face
+            ),
+            hashKey=self.hashKey
+        )
 
     def grooming(self) -> None:
         DRP = s.Dungeon[self.Dy][self.Dx]
-        DRP['room'][self.y][self.x] = obj('-be', str(self.id), block=f"{cc['bg']['A']}{self.icon}{cc['end']}", hashKey=self.hashKey)
+        DRP['room'][self.y][self.x] = obj(
+            '-be', str(self.id),
+            block=iset(
+                f"{cc['bg']['A']}{self.icon}{cc['end']}",
+                Type=self.face
+            ),
+            hashKey=self.hashKey
+        )
         time.sleep(randrange(1,14)/10)
-        DRP['room'][self.y][self.x] = obj('-be', str(self.id), block=f"{self.color}{self.icon}{cc['end']}", hashKey=self.hashKey)
+
+        DRP['room'][self.y][self.x] = obj(
+            '-be', str(self.id),
+            block=iset(
+                f"{self.color}{self.icon}{cc['end']}",
+                Type=self.face
+            ),
+            hashKey=self.hashKey
+        )
 
     def checkPWRest(self, stress) -> bool:
         if not self.checkPlayerisHere():
             self.getStress(stress*2)
+
             return True
+        
         return False
 
     # region move code
@@ -401,6 +448,7 @@ class Cat(Animal):
                 case "enemy":
                     if not s.enemyCount:
                         self.resetAction()
+
                         return
                     
                     if self.actionPurpose == "attack":
@@ -416,11 +464,16 @@ class Cat(Animal):
                         if self.monsterTargetHashKey not in s.entityHashPool:
                             self.monsterTargetHashKey = ""
                             self.combo                = 0
-                        if self.combo==0 and not randrange(0,4): self.combo = randrange(2,7)
+
+                        if self.combo==0 and not randrange(0,4):
+                            self.combo = randrange(2,7)
 
                         if not self.monsterTargetHashKey:
                             self.getStress(2)
-                            addLog(f"{self.color}{self.name}{cc['end']}이/가 사냥감을 찾았습니다...", colorKey=self.colorKey)
+                            addLog(
+                                f"{self.color}{self.name}{cc['end']}{pp(self.name,'sub',True)} 사냥감을 찾았습니다...",
+                                colorKey=self.colorKey
+                            )
                             self.chattering()
 
                         if self.combo:
@@ -449,11 +502,13 @@ class Cat(Animal):
                                     self.getStress()
                                     if not randrange(0,10): self.say(choice(cry))
                                     self.resetAction()
+
                                     return
                                 
                                 elif DRP['room'][path[0]][path[1]]['id'] in s.enemyIds:
                                     self.loseStress(randrange(1,3))
                                     self.attack(path[0], path[1], ("entity", "animal", "cat", "slash"))
+
                                     if not self.monsterTargetHashKey:
                                         if DRP['room'][path[0]][path[1]]['type'] == 1:
                                             self.monsterTargetHashKey = DRP['room'][path[0]][path[1]]['hashKey']
@@ -461,13 +516,14 @@ class Cat(Animal):
                                     if choices([0,1],[55,45],k=1)[0]:
                                         for target in choices(["leg", "side", "tail"], [55, 30, 15], k=2):
                                             self.ashWeight[target] += 1
-
                                     self.resetAction()
+
                                     return
                                 
                                 elif DRP['room'][path[0]][path[1]]['id'] == -1:
                                     self.getStress()
                                     if not randrange(0,10): self.say(choice(cry))
+
                                     return
 
                                 else:
@@ -475,6 +531,7 @@ class Cat(Animal):
                                     self.y, self.x = path
 
                                 super().step(bfy, bfx)
+
                             time.sleep(0.07)
 
                 # region player
@@ -486,16 +543,21 @@ class Cat(Animal):
                             if self.hp <= int(self.Mhp/2):
                                 self.getStress()
                                 text = choice(catComments['requestHp'])
+
                             elif int((self.hp/self.Mhp)*100)>= 80:
                                 text = choice(catComments['requestMhp'])
+
                             else: text = choice(catComments['chat'])
-                            self.say(text)
+                            self.say        (text)
                             self.resetAction()
                         
                         case "attack":
                             if not self.attackPlayerCooltime: self.attackPlayerCooltime = randrange(7,16)
 
-                            addLog(f"{self.color}{self.name}{cc['end']}이/가 당신을 노려봅니다...", colorKey=self.colorKey)
+                            addLog(
+                                f"{self.color}{self.name}{cc['end']}{pp(self.name,'sub',True)} 당신을 노려봅니다...",
+                                colorKey=self.colorKey
+                            )
                             self.chattering()
 
                             while 1:
@@ -506,27 +568,34 @@ class Cat(Animal):
                                         (self.y, self.x),
                                         [300],
                                         s.interactableBlocks['steppable']['total']
-                                        )
+                                    )
+
                                     if not path:
                                         if not randrange(0,10):
-                                            self.getStress()
-                                            self.say(choice(cry))
+                                            self.getStress  ()
+                                            self.say        (choice(cry))
                                             self.resetAction()
+
                                             return
+                                        
                                     elif DRP['room'][path[0]][path[1]]['id'] == 300:
                                         self.loseStress(10)
                                         self.attackPlayer(
                                             1,
                                             ("entity", "animal", "cat", "slash"),
                                             "장난이었는데..."
-                                            )
-                                        p.say(choice(c.collide['animal']['catAttack']))
+                                        )
+                                        p.say           (choice(c.collide['animal']['catAttack']))
                                         self.resetAction()
+
                                         return
+                                    
                                     else:
                                         bfy, bfx       = self.y, self.x
                                         self.y, self.x = path
+                                        
                                     super().step(bfy, bfx)
+
                                 time.sleep(0.07)
                         
                         case "goToSide":
@@ -538,59 +607,68 @@ class Cat(Animal):
                                         (self.y, self.x),
                                         [300],
                                         s.interactableBlocks['steppable']['total']
-                                        )
+                                    )
+                                    
                                     if not path:
                                         if not randrange(0,10):
-                                            self.getStress(2)
-                                            self.say(choice(cry))
+                                            self.getStress  (2)
+                                            self.say        (choice(cry))
                                             self.resetAction()
+
                                             return
+                                        
                                     elif DRP['room'][path[0]][path[1]]['id'] == 300:
-                                        self.loseStress(5)
-                                        self.say(choice(comfortableCry))
+                                        self.loseStress (5)
+                                        self.say        (choice(comfortableCry))
                                         self.resetAction()
+                                        
                                         return
+                                    
                                     else:
                                         bfy, bfx       = self.y, self.x
                                         self.y, self.x = path
+
                                     super().step(bfy, bfx)
+
                                 time.sleep(0.2)
 
                 # region else
                 case "else":
                     if not self.actionCount:
-                        self.loseStress(5)
+                        self.loseStress (5)
                         self.resetAction()
+
                         return
                     
                     match self.actionPurpose:
                         case "move":
                             self.actionCount -= 1
-                            ay, ax = -1, -1
-                            if sum([ay,ax])==-2 or (self.y,self.x) == (ay,ax):
+                            ay, ax            = -1, -1
+                            if sum([ay,ax])==-2 or (self.y,self.x)==(ay,ax):
                                 while 1:
-                                    ay = randrange(1, len(DRP['room'])-1)
+                                    ay = randrange(1, len(DRP['room']   )-1)
                                     ax = randrange(1, len(DRP['room'][0])-1)
                                     if DRP['room'][ay][ax]['id'] in s.interactableBlocks['unsteppable']: continue
                                     break
 
                             if randrange(0,2):
                                 self.x += 1\
-                                        if self.x<ax\
-                                           and DRP['room'][self.y][self.x+1]["id"] in s.interactableBlocks['steppable']['total']\
+                                        if  self.x<ax\
+                                        and DRP['room'][self.y][self.x+1]["id"] in s.interactableBlocks['steppable']['total']\
                                     else -1\
-                                        if self.x>ax\
-                                           and DRP['room'][self.y][self.x-1]["id"] in s.interactableBlocks['steppable']['total']\
+                                        if  self.x>ax\
+                                        and DRP['room'][self.y][self.x-1]["id"] in s.interactableBlocks['steppable']['total']\
                                     else  0
                             else:
                                 self.y += 1\
-                                       if self.y<ay\
+                                       if  self.y<ay\
                                        and DRP['room'][self.y+1][self.x]["id"] in s.interactableBlocks['steppable']['total']\
                                     else -1\
-                                       if self.y>ay\
+                                       if  self.y>ay\
                                        and DRP['room'][self.y-1][self.x]["id"] in s.interactableBlocks['steppable']['total']\
                                     else  0
-                                
+                            
+                            
                             super().step(bfy, bfx)
                             self.coolTime = randrange(150, 300)+(100*self.stressLvl)
 
@@ -600,6 +678,7 @@ class Cat(Animal):
                                 radius = self.statusData['radius']
                                 path   = self.statusData['path']
                                 speed  = self.statusData['speed']
+
                             else:
                                 radius = randrange(1,4)
                                 while 1:
@@ -610,10 +689,13 @@ class Cat(Animal):
                                         if radius == 1:
                                             self.getStress(3)
                                             self.actionCount = 0
+
                                             return
+                                        
                                         radius -= 1
                                         continue
                                     break
+
                                 self.statusData = {
                                     "radius" : radius,
                                     "path"   : path,
@@ -624,7 +706,8 @@ class Cat(Animal):
                             gotoY, gotoX   = map(
                                 lambda p: -1 if p<0 else 1 if p>0 else 0,
                                 (path[0][0]-self.y, path[0][1]-self.x)
-                                )
+                            )
+                            
                             while (self.y,self.x) != (path[0][0]-gotoY,path[0][1]-gotoX):
                                 if not l.pause:
                                     if not self.checkPlayerisHere():
@@ -641,10 +724,12 @@ class Cat(Animal):
                                         if blockID == 300: p.say(choice(c.collide['animal']['cat']))
                                         break
 
-                                    bfy, bfx = self.y, self.x
-                                    self.y  += gotoY
-                                    self.x  += gotoX
+                                    bfy, bfx  = self.y, self.x
+                                    self.y   += gotoY
+                                    self.x   += gotoX
+
                                     super().step(bfy, bfx)
+
                                 time.sleep(speed)
 
                             for direction in path:
@@ -665,7 +750,9 @@ class Cat(Animal):
 
                                     bfy, bfx       = self.y, self.x
                                     self.y, self.x = direction
+
                                     super().step(bfy, bfx)
+
                                 time.sleep(speed)
 
                             self.coolTime = int(speed*100)\
@@ -679,7 +766,7 @@ class Cat(Animal):
                                 return
 
                             self.actionCount -= 1
-                            addLog(f"{self.color}{self.name}{cc['end']}이/가 그루밍 중입니다...", colorKey=self.colorKey)
+                            addLog(f"{self.color}{self.name}{cc['end']}{pp(self.name,'sub',True)} 그루밍 중입니다...", colorKey=self.colorKey)
                             target = choices(
                                 ["leg", "side", "tail"],
                                 list(self.ashWeight.values()),
@@ -690,30 +777,32 @@ class Cat(Animal):
                             if self.ashWeight[target]:
                                 self.ashWeight[target] -= 1
                                 self.camouflage['ash'] += 1
+
                             self.camouflage['hair'] += randrange(1,5)
                             self.camouflage['dust'] += randrange(0,3)
                             self.coolTime = randrange(100,501)
 
                         case "spitOut":
                             for y, x in [
-                                (self.y-1,self.x),
-                                (self.y,self.x+1),
-                                (self.y+1,self.x),
-                                (self.y,self.x-1)
-                                ]:
+                                (self.y-1, self.x  ),
+                                (self.y,   self.x+1),
+                                (self.y+1, self.x  ),
+                                (self.y,   self.x-1)
+                            ]:
                                 blockID = s.Dungeon[self.Dy][self.Dx]['room'][y][x]['id']
                                 if blockID in s.interactableBlocks['steppable']['total']:
                                     ty, tx = y, x
                                     break
+
                             else:
                                 self.getStress(5)
                                 self.resetAction()
+
                                 return
                             
                             self.say(choice(catComments['spitOut']))
                             s.Dungeon[self.Dy][self.Dx]['room'][ty][tx]=\
-                                obj(
-                                    '-bb',
+                                obj('-bb',
                                     str(choices(
                                         [14, 11, 12],
                                         list(self.camouflage.values()),
@@ -727,17 +816,34 @@ class Cat(Animal):
 
                 # region rest
                 case "rest":
-                    addLog(f"{self.color}{self.name}{cc['end']}이/가 자고 있습니다...", colorKey=self.colorKey)
+                    addLog(
+                        f"{self.color}{self.name}{cc['end']}{pp(self.name,'sub',True)} 자고 있습니다...",
+                        colorKey=self.colorKey
+                    )
                     stress = 0
                     while self.stressLvl!=1 and self.stressPt!=0:
                         if self.checkPWRest(stress): break
 
-                        s.Dungeon[self.Dy][self.Dx]['room'][self.y][self.x] = obj('-be', str(self.id), block=f"{cc['bg']['A']}{self.icon}{cc['end']}", hashKey=self.hashKey)
+                        s.Dungeon[self.Dy][self.Dx]['room'][self.y][self.x] = obj(
+                            '-be', str(self.id),
+                            block=iset(
+                                f"{cc['bg']['A']}{self.icon}{cc['end']}",
+                                Type=self.face
+                            ),
+                            hashKey=self.hashKey
+                        )
                         if self.checkPWRest(stress): break
                         time.sleep(1.5)
                         if self.checkPWRest(stress): break
 
-                        s.Dungeon[self.Dy][self.Dx]['room'][self.y][self.x] = obj('-be', str(self.id), block=f"{self.color}{self.icon}{cc['end']}", hashKey=self.hashKey)
+                        s.Dungeon[self.Dy][self.Dx]['room'][self.y][self.x] = obj(
+                            '-be', str(self.id),
+                            block=iset(
+                                f"{self.color}{self.icon}{cc['end']}",
+                                Type=self.face
+                            ),
+                            hashKey=self.hashKey
+                        )
                         if self.checkPWRest(stress): break
                         time.sleep(1.5)
 

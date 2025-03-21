@@ -22,7 +22,7 @@ def counter() -> None:
                         choice(c.monologue['ELS']),
                         choice(c.monologue[
                             choice([
-                                "HL"  if s.hpLow==True          else "ELS",
+                                "HL"  if s.hpLow                else "ELS",
                                 "HUL" if round(s.hunger/20)<=30 else "ELS",
                                 "CO"  if s.Mlvl-s.lvl==10       else "ELS"
                             ])
@@ -34,8 +34,11 @@ def counter() -> None:
 
                 s.monologueRange = randrange(p.monologue['min'], p.monologue['max']+1)
                 s.monologueCount = 0
+
             else: s.monologueCount += 1
+
             time.sleep(0.1)
+            
         else: time.sleep(0.5)
 
 threading.Thread(target=counter, name="monologueCounter", daemon=True).start()

@@ -1,0 +1,38 @@
+{
+    "custom" : {
+        "icon"        : "?",
+        "name"        : "statusEffect_custom",
+        "id"          : "custom",
+        "tick"        : 0,
+        "seq"         : "back",
+        "command"     : "",
+        "description" : "statusEffect_custom"
+    },
+    "0" : {
+        "icon"        : "\u001b[;38;5;10m@\u001b[0m",
+        "name"        : "숙명",
+        "id"          : 0,
+        "tick"        : "∞",
+        "seq"         : "back",
+        "command"     : "",
+        "description" : "세니플라가제 \u001b[;38;5;14m윤회 억제 장치\u001b[0m.\n\u001b[;38;5;10m글라가트로프의 주체\u001b[0m라고도 할 수 있다."
+    },
+    "1" : {
+        "icon"        : "\u001b[;38;5;9m∵\u001b[0m",
+        "name"        : "피묻음",
+        "id"          : 1,
+        "tick"        : 0,
+        "seq"         : "fore",
+        "command"     : "s.steppedBlock = obj('-bb', '27', block=iset(s.bloodIcon[1]), nbt={'link' : False, 'stack' : 1, 'blockData' : s.steppedBlock})",
+        "description" : "발에 피가 묻었다.\n이제 걸을 때마다 피가 바닥에 남는다."
+    },
+    "600" : {
+        "icon"        : "\u001b[;38;5;13mགྷ\u001b[0m",
+        "name"        : "저주 · 키트리마",
+        "id"          : 600,
+        "tick"        : 0,
+        "seq"         : "back",
+        "command"     : "if not effect['tick']%15: s.hp -= 1; sound.echo('entity','enemy','pain','growl',feedback=50,vVolume=65); sound.play('player','hit'); addLog('\u001b[;38;5;13m계속해서 이명이 들려옵니다...\u001b[0m')",
+        "description" : "머릿속에서 \u001b[;38;5;13m끔찍한 비명\u001b[0m이 끝없이 울려퍼지고 있다..."
+    }
+}

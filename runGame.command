@@ -1,16 +1,25 @@
 #!/bin/bash
 # shellcheck disable=SC1091
 
+
 echo -ne "\033]0;Rudventure\007"
-# export PATH="/Library/Frameworks/Python.framework/Versions/3.13/bin:$PATH"
-# echo "Python version : $(python3 --version)"
-# sleep 0.5
+
+
+comments=(
+    "숙명을 저버렸습니다."
+    "윤회를 벗어났습니다."
+    "데이터를 찾을 수 없습니다."
+    "ⵣⵁⴱⵢ·ⴱⴵ: ⵥⵓⵢⵣⵒ-ⴱ·ⵣ ⵉⵞⵒ ⵁⵉ·ⴱ·ⵞⵉ:ⴱ ⵛ:ⵣⵉⵙⵝⵉ·ⵁ"
+    "ⵉⵁⵖ·ⵁⵒⴱⴼ ⵥⵣⵇ·ⵣⵛⵉⵠⵥ:ⵣⵞ ⵞⵉ·ⴱ ⵍⵞⵐⵛ:ⵞⵓⵢ:ⴱ-·ⵓ"
+    "ⵛⵣⵉⴼ; ⵥⵣⵙⵞⴵ; ⵣⴱ·ⵣ ⵥ:ⵣⵉⵓⵠ:"
+)
 
 cd     "$(cd "$(dirname "$0")" && pwd -P)" || exit
 source bin/activate
 
 pathFiles=("pip" "pip3" "pip3.13" "wheel")
 for file in "${pathFiles[@]}"; do
+
     sed -i '' "1s|.*|#!$PWD/bin/python3.13|" "bin/$file"
 done
 
@@ -22,6 +31,7 @@ while true; do
     mtsx=$(echo "$configData" | grep -o '"mtsX" *: *[^,}]*' | awk -F ': *' '{print $2}')
 
     if [ "$(echo "$configData" | grep -o '"autoTerminalSize" *: *[^,}]*' | awk -F ': *' '{print $2}')" = "true" ] && [ "$(tput lines)" -lt "$mtsy" ] && [ "$(tput cols)" -lt "$mtsx" ]; then
+
         printf "\e[8;%d;%dt" "$mtsy" "$mtsx"
     fi
     clear
@@ -29,7 +39,8 @@ while true; do
     errorCode=$?
 
     if [ $errorCode -eq 1 ]; then
-        printf "에러 코드 %s : 데이터를 찾을 수 없습니다.\n프로그램을 종료합니다.", $errorCode
+
+        printf "%s\n프로그램을 종료합니다.\n\n\n", "${comments[$((RANDOM % ${#comments[@]}))]}"
         break
     elif [ $errorCode -gt 1 ]; then break
     fi

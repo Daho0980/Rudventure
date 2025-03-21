@@ -19,7 +19,7 @@ def _addValue(dd, value, path):
 
 makePath = lambda *path: s.TFP + s.s.join(path)
 
-def obj(path:str, target:str, **changeData) -> dict:
+def obj(path:str, target:str, **addData) -> dict:
     """
     path   : json 파일의 위치
     target : 가져올 요소의 키
@@ -29,11 +29,13 @@ def obj(path:str, target:str, **changeData) -> dict:
     match path:
         case "-bb" : path = s.path['blockData']['block']
         case "-be" : path = s.path['blockData']['entity']
+        case "-ba" : path = s.path['blockData']['animal']
+        case "-se" : path = s.path['statusEffectData']
 
     if (path,target) in objCache:
         data = deepcopy(objCache[(path,target)])
 
-        for key, value in changeData.items():
+        for key, value in addData.items():
             data[key] = value
 
         return data
@@ -57,7 +59,7 @@ def obj(path:str, target:str, **changeData) -> dict:
                         if arrayDepth and arrayDepth[-1]:
                             _addValue(data, {}, tempPath)
                             arrayDepth.append(0)
-                            tempPath.append(-1)
+                            tempPath  .append(-1)
                         else:
                             _setValue(data, {}, tempPath)
 
@@ -67,24 +69,27 @@ def obj(path:str, target:str, **changeData) -> dict:
                             tempPath.append(-1)
 
                         else: _setValue(data, [], tempPath)
+
                         arrayDepth.append(1)
 
                     case "string"|"number"|"boolean":
                         if tempPath and value!=None:
                             if prefix.endswith(".item"):
                                 _addValue(data, value, tempPath)
+
                             else:
                                 _setValue(data, value, tempPath)
                                 tempPath.pop()
                             
                     case "end_map"|"end_array":
                         tempPath.pop()
-                        if arrayDepth: arrayDepth.pop()
+                        
+                        if arrayDepth:       arrayDepth.pop()
                         if prefix == target: break
 
     objCache[(path,target)] = data[target]
 
-    for key, value in changeData.items():
+    for key, value in addData.items():
         data[target][key] = value
 
     return data[target]
@@ -110,5 +115,7 @@ def elm(path:str, target:str, Type:str):
         for prefix, event, value in ijson.parse(f):
             if (prefix, event) == (target, Type):
                 elmCache[(path,target,Type)] = value
+                
                 return value
+            
         return False

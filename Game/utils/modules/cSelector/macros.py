@@ -3,7 +3,7 @@ from Game.utils.modules.Textbox import TextBox
 from Game.utils.graphics        import anchor
 
 
-def fullSizedBox(stdscr,
+def fullSizedBox(stdscr               ,
                  lineType:str="double",
                  boxColor:str=""       ) -> str:
     y, x = stdscr.getmaxyx()

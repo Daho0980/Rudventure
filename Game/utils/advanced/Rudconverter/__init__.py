@@ -2,7 +2,7 @@ import os   ; import json
 from   zlib   import compress, decompress
 from   base64 import b64encode, b64decode
 
-from Game.core.system        import jsonDataKeyRecover as jdkr
+from Game.core.system        import jsonDataKeyRecoverer as jdkr
 from Game.core.system.logger import addLog
 
 from Assets.data import (
@@ -17,16 +17,15 @@ def _encode(strings:list[str]) -> list[str]:
     for string in strings:
         # Base64로 인코딩하여 저장
         encoded_data.append(b64encode(compress(string.encode('utf-8'))).decode('utf-8'))
+        
     return encoded_data
     
 def _decode(encodedStrings:list[str]) -> list[str]:
     decodedData = []
     for encodedString in encodedStrings:
-        # Base64 디코딩
-        decodedBase64 = b64decode(encodedString.encode('utf-8'))
-        # 압축 해제 및 UTF-8 디코딩
-        decompressedData = decompress(decodedBase64).decode('utf-8')
-        decodedData.append(decompressedData)
+        # 압축 해제 및 UTF-8, Base64 디코딩
+        decodedData.append(decompress(b64decode(encodedString.encode('utf-8'))).decode('utf-8'))
+
     return decodedData
     
 def _changeExtention(name:str, beforeExt:str=".rud", afterExt:str=".json"):
@@ -60,17 +59,18 @@ def save() -> int:
             value = getattr(s, i)
             if isinstance(value, dict): value = jdkr.serializeDict(value)
             statusData[i]  = value
+            
         for i in commentVars:
             value = getattr(c, i)
             if isinstance(value, dict): value = jdkr.serializeDict(value)
             commentData[i]  = value
 
         statusData["playerIcon"] = s.ids[300]
-        data["status"]           = statusData
-        data["comments"]         = commentData
+        data      ["status"    ] = statusData
+        data      ["comments"  ] = commentData
 
 
-        json.dump(data, saveJson, ensure_ascii=False)
+        json    .dump(data, saveJson, ensure_ascii=False)
         saveJson.close()
 
         # 파일 암호화 단계
@@ -79,10 +79,12 @@ def save() -> int:
         with open(file_path, 'w') as encodeFile:
             for line in encodeData: encodeFile.write(f"{line}\n")
         _changeExtention(f"{s.TFP}saveData{s.s}{s.name}", beforeExt=".json", afterExt=".rud")
+
     except Exception as e:
         addLog(f"세이브 저장에 실패했습니다 : {e}")
+
         return 0
-    else:   return 1
+    else: return 1
 
 def load(name:str):
     try:
@@ -93,9 +95,6 @@ def load(name:str):
         with open(f"saveData{s.s}{name}.json", 'r') as d:
             dictData = json.load(d)
         os.remove(f"saveData{s.s}{name}.json")
+        
     except: return False
     else:   return jdkr.deserializeDict(dictData)
-
-# example = encode(["레포\n", "다호\n", "업로드\n"])
-# print(f"input : \n\n{example}")
-# print(f"output : \n\n{decode(example)}")

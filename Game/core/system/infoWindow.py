@@ -2,13 +2,18 @@ from .dataLoader                 import elm
 from Assets.data.totalGameStatus import infoWindow
 
 
-def add(icon:str,
-        blockName:str,
-        status:str,
-        explanation:str="",
-        titleOnly:bool =False,
-        time:int       =30,   ) -> None:
-    infoWindow['text']                        = f"[ {icon} ] {blockName}" if titleOnly else f"[ {icon} ] {blockName}\n\n{status}\n\n{explanation}"
+def add(icon       :str       ,
+        blockName  :str       ,
+        status     :str =""   ,
+        explanation:str =""   ,
+        titleOnly  :bool=False,
+        time       :int =30   ,) -> None:
+    infoWindow['text'] = f"[ {icon} ] {blockName}"\
+        if titleOnly\
+    else f"""[ {icon} ] {blockName}
+
+{f"{status}\n\n"if status else ''}{explanation}"""
+    
     infoWindow['time'], infoWindow['setTime'] = time, time
 
 def remove() -> None:
@@ -34,14 +39,18 @@ def _getBlockInfo(fileName:str, target:str, Type:str):
         )
         ```
     """
-    return elm(f"Assets/data/blockInfo/{fileName}.json", target, Type)
+    return elm(
+        f"Assets/data/block/blockInfo/{fileName}.json",
+        target, Type
+    )
     
-def dataLoader(blockId:str, blockType:str, blockData:dict) -> dict:
+def dataRegistration(blockId:str, blockType:str, blockData:dict) -> dict:
     try:
-        output = {}
-        output["icon"]        = blockData['block']
-        output["blockName"]   = _getBlockInfo(blockType, f"{blockId}.name", "string")
-        output["status"]      = _getBlockInfo(blockType, f"{blockId}.status", "string") if blockType == "weapon" else ""
+        output              = {}
+        output["icon"]      = blockData['block']
+        output["blockName"] = _getBlockInfo(blockType, f"{blockId}.name", "string")
+        output["status"]    = _getBlockInfo(blockType, f"{blockId}.status", "string") if blockType == "weapon" else ""
+        
         try:
             if blockData['nbt']['link'] and _getBlockInfo(blockType, f"{blockId}.dataType", "number") == 2:
                 output["explanation"] = _getBlockInfo(blockType, f"{blockId}.explanation.link", "string")
@@ -50,5 +59,6 @@ def dataLoader(blockId:str, blockType:str, blockData:dict) -> dict:
         except: output["explanation"] = _getBlockInfo(blockType, f"{blockId}.explanation.observe", "string")
 
         if False in list(output.values()): return False # type: ignore
-        else:               return output
+        else:                              return output
+
     except: return False # type: ignore

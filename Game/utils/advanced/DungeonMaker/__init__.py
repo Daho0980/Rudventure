@@ -25,9 +25,11 @@ def centerGridMapReturn(grid:list, blank:int=0):
 
     DisplayMap    = []
     subDisplayMap = []
+
     for _ in range(9):
         DisplayMap.append([' ']*9)
         subDisplayMap.append([' ']*8)
+
     toolY, toolX = 4-s.Dy, 4-s.Dx
     rowLength = len(DisplayMap)
 
@@ -35,17 +37,16 @@ def centerGridMapReturn(grid:list, blank:int=0):
         for column in range(len(DisplayMap[row])):
             FixY, FixX = row+toolY, column+toolX
 
-            if 0 <= FixY <= rowLength-1            and\
-               0 <= FixX <= len(DisplayMap[row])-1 and\
-               len(grid[row][column]) > 0:
-                    
+            if  0 <= FixY              <= rowLength-1\
+            and 0 <= FixX              <= len(DisplayMap[row])-1\
+            and len(grid[row][column]) >  0:      
                 if FixX < len(DisplayMap[row])-1 and column < len(DisplayMap[row])-1:
                     if grid[row][column+1]:
-                        if (grid[row][column]['doors']['R'] and\
-                            grid[row][column]['isPlayerVisited']==2)\
+                        if  (grid[row][column]['doors']['R']\
+                        and grid[row][column]['isPlayerVisited']==2)\
                             or\
-                            (grid[row][column+1]['doors']['L'] and\
-                            grid[row][column+1]['isPlayerVisited']==2):
+                        (grid[row][column+1]['doors']['L']\
+                        and grid[row][column+1]['isPlayerVisited']==2):
                             subDisplayMap[FixY][FixX] = '═'
 
                 if row==s.Dy and column==s.Dx:
@@ -54,13 +55,14 @@ def centerGridMapReturn(grid:list, blank:int=0):
                     match grid[row][column]['isPlayerVisited']:
                         case 0: DisplayMap[FixY][FixX] = ' '
                         case 1: DisplayMap[FixY][FixX] = f"{cc['fg']['F']}?{cc['end']}"
-                        case 2: DisplayMap[FixY][FixX] = f"{'' if not grid[row][column]['roomIcon'][1] else cc['fg'][grid[row][column]['roomIcon'][1]]}{grid[row][column]['roomIcon'][0]}{cc['end']}"
+                        case 2:
+                            DisplayMap[FixY][FixX] = f"{''
+                                    if not grid[row][column]['roomIcon'][1]
+                                else cc['fg'][grid[row][column]['roomIcon'][1]]
+                            }{grid[row][column]['roomIcon'][0]}{cc['end']}"
         
-        # DisplayMap[index] = joineach(mainline, subDisplayMap[index])
     for index, mainline in enumerate(DisplayMap):
         output += (blanks+joineach(mainline,subDisplayMap[index])+blanks+("\n"if index!=rowLength-1 else""))
-
-    # for i in range(len(DisplayMap)):
 
     return output
 
@@ -73,18 +75,19 @@ def DungeonMaker(showAll=False) -> list:
             output.append([])
             for _ in range(9):
                 output[r].append({
-                    "room"            : [],
-                    "roomIcon"        : [" ", ""],
-                    "doors"         : {"U":0, "R":0, "D":0, "L":0},
-                    "roomType"        : None,
-                    "isPlayerHere"    : False,
-                    "isPlayerVisited" : 0,
-                    "summonCount"     : 0,
+                    "name"            : None                        ,
+                    "room"            : []                          ,
+                    "roomIcon"        : [" ", ""]                   ,
+                    "doors"           : {"U":0, "R":0, "D":0, "L":0},
+                    "roomType"        : None                        ,
+                    "isPlayerHere"    : False                       ,
+                    "isPlayerVisited" : 0                           ,
+                    "summonCount"     : 0                           ,
                     "interaction"     : False
                     })
 
         output[4][4]['roomIcon']        = rData[0]
-        output[4][4]['roomType']        = 0
+        output[4][4]['roomType']        = "startPoint"
         output[4][4]['isPlayerVisited'] = 2
         output[4][4]['isPlayerHere']    = True
         output[4][4]['interaction']     = True
@@ -92,35 +95,37 @@ def DungeonMaker(showAll=False) -> list:
         output = makeRoom(
             deleteBlankData(
                 snake.main(
-                    output,
-                    4, 4,
+                    output, 4, 4,
                     rawPrint=True,
-                    showAll=showAll
-                    )
+                    showAll =showAll
                 )
             )
+        )
 
         isStartExist = False
 
         if not output: continue
         for r in range(9):
             for c in range(9):
-                if output[r][c] and output[r][c]['roomType'] == 0:
+                if output[r][c] and output[r][c]['roomType'] == "startPoint":
                     isStartExist = True
                     s.Dy, s.Dx   = r, c
                     break
 
         if   not isStartExist: continue
-        elif 4 in [
-            0 if s.Dy == 0 or not output[s.Dy-1][s.Dx] else output[3][4]['roomType'],
-            0 if s.Dx == 8 or not output[s.Dy][s.Dx+1] else output[4][5]['roomType'],
-            0 if s.Dy == 8 or not output[s.Dy+1][s.Dx] else output[5][4]['roomType'],
-            0 if s.Dx == 0 or not output[s.Dy][s.Dx-1] else output[4][3]['roomType']
+        elif "endPoint" in [
+            "startPoint" if s.Dy == 0 or not output[s.Dy-1][s.Dx] else output[3][4]['roomType'],
+            "startPoint" if s.Dx == 8 or not output[s.Dy][s.Dx+1] else output[4][5]['roomType'],
+            "startPoint" if s.Dy == 8 or not output[s.Dy+1][s.Dx] else output[5][4]['roomType'],
+            "startPoint" if s.Dx == 0 or not output[s.Dy][s.Dx-1] else output[4][3]['roomType']
         ]: continue
         break
 
 
-    for roomPos, doorDirection in zip([[4-1, 4], [4, 4+1], [4+1, 4], [4, 4-1]], list(output[4][4]["doors"].values())):
+    for roomPos, doorDirection in zip(
+        [[4-1, 4], [4, 4+1], [4+1, 4], [4, 4-1]],
+        list(output[4][4]["doors"].values())
+    ):
         if doorDirection: output[roomPos[0]][roomPos[1]]["isPlayerVisited"] = 1
 
     return output

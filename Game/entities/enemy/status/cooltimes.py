@@ -4,7 +4,7 @@ class Cooltime:
             if key.startswith("__") or key in exception: continue
 
             if isinstance(value, tuple):
-                setattr(self, key, tuple(map(lambda num: num/2, value)))
+                setattr(self, key, tuple(map(lambda num: int(num/2), value)))
             else:
                 setattr(self, key, value/2)
 
@@ -23,6 +23,8 @@ class Unrest(Cooltime):
 class Resentment(Cooltime):
     turnEnd       = 350
     blink         = 0.07
-    explotion     = 0.07
+    explosion     = 0.07
 
     modeException = ["modeException"]
+
+class Craving(Cooltime): ... 

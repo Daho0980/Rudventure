@@ -12,13 +12,13 @@ currentStatus:dict[str,dict] = {
         "state"       : ""
     },
     "optional" : {
-        "time" : True,
+        "time"        : True,
         "small_image" : ""
     }
 }
 
 isConnected:bool = True
-clientID:int     = elm(
+clientID   :int  = elm(
     f"{s.TFP}config{s.s}data.json",
     "clientID",
     "number"
@@ -40,8 +40,10 @@ def load(large_image:str, details:str, state:str, start:bool=False, small_image:
 def update() -> bool:
     if isConnected:
         status = currentStatus['essential']
+        
         if currentStatus['optional']['time']:
             status['start'] = int(time.time())
+
         if currentStatus['optional']['small_image'] != "":
             status['small_image'] = currentStatus['optional']['small_image']
             

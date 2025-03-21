@@ -4,10 +4,10 @@ from .clientSet import FakeClient
 client           = FakeClient()
 serverConnection = True
 
-history:dict = {"chat": [], "max": 200}
-inputText    = []
+history  :dict = {"chat": [], "max": 200}
+inputText      = []
 
-c = {
+c:dict[str,int] = {
     # Normal
     "B" : 0, "M" : 0, "G" : 0, "O" : 0,
     "N" : 0, "P" : 0, "T" : 0, "S" : 0,
@@ -26,7 +26,7 @@ c = {
 prefix:str = '/'
 
 # region authority settings
-authority:dict = {
+authority:dict[str,dict] = {
     "NTS" : {
         0 : "admin",
         1 : "gm",

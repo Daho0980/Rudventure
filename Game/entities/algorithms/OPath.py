@@ -14,17 +14,16 @@ def main(radius, center):
                 path.append((
                     y+center[0]-radius,
                     x+center[1]-radius
-                    ))
+                ))
     
-    return organizePath(path)
+    return _organizePath(path)
 
-def organizePath(path):
+def _organizePath(path):
     pathDrawer = {}
     newPath    = []
 
     for y, x in path:
-        if not pathDrawer.get(y):
-            pathDrawer[y] = []
+        if not pathDrawer.get(y): pathDrawer[y] = []
         pathDrawer[y].append((y, x))
 
     mn, mx = min(pathDrawer.keys()), max(pathDrawer.keys())
@@ -47,7 +46,7 @@ def organizePath(path):
     return newPath
 
 
-def pathToGrid(path):
+def _pathToGrid(path):
     global center
 
     grid = [['0' for _ in range(30)] for _ in range(30)]
@@ -67,13 +66,13 @@ if __name__ == '__main__':
     from random import randrange
 
     while 1:
-        radius = 3
+        radius = randrange(1, 11)
         center = (
             randrange(10, 20),
             randrange(10, 20)
-            )
+        )
         os.system("clear")
         path = main(radius, center)
-        pathToGrid(path)
+        _pathToGrid(path)
         print(f"path : {path}")
         time.sleep(0.3)

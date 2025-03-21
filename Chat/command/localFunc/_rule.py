@@ -2,6 +2,10 @@ from Chat import (
     rules         as r,
     mainFunctions as mf
 )
+from functions.grammar import (
+    attrform as af,
+    pstpos   as pp
+)
 
 
 def rule_0() -> bool:
@@ -18,7 +22,7 @@ def rule_1(scope:str) -> bool:
         return True
     
     except Exception as e:
-        mf.sendError(f"'{scope}'(이)라는 스코프는 존재하지 않습니다.", e)
+        mf.error(f"'{scope}'{af(scope,'mod',True)} 스코프는 존재하지 않습니다.", e)
         return False
 
 # NOTE: the 'rulePath' variable will take something like this:
@@ -27,11 +31,11 @@ def rule_2(rulePath:str) -> bool:
     scope, rule = rulePath.split('.')
 
     try:
-        mf.sendOutput(f"현재 '{rulePath}'은/는 '{eval(f'r.{scope}["{rule}"]')}'입니다.")
+        mf.output(f"현재 '{rulePath}'{pp(rulePath,'top',True)} '{eval(f'r.{scope}["{rule}"]')}'입니다.")
         return True
     
     except Exception as e:
-        mf.sendError(f"'{rulePath}'(이)라는 위치는 존재하지 않습니다.", e)
+        mf.error(f"'{rulePath}'{af(rulePath,'mod',True)} 위치는 존재하지 않습니다.", e)
         return False
 
 def rule_3(rulePath:str, allowance:str) -> bool:
@@ -39,15 +43,15 @@ def rule_3(rulePath:str, allowance:str) -> bool:
 
     try:
         if not isinstance(eval(allowance), bool):
-            mf.sendError(f"'{allowance}'은/는 bool 형태의 값이 아닙니다.")
+            mf.error(f"'{allowance}'{pp(allowance,'top',True)} bool 형태의 값이 아닙니다.")
             return False
         allowance = eval(allowance)
 
         exec(f"r.{scope}['{rule}'] = {allowance}")
-        mf.sendOutput(f"'{rulePath}'가 '{eval(f'r.{scope}["{rule}"]')}'로 변경되었습니다.")
+        mf.output(f"'{rulePath}'{pp(rulePath,'sub',True)} '{eval(f'r.{scope}["{rule}"]')}'로 변경되었습니다.")
 
         return True
 
     except Exception as e:
-        mf.sendError(f"'{rulePath}'(이)라는 위치는 존재하지 않습니다.", e)
+        mf.error(f"'{rulePath}'{af(rulePath,'mod',True)} 위치는 존재하지 않습니다.", e)
         return False

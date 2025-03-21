@@ -59,7 +59,7 @@ if s.serverConnection:
 
 stdscr = curses.initscr()
 curses.curs_set(1)
-stdscr.nodelay(True)
+stdscr.nodelay (True)
 
 # region init color
 if curses.has_colors():
@@ -104,13 +104,12 @@ chatWin = stdscr.subwin(CWH, x, 0, 0)
 inputWin = stdscr.subwin(3, x, CWH, 0)
 # inputWin.keypad(True)
 
-threading.Thread(
-    target=renderChat,
-    daemon=True       ).start()
+threading.Thread(target=renderChat,
+                 daemon=True       ).start()
 
-for i in list(s.c.keys()):
-    mf.addChat(["system", "colorTest", i])
+for i in list(s.c.keys()): mf.addChat(["system", "colorTest", i])
 mf.addChat(["system", "색상 테스트 완료", 'Y'])
+
 if s.serverConnection:
     mf.addChat(["system", f"'{s.client.host}:{s.client.port}'로 연결되었습니다.", 'Y'])
 else:
@@ -118,9 +117,10 @@ else:
 
 
 while True:
-    inputWin.clear()
-    inputWin.box()
+    inputWin.clear ()
+    inputWin.box   ()
     inputWin.addstr(1, 1, "> ")
+
     inputWin.addstr(1, 3,
         ''.join(s.inputText)[max(0, (len(s.inputText)-(inputWin.getmaxyx()[1]-5))):],
         curses.color_pair(s.c[
@@ -132,8 +132,8 @@ while True:
                 if  s.inputText
                 and s.inputText[0]==s.prefix
             else 'Y'
-        ]
-    ))
+        ])
+    )
 
     try:    key = mf.escapeAnsi(inputWin.get_wch())
     except: continue

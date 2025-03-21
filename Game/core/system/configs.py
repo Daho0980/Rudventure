@@ -10,7 +10,7 @@ def reset() -> None:
         json.dump(
             {
                 "statusDesign"      : 1,
-                "debugConsole"      : False,
+                "debug"             : False,
                 "showDungeonMap"    : 0,
                 "frameRate"         : -1,
                 "volume"            : 50,
@@ -29,7 +29,7 @@ def load() -> None:
         data = json.load(f)
 
     s.statusDesign      = data["statusDesign"]
-    s.debugConsole      = data["debugConsole"]
+    s.debug             = data["debug"]
     s.showDungeonMap    = data["showDungeonMap"]
     s.frameRate         = data["frameRate"]
     s.volume            = data["volume"]
@@ -44,7 +44,7 @@ def save() -> None:
         json.dump(
             {
                 "statusDesign"      : s.statusDesign,
-                "debugConsole"      : s.debugConsole,
+                "debug"             : s.debug,
                 "showDungeonMap"    : s.showDungeonMap,
                 "frameRate"         : s.frameRate,
                 "volume"            : s.volume,

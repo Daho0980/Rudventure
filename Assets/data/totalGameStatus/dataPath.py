@@ -1,12 +1,14 @@
-path:dict[str, dict] = {
+path:dict = {
     "blockData" : {
-        "block"  : ["Assets", "data", "blockData", "block.json"],
-        "entity" : ["Assets", "data", "blockData", "entity.json"],
-        "animal" : ["Assets", "data", "blockData", "animal_spd.json"],
-        "enemy"  : ["Assets", "data", "blockData", "enemy_spd.json"]
+        "block"  : ["Assets", "data", "block", "blockData", "block.json"],
+        "entity" : ["Assets", "data", "block", "blockData", "entity.json"],
+        "animal" : ["Assets", "data", "block", "blockData", "animal_spd.json"],
+        "enemy"  : ["Assets", "data", "block", "blockData", "enemy_spd.json"]
     },
     "blockInfo" : {
-        "block"  : ["Assets", "data", "blockInfo", "block.json"],
-        "entity" : ["Assets", "data", "blockInfo", "entity.json"]
-    }
+        "block"  : ["Assets", "data", "block", "blockInfo", "block.json"],
+        "entity" : ["Assets", "data", "block", "blockInfo", "entity.json"]
+    },
+
+    "statusEffectData" : ["Assets", "data", "statusEffect", "data.json"]
 }
