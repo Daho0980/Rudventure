@@ -34,6 +34,7 @@ while true; do
 
         printf "\e[8;%d;%dt" "$mtsy" "$mtsx"
     fi
+    
     clear
     python3 run.py
     errorCode=$?

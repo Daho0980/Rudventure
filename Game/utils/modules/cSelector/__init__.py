@@ -75,8 +75,9 @@ def main(title     :str,
 def _convert(menu, maxLine:int): # 1차원 메뉴를 2차원으로 재배열
     menu = list(map(lambda m:(None,m)if isinstance(m,str)else(customColor(*m[0][1:],m[0][0]),m[1])if isinstance(m[0],(tuple,list))else m,menu)) # type: ignore
 
-    newmenu                   = [] # 2차원 배열로 변환될 menu
-    subListRow, subListColumn = -1, -1 # 가로, 세로
+    newmenu       = [] # 2차원 배열로 변환될 menu
+    subListColumn = -1 # 가로
+    subListRow    = -1 # 세로
     
     while 1:
         if subListColumn >= len(menu)-1: break
@@ -154,8 +155,8 @@ def _system(stdscr,
     if maxLine > len(menu): raise Exception('최대 세로 배열수는 menu 개수보다 많을 수 없습니다!')
 
     if isinstance(menu, dict):
-        menuKeys:(list|dict) = list(menu.keys())
-        menuValues:list      = list(menu.values())
+        menuKeys  :(list|dict) = list(menu.keys()  )
+        menuValues:list        = list(menu.values())
 
     else: menuKeys = menu
 
@@ -348,5 +349,5 @@ def _system(stdscr,
         blankD += menuKeys[i][:currSelectColumn+1].count((None,'')) if (i==currSelectRow) else menuKeys[i].count((None,''))
     
     # 최대 라인 * 현재 가로줄 위치 + 현재 세로줄 위치 + 1 - 공백 개수
-    if getPos: return (maxLine*currSelectRow)+currSelectColumn+1-blankD, [currSelectColumn, currSelectRow]
-    else:      return (maxLine*currSelectRow)+currSelectColumn+1-blankD
+    if  getPos: return (maxLine*currSelectRow)+currSelectColumn+1-blankD, [ currSelectColumn, currSelectRow ]
+    else      : return (maxLine*currSelectRow)+currSelectColumn+1-blankD

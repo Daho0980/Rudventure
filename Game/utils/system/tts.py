@@ -10,7 +10,7 @@ MC  = [' ', '.', ',', '"', '\'', '·', '~', '(', ')']
 LOC = ['(', ')']
 
 def lineAnalyzer(text:str, delay:float|int, useLvl:bool) -> dict:
-    output = {"timeMultiply" : [], "type" : []}
+    output = { "timeMultiply" : [], "type" : [] }
 
     BracketStack = 0
 
@@ -39,10 +39,10 @@ def lineAnalyzer(text:str, delay:float|int, useLvl:bool) -> dict:
 
     return output
 
-def TTS(text     :str                                       ,
-        voicePath:tuple    =("player", "voice", "glagatrof"),
-        delay    :float|int=0.07                            ,
-        useLvl   :bool     =True                             ) -> None:
+def TTS(text     :str                                     ,
+        voicePath:tuple    =("player","voice","glagatrof"),
+        delay    :float|int=0.07                          ,
+        useLvl   :bool     =True                           ) -> None:
     if l.useSound:
         lineData  = lineAnalyzer(text, delay, useLvl)
         voiceType = "no"

@@ -1,8 +1,8 @@
 {
     "200" : {
-        "entity"      : "Cat",
-        "name"        : "고양이",
+        "entity" : "Cat",
+        "name" : "고양이",
         "entityCount" : 1,
-        "icon"        : "빔"
+        "icon" : "빔"
     }
 }

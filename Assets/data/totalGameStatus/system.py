@@ -19,10 +19,10 @@ port     :int       = -1
 volume:int = 50
 
 # region Terminal
-# The origin of this name is 'S'creen'S'ize'S' LMAO
+# TMI: The origin of this name is 'S'creen'S'ize'S' LMAO
 sss:dict[str, tuple] = {
-    "minimum"     : (58, 122),
-    "recommended" : (67, 195)
+    "minimum"     : ( 58, 122 ),
+    "recommended" : ( 67, 195 )
 }
 autoTerminalSize :bool|None = None
 checkTerminalSize:bool|None = None

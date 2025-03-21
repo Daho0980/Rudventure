@@ -59,7 +59,7 @@ def set() -> None:
         s.MFairWind = 90
         
     else:
-        s.hp     = 10
+        s.hp     = 3
         s.df     = 5
         s.atk    = 1
         s.hunger = 2000
@@ -290,10 +290,10 @@ def move(Dir, distance:int) -> None:
         elif pos[1] == -1: s.Dx += 1; wayType = 3
 
         DWPD = {
-            'y'  : len(s.Dungeon[s.Dy][s.Dx]['room'])//2,
-            'my' : len(s.Dungeon[s.Dy][s.Dx]['room'])-2,
+            'y'  : len(s.Dungeon[s.Dy][s.Dx]['room']   )//2,
+            'my' : len(s.Dungeon[s.Dy][s.Dx]['room']   ) -2,
             'x'  : len(s.Dungeon[s.Dy][s.Dx]['room'][0])//2,
-            'mx' : len(s.Dungeon[s.Dy][s.Dx]['room'][0])-2
+            'mx' : len(s.Dungeon[s.Dy][s.Dx]['room'][0]) -2
         }
         wayPoint:list[list[int]] = [
             [DWPD['my'], DWPD['x']],
@@ -413,8 +413,9 @@ def move(Dir, distance:int) -> None:
         s.steppedBlock = block['nbt']['blockData']
 
         if block['nbt']['stack'] > 2:
-            event.bleeding(2, False)
-            statusEffect.addEffect('1', block['nbt']['stack']-2)
+            split = randrange(1, 4)
+            event.bleeding(split, False)
+            statusEffect.addEffect('1', block['nbt']['stack']-split)
 
         else: statusEffect.addEffect('1', block['nbt']['stack'])
 

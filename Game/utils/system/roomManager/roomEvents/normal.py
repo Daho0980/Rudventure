@@ -45,7 +45,7 @@ def event(data) -> None:
             ))
 
         changeDoor(1, data, "░░")
-        play      ("object", "door", "close")
+        play("object", "door", "close")
 
     elif not s.enemyCount and s.roomLock:
         s.roomLock                           = False
@@ -53,4 +53,4 @@ def event(data) -> None:
         if randrange(0, 101) > p.clearedRoomLoot: randPlaceOrb()
 
         changeDoor(2, data)
-        play      ("object", "door", "open")
+        play("object", "door", "open")

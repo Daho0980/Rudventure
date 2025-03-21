@@ -29,8 +29,8 @@ def showStage(stdscr, stageName:str):
             addWidth    =3
             )
         ); stdscr.refresh()
-    play        ("soundEffects", "smash")
-    time  .sleep(1.6)
+    play("soundEffects", "smash")
+    time.sleep(1.6)
     stdscr.clear()
 
     anchor(

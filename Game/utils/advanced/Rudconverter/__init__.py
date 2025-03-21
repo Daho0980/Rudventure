@@ -11,7 +11,6 @@ from Assets.data import (
 )
 
 
-# region Local function
 def _encode(strings:list[str]) -> list[str]:
     encoded_data = []
     for string in strings:
@@ -32,7 +31,6 @@ def _changeExtention(name:str, beforeExt:str=".rud", afterExt:str=".json"):
     try:    os.rename(f"{name}{beforeExt}", f"{name}{afterExt}")
     except: return False
 
-# region Global function
 def save() -> int:
     commentVars  = [name for name in dir(c) if not name.startswith('__')]
     
@@ -41,9 +39,8 @@ def save() -> int:
         saveJson  = open(file_path, 'w')
 
         Vars = [
-            "name", "playerDamageIcon", "playerColor",
-            "playerVoice",
-            "stage", "killCount", "inventory",
+            "name", "playerDamageIcon", "playerColor", "playerVoice",
+            "stage", "killCount", "inventory", "statusEffect",
             "hp", "df", "atk", "hunger", "xp", "lvl", "ashChip",
             "fairWind", "Mhp", "Mdf", "Mxp", "Mlvl", "MFairWind",
             "critRate", "critDMG", "evasionRate", "statusFormula",

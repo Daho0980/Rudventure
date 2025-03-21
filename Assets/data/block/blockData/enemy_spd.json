@@ -1,35 +1,35 @@
 {
     "0" : {
-        "class"       : "Pain",
-        "kinds"       : "고통의 편린",
-        "id"          : 600,
-        "curse"       : 3,
-        "hp"          : 4,
-        "atk"         : 1,
+        "class" : "Pain",
+        "kinds" : "고통의 편린",
+        "id" : 600,
+        "curse" : 3,
+        "hp" : 4,
+        "atk" : 1,
         "entityCount" : 1,
-        "icon"        : "% ",
-        "ashChip"     : 1
+        "icon" : "% ",
+        "ashChip" : 1
     },
     "1" : {
-        "class"       : "Unrest",
-        "kinds"       : "불안의 편린",
-        "id"          : 601,
-        "curse"       : 5,
-        "hp"          : 10,
-        "atk"         : 2,
+        "class" : "Unrest",
+        "kinds" : "불안의 편린",
+        "id" : 601,
+        "curse" : 5,
+        "hp" : 10,
+        "atk" : 2,
         "entityCount" : 1,
-        "icon"        : "# ",
-        "ashChip"     : 2
+        "icon" : "# ",
+        "ashChip" : 2
     },
     "2" : {
-        "class"       : "Resentment",
-        "kinds"       : "원망의 편린",
-        "id"          : 602,
-        "curse"       : 3,
-        "hp"          : 5,
-        "atk"         : 7,
+        "class" : "Resentment",
+        "kinds" : "원망의 편린",
+        "id" : 602,
+        "curse" : 3,
+        "hp" : 5,
+        "atk" : 7,
         "entityCount" : 1,
-        "icon"        : "※ ",
-        "ashChip"     : 1
+        "icon" : "※ ",
+        "ashChip" : 1
     }
 }

@@ -4,8 +4,8 @@ stage:int = 0
 # region Dungeon
 Dungeon :list = []
 roomData:dict = {
-    "type"      : "None",
-    "cell"      : 0,
+    "type" : "None",
+    "cell" : 0     ,
 
     "maxWidth"  : 0,
     "maxHeight" : 0,

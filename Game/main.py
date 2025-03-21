@@ -2,6 +2,7 @@
 import time ; import curses ; import random
 from   cusser                 import Cusser
 
+from .entities.player.statusEffect import addEffect
 from .entities           import entity, player
 from .entities.player    import checkStatus           as cs
 from .pages              import mainSettings, mainMenu
@@ -163,7 +164,7 @@ f"""
             stdscr.refresh()
 
 
-curses.noecho  ()
+curses.noecho()
 curses.curs_set(0)
 
 dp.load(
@@ -209,6 +210,7 @@ if not dp.isConnected:
 
 else: logger.addLog(f"포트는 {cc['fg']['L']}{s.port}{cc['end']}입니다.", colorKey='Y')
 
+addEffect('600', 50)
 while s.main:
     dp.load(
         large_image="rudventure-icon1",

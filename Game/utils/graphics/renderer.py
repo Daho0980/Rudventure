@@ -69,9 +69,9 @@ def statusBar(status        :int          ,
 
     maxStatus = maxStatus or status
 
-    Display:list         = []
-    spaceLen:str         = " "*space
-    statusForDisplay:int = 0
+    Display         :list = []
+    spaceLen        :str  = " "*space
+    statusForDisplay:int  = 0
 
     Display.append(f"{f'{statusName} ' if len(statusName)>0 else ''} {spaceLen}{frontTag} {cc['fg']['G1']}{barTypes[barType][0]}{color}")
     if usePercentage:
@@ -343,6 +343,6 @@ FPS : {s.currentFrame}""",
     if l.pause: Display.append(anchor(stdscr, UIP.pauseBox, returnStr=True))
     else      : s.elapsedTime = time.perf_counter()-s.startTime
 
-    stdscr.erase ()
+    stdscr.erase()
     stdscr.addstr(''.join(Display))
     s.elapsedFrame += 1

@@ -26,4 +26,4 @@ def raiseRoomEvent() -> None:
                         case 1|2|3: event.event1()
                         
                 case "treasure": treasure.event(True if randrange(1,101)<=p.treasureComment else False)
-                case "endPoint": boss    .event(data)
+                case "endPoint": boss.event(data)

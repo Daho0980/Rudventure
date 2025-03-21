@@ -106,7 +106,7 @@ class Box:
                 addOnyx=[1, 0]
             )
             stdscr.refresh()
-            time  .sleep  (frameDelay)
+            time.sleep(frameDelay)
         
         time.sleep(connectDelay)
 

@@ -52,7 +52,7 @@ def dataRegistration(blockId:str, blockType:str, blockData:dict) -> dict:
         output["status"]    = _getBlockInfo(blockType, f"{blockId}.status", "string") if blockType == "weapon" else ""
         
         try:
-            if blockData['nbt']['link'] and _getBlockInfo(blockType, f"{blockId}.dataType", "number") == 2:
+            if blockData['nbt']['link'] and _getBlockInfo(blockType, f"{blockId}.dataType", "number")==2:
                 output["explanation"] = _getBlockInfo(blockType, f"{blockId}.explanation.link", "string")
             else:
                 output["explanation"] = _getBlockInfo(blockType, f"{blockId}.explanation.observe", "string")

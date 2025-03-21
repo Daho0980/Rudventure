@@ -37,7 +37,7 @@ comfortableCry = [
     "갸릉."
 ]
 
-catComments:dict = {
+catComments = {
     "requestHp" : [
         "츄르 '줘'.", "힘들어.", "나갈래.",
         "...줘."
@@ -62,8 +62,7 @@ catComments:dict = {
     "stress" : {
         "get" : [
             "으으윽..", "머리아파..", "불쾌해...",
-            "거지같아...", "힘들어...", "크윽...",
-            "으악 고통!"
+            "거지같아...", "힘들어...", "으악 고통!"
         ],
         "lose" : [
             "한 층 개운해졌어.", "으음~", "아이 좋아.",
@@ -76,7 +75,7 @@ catComments:dict = {
     ]
 }
 
-actionP:dict[str,dict] = {
+actionP = {
     "player" : {
         "prob" : 30,
 

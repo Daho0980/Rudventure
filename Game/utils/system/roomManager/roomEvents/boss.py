@@ -35,4 +35,4 @@ def event(data) -> None:
         randPlaceOrb(2)
 
         changeDoor(2, data)
-        play      ("object", "door", "open")
+        play("object", "door", "open")
