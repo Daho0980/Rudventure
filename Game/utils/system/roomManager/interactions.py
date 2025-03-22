@@ -73,12 +73,21 @@ def randPlaceBlock(block        :str      ,
 
     `allowedBlocks`(list) : 블록을 놓을 수 있는 블록의 id
     """
+    data      = { "block" : iset(block, Type='s') }
+    stackable = True\
+        if obj('-bb', str(ID)).get('blockData' , False)\
+    else True
+
     while 1:
         Ry, Rx = randrange(*y), randrange(*x)
         if s.Dungeon[s.Dy][s.Dx]['room'][Ry][Rx]["id"] not in allowedBlocks: continue
+
+        if stackable:
+            data["blockData"] = s.Dungeon[s.Dy][s.Dx]['room'][Ry][Rx]
+            
         break
         
-    s.Dungeon[s.Dy][s.Dx]['room'][Ry][Rx] = obj('-bb', str(ID), block=iset(block, Type='s'))
+    s.Dungeon[s.Dy][s.Dx]['room'][Ry][Rx] = obj('-bb', str(ID), **data)
 
 def randPlaceOrb(multiple:int=1) -> None:
     room = s.Dungeon[s.Dy][s.Dx]['room']

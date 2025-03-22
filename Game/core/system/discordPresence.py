@@ -37,6 +37,41 @@ def load(large_image:str, details:str, state:str, start:bool=False, small_image:
     currentStatus['optional']['time']        = start
     currentStatus['optional']['small_image'] = small_image.lower()
 
+def quickLoad(Type:str) -> None:
+    match Type:
+        case "inMenu":
+            load(
+                large_image="rudventure-in_settings1",
+                details    ="메인 메뉴",
+                state      ="탐색 중",
+                start      =True
+            )
+
+        case "enter":
+            load(
+                large_image="rudventure-icon1",
+                small_image=s.playerColor[1],
+                details    ="메인 메뉴",
+                state      ="나락 입장 중"
+            )
+
+        case "inDungeon":
+            load(
+                large_image="rudventure-in_battle1",
+                small_image=s.playerColor[1],
+                details    ="나락",
+                state      =f"제 -{s.stage+1}층",
+                start      =True
+            ) 
+
+        case "goDeeper":
+            load(
+                large_image="rudventure-icon1",
+                small_image=s.playerColor[1],
+                details    =f"나락",
+                state      ="더 깊은 곳으로 이동 중...",
+            )
+
 def update() -> bool:
     if isConnected:
         status = currentStatus['essential']

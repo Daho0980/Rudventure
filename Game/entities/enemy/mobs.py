@@ -208,12 +208,17 @@ class Enemy:
             time.sleep(0.5)
 
     def step(self, bfy:int, bfx:int, saveStepped:bool=True) -> None:
+        block = s.Dungeon[self.Dy][self.Dx]['room'][self.y][self.x]
+
         self.face = getFace(self.x, bfx, self.face)
         s.Dungeon[self.Dy][self.Dx]['room'][bfy][bfx] = self.stepped
+
         if saveStepped:
-            self.stepped = s.Dungeon[self.Dy][self.Dx]['room'][self.y][self.x]\
-                    if s.Dungeon[self.Dy][self.Dx]['room'][self.y][self.x]['id']\
+            self.stepped = block\
+                    if block['id']\
                     in s.monsterInteractableBlocks['steppable']['maintainable']\
+                else block['blockData']\
+                    if block.get('blockData', False)\
                 else obj('-bb', '0')
             
         s.Dungeon[self.Dy][self.Dx]['room'][self.y][self.x] = obj('-be', str(self.id), block=iset(self.icon), hashKey=self.hashKey)
@@ -407,6 +412,8 @@ class Unrest(Enemy):
                                     super().step(bfy, bfx, saveStepped=False)
 
                                 time.sleep(self.coolTimes.rush)
+                            
+                            play("entity", "enemy", "unrest", "crash")
 
                         elif self.y == s.y:
                             a = 0 if self.x<s.x else 1
@@ -430,6 +437,8 @@ class Unrest(Enemy):
                                     super().step(bfy, bfx, saveStepped=False)
 
                                 time.sleep(self.coolTimes.rush)
+                            
+                            play("entity", "enemy", "unrest", "crash")
 
                     else:
                         if randrange(0,2):

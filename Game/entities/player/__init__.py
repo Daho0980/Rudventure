@@ -1,3 +1,4 @@
+from doctest import debug
 import time    ; import curses; import threading
 from   itertools                import chain
 from   random                   import randrange, choice
@@ -59,7 +60,7 @@ def set() -> None:
         s.MFairWind = 90
         
     else:
-        s.hp     = 3
+        s.hp     = 10
         s.df     = 5
         s.atk    = 1
         s.hunger = 2000
@@ -83,7 +84,8 @@ def start() -> None:
             len(s.Dungeon[s.Dy][s.Dx]['room'][0])
         ]
     )
-    s.face   = 'n'
+    s.face         = 'n'
+    s.steppedBlock = s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x]
     s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x] = obj('-bb', '300', block=iset(s.ids[300]))
 
 def damage(block:str="?", atk:int=1) -> tuple:
@@ -212,8 +214,9 @@ def orbEvent(Size:int, Type:int) -> None:
         case 4: xpSystem.getXP(point)
 
 
+# region main
 def move(Dir, distance:int) -> None:
-    roomGrid:dict = s.Dungeon[s.Dy][s.Dx]['room']
+    roomGrid = s.Dungeon[s.Dy][s.Dx]['room']
 
     bfy, bfx   = s.y, s.x
     ty, tx     = s.y, s.x
@@ -410,8 +413,6 @@ def move(Dir, distance:int) -> None:
     elif blockID == 27:
         sound = ("player", "interaction", "step", "blood")
 
-        s.steppedBlock = block['nbt']['blockData']
-
         if block['nbt']['stack'] > 2:
             split = randrange(1, 4)
             event.bleeding(split, False)
@@ -472,14 +473,22 @@ def move(Dir, distance:int) -> None:
 
     s.y, s.x                                = ty, tx
     s.Dungeon[bfDy][bfDx]['room'][bfy][bfx] = s.steppedBlock
-    s.steppedBlock = s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x]\
-            if s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x]['id'] in s.interactableBlocks['steppable']['maintainable']\
+
+    block          = s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x]
+    s.steppedBlock = block\
+            if block['id'] in s.interactableBlocks['steppable']['maintainable']\
+        else block['blockData']\
+            if block.get('blockData', False)\
         else obj('-bb', '0')
+    
     s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x] = obj('-bb', '300', block=iset(s.ids[300]))
+
     if sound: play(*sound)
 
     statusEffect.tickProgress("back")
 
+
+# region extended
 def observe(Dir) -> None:
     roomGrid:dict = s.Dungeon[s.Dy][s.Dx]['room']
 
@@ -501,7 +510,7 @@ def observe(Dir) -> None:
     data = iWin.dataRegistration(
         block['id'],
         s.types[block['type']],
-        block
+        **block
     )
 
     if not data:

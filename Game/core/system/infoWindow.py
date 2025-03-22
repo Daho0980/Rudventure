@@ -1,5 +1,8 @@
 from .dataLoader                 import elm
+from Assets.data                 import totalGameStatus as s
+from Assets.data.color           import cColors         as cc
 from Assets.data.totalGameStatus import infoWindow
+from .logger                     import addLog
 
 
 def add(icon       :str       ,
@@ -43,8 +46,26 @@ def _getBlockInfo(fileName:str, target:str, Type:str):
         f"Assets/data/block/blockInfo/{fileName}.json",
         target, Type
     )
-    
-def dataRegistration(blockId:str, blockType:str, blockData:dict) -> dict:
+
+def _dicttoStr(data   :dict     ,
+               depth  :int =0   ,
+               indent :int =2   ,
+               lineLim:int =50  ,
+               raw    :bool=False) -> str|list:
+    output = []
+
+    for key, value in data.items():
+        trigger = isinstance(value, dict)
+        overCut = "..." if ((depth*indent)+len(str(value))+len(str(key))+3)>lineLim and not trigger else ''
+
+        output.append(f"{(' '*indent)*depth}{key} : {cc['fg']['Y']if key!='block'else''}{"" if trigger else value}{overCut}{cc['end']}")
+
+        if trigger:
+            output.extend(_dicttoStr(value, depth=depth+1, lineLim=lineLim, raw=True))
+
+    return output if raw else '\n'.join(output)
+
+def dataRegistration(blockId:str, blockType:str, **blockData) -> dict:
     try:
         output              = {}
         output["icon"]      = blockData['block']
@@ -58,7 +79,13 @@ def dataRegistration(blockId:str, blockType:str, blockData:dict) -> dict:
                 output["explanation"] = _getBlockInfo(blockType, f"{blockId}.explanation.observe", "string")
         except: output["explanation"] = _getBlockInfo(blockType, f"{blockId}.explanation.observe", "string")
 
+        output['explanation'] = output['explanation']+(f"\n\n블록 데이터 :\n{_dicttoStr(blockData, depth=1)}"if s.debug else "") # type: ignore
+
         if False in list(output.values()): return False # type: ignore
         else:                              return output
 
-    except: return False # type: ignore
+    except Exception as e:
+        if s.debug:
+            addLog(f"데이터 수집 도중 에러가 발생했습니다 : {cc['fg']['R']}{e}{cc['end']}", colorKey='R')
+
+        return False # type: ignore

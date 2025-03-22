@@ -16,9 +16,9 @@ def main(effect, sequence):
                 block=iset(s.bloodIcon[1]),
                 nbt  ={
                     "link"      : False,
-                    "stack"     : 1,
-                    "blockData" : s.steppedBlock
-                }
+                    "stack"     : 1
+                },
+                blockData=s.steppedBlock
             )
         
         case 600:

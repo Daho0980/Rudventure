@@ -2,11 +2,12 @@
 import time ; import curses ; import random
 from   cusser                 import Cusser
 
-from .entities           import entity, player
+from .                   import _main_extended as ME
+from .entities           import player
 from .entities.player    import checkStatus           as cs
 from .pages              import mainSettings, mainMenu
 from .utils.advanced     import DungeonMaker, keyHandler
-from .utils.graphics     import escapeAnsi, anchor, renderer
+from .utils.graphics     import escapeAnsi, anchor, renderer, stage
 from .utils.modules      import Textbox, cSelector
 from .utils.system       import roomManager
 from .utils.system.sound import play
@@ -26,9 +27,6 @@ from .core.system import (
 )
 from .utils.advanced.Rudconverter import (
     save
-)
-from .utils.graphics import (
-    stage
 )
 from .utils.system.roomManager.interactions import (
     randPlaceOrb
@@ -135,12 +133,8 @@ f"""
             exit(0 if theChoice-1 else 1)
 
         else:
-            dp.load(
-                large_image="rudventure-icon1",
-                small_image=s.playerColor[1],
-                details    =f"나락",
-                state      ="더 깊은 곳으로 이동 중...",
-            ); dp.update()
+            dp.quickLoad('goDeeper')
+            dp.update()
 
             play("system", "clear")
             anchor(stdscr,
@@ -166,12 +160,8 @@ f"""
 curses.noecho()
 curses.curs_set(0)
 
-dp.load(
-    large_image="rudventure-in_settings1",
-    details    ="메인 메뉴",
-    state      ="탐색 중",
-    start      =True
-); dp.update()
+dp.quickLoad('inMenu')
+dp.update()
 
 mainMenu.main(stdscr)
 
@@ -199,7 +189,7 @@ keyHandler.add()
 from Game.core.system import (
     frameCounter,
     monologue
-) # 지우면 명령 불복종 및 반동으로 간주함
+) # 스레드 연결
 
 if not dp.isConnected:
     logger.addLog(
@@ -210,12 +200,8 @@ if not dp.isConnected:
 else: logger.addLog(f"포트는 {cc['fg']['L']}{s.port}{cc['end']}입니다.", colorKey='Y')
 
 while s.main:
-    dp.load(
-        large_image="rudventure-icon1",
-        small_image=s.playerColor[1],
-        details    ="메인 메뉴",
-        state      ="나락 입장 중"
-    ); dp.update()
+    dp.quickLoad('enter')
+    dp.update()
     
     if s.bodyPreservationMode and s.gameRecord: s.entitySaveTrigger = True
 
@@ -227,43 +213,15 @@ while s.main:
     player.start()
     randPlaceOrb()
 
-    if not s.stage and not s.isLoadfromBody and s.name.lower() in ["업로드", "upload"]:
-        entity.addAnimal(
-            200, 10, 1, 3, 6,
-            name     ="구름이",
-            color    =[cc['fg']['W'],'W'],
-            friendly =True,
-            MCBF     =True,
-            SICR     =True,
-            extraData={"loyalty":10}
-        )
-    elif s.isLoadfromBody and not l.isSaveLoaded:
-        l.isSaveLoaded = True
-        entity.loadEntities()
+    ME.spawnCompanion(stdscr)
     
     stage.showStage(stdscr,
         f"지 하   {cc['fg']['R']}-{s.stage+1}{cc['end']}   층"
-        )
-
-    if not s.stage:
-        player.say(
-            random.choice(
-                c.loadsaveStart\
-                    if  s.bodyPreservationMode
-                    and s.isLoadfromBody\
-                else c.startWithCowardmode\
-                    if s.bodyPreservationMode\
-                else c.start
-            )
-        )
-
-    dp.load(
-        large_image="rudventure-in_battle1",
-        small_image=s.playerColor[1],
-        details    ="나락",
-        state      =f"제 -{s.stage+1}층",
-        start      =True
     )
+
+    ME.startComment()
+
+    dp.quickLoad('inDungeon')
     dp.update()
 
     if s.entitySaveTrigger:

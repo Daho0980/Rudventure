@@ -21,71 +21,79 @@ from Game.entities.player.statusEffect import (
 )
 
 
-def setIconColor() -> None:
-    s.ids[4]   = f"{cc['fg']['Y']}É{cc['end']}"
-    s.ids[5]   = f"{cc['fg']['R']}F{cc['end']}"
-    s.ids[7]   = f"{cc['fg']['R']}X{cc['end']}"
-    s.ids[8]   = f"{cc['fg']['B1']}{md.cMarkdown(1)}O{cc['end']}"
-    s.ids[9]   = f"{cc['fg']['B1']}{md.cMarkdown(1)}o{cc['end']}"
-    s.ids[10]  = f"{cc['fg']['R']}o{cc['end']}"
-    s.ids[11]  = f"{cc['fg']['B1']}q{cc['end']}"
-    s.ids[12]  = f"{cc['fg']['L']}v{cc['end']}"
-    s.ids[13]  = f"{cc['fg']['Y']}o{cc['end']}"
-    s.ids[14]  = f"{cc['fg']['F']}ø{cc['end']}"
-    s.ids[15]  = f"{cc['fg']['R']}O{cc['end']}"
-    s.ids[16]  = f"{cc['fg']['B1']}Q{cc['end']}"
-    s.ids[17]  = f"{cc['fg']['L']}V{cc['end']}"
-    s.ids[18]  = f"{cc['fg']['Y']}O{cc['end']}"
-    s.ids[19]  = f"{cc['fg']['F']}Ø{cc['end']}"
+def _setIconColor(func):
+    def _w(*args):
+        func(*args)
 
-    s.ids[21] = f"{cc['fg']['O']}☷{cc['end']}"
+        s.ids[4]   = f"{cc['fg']['Y']}É{cc['end']}"
+        s.ids[5]   = f"{cc['fg']['R']}F{cc['end']}"
+        s.ids[7]   = f"{cc['fg']['R']}X{cc['end']}"
+        s.ids[8]   = f"{cc['fg']['B1']}{md.cMarkdown(1)}O{cc['end']}"
+        s.ids[9]   = f"{cc['fg']['B1']}{md.cMarkdown(1)}o{cc['end']}"
+        s.ids[10]  = f"{cc['fg']['R']}o{cc['end']}"
+        s.ids[11]  = f"{cc['fg']['B1']}q{cc['end']}"
+        s.ids[12]  = f"{cc['fg']['L']}v{cc['end']}"
+        s.ids[13]  = f"{cc['fg']['Y']}o{cc['end']}"
+        s.ids[14]  = f"{cc['fg']['F']}ø{cc['end']}"
+        s.ids[15]  = f"{cc['fg']['R']}O{cc['end']}"
+        s.ids[16]  = f"{cc['fg']['B1']}Q{cc['end']}"
+        s.ids[17]  = f"{cc['fg']['L']}V{cc['end']}"
+        s.ids[18]  = f"{cc['fg']['Y']}O{cc['end']}"
+        s.ids[19]  = f"{cc['fg']['F']}Ø{cc['end']}"
 
-    s.ids[26] = f"{cc['fg']['M']}X{cc['end']}"
-    s.ids[27] = f"{cc['bg']['R']}░{cc['end']}"
+        s.ids[21] = f"{cc['fg']['O']}☷{cc['end']}"
 
-    s.ids[300] = f"{cc['fg']['L']}@{cc['end']}" if s.ids[300]=='@'else s.ids[300]
-    s.ids[301] = f"{cc['fg']['L']}&{cc['end']}"
+        s.ids[26] = f"{cc['fg']['M']}X{cc['end']}"
+        s.ids[27] = f"{cc['bg']['R']}░{cc['end']}"
 
-    s.ids[400] = f"{cc['fg']['A']}Y{cc['end']}"
-    s.ids[401] = f"{cc['fg']['F']}Y{cc['end']}"
+        s.ids[300] = f"{cc['fg']['L']}@{cc['end']}" if s.ids[300]=='@'else s.ids[300]
+        s.ids[301] = f"{cc['fg']['L']}&{cc['end']}"
 
-    s.ids[501] = f"{cc['fg']['R']}H{cc['end']}"
-    s.ids[502] = f"{cc['fg']['B1']}U{cc['end']}"
+        s.ids[400] = f"{cc['fg']['A']}Y{cc['end']}"
+        s.ids[401] = f"{cc['fg']['F']}Y{cc['end']}"
 
-    s.ids[900] = f"{cc['fg']['G1']};{cc['end']}"
+        s.ids[501] = f"{cc['fg']['R']}H{cc['end']}"
+        s.ids[502] = f"{cc['fg']['B1']}U{cc['end']}"
 
-    s.bloodIcon = {
-        5 : f"{cc['fg']['R']}██{cc['end']}",
-        4 : f"{cc['fg']['R']}█▓{cc['end']}",
-        3 : f"{cc['fg']['R']}▓▒{cc['end']}",
-        2 : f"{cc['fg']['R']}▒░{cc['end']}",
-        1 : f"{cc['fg']['R']}░{cc['end']}" ,
-    }
+        s.ids[900] = f"{cc['fg']['G1']};{cc['end']}"
 
-def _setFrame():
-    s.frameRate = [1,30,60,120][
-        cSelector.main(
-        f"{UIP.LOGO}\n를 시작하기 전에, 프레임을 설정해주세요",
-        {
-            (cc['fg']['R'], "1프레임")  : "도전자를 위한 설정입니다.\n당신의 예측 기술을 뽐내보세요!"             ,
-            "30프레임"                  : "권장 수준보다 더 낮은 프레임 설정입니다.\n이전에 표준 설정이기도 했죠.",
-            "60프레임"                  : "권장 수준보다 낮은 프레임 설정입니다."                                 ,
-            "120프레임(권장)"           : "러드벤처를 플레이하기 위한 권장 설정입니다."
-        },
-        [1,0,255,10],
-        '@)',
-        maxLine=2,
-        setPos =[1, 1]
-        )-1
-    ]
+        s.bloodIcon = {
+            5 : f"{cc['fg']['R']}██{cc['end']}",
+            4 : f"{cc['fg']['R']}█▓{cc['end']}",
+            3 : f"{cc['fg']['R']}▓▒{cc['end']}",
+            2 : f"{cc['fg']['R']}▒░{cc['end']}",
+            1 : f"{cc['fg']['R']}░{cc['end']}" ,
+        }
 
+    return _w
+
+def _setFrame(func):
+    def _w(*args):
+        s.frameRate = [1,30,60,120][
+            cSelector.main(
+            f"{UIP.LOGO}\n를 시작하기 전에, 프레임을 설정해주세요",
+            {
+                (cc['fg']['R'], "1프레임")  : "도전자를 위한 설정입니다.\n당신의 예측 기술을 뽐내보세요!"             ,
+                "30프레임"                  : "권장 수준보다 더 낮은 프레임 설정입니다.\n이전에 표준 설정이기도 했죠.",
+                "60프레임"                  : "권장 수준보다 낮은 프레임 설정입니다."                                 ,
+                "120프레임(권장)"           : "러드벤처를 플레이하기 위한 권장 설정입니다."
+            },
+            [1,0,255,10],
+            '@)',
+            maxLine=2,
+            setPos =[1, 1]
+            )-1
+        ]
+        s.frame     = (1/s.frameRate)-(0.0017/(s.frameRate//60 or 1))
+        s.currFrame = s.frame
+
+        func(*args)
+    
+    return _w
+
+@_setFrame
+@_setIconColor
 def main(stdscr) -> None:
-    if not s.frameRate:
-        _setFrame()
-
-    s.frame     = (1/s.frameRate)-(0.0017/(s.frameRate//60 or 1))
-    s.currFrame = s.frame
-
     stdscr.clear()
     nameChangeCount = 0
     reTryCount      = 0
@@ -220,7 +228,6 @@ f"이름이 {cc['fg']['R']}{md.cMarkdown([2, 4])}없거나{cc['end']} \
             colorKey='Y'
         )
 
-    setIconColor()
     sound.play("soundEffects", "fall", block=True)
     if s.name.lower() in ["레포", "repo"]:
         sound.play("soundEffects", "repo", "vineBoom")
@@ -228,21 +235,6 @@ f"이름이 {cc['fg']['R']}{md.cMarkdown([2, 4])}없거나{cc['end']} \
         sound.echo("soundEffects", "repo", "scream", feedback=55)
         time.sleep(2.8)
 
-def presetted() -> None:
-    if not s.frameRate:
-        _setFrame()
-
-    s.frame     = (1/s.frameRate)-(0.0017/(s.frameRate//60 or 1))
-    s.currFrame = s.frame
-
-    setIconColor()
-    addLog(
-        choice([
-            "ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ",
-            f"아, 당신이군요ㅋㅋㅋ {cc['fg']['L']}자신감{cc['end']}이 {cc['fg']['R']}너무 없어서{cc['end']} 돌아오신 줄도 몰랐네요.",
-            f"그래도 육신을 불러오는 방법은 아시는 것 같아 다행이네요. {cc['fg']['L']}겁쟁이 씨{cc['end']}.",
-            f"육신 관리소에 몇 구나 들어차 있는지는 모르겠다만, 그게 {cc['fg']['Y']}마지막{cc['end']}이라면 좋겠네요 ;)",
-            f"아, 벌써 죽어서 돌아오신 건가요? 잠깐 잠이나 자려고 했는데... 이렇게나 {cc['fg']['A']}{md.cMarkdown([2, 4])}빠르게{cc['end']} 오실 줄은 몰랐네요."
-        ]),
-        colorKey='Y'
-    )
+@_setFrame
+@_setIconColor
+def presetted() -> None: pass

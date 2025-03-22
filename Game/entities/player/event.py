@@ -149,10 +149,10 @@ def _bloodOverflow(y:int, x:int, stack:int, pos=None):
                         '-bb', '27',
                         block=iset(s.bloodIcon[currStack]),
                         nbt  ={
-                            "link"      : True,
-                            "stack"     : currStack,
-                            "blockData" : target
-                        }
+                            "link"  : True,
+                            "stack" : currStack,
+                        },
+                        blockData = target
                     )
 
                 if stack > 0:
@@ -209,8 +209,8 @@ def bleeding(hp:int, multiply:bool=True) -> None:
                 '-bb', '27',
                 block=iset(s.bloodIcon[stack]),
                 nbt  ={
-                    "link"      : True,
-                    "stack"     : stack,
-                    "blockData" : roomGrid[y][x]
-                }
+                    "link"  : True,
+                    "stack" : stack,
+                },
+                blockData = roomGrid[y][x]
             )

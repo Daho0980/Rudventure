@@ -291,7 +291,8 @@ TextBox.Line_\n저주 : {cc['fg']['F']}{s.lvl}{cc['end']}, {cc['fg']['F']}{int((
             alwaysReturnBox=False,
             sideText       =f"{cc['fg']['Y']}{'━'*(timeGauge)}{cc['fg']['G1']}{'━'*(maxLen-timeGauge)}{cc['end']}",
             sideTextPos    =["under", "middle"],
-            coverSideText  =True
+            coverSideText  =True,
+            coverColor=cc['end']
         ).split('\n')
 
         Display.append(anchor(stdscr, '\n'.join(infoWindowText), y=2, x=int(x/2)-int(len(infoWindowText[0])/2), returnStr=True))

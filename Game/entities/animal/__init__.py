@@ -167,12 +167,16 @@ class Animal:
         addLog(f"{s.lightName}{pp(s.name,'sub',True)} {self.color}{self.name}{cc['end']}({self.icon}) 에 의해 {cc['fg']['R']}{atk}{cc['end']}만큼의 피해를 입었습니다!", colorKey='R')
 
     def step(self, bfy:int, bfx:int) -> None:
+        block = s.Dungeon[self.Dy][self.Dx]['room'][self.y][self.x]
+
         self.face = getFace(self.x, bfx, self.face)
         s.Dungeon[self.Dy][self.Dx]['room'][bfy][bfx] = self.stepped
-        self.stepped = s.Dungeon[self.Dy][self.Dx]['room'][self.y][self.x]\
-            if s.Dungeon[self.Dy][self.Dx]['room'][self.y][self.x]['id']\
+        self.stepped = block\
+                if block['id']\
                 in s.monsterInteractableBlocks['steppable']['maintainable']\
-            else obj(s.path['blockData']['block'], '0')
+            else block['blockData']\
+                if block.get('blockData', False)\
+            else obj('-bb', '0')
         
         s.Dungeon[self.Dy][self.Dx]['room'][self.y][self.x] = {
             "block"   : iset(f"{self.color}{self.icon}{cc['end']}", Type=self.face),
