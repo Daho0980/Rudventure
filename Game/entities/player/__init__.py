@@ -1,4 +1,3 @@
-from doctest import debug
 import time    ; import curses; import threading
 from   itertools                import chain
 from   random                   import randrange, choice
