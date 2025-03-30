@@ -17,11 +17,11 @@ cd desktop; git clone https://github.com/Daho0980/Rudventure.git
 ```
 
 ## TODO   
-- [ ] npc   
 - [ ] 더 많은 몬스터들   
-- [ ] 미궁 데이터 구성 방식 변경   
 - [ ] 아이템 및 아이템 시스템   
 - [ ] 필드 매니저   
+- [ ] npc   
+- [ ] 미궁 데이터 구성 방식 변경   
 - [ ] 보스   
 - [ ] 튜토리얼   
 - [ ] 방 장식품(항아리, 바닥 장식 등등...)   
@@ -30,4 +30,4 @@ cd desktop; git clone https://github.com/Daho0980/Rudventure.git
 - [ ] 요리 시스템   
 - [ ] 수집품 시스템(게임에서 죽어도 유지, 메뉴에서 볼 수 있음)   
 - [ ] 육신 보존 모드 개편(모드 활성화 시 `스테이지 클리어 시 저장`이 아닌 `이벤트 방에서 육신 저장터가 생성`됨)
-- [ ] Windows 지원
+- [ ] Windows 지원   
