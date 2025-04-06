@@ -8,22 +8,22 @@ from Game.utils.system.block     import iset
 from Game.utils.system.sound     import play
 
 
-def hitted(y:int, x:int, icon:str, ID:int, hashKey:str) -> None:
+def hitted(y:int, x:int, icon:str, ID:str, tag:str) -> None:
     roomGrid = s.Dungeon[s.Dy][s.Dx]['room']
 
     roomGrid[y][x] = obj(
-        '-be', '-1',
+        '-be', 'invincibleEntity',
         block=iset(
             f"{cc['fg']['R']}{escapeAnsi(icon)}{cc['end']}"
         ),
-        hashKey=hashKey
+        tag=tag
     )
     time.sleep(0.03)
 
     roomGrid[y][x] = obj(
-        '-be', str(ID),
-        block  =iset(icon),
-        hashKey=hashKey
+        '-be', ID,
+        block=iset(icon),
+        tag  =tag
     )
 
 def spawn(y:int, x:int, icon:str) -> None:
@@ -32,27 +32,25 @@ def spawn(y:int, x:int, icon:str) -> None:
     play("entity", "enemy", "charge")
     for i in ['. ', 'x ', 'X ']:
         roomGrid[y][x] = obj(
-            '-bb', '-1',
+            '-bb', 'invincibleBlock',
             block=iset(
                 f"{cc['fg']['R']}{i}{cc['end']}"
             )
-        )
-        time.sleep(0.08)
+        ); time.sleep(0.08)
 
         roomGrid[y][x] = obj(
-            '-bb', '-1',
+            '-bb', 'invincibleBlock',
             block=iset(
                 f"{cc['fg']['W']}{i}{cc['end']}"
             )
-        )
-        time.sleep(0.08)
+        ); time.sleep(0.08)
 
     play("entity", "enemy", "shoot")
     roomGrid[y][x] = obj(
-        '-bb', '-1',
+        '-bb', 'invincibleBlock',
         block=iset(
             f"{cc['fg']['W']}{escapeAnsi(icon)}{cc['end']}"
         )
     )
     time.sleep(0.05)
-    roomGrid[y][x] = obj('-bb', '-1', block=icon)
+    roomGrid[y][x] = obj('-be', 'invincibleEntity', block=icon)

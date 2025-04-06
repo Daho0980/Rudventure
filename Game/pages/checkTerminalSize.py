@@ -12,7 +12,7 @@ def main(stdscr) -> None:
     if s.checkTerminalSize:
         scr = list(map(lambda l:False if l[0]<s.sss['minimum'][l[1]]else True, zip(stdscr.getmaxyx(),(0,1))))
 
-        if sum(scr)<=1:
+        if sum(scr) <= 1:
             match clc.main(
                 Textbox.TextBox(
                     f"{cc['fg']['R']}무, 무슨?!{cc['end']}",

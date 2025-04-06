@@ -1,8 +1,8 @@
 import time    ; import curses; import threading
-from   itertools                import chain
-from   random                   import randrange, choice
+from   random                   import randrange, choices, choice
 
 from .                           import statusEffect
+from Assets.data.permissions     import Player      as perm
 from Assets.data.color           import cColors     as cc
 from functions.grammar           import pstpos      as pp
 from Game.core.system            import infoWindow  as iWin
@@ -13,7 +13,7 @@ from Game.utils.system.block     import iset
 from Game.utils.system.sound     import play
 
 from Assets.data import (
-    totalGameStatus as s,
+    totalGameStatus as s  ,
     percentage      as per,
     comments        as c
 )
@@ -85,7 +85,7 @@ def start() -> None:
     )
     s.face         = 'n'
     s.steppedBlock = s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x]
-    s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x] = obj('-bb', '300', block=iset(s.ids[300]))
+    s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x] = obj('-be', 'player1', block=iset(s.eids['player1']))
 
 def damage(block:str="?", atk:int=1) -> tuple:
     sound = ("player", "hit")
@@ -119,50 +119,59 @@ def damage(block:str="?", atk:int=1) -> tuple:
     return sound
 
 def attack(ty, tx, attackSound:tuple=("player", "slash")) -> None:
-    s.hitPos['pos'].append([ty, tx])
+    s.hitPos['pos'] .append([ty, tx])
     s.hitPos['data'].append(["player", s.atk, attackSound])
     time.sleep(0.001)
-    s.hitPos['pos'].remove([ty, tx])
+    s.hitPos['pos'] .remove([ty, tx])
     s.hitPos['data'].remove(["player", s.atk, attackSound])
 
-def itemEvent(y:int, x:int, face:str) -> None:
-    orbPer = randrange(1, 101)
-
-    if   0  < orbPer <= 45: typeIndex = "hunger"
-    elif 45 < orbPer <= 70: typeIndex = "hp"
-    elif 70 < orbPer <= 80: typeIndex = "def"
-    elif 80 < orbPer <= 85: typeIndex = "atk"
-    else                  : typeIndex = "exp"
-
-    orbId = s.orbIds["type"][typeIndex][randrange(0, 2)]
+def orbBoxEvent(y:int, x:int, face:str) -> None:
+    orbId = f"{choices(
+        ('hg', 'hp', 'df', 'atk', 'cs'),
+        weights=(45, 15, 10, 5, 15),
+        k      =1
+    )[0]}Orb{choices(
+        ('S', 'B'),
+        weights=(60, 40),
+        k      =1
+    )[0]}"
 
     s.Dungeon[s.Dy][s.Dx]['room'][y][x] = obj(
-        '-bb', str(orbId),
-        block=iset(s.ids[orbId], Type=face)
+        '-bb', orbId,
+        block=iset(s.bids[orbId], Type=face)
     )
         
-def orbEvent(Size:int, Type:int) -> None:
-    orbData = [
-    #    s   L
-        [1 , 3  ],
-        [1 , 2  ],
-        [1 , 2  ],
-        [50, 100],
-        [1 , 5  ]
-    ]
+def orbEvent(ID:str) -> None:
+    orbData = {
+        "S" : {
+            "hp"  : 1,
+            "df"  : 1,
+            "atk" : 1,
+            "hg"  : 50,
+            "cs"  : 1
+        },
+        "B" : {
+            "hp"  : 3,
+            "df"  : 2,
+            "atk" : 2,
+            "hg"  : 75,
+            "cs"  : 5
+        }
+    }
 
-    point   = orbData[Type][Size]
+    S, T    = ID[-1], ID[:-4]
+    point   = orbData[S][T]
     comment = randrange(1,101) <= per.getOrb
-    match Type:
-        case 0:
+    match T:
+        case 'hp':
             if s.hp == s.Mhp:
-                say(choice(c.getOrb['hp']['hpTooOver'][Size]))
+                say(choice(c.getOrb['hp']['hpTooOver'][S]))
 
                 return
                 
             elif s.hp+point > s.Mhp:
                 s.hp = s.Mhp
-                say(choice(c.getOrb['hp']['hpOver'][Size]))
+                say(choice(c.getOrb['hp']['hpOver'][S]))
 
                 return
             
@@ -174,18 +183,18 @@ def orbEvent(Size:int, Type:int) -> None:
                     c.getOrb['hp']['hpFull'
                             if s.hp == s.Mhp
                         else ['notHpLow','hpLow'][s.hpLow]
-                    ][Size]
+                    ][S]
                 ))
                 
-        case 1:
+        case 'df':
             if s.df == s.Mdf:
-                say(choice(c.getOrb['df']['dfTooOver'][Size]))
+                say(choice(c.getOrb['df']['dfTooOver'][S]))
 
                 return
 
             if s.df+point > s.Mdf:
                 s.df = s.Mdf
-                say(choice(c.getOrb['df']['dfOver'][Size]))
+                say(choice(c.getOrb['df']['dfOver'][S]))
 
                 return
 
@@ -194,23 +203,23 @@ def orbEvent(Size:int, Type:int) -> None:
 
             if comment:
                 if s.df == s.Mdf:
-                    say(choice(c.getOrb['df']['dfFull'][Size]))
+                    say(choice(c.getOrb['df']['dfFull'][S]))
 
                 elif s.df == point:
-                    say(choice(c.getOrb['df']['restorationed'][Size]))
+                    say(choice(c.getOrb['df']['restorationed'][S]))
 
-        case 2:
+        case 'atk':
             s.atk += point
             if comment:
                 say(choice(
                     c.getOrb['atk']['lowAtk'
                             if s.atk < s.stage
                         else 'hiAtk'
-                    ][Size]
+                    ][S]
                 ))
-        case 3: s.hunger += point
+        case 'hg': s.hunger += point
 
-        case 4: xpSystem.getXP(point)
+        case 'cs': xpSystem.getXP(point)
 
 
 # region main
@@ -235,21 +244,23 @@ def move(Dir, distance:int) -> None:
     s.hunger -= 1
 
     sound   = ("player", "move")
-    block   = roomGrid[ty][tx]
-    blockID = block['id']
-
-    if blockID == -1: ty, tx = bfy, bfx
-
-    if blockID in [1, 3]:
-        sound = damage(block['block'])
-
+    
+    # accessibility
+    if not perm.data[roomGrid[ty][tx]['id']] & (perm.STEP|perm.INTERACTION|perm.ENTITY):
         ty, tx     = bfy, bfx
         s.Dy, s.Dx = bfDy, bfDx
 
-    elif blockID in s.enemyIds+s.animalIds:
+    roomGrid = s.Dungeon[s.Dy][s.Dx]['room']
+    block    = roomGrid[ty][tx]
+    blockID  = block['id']
 
-        if block['hashKey'] in s.friendlyEntity:
+    # entity action
+    if perm.data[blockID]&perm.ENTITY:
+
+        if  block.get('tag', False)\
+        and block['tag'] in s.friendlyEntity:
             sound = ("player", "hit")
+
             addLog(
                 f"{cc['fg']['L']}우호적인 엔티티{cc['end']}는 {cc['fg']['R']}공격{cc['end']}할 수 없습니다!",
                 colorKey='L'
@@ -258,29 +269,30 @@ def move(Dir, distance:int) -> None:
         else:
             sound = None
 
-            s.target['hashKey'] = block['hashKey']
+            if block.get('tag', False):
+                s.target['tag'] = block['tag']
+
             attack(ty, tx)
-        
+
+    # block interaction
+    if blockID == 'wall':
+        sound = damage(block['block'])
+
         ty, tx     = bfy, bfx
         s.Dy, s.Dx = bfDy, bfDx
 
-    elif blockID == 4:
+    elif blockID == 'orbBox':
         sound = ("object", "itemBox", "open")
-        itemEvent(ty, tx, block['nbt']['face'])
-        ty, tx = bfy, bfx
+        orbBoxEvent(ty, tx, block['nbt']['face'])
 
-    elif blockID in chain(s.orbIds["size"]["smallOne"], s.orbIds["size"]["bigOne"]):
-        sound = ("player", "interaction", "repo", "nom")if s.name.lower()in("repo","레포")else("player", "getItem")
-        orbId = blockID
-        orbEvent(
-            Size=1 if orbId in s.orbIds['size']['bigOne'] else 0,
-            Type=int(list(chain(*s.orbIds['type'].values())).index(orbId)/2)
-        )
+    elif "Orb" in blockID:
+        sound = ("player", "interaction", "repo", "nom")if s.playerIdentity=='repo'else("player", "getItem")
+        orbEvent(blockID)
 
-    elif blockID == 2:
+    elif blockID == 'door':
         sound = ("object", "door", "open")
 
-        s.Dungeon[s.Dy][s.Dx]['room'][ty][tx]["id"] = 2
+        s.Dungeon[s.Dy][s.Dx]['room'][ty][tx] = obj('-bb', 'door')
 
         # ┏>|y, x| : U->D D->U L->R R->L
         pos     = [bfy-ty, bfx-tx]
@@ -322,25 +334,7 @@ def move(Dir, distance:int) -> None:
 
         getRoomData()
 
-    elif blockID == 6:
-        sound = ("object", "box", "move")
-        cy, cx = 0, 0
-        Type   = 1 if Dir in [curses.KEY_LEFT,curses.KEY_RIGHT] else 0
-
-        match Dir:
-            case curses.KEY_UP:    cy = ty-distance
-            case curses.KEY_DOWN:  cy = ty+distance
-            case curses.KEY_LEFT:  cx = tx-distance
-            case curses.KEY_RIGHT: cx = tx+distance
-
-        positions = [[cy, tx], [ty, cx]]
-        if roomGrid[positions[Type][0]][positions[Type][1]]['id'] in s.interactableBlocks['unsteppable']:
-            s.Dy, s.Dx = bfDy, bfDx
-            ty, tx     = bfy, bfx
-
-        else: s.Dungeon[s.Dy][s.Dx]['room'][positions[Type][0]][positions[Type][1]] = obj('-bb', '6')
-
-    elif blockID in (8, 9):
+    elif blockID in ('squishy0', 'squishy1'):
         sound = ("object", "squishy", "squish")
 
         face, count, command = list(s.Dungeon[s.Dy][s.Dx]['room'][ty][tx]['nbt'].values())
@@ -353,10 +347,10 @@ def move(Dir, distance:int) -> None:
                 colorKey='B1'
             )
 
-            BID = 8 if blockID==9 else 9
+            BID = 'squishy0' if blockID=='squishy1' else 'squishy1'
             s.Dungeon[s.Dy][s.Dx]['room'][ty][tx] = obj(
-                '-bb', str(BID),
-                block=iset(s.ids[BID], Type=face),
+                '-bb', BID,
+                block=iset(s.bids[BID], Type=face),
                 nbt={
                     "face"    : face,
                     "count"   : count-1,
@@ -368,40 +362,35 @@ def move(Dir, distance:int) -> None:
 
         ty, tx = bfy, bfx
 
-    elif blockID == 20:
+    elif blockID == 'clayModel':
         data = block["nbt"]
 
         s.Dungeon[s.Dy][s.Dx]['roomIcon'] = ['☷', 'O']
         event.readSign(data["texts"], data["delay"], data["voice"], data["command"])
-        roomGrid[ty][tx] = obj('-bb', '21', nbt={'link' : True})
+        roomGrid[ty][tx] = obj('-bb', 'deadClayModel', nbt={ 'link' : True })
 
-        s.Dy, s.Dx = bfDy, bfDx
-        ty, tx     = bfy, bfx
-
-    elif blockID == 21:
-        sound      = ("player", "interaction", "open")
-        s.Dy, s.Dx = bfDy, bfDx
-        ty, tx     = bfy, bfx
+    elif blockID == 'deadClayModel':
+        sound = ("player", "interaction", "open")
 
         addLog(
             f"당신 앞에는 그저 {cc['fg']['O']}흙더미{cc['end']}가 자리를 지키고 있을 뿐입니다...",
             colorKey='O'
         )
 
-    elif blockID == 22:
+    elif blockID == 'flower':
         if block['nbt']['step']:
             sound       = ("player", "interaction", "step", "flower")
             flowerColor = block['nbt']['color']
 
             for pos in [[ty-1, tx], [ty, tx+1], [ty+1, tx], [ty, tx-1]]:
-                if  not roomGrid[pos[0]][pos[1]]["id"] and\
+                if  roomGrid[pos[0]][pos[1]]["id"]=='floor' and\
                 not randrange(0,3):
                     roomGrid[pos[0]][pos[1]] = obj(
-                        '-bb', '23',
+                        '-bb', 'petal',
                         block=f"{cc['fg'][flowerColor]}. {cc['end']}",
                         nbt  ={'link' : True}
                     ) if block['nbt']['step'] == 1 else obj(
-                        '-bb', '22',
+                        '-bb', 'flower',
                         block=f"{cc['fg'][flowerColor]}{iset(choice(['*',',','.','_']), Type='s')}{cc['end']}",
                         nbt  ={
                             "color" : flowerColor,
@@ -409,30 +398,33 @@ def move(Dir, distance:int) -> None:
                         }
                     )
 
-    elif blockID == 27:
+    elif blockID == 'blood':
         sound = ("player", "interaction", "step", "blood")
 
         if block['nbt']['stack'] > 2:
             split = randrange(1, 4)
             event.bleeding(split, False)
-            statusEffect.addEffect('1', block['nbt']['stack']-split)
+            statusEffect.addEffect('bloodStomping', block['nbt']['stack']-split)
 
-        else: statusEffect.addEffect('1', block['nbt']['stack'])
+        else: statusEffect.addEffect('bloodStomping', block['nbt']['stack'])
 
-    elif blockID == 400:
+    elif blockID == 'normalStatue':
         s.Dy, s.Dx = bfDy, bfDx
 
         if s.lvl<5:
-            sound  = ("player", "hit")
-            ty, tx = bfy, bfx
-            addLog(f"{s.playerColor[0]}당신{cc['end']}은 아직 {cc['fg']['F']}자격{cc['end']}이 주어지지 않았습니다.", colorKey='A')
+            sound = ("player", "hit")
+
+            addLog(
+                f"{s.playerColor[0]}당신{cc['end']}은 아직 {cc['fg']['F']}자격{cc['end']}이 주어지지 않았습니다.",
+                colorKey='A'
+            )
 
         else:
             sound  = ("player", "interaction", "activate")
 
             s.Dungeon[s.Dy][s.Dx]['roomIcon'] = ['Y', 'F']
 
-            if s.lvl>(s.Mlvl/2): commentType = "middle"
+            if s.lvl > (s.Mlvl/2): commentType = "middle"
 
             s.lvl -= 5
             s.Mxp -= 15
@@ -440,9 +432,18 @@ def move(Dir, distance:int) -> None:
             commentType = "Over" if s.lvl>(s.Mlvl/2) else "Under"
 
             if block['nbt']['linkedInteraction']:
-                event.linkedInteraction(ty, tx, 400, {"block" : "same_", "id" : 401, "type" : 0, "nbt":{"link" : True}}, cc['fg']['F'])
-            else: roomGrid[ty][tx] = obj('-bb', '401', nbt={'link':True})
-            ty, tx = bfy, bfx
+                event.linkedInteraction(
+                    ty, tx, 'normalStatue',
+                    {
+                        "block" : "_same",
+                        "id"    : 'cursedStatue',
+                        "type"  : 'block',
+                        "nbt"   : { "link" : True }
+                    },
+                    cc['fg']['F']
+                )
+
+            else: roomGrid[ty][tx] = obj('-bb', 'cursedStatue', nbt={ "link" : True })
 
             addLog(
                 f"{s.playerColor[0]}당신{cc['end']}의 몸에서 {cc['fg']['F']}저주{cc['end']}가 빠져나가는 것이 느껴집니다...",
@@ -450,37 +451,53 @@ def move(Dir, distance:int) -> None:
             )
             say(choice(c.curseDecrease[commentType]))
 
-    elif blockID == 401:
-        sound      = ("player", "hit")
-        ty, tx     = bfy, bfx
-        s.Dy, s.Dx = bfDy, bfDx
-        addLog(f"이 {cc['fg']['A']}신상{cc['end']}은 이미 {cc['fg']['F']}저주{cc['end']}에 물들었습니다...", colorKey='F')
+    elif blockID == 'cursedStatue':
+        sound = ("player", "hit")
 
-    elif blockID in [501, 502]:
+        addLog(
+            f"이 {cc['fg']['A']}신상{cc['end']}은 이미 {cc['fg']['F']}저주{cc['end']}에 물들었습니다...",
+            colorKey='F'
+        )
+
+    elif blockID in ('aorta', 'venaCava'):
         sound = ("player", "getItem")
-        exec(f"{['s.Mhp', 's.Mdf'][blockID-501]}+=3")
 
-    elif blockID == 900:
+        # exec(f"{['s.Mhp', 's.Mdf'][blockID-501]}+=3")
+        exec(f"{'s.Mhp'\
+                if blockID=='aorta'\
+            else 's.Mdf'\
+                if blockID=='venaCava'\
+            else '_'\
+        }+=3")
+
+    elif blockID == 'ashChip':
         sound = ("object", "ashChip", "get")
+
         count = block["nbt"]["count"]
         if count:
             s.ashChip += count
             addLog(f"{cc['fg']['G1']}잿조각{cc['end']}을 {cc['fg']['G1']}{count}{cc['end']}개 얻었습니다.", colorKey='G1')
             cs.ashChipCheck()
 
+    if not perm.data[blockID] & perm.STEP:
+        ty, tx     = bfy, bfx
+        s.Dy, s.Dx = bfDy, bfDx
+
     statusEffect.tickProgress("fore")
 
-    s.y, s.x                                = ty, tx
+    s.y, s.x = ty, tx
+
     s.Dungeon[bfDy][bfDx]['room'][bfy][bfx] = s.steppedBlock
 
     block          = s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x]
-    s.steppedBlock = block\
-            if block['id'] in s.interactableBlocks['steppable']['maintainable']\
-        else block['blockData']\
-            if block.get('blockData', False)\
-        else obj('-bb', '0')
+    if perm.data[block['id']] & perm.STEP:
+        s.steppedBlock = block\
+                if perm.data[blockID]&perm.MAINTAIN\
+            else block['blockData']\
+                if block.get('blockData', False)\
+            else obj('-bb', 'floor')
     
-    s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x] = obj('-bb', '300', block=iset(s.ids[300]))
+    s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x] = obj('-be', 'player1', block=iset(s.eids['player1']))
 
     if sound: play(*sound)
 
@@ -502,30 +519,26 @@ def observe(Dir) -> None:
     block = roomGrid[ty][tx]
     
     match block['id']:
-        case 200:
-            if block['hashKey'] in s.friendlyEntity:
-                block['nbt'] = {"link" : True}
+        case 'cat':
+            if block['tag'] in s.friendlyEntity:
+                block['nbt'] = { "link" : True }
 
-    data = iWin.dataRegistration(
-        block['id'],
-        s.types[block['type']],
-        **block
-    )
+    data = iWin.dataExtraction(block['id'], block['type'], **block)
 
     if not data:
         titleOnly  = True
         targetType = {
-            0 : "블록",
-            1 : "엔티티",
-            2 : "아이템"
+            "block"  : "블록",
+            "entity" : "엔티티",
+            "item"   : "아이템"
         }[block['type']]
 
         data = {
-        "icon"        : f"{cc['fg']['R']}X{cc['end']}",
-        "blockName"   : f"{cc['fg']['R']}해당 {targetType}의 정보가{cc['end']}\n      {cc['fg']['R']}존재하지 않습니다!{cc['end']}",
-        "status"      : "",
-        "explanation" : ""
-        ""
+            "icon"        : f"{cc['fg']['R']}X{cc['end']}",
+            "blockName"   : f"{cc['fg']['R']}해당 {targetType}의 정보가{cc['end']}\n      {cc['fg']['R']}존재하지 않습니다!{cc['end']}",
+            "status"      : "",
+            "explanation" : ""
+            ""
         }
 
     iWin.add(
@@ -533,6 +546,7 @@ def observe(Dir) -> None:
         data['blockName'],
         data['status'],
         data['explanation'],
+
         titleOnly=titleOnly
     )
 
@@ -561,22 +575,21 @@ def say(text:str, TextColor:str="pc") -> None:
 
 def whistle() -> None:
     play("player", "whistle", "wa"if not randrange(0,915) else str(choice([1,2,3,4])))
-    if s.target['hashKey']:
+    if s.target['tag']:
         s.target['attackable'] = True
         s.target['command']    = True
         addLog(
-            f"{cc['fg']['L']}타겟{cc['end']}을 {cc['fg']['R']}집중 공격 대상{cc['end']}으로 설정합니다!",
+            f"{cc['fg']['L']}집중 공격 대상{cc['end']}이 설정되었습니다!",
             colorKey='L'
         )
         
     else: addLog("아무런 일도 일어나지 않았습니다...", colorKey='L')
 
 def getRoomData() -> None:
-    room    = s.Dungeon[s.Dy][s.Dx]
-    lineLen = map(lambda l: len(l), room['room'])
+    room = s.Dungeon[s.Dy][s.Dx]
 
     s.roomData['type'] = room['name']
-    s.roomData['cell'] = sum(lineLen)
+    s.roomData['cell'] = sum(map(lambda l:len(l),room['room']))
 
     s.roomData['maxHeight'] = len(room['room'])
     s.roomData['maxWidth']  = len(max(room['room'], key=len))

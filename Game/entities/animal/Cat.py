@@ -103,14 +103,14 @@ class Cat(Animal):
                  tribe         :str,
                  name          :str,
                  icon          :str,
-                 ID            :int,
+                 ID            :str,
                  color         :str,
                  colorKey      :str,
-                 hashKey       :str,
+                 tag           :str,
                  initFuncParams:list) -> None:
         super().__init__(tribe, name, icon, 
                          ID, color, colorKey,
-                         hashKey, initFuncParams)
+                         tag, initFuncParams)
 
     def start(self,
               setHp  :int       ,
@@ -119,8 +119,10 @@ class Cat(Animal):
               Dx     :int       ,
               y      :list|int  ,
               x      :list|int  ,
+              perm              ,
               loyalty:int     =-1) -> None:
-        super().start(setHp, setAtk, Dy, Dx, y, x)
+        super().start(setHp, setAtk, Dy, Dx, y, x, perm)
+
         self.target        = None
         self.actionPurpose = None
         self.actionCount   = 0
@@ -128,11 +130,7 @@ class Cat(Animal):
         self.stressLvl = 1 # min=1, max=4
         self.stressPt  = 0 # min=0, max=100
 
-        self.loyalty = 0\
-                if loyalty == -1\
-            else 10\
-                if loyalty >= 10\
-            else loyalty # min=0, max=10
+        self.loyalty = min(max(0, loyalty), 10)
         
         self.camouflage = {
             "ash"  : 0,
@@ -153,7 +151,7 @@ class Cat(Animal):
 
         self.voicePath = ("entity", "animal", "cat", "cloudy", "cry", "short")
 
-        self.monsterTargetHashKey = ""
+        self.targetTag = ""
 
         self.ignoreCommand = False
 
@@ -164,13 +162,21 @@ class Cat(Animal):
         roomGrid = s.Dungeon[self.Dy][self.Dx]['room']
 
         play("entity", "animal", "cat", "cloudy", "cry", "long")
-        roomGrid[self.y][self.x] = obj('-bb', '-1', block=f"{cc['fg']['A']}O {cc['end']}");          time.sleep(0.05)
-        roomGrid[self.y][self.x] = obj('-bb', '-1', block=f"{cc['fg']['A']}{self.icon}{cc['end']}"); time.sleep(0.05)
+        roomGrid[self.y][self.x] = obj(
+            '-be', 'invincibleEntity',
+            block=f"{cc['fg']['A']}O {cc['end']}"
+        ); time.sleep(0.05)
 
-        roomGrid[self.y][self.x] = obj('-be', str(self.id),
-            block  =f"{self.color}{self.icon}{cc['end']}",
-            id     =self.id,
-            hashKey=self.hashKey                           )
+        roomGrid[self.y][self.x] = obj(
+            '-be', 'invincibleEntity',
+            block=f"{cc['fg']['A']}{self.icon}{cc['end']}"
+        ); time.sleep(0.05)
+
+        roomGrid[self.y][self.x] = obj('-be', self.id,
+            block=f"{self.color}{self.icon}{cc['end']}",
+            id   =self.id,
+            tag  =self.tag
+        )
         time.sleep(0.05)
         play("entity", "animal", "cat", "teleport")
 
@@ -185,7 +191,7 @@ class Cat(Animal):
 
         if self.stage != s.stage:
             self.setLoyalty()
-            self.stepped = obj('-bb', '0')
+            self.stepped = obj('-bb', 'floor')
             self.stage   = s.stage
 
         else: s.Dungeon[self.Dy][self.Dx]['room'][self.y][self.x] = self.stepped
@@ -199,30 +205,35 @@ class Cat(Animal):
             (s.y+1,s.x  ),
             (s.y,  s.x-1)
         ]:
-            blockID = s.Dungeon[self.Dy][self.Dx]['room'][y][x]['id']
-            if blockID in s.interactableBlocks['steppable']['total']:
+            block = s.Dungeon[self.Dy][self.Dx]['room'][y][x]
+            if self.perm.data[block['id']] & self.perm.STEP:
                 self.y, self.x = y, x
 
-                if blockID in s.interactableBlocks['steppable']['maintainable']:
-                    self.stepped = s.Dungeon[self.Dy][self.Dx]['room'][y][x]
-                else: self.stepped = obj('-bb', '0')
+                self.stepped = block\
+                        if self.perm.data[block['id']]&self.perm.MAINTAIN\
+                    else block['blockData']\
+                        if block.get('blockData', False)\
+                    else obj('-bb', 'floor')
                 
                 if self.stage != s.stage: self.superTeleport()
-                else:                     self.teleport     ()
+                else                    : self.teleport()
+
                 return False
 
         while 1:
-            ry = randrange(1, len(s.Dungeon[self.Dy][self.Dx]['room']   )-1)
-            rx = randrange(1, len(s.Dungeon[self.Dy][self.Dx]['room'][0])-1)
+            DRP = s.Dungeon[self.Dy][self.Dx]['room']
+            ry = randrange(1, s.roomData['maxHeight']-1)
+            rx = randrange(1, s.roomData['maxWidth'] -1)
             
-            if s.Dungeon[self.Dy][self.Dx]['room'][ry][rx]['id']\
-            in s.interactableBlocks['unsteppable']:
+            if not self.perm.data[DRP[ry][rx]['id']] & self.perm.STEP:
                 continue
             self.y, self.x = ry, rx
+
             break
 
         if self.stage != s.stage: self.superTeleport()
-        else:                     self.teleport     ()
+        else                    : self.teleport()
+
         return False
 
     def wait(self) -> None:
@@ -264,30 +275,34 @@ class Cat(Animal):
 
     # region loyalty system
     def setLoyalty(self) -> None:
-        lvl, loy = self.stressLvl, self.loyalty
-        tu, ou = loy-2, loy-1
-        to, oo = loy+2, loy+1
+        lvl    = self.stressLvl
+        tu, ou = self.loyalty-2, self.loyalty-1
+        to, oo = self.loyalty+2, self.loyalty+1
 
-        self.loyalty = 10\
-            if   lvl<=2 and oo>=10\
-            else to if (lvl+self.stressPt)==0\
-            else oo if lvl<=2\
-            else 0  if lvl>2 and ou<=0\
-            else tu if lvl==4\
-            else ou if 2<lvl<4\
+        self.loyalty = 10 if lvl<=2 and oo>=10\
+            else to       if (lvl+self.stressPt)==0\
+            else oo       if lvl<=2\
+            else 0        if lvl>2 and ou<=0\
+            else tu       if lvl==4\
+            else ou       if 2<lvl<4\
+            \
             else self.loyalty
 
     # region action settings
     def setAction(self) -> None:
+        if self.ignoreCommand: self.ignoreCommand = False
+        
         if s.enemyCount:
             self.target        = "enemy"
             self.actionPurpose = "attack"
-            return
-        if self.ignoreCommand: self.ignoreCommand = False
 
-        if  self.stressLvl>=2 and self.stressPt>=50\
+            return
+
+        if  self.stressLvl>=2\
+        and self.stressPt >=50\
         and randrange(0,2):
             self.target = "rest"
+
             return
 
         self.target = choices(
@@ -321,6 +336,7 @@ class Cat(Animal):
                 if sum(self.camouflage.values()) >= 100:
                     self.actionPurpose = "spitOut"
                     self.actionCount   = 1
+                    
                     return
                 
                 self.actionPurpose = choices(
@@ -336,8 +352,7 @@ class Cat(Animal):
                 match self.actionPurpose:
                     case "spinAround": self.actionCount = randrange(1 ,6 )
                     case "move":       self.actionCount = randrange(6 ,21)
-                    case "grooming":   self.actionCount = randrange(10,21)
-                
+                    case "grooming":   self.actionCount = randrange(10,21)     
 
     def resetAction(self) -> None:
         self.target        = None
@@ -374,52 +389,52 @@ class Cat(Animal):
         for term in map(lambda i: i/100, termArray):
             DRP = s.Dungeon[self.Dy][self.Dx]
             DRP['room'][self.y][self.x] = obj(
-                '-be', str(self.id),
+                '-be', self.id,
                 block=iset(
                     f"{cc['bg']['A']}{self.icon}{cc['end']}",
                     Type=self.face
                 ),
-                hashKey=self.hashKey
+                tag=self.tag
             )
             time.sleep(0.03)
             DRP['room'][self.y][self.x] = obj(
-                '-be', str(self.id),
+                '-be', self.id,
                 block=iset(
                     f"{self.color}{self.icon}{cc['end']}",
                     Type=self.face
                 ),
-                hashKey=self.hashKey
+                tag=self.tag
             )
             time.sleep(term)
 
         DRP['room'][self.y][self.x] = obj(
-            '-be', str(self.id),
+            '-be', self.id,
             block=iset(
                 f"{self.color}{self.icon}{cc['end']}",
                 Type=self.face
             ),
-            hashKey=self.hashKey
+            tag=self.tag
         )
 
     def grooming(self) -> None:
         DRP = s.Dungeon[self.Dy][self.Dx]
         DRP['room'][self.y][self.x] = obj(
-            '-be', str(self.id),
+            '-be', self.id,
             block=iset(
                 f"{cc['bg']['A']}{self.icon}{cc['end']}",
                 Type=self.face
             ),
-            hashKey=self.hashKey
+            tag=self.tag
         )
         time.sleep(randrange(1,14)/10)
 
         DRP['room'][self.y][self.x] = obj(
-            '-be', str(self.id),
+            '-be', self.id,
             block=iset(
                 f"{self.color}{self.icon}{cc['end']}",
                 Type=self.face
             ),
-            hashKey=self.hashKey
+            tag=self.tag
         )
 
     def checkPWRest(self, stress) -> bool:
@@ -451,23 +466,23 @@ class Cat(Animal):
                         return
                     
                     if self.actionPurpose == "attack":
-                        if  s.target['hashKey'] != self.monsterTargetHashKey\
+                        if  s.target['tag'] != self.targetTag\
                         and s.target['attackable']\
                         and not self.ignoreCommand:
                             if choices([1,0],[self.loyalty,10-self.loyalty],k=1)[0]:
-                                self.monsterTargetHashKey = s.target['hashKey']
+                                self.targetTag = s.target['tag']
                             else:
                                 self.say(choice(catComments['complaint']))
                                 self.ignoreCommand = True
 
-                        if self.monsterTargetHashKey not in s.entityHashPool:
-                            self.monsterTargetHashKey = ""
-                            self.combo                = 0
+                        if self.targetTag not in s.entityHashPool:
+                            self.targetTag = ""
+                            self.combo     = 0
 
                         if self.combo==0 and not randrange(0,4):
                             self.combo = randrange(2,7)
 
-                        if not self.monsterTargetHashKey:
+                        if not self.targetTag:
                             self.getStress(2)
                             addLog(
                                 f"{self.color}{self.name}{cc['end']}{pp(self.name,'sub',True)} 사냥감을 찾았습니다...",
@@ -483,18 +498,18 @@ class Cat(Animal):
                             if not l.pause:
                                 if not self.checkPlayerisHere(): break
 
-                                if self.monsterTargetHashKey:
-                                    path = AStar.forHashKey(
+                                if self.targetTag:
+                                    path = AStar.forTag(
                                         (self.y, self.x),
-                                        self.monsterTargetHashKey,
-                                        s.interactableBlocks['steppable']['total']
+                                        self.targetTag,
+                                        self.perm.IDSet['step']
                                     )
 
                                 else:
                                     path = AStar.main(
                                         (self.y, self.x),
-                                        s.enemyIds,
-                                        s.interactableBlocks['steppable']['total']
+                                        self.perm.IDSet['enemy'],
+                                        self.perm.IDSet['step']
                                     )
                                     
                                 if not path:
@@ -504,13 +519,13 @@ class Cat(Animal):
 
                                     return
                                 
-                                elif DRP['room'][path[0]][path[1]]['id'] in s.enemyIds:
+                                elif self.perm.data[DRP['room'][path[0]][path[1]]['id']] & self.perm.ENEMY:
                                     self.loseStress(randrange(1,3))
                                     self.attack(path[0], path[1], ("entity", "animal", "cat", "slash"))
 
-                                    if not self.monsterTargetHashKey:
-                                        if DRP['room'][path[0]][path[1]]['type'] == 1:
-                                            self.monsterTargetHashKey = DRP['room'][path[0]][path[1]]['hashKey']
+                                    if not self.targetTag:
+                                        if DRP['room'][path[0]][path[1]]['type'] == 'entity':
+                                            self.targetTag = DRP['room'][path[0]][path[1]]['tag']
 
                                     if choices([0,1],[55,45],k=1)[0]:
                                         for target in choices(["leg", "side", "tail"], [55, 30, 15], k=2):
@@ -519,7 +534,7 @@ class Cat(Animal):
 
                                     return
                                 
-                                elif DRP['room'][path[0]][path[1]]['id'] == -1:
+                                elif DRP['room'][path[0]][path[1]]['id'] == 'invincibleEntity':
                                     self.getStress()
                                     if not randrange(0,10): self.say(choice(cry))
 
@@ -566,7 +581,8 @@ class Cat(Animal):
                                     path = AStar.main(
                                         (self.y, self.x),
                                         [300],
-                                        s.interactableBlocks['steppable']['total']
+                                        # s.interactableBlocks['steppable']['total']
+                                        self.perm.IDSet['step']
                                     )
 
                                     if not path:
@@ -605,7 +621,7 @@ class Cat(Animal):
                                     path = AStar.main(
                                         (self.y, self.x),
                                         [300],
-                                        s.interactableBlocks['steppable']['total']
+                                        self.perm.IDSet['step']
                                     )
                                     
                                     if not path:
@@ -647,26 +663,28 @@ class Cat(Animal):
                                 while 1:
                                     ay = randrange(1, len(DRP['room']   )-1)
                                     ax = randrange(1, len(DRP['room'][0])-1)
-                                    if DRP['room'][ay][ax]['id'] in s.interactableBlocks['unsteppable']: continue
+                                    if not (self.perm.data[DRP['room'][ay][ax]['id']]&self.perm.STEP):
+                                        continue
+
                                     break
 
                             if randrange(0,2):
                                 self.x += 1\
                                         if  self.x<ax\
-                                        and DRP['room'][self.y][self.x+1]["id"] in s.interactableBlocks['steppable']['total']\
+                                        and self.perm.data[DRP['room'][self.y][self.x+1]["id"]]&self.perm.STEP\
                                     else -1\
                                         if  self.x>ax\
-                                        and DRP['room'][self.y][self.x-1]["id"] in s.interactableBlocks['steppable']['total']\
+                                        and self.perm.data[DRP['room'][self.y][self.x-1]["id"]]&self.perm.STEP\
                                     else  0
+                                
                             else:
                                 self.y += 1\
                                        if  self.y<ay\
-                                       and DRP['room'][self.y+1][self.x]["id"] in s.interactableBlocks['steppable']['total']\
+                                       and self.perm.data[DRP['room'][self.y+1][self.x]["id"]]&self.perm.STEP\
                                     else -1\
                                        if  self.y>ay\
-                                       and DRP['room'][self.y-1][self.x]["id"] in s.interactableBlocks['steppable']['total']\
+                                       and self.perm.data[DRP['room'][self.y-1][self.x]["id"]]&self.perm.STEP\
                                     else  0
-                            
                             
                             super().step(bfy, bfx)
                             self.coolTime = randrange(150, 300)+(100*self.stressLvl)
@@ -714,13 +732,15 @@ class Cat(Animal):
                                         break
 
                                     blockID = DRP['room'][self.y+gotoY][self.x+gotoX]['id']
-                                    if blockID in s.interactableBlocks['unsteppable']:
+                                    if not self.perm.data[blockID] & self.perm.STEP:
                                         self.getStress(3)
                                         self.actionCount = 0
                                         play("entity", "animal", "cat", "collide")
                                         self.say(choice(catComments['attacked']))
 
-                                        if blockID == 300: p.say(choice(c.collide['animal']['cat']))
+                                        if blockID in ('player1', 'player2'):
+                                            p.say(choice(c.collide['animal']['cat']))
+
                                         break
 
                                     bfy, bfx  = self.y, self.x
@@ -735,16 +755,19 @@ class Cat(Animal):
                                 if not l.pause:
                                     if not self.checkPlayerisHere():
                                         self.actionCount = 0
+
                                         break
 
                                     blockID = DRP['room'][direction[0]][direction[1]]['id']
-                                    if blockID in s.interactableBlocks['unsteppable']:
+                                    if not self.perm.data[blockID] & self.perm.STEP:
                                         self.getStress(3)
                                         self.actionCount = 0
                                         play("entity", "animal", "cat", "collide")
                                         self.say(choice(catComments['attacked']))
 
-                                        if blockID == 300: p.say(choice(c.collide['animal']['cat']))
+                                        if blockID in ('player1', 'player2'):
+                                            p.say(choice(c.collide['animal']['cat']))
+
                                         break
 
                                     bfy, bfx       = self.y, self.x
@@ -755,17 +778,22 @@ class Cat(Animal):
                                 time.sleep(speed)
 
                             self.coolTime = int(speed*100)\
-                                if   self.actionCount>0\
+                                    if self.actionCount>0\
                                 else self.coolTime
                             
                         case "grooming":
                             if not sum(self.ashWeight.values()):
                                 self.actionCount = 0
                                 self.resetAction()
+
                                 return
 
                             self.actionCount -= 1
-                            addLog(f"{self.color}{self.name}{cc['end']}{pp(self.name,'sub',True)} 그루밍 중입니다...", colorKey=self.colorKey)
+                            addLog(
+                                f"{self.color}{self.name}{cc['end']}{pp(self.name,'sub',True)} 그루밍 중입니다...",
+                                colorKey=self.colorKey
+                            )
+                            
                             target = choices(
                                 ["leg", "side", "tail"],
                                 list(self.ashWeight.values()),
@@ -789,8 +817,9 @@ class Cat(Animal):
                                 (self.y,   self.x-1)
                             ]:
                                 blockID = s.Dungeon[self.Dy][self.Dx]['room'][y][x]['id']
-                                if blockID in s.interactableBlocks['steppable']['total']:
+                                if self.perm.data[blockID] & self.perm.STEP:
                                     ty, tx = y, x
+
                                     break
 
                             else:
@@ -800,14 +829,13 @@ class Cat(Animal):
                                 return
                             
                             self.say(choice(catComments['spitOut']))
-                            s.Dungeon[self.Dy][self.Dx]['room'][ty][tx]=\
-                                obj('-bb',
-                                    str(choices(
-                                        [14, 11, 12],
-                                        list(self.camouflage.values()),
-                                        k=1
-                                    )[0])
-                                )
+                            s.Dungeon[self.Dy][self.Dx]['room'][ty][tx] = obj('-bb',
+                                str(choices(
+                                    ('csOrbS', 'dfOrbS', 'atkOrbS'),
+                                    list(self.camouflage.values()),
+                                    k=1
+                                )[0])
+                            )
                             
                             self.camouflage = {k:0 for k in self.camouflage}
                             self.loseStress(5)
@@ -824,24 +852,24 @@ class Cat(Animal):
                         if self.checkPWRest(stress): break
 
                         s.Dungeon[self.Dy][self.Dx]['room'][self.y][self.x] = obj(
-                            '-be', str(self.id),
+                            '-be', self.id,
                             block=iset(
                                 f"{cc['bg']['A']}{self.icon}{cc['end']}",
                                 Type=self.face
                             ),
-                            hashKey=self.hashKey
+                            tag=self.tag
                         )
                         if self.checkPWRest(stress): break
                         time.sleep(1.5)
                         if self.checkPWRest(stress): break
 
                         s.Dungeon[self.Dy][self.Dx]['room'][self.y][self.x] = obj(
-                            '-be', str(self.id),
+                            '-be', self.id,
                             block=iset(
                                 f"{self.color}{self.icon}{cc['end']}",
                                 Type=self.face
                             ),
-                            hashKey=self.hashKey
+                            tag=self.tag
                         )
                         if self.checkPWRest(stress): break
                         time.sleep(1.5)

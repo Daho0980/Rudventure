@@ -1,179 +1,166 @@
 {
-    "-1" : {
+    "invincibleBlock" : {
         "block" : "  ",
-        "id" : -1,
-        "type" : 0
+        "id" : "invincibleBlock",
+        "type" : "block"
     },
-    "0" : {
+    "void" : {
         "block" : "  ",
-        "id" : 0,
-        "type" : 0
+        "id" : "void",
+        "type" : "block"
     },
-    "1" : {
+    "floor" : {
+        "block" : "  ",
+        "id" : "floor",
+        "type" : "block"
+    },
+    "wall" : {
         "block" : "██",
-        "id" : 1,
-        "type" : 0
+        "id" : "wall",
+        "type" : "block"
     },
-    "2" : {
+    "door" : {
         "block" : ". ",
-        "id" : 2,
-        "type" : 0
+        "id" : "door",
+        "type" : "block"
     },
-    "3" : {
-        "block" : "  ",
-        "id" : 3,
-        "type" : 0
-    },
-    "4" : {
+    "orbBox" : {
         "block" : "\u001b[;38;5;11mÉ\u001b[0m ",
-        "id" : 4,
-        "type" : 0,
+        "id" : "orbBox",
+        "type" : "block",
         "nbt" : {
             "face" : "n"
         }
     },
-    "5" : {
+    "exit" : {
         "block" : "\u001b[;38;5;9mF\u001b[0m ",
-        "id" : 5,
-        "type" : 0
+        "id" : "exit",
+        "type" : "block"
     },
-    "6" : {
-        "block" : "☒ ",
-        "id" : 6,
-        "type" : 0,
-        "nbt" : {
-            "step" : 5
-        }
-    },
-    "7" : {
-        "block" : "\u001b[;38;5;9mX\u001b[0m ",
-        "id" : 7,
-        "type" : 0
-    },
-    "8" : {
+    "squishy0" : {
         "block" : "\u001b[;38;5;12m\u001b[1mO\u001b[0m ",
-        "id" : 8,
-        "type" : 0,
+        "id" : "squishy0",
+        "type" : "block",
         "nbt" : {
             "face" : "r",
             "count" : 50,
             "command" : ""
         }
     },
-    "9" : {
+    "squishy1" : {
         "block" : "\u001b[;38;5;12mo\u001b[0m ",
-        "id" : 9,
-        "type" : 0,
+        "id" : "squishy1",
+        "type" : "block",
         "nbt" : {
             "face" : "r",
             "count" : 50,
             "command" : ""
         }
     },
-    "10" : {
+    "hpOrbS" : {
         "block" : "\u001b[;38;5;9mo\u001b[0m ",
-        "id" : 10,
-        "type" : 0,
+        "id" : "hpOrbS",
+        "type" : "block",
         "blockData" : {
             "block" : "  ",
-            "id" : 0,
-            "type" : 0
+            "id" : "floor",
+            "type" : "block"
         }
     },
-    "11" : {
+    "dfOrbS" : {
         "block" : "\u001b[;38;5;12mq\u001b[0m ",
-        "id" : 11,
-        "type" : 0,
+        "id" : "dfOrbS",
+        "type" : "block",
         "blockData" : {
             "block" : "  ",
-            "id" : 0,
-            "type" : 0
+            "id" : "floor",
+            "type" : "block"
         }
     },
-    "12" : {
+    "atkOrbS" : {
         "block" : "\u001b[;38;5;10mv\u001b[0m ",
-        "id" : 12,
-        "type" : 0,
+        "id" : "atkOrbS",
+        "type" : "block",
         "blockData" : {
             "block" : "  ",
-            "id" : 0,
-            "type" : 0
+            "id" : "floor",
+            "type" : "block"
         }
     },
-    "13" : {
+    "hgOrbS" : {
         "block" : "\u001b[;38;5;11mo\u001b[0m ",
-        "id" : 13,
-        "type" : 0,
+        "id" : "hgOrbS",
+        "type" : "block",
         "blockData" : {
             "block" : "  ",
-            "id" : 0,
-            "type" : 0
+            "id" : "floor",
+            "type" : "block"
         }
     },
-    "14" : {
+    "csOrbS" : {
         "block" : "\u001b[;38;5;13mø\u001b[0m ",
-        "id" : 14,
-        "type" : 0,
+        "id" : "csOrbS",
+        "type" : "block",
         "blockData" : {
             "block" : "  ",
-            "id" : 0,
-            "type" : 0
+            "id" : "floor",
+            "type" : "block"
         }
     },
-    "15" : {
+    "hpOrbB" : {
         "block" : "\u001b[;38;5;9mO\u001b[0m ",
-        "id" : 15,
-        "type" : 0,
+        "id" : "hpOrbB",
+        "type" : "block",
         "blockData" : {
             "block" : "  ",
-            "id" : 0,
-            "type" : 0
+            "id" : "floor",
+            "type" : "block"
         }
     },
-    "16" : {
+    "dfOrbB" : {
         "block" : "\u001b[;38;5;12mQ\u001b[0m ",
-        "id" : 16,
-        "type" : 0,
+        "id" : "dfOrbB",
+        "type" : "block",
         "blockData" : {
             "block" : "  ",
-            "id" : 0,
-            "type" : 0
+            "id" : "floor",
+            "type" : "block"
         }
     },
-    "17" : {
+    "atkOrbB" : {
         "block" : "\u001b[;38;5;10mV\u001b[0m ",
-        "id" : 17,
-        "type" : 0,
+        "id" : "atkOrbB",
+        "type" : "block",
         "blockData" : {
             "block" : "  ",
-            "id" : 0,
-            "type" : 0
+            "id" : "floor",
+            "type" : "block"
         }
     },
-    "18" : {
+    "hgOrbB" : {
         "block" : "\u001b[;38;5;11mO\u001b[0m ",
-        "id" : 18,
-        "type" : 0,
+        "id" : "hgOrbB",
+        "type" : "block",
         "blockData" : {
             "block" : "  ",
-            "id" : 0,
-            "type" : 0
+            "id" : "floor",
+            "type" : "block"
         }
     },
-    "19" : {
+    "csOrbB" : {
         "block" : "\u001b[;38;5;13mØ\u001b[0m ",
-        "id" : 19,
-        "type" : 0,
+        "id" : "csOrbB",
+        "type" : "block",
         "blockData" : {
             "block" : "  ",
-            "id" : 0,
-            "type" : 0
+            "id" : "floor",
+            "type" : "block"
         }
     },
-    "20" : {
+    "clayModel" : {
         "block" : "☷ ",
-        "id" : 20,
-        "type" : 0,
+        "id" : "clayModel",
+        "type" : "block",
         "nbt" : {
             "texts" : [],
             "command" : "",
@@ -181,128 +168,107 @@
             "voice" : "clayModel"
         }
     },
-    "21" : {
+    "deadClayModel" : {
         "block" : "\u001b[;38;5;3m☷\u001b[0m ",
-        "id" : 21,
-        "type" : 0,
+        "id" : "deadClayModel",
+        "type" : "block",
         "nbt" : {
             "link" : false
         }
     },
-    "22" : {
+    "flower" : {
         "block" : "* ",
-        "id" : 22,
-        "type" : 0,
+        "id" : "flower",
+        "type" : "block",
         "nbt" : {
             "color" : "W",
             "step" : 1
         }
     },
-    "23" : {
+    "petal" : {
         "block" : ". ",
-        "id" : 23,
-        "type" : 0,
+        "id" : "petal",
+        "type" : "block",
         "nbt" : {
             "link" : false
         }
     },
-    "24" : {
+    "item" : {
         "block" : "? ",
-        "id" : 24,
-        "type" : 0,
+        "id" : "item",
+        "type" : "item",
         "nbt" : {
             "itemData" : {
                 "icon" : "?",
                 "name" : "item",
                 "id" : -1,
-                "type" : "item",
+                "type" : "item.item",
                 "nbt" : {}
             }
         }
     },
-    "25" : {
-        "block" : "  ",
-        "id" : 25,
-        "type" : 0
-    },
-    "26" : {
+    "corpse" : {
         "block" : "\u001b[;38;5;3mX\u001b[0m ",
-        "id" : 26,
-        "type" : 0,
+        "id" : "corpse",
+        "type" : "block",
         "nbt" : {
             "link" : false
         }
     },
-    "27" : {
+    "blood" : {
         "block" : "\u001b[;38;5;9m░\u001b[0m ",
-        "id" : 27,
-        "type" : 0,
+        "id" : "blood",
+        "type" : "block",
         "nbt" : {
             "link" : false,
             "stack" : 1
         },
         "blockData" : {
             "block" : "  ",
-            "id" : 0,
-            "type" : 0
+            "id" : "floor",
+            "type" : "block"
         }
     },
-    "200" : {
-        "block" : "빔",
-        "id" : 200,
-        "type" : 0,
-        "hashKey" : "A"
-    },
-    "300" : {
-        "block" : "\u001b[;38;5;10m@\u001b[0m ",
-        "id" : 300,
-        "type" : 1
-    },
-    "301" : {
-        "block" : "\u001b[;38;5;11m&\u001b[0m ",
-        "id" : 301,
-        "type" : 1
-    },
-    "400" : {
+    "normalStatue" : {
         "block" : "\u001b[;38;5;14mY\u001b[0m ",
-        "id" : 400,
-        "type" : 0,
+        "id" : "normalStatue",
+        "type" : "block",
         "nbt" : {
             "linkedInteraction" : false
         }
     },
-    "401" : {
+    "cursedStatue" : {
         "block" : "\u001b[;38;5;13mY\u001b[0m ",
-        "id" : 401,
-        "type" : 0,
+        "id" : "cursedStatue",
+        "type" : "block",
         "nbt" : {
             "link" : false
         }
     },
-    "501" : {
+    "aorta" : {
         "block" : "\u001b[;38;5;9mH\u001b[0m ",
-        "id" : 501,
-        "type" : 0,
+        "id" : "aorta",
+        "type" : "block",
         "blockData" : {
             "block" : "  ",
-            "id" : 0,
-            "type" : 0
+            "id" : "floor",
+            "type" : "block"
         }
     },
-    "502" : {
+    "venaCava" : {
         "block" : "\u001b[;38;5;12mU\u001b[0m ",
-        "id" : 502,
-        "type" : 0,
+        "id" : "venaCava",
+        "type" : "block",
         "blockData" : {
             "block" : "  ",
-            "id" : 0,
-            "type" : 0
+            "id" : "floor",
+            "type" : "block"
         }
     },
-    "900" : {
+    "ashChip" : {
         "block" : "\u001b[;38;5;8m;\u001b[0m ",
-        "id" : 900,
-        "type" : 0,
+        "id" : "ashChip",
+        "type" : "block",
         "nbt" : {
             "count" : 0
         }

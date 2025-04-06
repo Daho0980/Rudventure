@@ -46,7 +46,9 @@ if __name__ == '__main__':
     a['2'] = 0
     a['3'] = 0
     print(a)
+    print(a.key())
     print(a.value())
     print(a.item())
+    print(a.items())
     a.resize(1)
     print(a)

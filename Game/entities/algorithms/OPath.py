@@ -1,5 +1,6 @@
-import os ; import math
-import             time
+import os
+import math
+import time
 
 
 def main(radius, center):
@@ -55,9 +56,13 @@ def _pathToGrid(path):
 
     for (y, x) in path:
         os.system("clear")
-        if False in map(lambda i: False if (i<0 or i>29) else True, [y, x]):
-            pass
+        if False in map(
+            lambda i: False if (i<0 or i>29) else True,
+            (y, x)
+        ): pass
+
         else: grid[y][x] = '\033[32m1\033[0m'
+
         for row in grid:
             print(' '.join(row))
         time.sleep(0.03/radius)

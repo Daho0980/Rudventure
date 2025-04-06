@@ -9,8 +9,8 @@ from Assets.data import (
     comments        as c
 )
 from Game.utils.system.roomManager.interactions import (
-    summonMonster,
     randPlaceOrb,
+    summonEnemy,
     changeDoor,
 )
 
@@ -30,21 +30,21 @@ roomData:dict[tuple, str] = {
 }
 
 def event(data) -> None:
-    if data['summonCount'] > 0:
+    if data['summonData']:
         doorData = tuple(data['doors'].values())
         if sum(doorData) > 1:
             data['roomIcon'] = [roomData[doorData], ""]
 
-        summonMonster(data['summonCount'])
+        summonEnemy(data['summonData'])
 
         if randrange(1, 101) <= p.enterinBattle:
             say(choice(
                 c.enterinBattle[5]\
-                if   data['summonCount'] >= 5\
+                    if len(data['summonData']) >= 5\
                 else c.enterinBattle[0]
             ))
 
-        changeDoor(1, data, "░░")
+        changeDoor('wall', data, "░░")
         play("object", "door", "close")
 
     elif not s.enemyCount and s.roomLock:
@@ -52,5 +52,5 @@ def event(data) -> None:
         s.Dungeon[s.Dy][s.Dx]['interaction'] = True
         if randrange(0, 101) > p.clearedRoomLoot: randPlaceOrb()
 
-        changeDoor(2, data)
+        changeDoor('door', data)
         play("object", "door", "open")

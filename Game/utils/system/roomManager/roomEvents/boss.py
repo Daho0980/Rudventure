@@ -11,28 +11,28 @@ from Assets.data import (
     comments        as c
 )
 from Game.utils.system.roomManager.interactions import (
-    summonMonster,
     randPlaceOrb,
-    changeDoor,
+    summonEnemy,
+    changeDoor
 )
 
 
 def event(data) -> None:
-    if data['summonCount'] > 0:
+    if data['summonData']:
         if randrange(1,101) <= p.enterinBattle:
             say(choice(c.enterinBattle[0]))
 
-        s.Dungeon[s.Dy][s.Dx]['room'][11][11] = obj('-bb', '0')
-        changeDoor(1, data, "░░")
+        s.Dungeon[s.Dy][s.Dx]['room'][11][11] = obj('-bb', 'floor')
+        changeDoor('wall', data, "░░")
         play("object", "door", "close")
 
-        summonMonster(data['summonCount'], 3, 2, 10, boss=True)
+        summonEnemy(data['summonData'], 3, 2, randrange(5, 11))
 
     elif not s.enemyCount and s.roomLock:
         s.roomLock                            = False
-        s.Dungeon[s.Dy][s.Dx]['room'][11][11] = obj('-bb', '5', block=iset(s.ids[5]))
+        s.Dungeon[s.Dy][s.Dx]['room'][11][11] = obj('-bb', 'exit', block=iset(s.bids['exit']))
         s.Dungeon[s.Dy][s.Dx]['interaction']  = True
         randPlaceOrb(2)
 
-        changeDoor(2, data)
+        changeDoor('door', data)
         play("object", "door", "open")

@@ -85,7 +85,7 @@ draw.text((0, -108), noise, font=font, fill=(214,222,235)) # upside bar
 draw.text((0, 100 ), line,  font=font, fill=(214,222,235)) # downside line
 draw.text((0, 575 ), line,  font=font, fill=(214,222,235)) # upside line
 
-if s.ezMode:
+if s.cowardMode:
     draw.text((255, 515), "with", font=font, fill=(214, 222, 235))
     draw.text((300, 515), "쫄",   font=font, fill=ftColors['R']  )
     draw.text((320, 515), "보",   font=font, fill=ftColors['Y']  )

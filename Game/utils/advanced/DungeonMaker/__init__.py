@@ -31,7 +31,7 @@ def centerGridMapReturn(grid:list, blank:int=0):
         subDisplayMap.append([' ']*8)
 
     toolY, toolX = 4-s.Dy, 4-s.Dx
-    rowLength = len(DisplayMap)
+    rowLength    = len(DisplayMap)
 
     for row in range(rowLength):
         for column in range(len(DisplayMap[row])):
@@ -40,13 +40,16 @@ def centerGridMapReturn(grid:list, blank:int=0):
             if  0 <= FixY              <= rowLength-1\
             and 0 <= FixX              <= len(DisplayMap[row])-1\
             and len(grid[row][column]) >  0:      
-                if FixX < len(DisplayMap[row])-1 and column < len(DisplayMap[row])-1:
+                if  FixX  <len(DisplayMap[row])-1\
+                and column<len(DisplayMap[row])-1:
                     if grid[row][column+1]:
-                        if  (grid[row][column]['doors']['R']\
-                        and grid[row][column]['isPlayerVisited']==2)\
-                            or\
-                        (grid[row][column+1]['doors']['L']\
-                        and grid[row][column+1]['isPlayerVisited']==2):
+                        if  (
+                            grid[row][column]['doors']['R']\
+                            and grid[row][column]['isPlayerVisited']==2
+                        ) or (
+                            grid[row][column+1]['doors']['L']\
+                            and grid[row][column+1]['isPlayerVisited']==2
+                        ):
                             subDisplayMap[FixY][FixX] = '═'
 
                 if row==s.Dy and column==s.Dx:
@@ -82,7 +85,7 @@ def DungeonMaker(showAll=False) -> list:
                     "roomType"        : None                        ,
                     "isPlayerHere"    : False                       ,
                     "isPlayerVisited" : 0                           ,
-                    "summonCount"     : 0                           ,
+                    "summonData"      : []                           ,
                     "interaction"     : False
                     })
 

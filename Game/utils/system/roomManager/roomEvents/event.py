@@ -7,18 +7,18 @@ from Game.utils.system.roomManager.interactions import changeDoor
 
 
 def event0(data) -> None:
-    if data['summonCount']==0 and s.enemyCount:
-        data['summonCount'] = -1
-        s.roomLock          = True
+    if not data['summonData'] and s.enemyCount:
+        data['summonData'] = ['command.roomEnd']
+        s.roomLock = True
 
-        changeDoor(1, data, "░░")
+        changeDoor('wall', data, "░░")
         play("object", "door", "close")
 
     if not s.enemyCount and s.roomLock:
         s.roomLock                           = False
         s.Dungeon[s.Dy][s.Dx]['interaction'] = True
         
-        changeDoor(2, data)
+        changeDoor('door', data)
         play("object", "door", "open")
 
 def event1() -> None:

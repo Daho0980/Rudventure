@@ -4,6 +4,8 @@ from Assets.data.color import cColors as cc
 name     :str = ""
 lightName:str = ""
 
+playerIdentity:str = "glagatrof"
+
 Dy  :int = 0
 Dx  :int = 0
 x   :int = 0
@@ -40,8 +42,8 @@ statusFormula = {
 
 ashChip:int = 0
 
-steppedBlock:dict = { "block" : '  ', "id" : 0, "type" : 0 }
-killCount   :int = 0
+steppedBlock:dict = { 'block' : '  ', 'id' : 'floor', 'type' : 'block' }
+killCount   :int  = 0
 
 inventory:dict = {
     "cells" : [
@@ -59,7 +61,7 @@ statusEffect:dict = {
 }
 
 target:dict = {
-    "hashKey"    : "",
+    "tag"        : ""   ,
     "attackable" : False,
     "command"    : False
 }

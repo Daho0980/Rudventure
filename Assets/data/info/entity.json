@@ -1,12 +1,12 @@
 {
-    "-1" : {
+    "invincibleEntity" : {
         "name"        : "무적 상태",
         "dataType"    : 0,
         "explanation" : {
             "observe" : "모든 엔티티가 공통적으로 가지는 무적 상태.\n이 상태에서는 공격하거나 상호작용할 수 없다."
         }
     },
-    "200" : {
+    "cat" : {
         "name"        : "고양이",
         "dataType"    : 2,
         "explanation" : {
@@ -14,21 +14,21 @@
             "link"    : "왠지 모르게 나를 잘 따르는 고양이.\n가끔 뭔가를 토해내기도 한다.\n\n어쩌면... \u001b[;38;5;9m털공이 아닐지도?\u001b[0m"
         }
     },
-    "600" : {
+    "pain" : {
         "name"        : "고통의 편린",
         "dataType"    : 0,
         "explanation" : {
             "observe" : "평생을 고통 속에서 살아가는 편린.\n미궁을 정처 없이 떠돈다."
         }
     },
-    "601" : {
+    "unrest" : {
         "name"        : "불안의 편린",
         "dataType"    : 0,
         "explanation" : {
             "observe" : "불안함을 잠시도 내려놓지 못하는 편린.\n적이 있으면 무작정 돌진하고 본다."
         }
     },
-    "602" : {
+    "resentment" : {
         "name"        : "원망의 편린",
         "dataType"    : 0,
         "explanation" : {

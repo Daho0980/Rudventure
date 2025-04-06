@@ -6,7 +6,7 @@ from Assets.data import totalGameStatus as s
 def heuristic(a, b):
     return abs(a[0]-b[0]) + abs(a[1]-b[1])
 
-def main(start, targetID, positiveID):
+def main(start:tuple, targetID:list, positiveID:list):
     grid = s.Dungeon[s.Dy][s.Dx]['room']
 
     openList = []
@@ -27,6 +27,7 @@ def main(start, targetID, positiveID):
                 path.append(curr)
                 curr = cameFrom[curr]
             path.reverse()
+
             return path[1] if len(path)>1 else start
         
         for dx, dy in [(-1,0),(1,0),(0,-1),(0,1)]:
@@ -45,7 +46,7 @@ def main(start, targetID, positiveID):
     
     return None
 
-def forHashKey(start, hashKey, positiveID):
+def forTag(start:tuple, tag:str, positiveID:list):
     grid = s.Dungeon[s.Dy][s.Dx]['room']
 
     openList = []
@@ -60,12 +61,14 @@ def forHashKey(start, hashKey, positiveID):
     while openList:
         _, curr = heapq.heappop(openList)
 
-        if grid[curr[0]][curr[1]]['type']==1 and grid[curr[0]][curr[1]]['hashKey']==hashKey:
+        if  grid[curr[0]][curr[1]]['type']=='entity'\
+        and grid[curr[0]][curr[1]]['tag'] ==tag:
             path = []
             while curr:
                 path.append(curr)
                 curr = cameFrom[curr]
             path.reverse()
+
             return path[1] if len(path)>1 else start
         
         for dx, dy in [(-1,0),(1,0),(0,-1),(0,1)]:
@@ -74,9 +77,9 @@ def forHashKey(start, hashKey, positiveID):
             if (0<=nextNode[0]<len(grid) and 0<=nextNode[1]<len(grid[0]))\
             and (grid[nextNode[0]][nextNode[1]]['id'] in positiveID\
                 or (
-                    grid[nextNode[0]][nextNode[1]]['type']       ==1
-                    and nextNode                                 !=(s.y,s.x)
-                    and grid[nextNode[0]][nextNode[1]]['hashKey']==hashKey
+                    grid[nextNode[0]][nextNode[1]]['type']   =='entity'
+                    and nextNode                             !=(s.y,s.x)
+                    and grid[nextNode[0]][nextNode[1]]['tag']==tag
                 )\
                 or nextNode == start
             ):

@@ -3,10 +3,10 @@ from itertools import chain
 from Game.core.system.dataLoader import obj
 
 
-dataPath = __import__("Assets.data.totalGameStatus", fromlist=["path"]).path['blockData']['block']
-wall     = obj(dataPath, '1')
-floor    = obj(dataPath, '0')
-void     = obj(dataPath, '25')
+dataPath = __import__("Assets.data.totalGameStatus", fromlist=["path"]).path['data']['block']
+wall     = obj(dataPath, 'wall')
+floor    = obj(dataPath, 'floor')
+void     = obj(dataPath, 'void')
 
 Room:list[list[dict[str,str|int|dict]]] = [
     [wall]*13, 

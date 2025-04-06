@@ -8,8 +8,9 @@ from Assets.data import (
 )
 
 
+s.playerIdentity   = "upload"
 s.playerColor      = ["\033[;38;5;32m", "CU"]
-s.ids[300]         = f"{s.playerColor[0]}◑{cc['end']}"
+s.eids['player1']  = f"{s.playerColor[0]}◑{cc['end']}"
 s.playerVoice      = "upload"
 s.playerDamageIcon = ['◐']
 
@@ -168,14 +169,13 @@ c.start = [
 c.startWithCowardmode = [
     "응!",
     "그래!",
-    "에라이.",
+    "에라이."
 ]
 
 c.loadsaveStart = [
     "또 여기야?",
     "또?",
-    "눈 아파.",
-    "좀 닥쳐봐. 손톱 다 뽑아서 루브르 박물관에 전시하기 전에.",
+    "눈 아파."
 ]
 
 c.monologue = {

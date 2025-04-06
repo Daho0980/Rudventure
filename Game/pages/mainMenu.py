@@ -51,10 +51,10 @@ def setData(data):
     s.killCount = SD['killCount']
 
     s.bodyPreservationMode = SD['bodyPreservationMode']
-    s.ezMode               = SD['ezMode']
+    s.cowardMode           = SD['cowardMode']
     s.sanjibaMode          = SD['sanjibaMode']
 
-    s.ids[300]         = SD['playerIcon']
+    s.eids['player1']  = SD['playerIcon']
     s.playerDamageIcon = SD['playerDamageIcon']
     s.playerColor      = SD['playerColor']
     s.playerVoice      = SD['playerVoice']
@@ -340,14 +340,14 @@ def main(stdscr) -> None:
                                     {
                                         f"육신 보존 모드 : {s.bodyPreservationMode}" : [
                                             "활성화 시 스테이지를 클리어할 때마다\n육신 보관소에 육신이 보존됩니다.",
-                                            "괜찮아요. 좀만 하다 보면 곧 익숙해질 겁니다."if s.bodyPreservationMode and s.ezMode else"게임에서마저도 죽는 게 두려운가 봐요?"
+                                            "괜찮아요. 좀만 하다 보면 곧 익숙해질 겁니다."if s.bodyPreservationMode and s.cowardMode else"게임에서마저도 죽는 게 두려운가 봐요?"
                                             ][s.bodyPreservationMode],
-                                        f"쫄보 모드 : {s.ezMode}" : [
+                                        f"쫄보 모드 : {s.cowardMode}" : [
 """활성화 시 모든 편린의 체력이 2 낮아집니다.
 또한 확률적으로 편린의 공격을 회피합니다.
 심지어 저주 제외 모든 스탯이 100% 상승합니다!
 거기에다가 공격력은 특별히 400% 상승합니다!!""",
-                                            "이거 완전 쌩 뉴비를 위한 설정이네요.\n이 게임이 처음이신가 봐요?"if s.bodyPreservationMode and s.ezMode else choice(
+                                            "이거 완전 쌩 뉴비를 위한 설정이네요.\n이 게임이 처음이신가 봐요?"if s.bodyPreservationMode and s.cowardMode else choice(
                                                 [
                                                     "\"쫄보 활성화.\"",
                                                     "쫄?",         "아.. 쫄?",
@@ -355,7 +355,7 @@ def main(stdscr) -> None:
                                                     "어으... 쫄?", "어음... 쫄?"
                                                 ]
                                             )
-                                        ][s.ezMode],
+                                        ][s.cowardMode],
                                         (cc['fg']['R'], f"산지바 모드 : {s.sanjibaMode}") : [
                                             "활성화 시 모든 나락에서의 편린의 속도가 강화됩니다!",
                                             f"등활지옥에 당도하신 것을 환영합니다, 글라가트로프여."
@@ -371,7 +371,7 @@ def main(stdscr) -> None:
                                 )
                                 match modSettings:
                                     case 1: s.bodyPreservationMode = False if s.bodyPreservationMode else True
-                                    case 2: s.ezMode               = False if s.ezMode               else True
+                                    case 2: s.cowardMode               = False if s.cowardMode               else True
                                     case 3: s.sanjibaMode          = False if s.sanjibaMode          else True
                                     case 4: break
                                     

@@ -1,14 +1,16 @@
 path:dict = {
-    "blockData" : {
-        "block"  : ["Assets", "data", "block", "blockData", "block.json"],
-        "entity" : ["Assets", "data", "block", "blockData", "entity.json"],
-        "animal" : ["Assets", "data", "block", "blockData", "animal_spd.json"],
-        "enemy"  : ["Assets", "data", "block", "blockData", "enemy_spd.json"]
-    },
-    "blockInfo" : {
-        "block"  : ["Assets", "data", "block", "blockInfo", "block.json"],
-        "entity" : ["Assets", "data", "block", "blockInfo", "entity.json"]
-    },
+    "data" : {
+        "item"         : ["Assets", "data", "data", "item.json"],
+        "block"        : ["Assets", "data", "data", "block.json"],
+        "entity"       : ["Assets", "data", "data", "entity.json"],
+        "statusEffect" : ["Assets", "data", "data", "statusEffect.json"],
 
-    "statusEffectData" : ["Assets", "data", "statusEffect", "data.json"]
+        "enemySpd"  : ["Assets", "data", "data", "enemy_spd.json"],
+        "animalSpd" : ["Assets", "data", "data", "animal_spd.json"]
+    },
+    "info" : {
+        "item"   : ["Assets", "data", "info", "item.json"],
+        "block"  : ["Assets", "data", "info", "block.json"],
+        "entity" : ["Assets", "data", "info", "entity.json"]
+    }
 }

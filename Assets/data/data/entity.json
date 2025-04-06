@@ -1,0 +1,42 @@
+{
+    "invincibleEntity" : {
+        "block" : "? ",
+        "id" : "invincibleEntity",
+        "type" : "entity",
+        "tag" : "X"
+    },
+    "player1" : {
+        "block" : "\u001b[;38;5;10m@\u001b[0m ",
+        "id" : "player1",
+        "type" : "entity"
+    },
+    "player2" : {
+        "block" : "\u001b[;38;5;11m&\u001b[0m ",
+        "id" : "player2",
+        "type" : "entity"
+    },
+    "cat" : {
+        "block" : "빔",
+        "id" : "cat",
+        "type" : "entity",
+        "tag" : "X"
+    },
+    "pain" : {
+        "block" : "% ",
+        "id" : "pain",
+        "type" : "entity",
+        "tag" : "X"
+    },
+    "unrest" : {
+        "block" : "# ",
+        "id" : "unrest",
+        "type" : "entity",
+        "tag" : "X"
+    },
+    "resentment" : {
+        "block" : "※ ",
+        "id" : "resentment",
+        "type" : "entity",
+        "tag" : "X"
+    }
+}

@@ -1,7 +1,7 @@
 from functools import wraps
 from random    import choice
 
-from Assets.data.color import cColors as cc
+from Assets.data.color import cColors       as cc
 from .entities         import entity, player
 
 from Assets.data import (
@@ -17,7 +17,7 @@ funcData = {}
 def _ephemera(func):
     def wrapper(*args):
         func(*args)
-        func.__code__ = (_:=lambda*a,**k:None).__code__
+        func.__code__ = (_:=lambda*_:None).__code__
     
     return wrapper
 
@@ -51,13 +51,13 @@ def spawnCompanion(stdscr) -> None:
     and not s.isLoadfromBody\
     and s.name.lower() in ["업로드", "upload"]:
         entity.addAnimal(
-            200, 10, 1, 3, 6,
+            'cat', 10, 1, 3, 6,
             name     ="구름이",
             color    =[cc['fg']['W'],'W'],
             friendly =True,
             MCBF     =True,
             SICR     =True,
-            extraData={"loyalty":10}
+            extraData={ "loyalty":10 }
         )
     elif s.isLoadfromBody and not l.isSaveLoaded:
         l.isSaveLoaded = True

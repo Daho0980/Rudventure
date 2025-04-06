@@ -168,7 +168,7 @@ mainMenu.main(stdscr)
 if s.name == "":
     mainSettings.main(stdscr)
     player      .set ()
-    if s.ezMode:
+    if s.cowardMode:
         s.hp     *= 2
         s.df     *= 2
         s.atk    *= 5

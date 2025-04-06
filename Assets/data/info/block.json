@@ -1,159 +1,145 @@
 {
-    "-1" : {
+    "invincibleBlock" : {
         "name"        : "무적 블록",
         "dataType"    : 0,
         "explanation" : {
             "observe" : "말 그대로 무적인 블록.\n접근할 수도, 부술 수도 없다."
         }
     },
-    "0" : {
+    "void" : {
+        "name"        : "공허",
+        "dataType"    : 0,
+        "explanation" : {
+            "observe" : "빈 공간.\n그저 그 위치를 메우고 있을 뿐이다."
+        }
+    },
+    "floor" : {
         "name"        : "바닥",
         "dataType"    : 0,
         "explanation" : {
             "observe" : "미궁의 바닥을 구성하는 블록.\n마음대로 밟고 다닐 수 있다."
         }
     },
-    "1" : {
+    "wall" : {
         "name"        : "벽",
         "dataType"    : 0,
         "explanation" : {
             "observe" : "미궁의 벽을 구성하는 블록.\n벽에 박으면 아프니 재미로 벽에\n박을 생각은 하지 않는 것이 좋다."
         }
     },
-    "2" : {
+    "door" : {
         "name"        : "문",
         "dataType"    : 0,
         "explanation" : {
             "observe" : "미궁을 드나들 수 있는 블록."
         }
     },
-    "3" : {
-        "name"        : "가짜 바닥",
-        "dataType"    : 0,
-        "explanation" : {
-            "observe" : "바닥인 척 하는 블록.\n닿으면 아프다."
-        }
-    },
-    "4" : {
+    "orbBox" : {
         "name"        : "구슬 상자",
         "dataType"    : 0,
         "explanation" : {
             "observe" : "\u001b[;38;5;9m체력\u001b[0m/\u001b[;38;5;12m방어력\u001b[0m/\u001b[;38;5;10m공격력\u001b[0m/\u001b[;38;5;11m허기\u001b[0m/\u001b[;38;5;13m저주\u001b[0m 구슬 중\n하나가 들어있는 상자.\n안에 들어있는 구슬의 크기도 제각각이다."
         }
     },
-    "5" : {
+    "exit" : {
         "name"        : "출구",
         "dataType"    : 0,
         "explanation" : {
             "observe" : "현재 미궁을 탈출할 수 있는 블록.\n접근하면 다음 미궁으로 이동한다."
         }
     },
-    "6" : {
-        "name"        : "상자",
-        "dataType"    : 0,
-        "explanation" : {
-            "observe" : "상자 블록.\n미는 것 말고는 할 수 있는 게 없다."
-        }
-    },
-    "7" : {
-        "name"        : "상자 표적",
-        "dataType"    : 0,
-        "explanation" : {
-            "observe" : "상자 블록을 둬야 하는 위치가 표시된 블록.\n두면 무슨 일이 일어날 지 모른다."
-        }
-    },
-    "8" : {
+    "squishy0" : {
         "name"        : "말랑이",
         "dataType"    : 0,
         "explanation" : {
             "observe" : "만지면 뽈롱거린다.\n지금은 펴져 있는 상태."
         }
     },
-    "9" : {
+    "squishy1" : {
         "name"        : "말랑이",
         "dataType"    : 0,
         "explanation" : {
             "observe" : "만지면 뽈롱거린다.\n지금은 구겨져 있는 상태."
         }
     },
-    "10" : {
+    "hpOrbS" : {
         "name"        : "작은 체력 구슬",
         "dataType"    : 0,
         "explanation" : {
             "observe" : "작은 체력 구슬.\n흡수 시 \u001b[;38;5;9m체력을 1 회복\u001b[0m한다."
         }
     },
-    "11" : {
+    "dfOrbS" : {
         "name"        : "작은 방어력 구슬",
         "dataType"    : 0,
         "explanation" : {
             "observe" : "작은 방어력 구슬.\n흡수 시 \u001b[;38;5;12m방어력을 1 회복\u001b[0m한다."
         }
     },
-    "12" : {
+    "atkOrbS" : {
         "name"        : "작은 공격력 구슬",
         "dataType"    : 0,
         "explanation" : {
             "observe" : "작은 공격력 구슬.\n흡수 시 \u001b[;38;5;10m공격력이 1 증가\u001b[0m한다."
         }
     },
-    "13" : {
+    "hgOrbS" : {
         "name"        : "작은 허기 구슬",
         "dataType"    : 0,
         "explanation" : {
             "observe" : "작은 허기 구슬.\n흡수 시 \u001b[;38;5;11m허기를 50 회복\u001b[0m한다."
         }
     },
-    "14" : {
+    "csOrbS" : {
         "name"        : "작은 저주 구슬",
         "dataType"    : 0,
         "explanation" : {
             "observe" : "작은 저주 구슬.\n흡수 시 \u001b[;38;5;13m저주가 1 상승\u001b[0m한다."
         }
     },
-    "15" : {
+    "hpOrbB" : {
         "name"        : "큰 체력 구슬",
         "dataType"    : 0,
         "explanation" : {
             "observe" : "큰 체력 구슬.\n흡수 시 \u001b[;38;5;9m체력을 3 회복\u001b[0m한다."
         }
     },
-    "16" : {
+    "dfOrbB" : {
         "name"        : "큰 방어력 구슬",
         "dataType"    : 0,
         "explanation" : {
             "observe" : "큰 방어력 구슬.\n흡수 시 \u001b[;38;5;12m방어력을 3 회복\u001b[0m한다."
         }
     },
-    "17" : {
+    "atkOrbB" : {
         "name"        : "큰 공격력 구슬",
         "dataType"    : 0,
         "explanation" : {
             "observe" : "큰 공격력 구슬.\n흡수 시 \u001b[;38;5;10m공격력이 2 증가\u001b[0m한다."
         }
     },
-    "18" : {
+    "hgOrbB" : {
         "name"        : "큰 허기 구슬",
         "dataType"    : 0,
         "explanation" : {
             "observe" : "큰 허기 구슬.\n흡수 시 \u001b[;38;5;11m허기를 100 회복\u001b[0m한다."
         }
     },
-    "19" : {
+    "csOrbB" : {
         "name"        : "큰 저주 구슬",
         "dataType"    : 0,
         "explanation" : {
             "observe" : "큰 저주 구슬.\n흡수 시 \u001b[;38;5;13m저주가 5 상승\u001b[0m한다."
         }
     },
-    "20" : {
+    "clayModel" : {
         "name"        : "토용",
         "dataType"    : 0,
         "explanation" : {
             "observe" : "나락에 있던 이들의 마지막 염원이 담긴 인형.\n도움을 주거나 죽기 전 하고 싶었던 말을 내뱉고는 그대로 죽어버린다."
         }
     },
-    "21" : {
+    "deadClayModel" : {
         "name"        : "죽은 토용",
         "dataType"    : 2,
         "explanation" : {
@@ -161,14 +147,14 @@
             "link"    : "간단하게 빚어진 인형.\n이들이 \u001b[;38;5;9m살아있었다는 증거\u001b[0m는 그 어디에도 없다."
         }
     },
-    "22" : {
+    "flower" : {
         "name"        : "꽃",
         "dataType"    : 2,
         "explanation" : {
             "observe" : "미궁에 피어있는 꽃.\n어쩌다 이런 곳에 피게 되었는지는 아무도 모른다."
         }
     },
-    "23" : {
+    "petal" : {
         "name"        : "꽃잎",
         "dataType"    : 2,
         "explanation" : {
@@ -176,17 +162,7 @@
             "link"    : "미궁에 피어있던 꽃의 잎.\n\u001b[;38;5;9m이제는 아름답지 않다\u001b[0m."
         }
     },
-    "24" : {
-        "name" : "데이터 구조 구상 필요"
-    },
-    "25" : {
-        "name"        : "무저갱",
-        "dataType"    : 0,
-        "explanation" : {
-            "observe" : "끝없이 이어져 있는 구멍.\n어디로 연결될지는 아무도 모른다."
-        }
-    },
-    "26" : {
+    "corpse" : {
         "name"        : "시체",
         "dataType"    : 2,
         "explanation" : {
@@ -194,7 +170,7 @@
             "link"    : "무언가의 시체.\n\u001b[;38;5;9m아직 갓 죽어 약간의 사후경직이 보인다\u001b[0m."
         }
     },
-    "27" : {
+    "blood" : {
         "name"        : "혈액",
         "dataType"    : 2,
         "explanation" : {
@@ -202,14 +178,14 @@
             "link"    : "\u001b[;38;5;9m내 피다.\u001b[0m"
         }
     },
-    "400" : {
+    "normalStatue" : {
         "name"        : "저주를 씻어내는 신상",
         "dataType"    : 0,
         "explanation" : {
             "observe" : "언제나 예배당에 세워져 있는 신상.\n어떤 신을 기리는 것인지는 모르겠으나\n근처에 다가가면 약한 순풍이 분다.\n신상에 손을 대면 \u001b[;38;5;13m저주를 5lv 흡수\u001b[0m한다."
         }
     },
-    "401" : {
+    "cursedStatue" : {
         "name"        : "오염된 저주를 씻어내는 신상",
         "dataType"    : 2,
         "explanation" : {
@@ -217,21 +193,21 @@
             "link"    : "\u001b[;38;5;9m네가 죽인 거야.\u001b[0m"
         }
     },
-    "501" : {
+    "aorta" : {
         "name"        : "대동맥",
         "dataType"    : 0,
         "explanation" : {
             "observe" : "누군가의 대동맥.\n큰 혈관을 중심으로 다른 혈관들이 뻗어있다.\n흡수 시 \u001b[;38;5;9m최대 체력이 3 증가\u001b[0m한다."
         }
     },
-    "502" : {
+    "venaCava" : {
         "name"        : "대정맥",
         "dataType"    : 0,
         "explanation" : {
             "observe" : "누군가의 대정맥.\n큰 혈관을 중심으로 다른 혈관들이 뻗어있다.\n흡수 시 \u001b[;38;5;12m최대 방어력이 3 증가\u001b[0m한다."
         }
     },
-    "900" : {
+    "ashChip" : {
         "name"        : "잿조각",
         "dataType"    : 0,
         "explanation" : {

@@ -28,22 +28,22 @@ def _getBlockInfo(fileName:str, target:str, Type:str):
     `fileName` : 블록의 타입\n
     `target`   : 가져올 요소의 키\n
     `Type`     : 가져올 요소의 타입. 아래와 같은 종류가 있음:
-    ```py
-        number  : int 대응
-        string  : str 대응
-        boolean : bool 대응
-    ```\n
-    예시:
-        ```py
-        infoWindow.getBloclInfoData(
-            fileName="block",
-            target="0.explanation.observe",
-            Type="string"
-        )
         ```
+            number  : int 대응
+            string  : str 대응
+            boolean : bool 대응
+        ```\n
+    예시:
+    ```
+    infoWindow.getBloclInfoData(
+        fileName="block",
+        target  ="floor.explanation.observe",
+        Type    ="string"
+    )
+    ```
     """
     return elm(
-        f"Assets/data/block/blockInfo/{fileName}.json",
+        f"Assets/data/info/{fileName}.json",
         target, Type
     )
 
@@ -65,7 +65,7 @@ def _dicttoStr(data   :dict     ,
 
     return output if raw else '\n'.join(output)
 
-def dataRegistration(blockId:str, blockType:str, **blockData) -> dict:
+def dataExtraction(blockId:str, blockType:str, **blockData) -> dict|None:
     try:
         output              = {}
         output["icon"]      = blockData['block']
@@ -77,15 +77,17 @@ def dataRegistration(blockId:str, blockType:str, **blockData) -> dict:
                 output["explanation"] = _getBlockInfo(blockType, f"{blockId}.explanation.link", "string")
             else:
                 output["explanation"] = _getBlockInfo(blockType, f"{blockId}.explanation.observe", "string")
-        except: output["explanation"] = _getBlockInfo(blockType, f"{blockId}.explanation.observe", "string")
 
-        output['explanation'] = output['explanation']+(f"\n\n블록 데이터 :\n{_dicttoStr(blockData, depth=1)}"if s.debug else "") # type: ignore
+        except:
+            output["explanation"] = _getBlockInfo(blockType, f"{blockId}.explanation.observe", "string")
 
-        if False in list(output.values()): return False # type: ignore
-        else:                              return output
+        output['explanation'] = output['explanation']+(f"\n\n타입 : {cc['fg']['L']}{blockType}{cc['end']}\n블록 데이터 :\n{_dicttoStr(blockData, depth=1)}"if s.debug else "") # type: ignore
+
+        if  False in list(output.values()): return None
+        else                              : return output
 
     except Exception as e:
         if s.debug:
             addLog(f"데이터 수집 도중 에러가 발생했습니다 : {cc['fg']['R']}{e}{cc['end']}", colorKey='R')
 
-        return False # type: ignore
+        return None

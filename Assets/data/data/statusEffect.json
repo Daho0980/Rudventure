@@ -1,24 +1,24 @@
 {
-    "0" : {
+    "fatality" : {
         "icon" : "\u001b[;38;5;10m@\u001b[0m",
         "name" : "숙명",
-        "id" : 0,
+        "id" : "fatality",
         "tick" : "∞",
         "seq" : "back",
         "description" : "세니플라가제 \u001b[;38;5;14m윤회 억제 장치\u001b[0m.\n\u001b[;38;5;10m글라가트로프의 주체\u001b[0m라고도 할 수 있다."
     },
-    "1" : {
+    "bloodStomping" : {
         "icon" : "\u001b[;38;5;9m∵\u001b[0m",
         "name" : "피묻음",
-        "id" : 1,
+        "id" : "bloodStomping",
         "tick" : 0,
-        "seq" : "fore",
+        "seq" : "back",
         "description" : "발에 피가 묻었다.\n이제 걸을 때마다 피가 바닥에 남는다."
     },
-    "600" : {
+    "kitrima" : {
         "icon" : "\u001b[;38;5;13mགྷ\u001b[0m",
         "name" : "저주 · 키트리마",
-        "id" : 600,
+        "id" : "kitrima",
         "tick" : 0,
         "seq" : "back",
         "description" : "머릿속에서 \u001b[;38;5;13m끔찍한 비명\u001b[0m이 끝없이 울려퍼지고 있다..."

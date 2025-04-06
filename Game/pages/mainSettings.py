@@ -25,37 +25,37 @@ def _setIconColor(func):
     def _w(*args):
         func(*args)
 
-        s.ids[4]   = f"{cc['fg']['Y']}É{cc['end']}"
-        s.ids[5]   = f"{cc['fg']['R']}F{cc['end']}"
-        s.ids[7]   = f"{cc['fg']['R']}X{cc['end']}"
-        s.ids[8]   = f"{cc['fg']['B1']}{md.cMarkdown(1)}O{cc['end']}"
-        s.ids[9]   = f"{cc['fg']['B1']}{md.cMarkdown(1)}o{cc['end']}"
-        s.ids[10]  = f"{cc['fg']['R']}o{cc['end']}"
-        s.ids[11]  = f"{cc['fg']['B1']}q{cc['end']}"
-        s.ids[12]  = f"{cc['fg']['L']}v{cc['end']}"
-        s.ids[13]  = f"{cc['fg']['Y']}o{cc['end']}"
-        s.ids[14]  = f"{cc['fg']['F']}ø{cc['end']}"
-        s.ids[15]  = f"{cc['fg']['R']}O{cc['end']}"
-        s.ids[16]  = f"{cc['fg']['B1']}Q{cc['end']}"
-        s.ids[17]  = f"{cc['fg']['L']}V{cc['end']}"
-        s.ids[18]  = f"{cc['fg']['Y']}O{cc['end']}"
-        s.ids[19]  = f"{cc['fg']['F']}Ø{cc['end']}"
+        s.bids['orbBox']   = f"{cc['fg']['Y']}É{cc['end']}"
+        s.bids['exit']     = f"{cc['fg']['R']}F{cc['end']}"
+        s.bids['squishy0'] = f"{cc['fg']['B1']}{md.cMarkdown(1)}O{cc['end']}"
+        s.bids['squishy1'] = f"{cc['fg']['B1']}{md.cMarkdown(1)}o{cc['end']}"
 
-        s.ids[21] = f"{cc['fg']['O']}☷{cc['end']}"
+        s.bids['hpOrbS']  = f"{cc['fg']['R']}o{cc['end']}"
+        s.bids['dfOrbS']  = f"{cc['fg']['B1']}q{cc['end']}"
+        s.bids['atkOrbS'] = f"{cc['fg']['L']}v{cc['end']}"
+        s.bids['hgOrbS']  = f"{cc['fg']['Y']}o{cc['end']}"
+        s.bids['csOrbS']  = f"{cc['fg']['F']}ø{cc['end']}"
+        s.bids['hpOrbB']  = f"{cc['fg']['R']}O{cc['end']}"
+        s.bids['dfOrbB']  = f"{cc['fg']['B1']}Q{cc['end']}"
+        s.bids['atkOrbB'] = f"{cc['fg']['L']}V{cc['end']}"
+        s.bids['hgOrbB']  = f"{cc['fg']['Y']}O{cc['end']}"
+        s.bids['csOrbB']  = f"{cc['fg']['F']}Ø{cc['end']}"
 
-        s.ids[26] = f"{cc['fg']['M']}X{cc['end']}"
-        s.ids[27] = f"{cc['bg']['R']}░{cc['end']}"
+        s.bids['deadClayModel'] = f"{cc['fg']['O']}☷{cc['end']}"
 
-        s.ids[300] = f"{cc['fg']['L']}@{cc['end']}" if s.ids[300]=='@'else s.ids[300]
-        s.ids[301] = f"{cc['fg']['L']}&{cc['end']}"
+        s.bids['corpse'] = f"{cc['fg']['M']}X{cc['end']}"
+        s.bids['blood']  = f"{cc['bg']['R']}░{cc['end']}"
 
-        s.ids[400] = f"{cc['fg']['A']}Y{cc['end']}"
-        s.ids[401] = f"{cc['fg']['F']}Y{cc['end']}"
+        s.eids['player1'] = f"{cc['fg']['L']}@{cc['end']}" if s.eids['player1']=='@'else s.eids['player1']
+        s.eids['player2'] = f"{cc['fg']['L']}&{cc['end']}"
 
-        s.ids[501] = f"{cc['fg']['R']}H{cc['end']}"
-        s.ids[502] = f"{cc['fg']['B1']}U{cc['end']}"
+        s.bids['normalStatue'] = f"{cc['fg']['A']}Y{cc['end']}"
+        s.bids['cursedStatue'] = f"{cc['fg']['F']}Y{cc['end']}"
 
-        s.ids[900] = f"{cc['fg']['G1']};{cc['end']}"
+        s.bids['aorta'] = f"{cc['fg']['R']}H{cc['end']}"
+        s.bids['venaCava'] = f"{cc['fg']['B1']}U{cc['end']}"
+
+        s.bids['ashChip'] = f"{cc['fg']['G1']};{cc['end']}"
 
         s.bloodIcon = {
             5 : f"{cc['fg']['R']}██{cc['end']}",
@@ -189,7 +189,7 @@ f"이름이 {cc['fg']['R']}{md.cMarkdown([2, 4])}없거나{cc['end']} \
                             case 6:
                                 s.lightName = f"{cc['fg']['W']}{temporaryName[:2]}\033[;38;5;253m{temporaryName[2]}{s.playerColor[0]}{temporaryName[3:]}{cc['end']}"
                     
-                    case _: addEffect('0', "∞", merge=False)
+                    case _: addEffect('fatality', "∞", merge=False)
 
                 break
             
@@ -215,7 +215,7 @@ f"이름이 {cc['fg']['R']}{md.cMarkdown([2, 4])}없거나{cc['end']} \
     s.name      = temporaryName
     s.lightName = s.lightName  or f"{s.playerColor[0]}{temporaryName}{cc['end']}"
 
-    if s.bodyPreservationMode:
+    if s.cowardMode:
         addLog(
             choice([
             f"우쭈쭈, 우리 {md.cMarkdown(2)}겁. 쟁. 이.{cc['end']} {s.lightName}님 오셨군요?",
@@ -237,4 +237,4 @@ f"이름이 {cc['fg']['R']}{md.cMarkdown([2, 4])}없거나{cc['end']} \
 
 @_setFrame
 @_setIconColor
-def presetted() -> None: pass
+def presetted(): pass

@@ -3,8 +3,8 @@ from   random import randrange, choice
 
 from Assets.data                 import totalGameStatus as s
 from Assets.data.color           import cColors         as cc
+from functions.grammar           import pstpos          as pp
 from Game.entities.functions     import getFace
-from functions.grammar           import pstpos as pp
 from Game.core.system.dataLoader import obj
 from Game.core.system.logger     import addLog
 from Game.entities               import event
@@ -18,19 +18,18 @@ class Animal:
                  tribe         :str,
                  name          :str,
                  icon          :str,
-                 ID            :int,
+                 ID            :str,
                  color         :str,
                  colorKey      :str,
-                 hashKey       :str,
+                 tag           :str,
                  initFuncParams:list) -> None:
-        self.tribe   = tribe
-        self.hashKey = hashKey
+        self.tribe = tribe
+        self.tag   = tag
 
-        self.name = name
-        self.Dy   = 0
-        self.Dx   = 0
-        self.y    = 0
-        self.x    = 0
+        self.Dy = 0
+        self.Dx = 0
+        self.y  = 0
+        self.x  = 0
 
         self.atk      = 0
         self.hp       = 0
@@ -39,6 +38,7 @@ class Animal:
 
         self.Mhp = 0
 
+        self.name     = name
         self.icon     = icon
         self.id       = ID
         self.color    = color
@@ -54,7 +54,8 @@ class Animal:
               Dy    :int     ,
               Dx    :int     ,
               y     :list|int,
-              x     :list|int ) -> None:
+              x     :list|int,
+              perm            ) -> None:
         self.hp    = setHp
         self.atk   = setAtk
         self.stage = 1
@@ -63,26 +64,37 @@ class Animal:
 
         self.face = 'n'
 
-        DRP = s.Dungeon[self.Dy][self.Dx]
+        self.perm = perm
 
+        self.Dy, self.Dx = Dy, Dx
+        DRP              = s.Dungeon[self.Dy][self.Dx]
         if isinstance(y, list) or isinstance(x, list):
             while 1:
-                sY = randrange(1,len(DRP['room'])-1)
-                sX = randrange(1,len(DRP['room'][0])-1)
-                if s.Dungeon[Dy][Dx]['room'][sY][sX]["id"] in s.monsterInteractableBlocks['unsteppable']:
-                    continue
-                else:
+                sY = randrange(1, s.roomData['maxHeight']-1)
+                sX = randrange(1, s.roomData['maxWidth'] -1)
+
+                # if s.Dungeon[Dy][Dx]['room'][sY][sX]["id"] in s.monsterInteractableBlocks['unsteppable']:
+                if self.perm.data[s.Dungeon[Dy][Dx]['room'][sY][sX]["id"]] & self.perm.STEP:
                     self.y = sY if isinstance(y, list) else y
                     self.x = sX if isinstance(x, list) else x
                     event.spawn(self.y, self.x, f"{self.color}{self.icon}{cc['end']}")
+                    
                     break
-        else:
-            self.Dy, self.Dx = Dy, Dx
-            self.y,  self.x  = y, x
 
-        self.stepped = DRP['room'][self.y][self.x]\
-                       if   DRP in s.interactableBlocks['steppable']['maintainable']\
-                       else obj(s.path['blockData']['block'], '0')
+                else: continue
+
+        else: self.y,  self.x  = y, x
+
+        # self.stepped = DRP['room'][self.y][self.x]\
+        #         if DRP in s.interactableBlocks['steppable']['maintainable']\
+        #     else obj('-bb', '0')
+        block = DRP['room'][self.y][self.x]
+
+        self.stepped = block\
+                if self.perm.data[block['id']]&self.perm.MAINTAIN\
+            else block['blockData']\
+                if block.get('blockData', False)\
+            else obj('-bb', 'floor')
         
     def damaged(self) -> None:
         if s.hitPos['pos'] and [self.y, self.x] in s.hitPos['pos']:
@@ -104,13 +116,13 @@ class Animal:
             if self.hp > 0:
                 msg = f"{cc['fg']['F']}{self.name}{cc['end']}{pp(self.name,'sub',True)} {cc['fg']['L']}{dmg}{cc['end']}만큼의 피해를 입었습니다! {cc['fg']['R']}(체력 : {self.hp}){cc['end']}"
                 if   not dmg: msg  = f"{cc['fg']['L']}공격{cc['end']}이 빗나갔습니다!"
-                elif crit:    msg += f" {cc['fg']['L']}치명타!{cc['end']}"
+                elif crit   : msg += f" {cc['fg']['L']}치명타!{cc['end']}"
 
                 if dmg:
                     event.hitted(
                         self.y, self.x,
                         f"{self.color}{self.icon}{cc['end']}",
-                        self.id, self.hashKey
+                        self.id, self.tag
                     )
                 addLog(msg, colorKey='L')
                 if sound: play("entity", "enemy", "damage", sound)
@@ -146,9 +158,9 @@ class Animal:
             s.df -= 1
 
             if s.df == 0: dmg = int(atk/2)
-            else:         dmg = int(atk/3)
+            else        : dmg = int(atk/3)
 
-            if s.df == 0 and s.dfCrack <= 0:
+            if s.df==0 and s.dfCrack<=0:
                 sound     = ("player", "armor", "armorCrack")
                 s.dfCrack = 1
 
@@ -171,24 +183,29 @@ class Animal:
 
         self.face = getFace(self.x, bfx, self.face)
         s.Dungeon[self.Dy][self.Dx]['room'][bfy][bfx] = self.stepped
+        # self.stepped = block\
+        #         if block['id']\
+        #         in s.monsterInteractableBlocks['steppable']['maintainable']\
+        #     else block['blockData']\
+        #         if block.get('blockData', False)\
+        #     else obj('-bb', '0')
         self.stepped = block\
-                if block['id']\
-                in s.monsterInteractableBlocks['steppable']['maintainable']\
+                if self.perm.data[block['id']]&self.perm.MAINTAIN\
             else block['blockData']\
                 if block.get('blockData', False)\
-            else obj('-bb', '0')
+            else obj('-bb', 'floor')
         
         s.Dungeon[self.Dy][self.Dx]['room'][self.y][self.x] = {
-            "block"   : iset(f"{self.color}{self.icon}{cc['end']}", Type=self.face),
-            "id"      : self.id,
-            "type"    : 1,
-            "hashKey" : self.hashKey
+            'block' : iset(f"{self.color}{self.icon}{cc['end']}", Type=self.face),
+            'id'    : self.id                                                    ,
+            'type'  : 'entity'                                                   ,
+            'tag'   : self.tag
             }
         
     def saveData(self):
-        s.entityDataMaintained['addAnimal'][self.hashKey]               = {}
-        s.entityDataMaintained['addAnimal'][self.hashKey]["funcParams"] = self.initFuncParams
-        s.entityDataMaintained['addAnimal'][self.hashKey]['selfParams'] = self.__dict__
+        s.entityDataMaintained['addAnimal'][self.tag]               = {}
+        s.entityDataMaintained['addAnimal'][self.tag]["funcParams"] = self.initFuncParams
+        s.entityDataMaintained['addAnimal'][self.tag]['selfParams'] = self.__dict__
 
     def loadData(self, data):
         for key, value in data.items():

@@ -15,16 +15,17 @@ from Assets.data import (
 
 extraParameters = lambda data: ','.join(f"{k}={v}" for k, v in data.items())
 
-def addHashKey() -> str:
+def addTag() -> str:
     while 1:
-        hashKey = hashGenerator.main()
-        if hashKey in s.entityHashPool: continue
+        tag = hashGenerator.main()
+        if tag in s.entityHashPool: continue
         break
-    s.entityHashPool.append(hashKey)
+    s.entityHashPool.append(tag)
 
-    return hashKey
+    return tag
 
-def addMonster(entityID  :int       ,
+# region Monster
+def addMonster(ID        :str       ,
                hpMtp     :int       ,
                atkMtp    :int       ,
                acMtp     :int       ,
@@ -37,20 +38,21 @@ def addMonster(entityID  :int       ,
     """
     모든 적을 소환할 수 있는 함수
 
-        `entityID`(str)            : 소환할 몬스터의 넘버링
+        `ID`(str)                    : 몬스터의 고유 id
         `hpMtp`(int)                 : 몬스터의 기본 체력 배수값
         `atkMtp`(int)                : 몬스터의 기본 공격력 배수값
+        `acMtp`(int)                 : 몬스터의 기본 사체 잿가루 배수값
         `Dy`(int), `Dx`(int)         : 엔티티가 소환될 미궁 y, x값
         `y`(list|int), `x`(list|int) : 엔티티가 소환될 방 y, x값
             랜덤하게 소환하려면 list([min, max])로 기입,
             특정한 곳에 소환하려면 int로 기입해야 함. 이 둘은 모두 독립적으로 결정될 수 있음
-        `useRoomLock`(bool=False)    : 해당 몬스터 소환 시 방 잠금 여부, 기본적으로 `False`로\
+        `lock`(bool=False)           : 해당 몬스터 소환 시 방 잠금 여부, 기본적으로 `False`로\
                                        설정되어 있음
         `sendEffect`(bool=True)      : 몬스터 사망 시 사망 이펙트 전송 여부, 기본적으로 `True`로\
                                        설정되어 있음
     """
-    data    = obj(s.path['blockData']['enemy'], str(entityID))
-    hashKey = addHashKey()
+    data = obj(s.path['data']['enemySpd'], ID)
+    tag  = addTag()
 
     mClass      = data['class']
     name        = data['kinds']
@@ -70,6 +72,7 @@ def addMonster(entityID  :int       ,
         exec(f"""
 import time
 
+from Assets.data.permissions import {mClass} as perm
 from Game.entities.enemy     import mobs
 from Game.utils.system       import xpSystem as xps
              
@@ -79,11 +82,12 @@ from Assets.data import (
 )
              
              
-{mClass} = mobs.{mClass}("{name}", "{icon}", {mID}, "{hashKey}")
+{mClass} = mobs.{mClass}("{name}", "{icon}", '{mID}', "{tag}")
 {mClass}.start(
-    {((hp-2 if s.ezMode else hp)*hpMtp)+((s.stage-1)*2)},
+    {((hp-2 if s.cowardMode else hp)*hpMtp)+((s.stage-1)*2)},
     {((atk)*atkMtp)+(s.stage-1)},
-    {Dy}, {Dx}, {y}, {x}
+    {Dy}, {Dx}, {y}, {x},
+    perm
 )
 
 if {lock}: s.roomLock = True
@@ -100,20 +104,20 @@ while s.main:
         {mClass}.move()
     else: time.sleep(0.05)
 
-if s.target['hashKey'] == {mClass}.hashKey:
-    s.target = {{"hashKey" : "", "attackable" : False, "command" : False}}
+if s.target['tag'] == {mClass}.tag:
+    s.target = {{"tag" : "", "attackable" : False, "command" : False}}
 
 if s.main and not (s.killAll or s.clearEntity):
     xps.getXP({curse}*{mClass}.xpMultiplier)
     s.Dungeon[{mClass}.Dy][{mClass}.Dx]['room'][{mClass}.y][{mClass}.x] = {{
-        "block" : f"{cc['fg']['G1']}{{{mClass}.icon}}{cc['end']}",
-        "id"    : 900,
-        "type"  : 0,
-        "nbt"   : {{
-            "count" : {ashChip*acMtp}}}
+        'block' : f"{cc['fg']['G1']}{{{mClass}.icon}}{cc['end']}",
+        'id'    : 'ashChip',
+        'type'  : 'block',
+        'nbt'   : {{
+            'count' : {ashChip*acMtp}}}
         }}
         """)
-        s.entityHashPool.remove(hashKey)
+        s.entityHashPool.remove(tag)
         if s.main and not (s.killAll or s.clearEntity):
             s.killCount += 1
             if sendEffect:
@@ -123,28 +127,29 @@ if s.main and not (s.killAll or s.clearEntity):
     threading.Thread(target=EntityInteraction, name=name, daemon=True).start()
     time.sleep(0.2)
 
-def addAnimal(entityID:int     ,
-              hp      :int     ,
-              atk     :int     ,
-              y       :list|int,
-              x       :list|int,
-              Dy      :int=0   ,
-              Dx      :int=0   ,
+# region Animal
+def addAnimal(ID      :str                      ,
+              hp      :int                      ,
+              atk     :int                      ,
+              y       :list|int                 ,
+              x       :list|int                 ,
+              Dy      :int     =0               ,
+              Dx      :int     =0               ,
 
-              icon    :str=""                   ,
-              name    :str=""                   ,
+              icon    :str =""                  ,
+              name    :str =""                  ,
               color   :list=[cc['fg']['W'], 'W'],
               friendly:bool=False               ,
 
-              MCBF:bool=False,
-              SICR:bool=True ,
+              MCBF:bool=False                   ,
+              SICR:bool=True                    ,
 
-              extraData:dict  ={},
+              extraData  :dict={}               ,
               preloadData:dict={}                ) -> None:
     """
     모든 동물을 소환할 수 있는 함수
 
-        `entityID`(int)      : 엔티티의 고유 id
+        `ID`(int)            : 엔티티의 고유 id
         `hp`(int)            : 엔티티가 가질 체력
         `atk`(int)           : 엔티티가 가질 공격력
         `Dy`(int), `Dx`(int) : 엔티티가 소환될 미궁 y, x값
@@ -160,30 +165,31 @@ def addAnimal(entityID:int     ,
         `MCBG`(bool)                   : 엔티티 유지 여부. 활성화 시 죽지 않고 계속 남아있음(던전 새로 생성 시 listIndexOutofRange 주의)
         `SICR`(bool)                   : 엔티티를 현재 주목된 방에 소환할지에 대한 여부. 활성화 시 매개변수 `Dy`, `Dx`를 무시함
     """
-    data = obj(s.path['blockData']['animal'], str(entityID))
+    data = obj(s.path['data']['animalSpd'], ID)
     if preloadData:
-        hashKey = preloadData['hashKey']
-        s.entityHashPool.append(hashKey)
+        tag = preloadData['tag']
+        s.entityHashPool.append(tag)
         
-    else: hashKey = addHashKey()
+    else: tag = addTag()
 
     entity      = data['entity']
     icon        = icon or data['icon']
     name        = name or data['name']
     entityCount = data['entityCount']
 
-    endowmentOfFragment = randrange(0,2)
+    endowmentofFragment = randrange(0,2)
 
     s.entityCount      += entityCount
     s.totalEntityCount += 1
 
-    if friendly: s.friendlyEntity.append(hashKey)
+    if friendly: s.friendlyEntity.append(tag)
     if SICR:     Dy, Dx = s.Dy, s.Dx
 
     def EntityInteraction() -> None:
         exec(f"""
 import time
 
+from Assets.data.permissions import {entity} as perm
 from Game.entities.animal    import {entity}
 from Game.utils.system       import xpSystem as xps
 
@@ -194,11 +200,11 @@ from Assets.data import (
 
              
 {entity} = {entity}.{entity}(
-    "{entity}", "{name}", "{icon}", {entityID},
+    "{entity}", "{name}", "{icon}", '{ID}',
     "{color[0]}", "{color[1]}",
-    "{hashKey}",
+    "{tag}",
     [
-        {entityID},
+        '{ID}',
         {hp}, {atk}, {y}, {x}, {Dy}, {Dx},
         "{icon}", "{name}", {color}, {friendly},
         {MCBF}, {SICR}
@@ -208,6 +214,7 @@ from Assets.data import (
 {entity}.start(
     {hp}, {atk},
     {Dy}, {Dx}, {y}, {x},
+    perm,
     {extraParameters(extraData)}
 )
 
@@ -228,7 +235,7 @@ while s.main:
         time.sleep(0.05)
 
 if s.main and not (s.killAll or s.clearEntity):
-    if {endowmentOfFragment}:
+    if {endowmentofFragment}:
         addMonster(
             0,
             {int(hp/2) or 1},
@@ -245,15 +252,15 @@ if s.main and not (s.killAll or s.clearEntity):
     else:
         s.Dungeon[{entity}.Dy][{entity}.Dx]['room'][{entity}.y][{entity}.x] = {{
             "block" : f"{cc['fg']['M']}{{{entity}.icon}}{cc['end']}",
-            "id"    : 26,
-            "type"  : 0,
-            "nbt"   : {{
-                "link" : True
+            'id'    : 'corpse',
+            'type'  : 'block',
+            'nbt'   : {{
+                'link' : True
             }}
-        }}
-""")
-        s.entityHashPool.remove(hashKey)
-        if hashKey in s.friendlyEntity: s.friendlyEntity.remove(hashKey)
+        }}"""
+        )
+        s.entityHashPool.remove(tag)
+        if tag in s.friendlyEntity: s.friendlyEntity.remove(tag)
         
         if s.main and not (s.killAll or s.clearEntity):
             s.killCount += 1

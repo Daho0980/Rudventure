@@ -28,8 +28,8 @@ def counter() -> None:
                             ])
                         ])
                     ],
-                    weights=[50,50],
-                    k=1
+                    weights=[60,40],
+                    k      =1
                     )[0])
 
                 s.monologueRange = randrange(p.monologue['min'], p.monologue['max']+1)

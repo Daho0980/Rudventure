@@ -13,7 +13,7 @@ from Assets.data import (
 
 
 def hpCheck() -> None:
-    if s.hp <= int(s.Mhp*0.3) and not s.hpLow:
+    if s.hp<=int(s.Mhp*0.3) and not s.hpLow:
         play("system", "hpLow")
         s.hpLow = True
         p.say(choice(c.lowHp))
@@ -24,12 +24,13 @@ def defCheck() -> None:
     if s.df > 0: s.dfCrack = 0
 
 def ashChipCheck() -> None:
-    if s.ashChip>=100:
+    if s.ashChip >= 100:
         s.ashChip -= 100
         s.Mlvl    += 1
+
         play("system", "ashDiskUp")
         addLog(
-            f"{cc['fg']['G1']}재의 그릇{cc['end']}의 수가 증가했습니다. (그릇의 수 {cc['fg']['G1']}{s.Mlvl-1}{cc['end']} -> {cc['fg']['F']}{s.Mlvl}{cc['end']})",
+            f"{cc['fg']['G1']}재의 그릇{cc['end']}의 수가 증가했습니다! (그릇의 수 {cc['fg']['G1']}{s.Mlvl-1}{cc['end']} -> {cc['fg']['F']}{s.Mlvl}{cc['end']})",
             colorKey='G1'
         )
 

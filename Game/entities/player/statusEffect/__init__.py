@@ -15,7 +15,7 @@ indexConverter = lambda key: keyIndex[key]
 
 def render() -> str:
     return TextBox(
-        f" {' '.join(map(
+        f" {'  '.join(map(
             lambda e: e['icon'],
             s.statusEffect['line'][s.statusEffect['pointer']:s.statusEffect['pointer']+9]
         ))} "\

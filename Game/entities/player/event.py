@@ -2,8 +2,8 @@ import time ; import threading
 from   copy   import deepcopy
 from   random import randrange, shuffle, choice
 
-from Assets.data.color           import cColors as cc
-from Assets.data                 import lockers as l
+from Assets.data.color           import cColors  as cc
+from Assets.data.permissions     import Player   as perm
 from Game.core.system            import logger
 from Game.core.system.dataLoader import obj
 from Game.entities               import player as p
@@ -14,39 +14,40 @@ from Game.utils.system.sound     import play # 이거 씀
 
 from Assets.data import (
     totalGameStatus as s,
-    comments        as c # 얘도 쓰는거임
+    comments        as c, # 얘도 쓰는거임
+    lockers         as l
     )
 
 
 def hitted() -> None:
     def event() -> None:
-        if s.ids[300].startswith(cc['fg']['R']):
-            s.ids[300] = escapeAnsi(s.ids[300])
+        if s.eids['player1'].startswith(cc['fg']['R']):
+            s.eids['player1'] = escapeAnsi(s.eids['player1'])
         else:
-            icon:str      = s.ids[300][:]
-            character:str = escapeAnsi(choice(s.playerDamageIcon))
+            icon      = s.eids['player1'][:]
+            character = escapeAnsi(choice(s.playerDamageIcon))
 
-            s.ids[300] = f"{cc['fg']['R']}{character}{cc['end']}"
-            s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x]['block'] = iset(s.ids[300])
+            s.eids['player1'] = f"{cc['fg']['R']}{character}{cc['end']}"
+            s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x]['block'] = iset(s.eids['player1'])
             time.sleep(0.03)
-            s.ids[300] = icon[:]
-            s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x]['block'] = iset(s.ids[300])
+            s.eids['player1'] = icon[:]
+            s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x]['block'] = iset(s.eids['player1'])
 
     threading.Thread(target=event, daemon=True).start()
 
 def defended() -> None:
     def event() -> None:
-        if s.ids[300].startswith(cc['fg']['B1']):
-            s.ids[300] = escapeAnsi(s.ids[300])
+        if s.eids['player1'].startswith(cc['fg']['B1']):
+            s.eids['player1'] = escapeAnsi(s.eids['player1'])
         else:
-            icon:str      = s.ids[300][:]
-            character:str = escapeAnsi(choice(s.playerDamageIcon))
+            icon      = s.eids['player1'][:]
+            character = escapeAnsi(choice(s.playerDamageIcon))
 
-            s.ids[300] = f"{cc['fg']['B1']}{character}{cc['end']}"
-            s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x]['block'] = iset(s.ids[300])
+            s.eids['player1']                                = f"{cc['fg']['B1']}{character}{cc['end']}"
+            s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x]['block'] = iset(s.eids['player1'])
             time.sleep(0.03)
-            s.ids[300] = icon[:]
-            s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x]['block'] = iset(s.ids[300])
+            s.eids['player1']                                = icon[:]
+            s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x]['block'] = iset(s.eids['player1'])
 
     threading.Thread(target=event, daemon=True).start()
 
@@ -59,12 +60,12 @@ def cursedDeath() -> None:
         s.DROD = [f"{cc['fg']['F']}저주받음{cc['end']}", 'F']
 
         p.say("큭..")
-        s.ids[300]                                       = f"{cc['fg']['F']}{escapeAnsi(s.ids[300])}{cc['end']}"
-        s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x]['block'] = iset(s.ids[300])
+        s.eids['player1']                                = f"{cc['fg']['F']}{escapeAnsi(s.eids['player1'])}{cc['end']}"
+        s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x]['block'] = iset(s.eids['player1'])
         time.sleep(1.5)
 
-        s.ids[300]                                       = f"{cc['fg']['F']}a{cc['end']}"
-        s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x]['block'] = iset(s.ids[300])
+        s.eids['player1']                                = f"{cc['fg']['F']}a{cc['end']}"
+        s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x]['block'] = iset(s.eids['player1'])
         p.say(f"크{cc['fg']['F']}으윽...")
         time.sleep(1.7)
 
@@ -72,23 +73,22 @@ def cursedDeath() -> None:
         while s.hp!=1:
             s.hp -= 1
             time.sleep(0.15)
-        s.ids[300]                                       = f"{cc['fg']['F']}o{cc['end']}"
-        s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x]['block'] = iset(s.ids[300])
+        s.eids['player1']                                = f"{cc['fg']['F']}o{cc['end']}"
+        s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x]['block'] = iset(s.eids['player1'])
         time.sleep(0.1)
 
-        s.ids[300]                                       = f"{cc['fg']['F']}'{cc['end']}"
-        s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x]['block'] = iset(s.ids[300])
+        s.eids['player1']                                = f"{cc['fg']['F']}'{cc['end']}"
+        s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x]['block'] = iset(s.eids['player1'])
         time.sleep(0.1)
 
-        s.ids[300]                                       = f"{cc['fg']['F']}.{cc['end']}"
-        s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x]['block'] = iset(s.ids[300])
+        s.eids['player1']                                = f"{cc['fg']['F']}.{cc['end']}"
+        s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x]['block'] = iset(s.eids['player1'])
         time.sleep(0.2)
 
-        s.ids[300]                                       = " "
-        s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x]['block'] = iset(s.ids[300])
+        s.eids['player1']                                = " "
+        s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x]['block'] = iset(s.eids['player1'])
         time.sleep(1)
         s.hp -= 1
-
     
     threading.Thread(target=event, daemon=True).start()
 
@@ -101,6 +101,7 @@ def readSign(texts, delay, voice, command="") -> None:
                 exec(line[1])
                 logger.addLog(line[0], duration=max(50, TTC(line[0])))
                 TTS(line[0], voicePath=("object", "clayModel", "voice", voice), useLvl=False)
+
             else:
                 logger.addLog(line, duration=max(50, TTC(line)))
                 TTS(line, voicePath=("object", "clayModel", "voice", voice), useLvl=False)
@@ -109,13 +110,14 @@ def readSign(texts, delay, voice, command="") -> None:
     
     threading.Thread(target=target, daemon=True).start()
 
-def linkedInteraction(y:int, x:int, _id:int, afterData:dict, color:str):
+def linkedInteraction(y:int, x:int, _id:str, afterData:dict, color:str):
     for r in range(y-1, y+2):
         for c in range(x-1, x+2):
             if s.Dungeon[s.Dy][s.Dx]['room'][r][c]['id'] == _id:
-                if afterData['block'] == "same_":
-                    CData = deepcopy(afterData)
+                if afterData['block'] == "_same":
+                    CData          = deepcopy(afterData)
                     CData['block'] = f"{color}{escapeAnsi(s.Dungeon[s.Dy][s.Dx]['room'][r][c]['block'])}{cc['end']}" 
+
                 s.Dungeon[s.Dy][s.Dx]['room'][r][c] = CData
                 linkedInteraction(r, c, _id, afterData, color)
                         
@@ -131,10 +133,10 @@ def _bloodOverflow(y:int, x:int, stack:int, pos=None):
             if (row, col) in pos: continue
             
             target = s.Dungeon[s.Dy][s.Dx]['room'][row][col]
-            if target['id'] in s.interactableBlocks['steppable']['total']:
+            if perm.data[target['id']] & perm.STEP:
                 pos.append((row, col))
 
-                if target['id'] == 27:
+                if target['id'] == 'blood':
                     targetStack            = min(stack+target['nbt']['stack'], 5)
                     target['nbt']['stack'] = targetStack
                     target['block']        = iset(s.bloodIcon[targetStack])
@@ -146,7 +148,7 @@ def _bloodOverflow(y:int, x:int, stack:int, pos=None):
                     stack    -= 5
 
                     s.Dungeon[s.Dy][s.Dx]['room'][row][col] = obj(
-                        '-bb', '27',
+                        '-bb', 'blood',
                         block=iset(s.bloodIcon[currStack]),
                         nbt  ={
                             "link"  : True,
@@ -174,8 +176,7 @@ def bleeding(hp:int, multiply:bool=True) -> None:
         ((s.y-1,s.x),(s.y,s.x+1),(s.y+1,s.x),(s.y,s.x-1)),
         ("U","R","D","L")
     ):
-        if roomGrid[Dir[0]][Dir[1]]['id']\
-        in s.interactableBlocks['unsteppable']:
+        if not perm.data[roomGrid[Dir[0]][Dir[1]]['id']] & perm.STEP:
             del stk[dirN]
 
     dirKey = list(stk.keys())
@@ -193,24 +194,23 @@ def bleeding(hp:int, multiply:bool=True) -> None:
         y, x  = pos[dirN]
         stack = stk[dirN]
         
-        if roomGrid[y][x]['id'] == 27:
+        if roomGrid[y][x]['id'] == 'blood':
             targetStack                    = min(stack+roomGrid[y][x]['nbt']['stack'], 5)
             roomGrid[y][x]['nbt']['stack'] = targetStack
             roomGrid[y][x]['block']        = iset(s.bloodIcon[targetStack])
 
             stack -= 5-targetStack
 
-            if stack > 0:
-                _bloodOverflow(y, x, stack)
+            if stack > 0: _bloodOverflow(y, x, stack)
         
         else:
             stack          = min(stack, 5)
             roomGrid[y][x] = obj(
-                '-bb', '27',
+                '-bb', 'blood',
                 block=iset(s.bloodIcon[stack]),
                 nbt  ={
                     "link"  : True,
                     "stack" : stack,
                 },
-                blockData = roomGrid[y][x]
+                blockData=roomGrid[y][x]
             )

@@ -2,7 +2,7 @@ import math # 이거 쓰는거임
 import time
 from   random import randrange, choice
 
-from .                           import event    as eEv
+from .                           import event    as eEvent
 from .status                     import cooltimes
 from Assets.data.color           import cColors  as cc
 from Assets.data.comments        import TIOTA
@@ -22,21 +22,21 @@ from Assets.data import (
 from Game.entities.player import (
     event        as pEv,
     statusEffect as se,
-    
+
     say
 )
 
 
-# region Monster common code
+# region Base
 class Enemy:
-    def __init__(self, name:str, icon:str, ID:int, hashKey:str) -> None:
-        self.hashKey = hashKey
-        self.name    = name
-        self.Dy      = 0
-        self.Dx      = 0
-        self.y       = 0
-        self.x       = 0
-        self.face    = 'n'
+    def __init__(self, name:str, icon:str, ID:str, tag:str) -> None:
+        self.tag  = tag
+        self.name = name
+        self.Dy   = 0
+        self.Dx   = 0
+        self.y    = 0
+        self.x    = 0
+        self.face = 'n'
 
         self.atk      = 0
         self.hp       = 0
@@ -56,34 +56,39 @@ class Enemy:
               Dy    :int     ,
               Dx    :int     ,
               y     :list|int,
-              x     :list|int ) -> None:
-        self.hp           = setHp
-        self.atk          = setAtk
-        self.Dy, self.Dx  = Dy, Dx
+              x     :list|int,
+              perm            ) -> None:
+        self.hp  = setHp
+        self.atk = setAtk
 
-        DRP = s.Dungeon[self.Dy][self.Dx]
+        self.perm = perm
 
+        self.Dy, self.Dx = Dy, Dx
+        DRP              = s.Dungeon[self.Dy][self.Dx]
         if isinstance(y, list) or isinstance(x, list):
             while 1:
-                sY = randrange(1,len(DRP['room']   )-1)
-                sX = randrange(1,len(DRP['room'][0])-1)
+                sY = randrange(1, s.roomData['maxHeight']-1)
+                sX = randrange(1, s.roomData['maxWidth'] -1)
 
-                if s.Dungeon[Dy][Dx]['room'][sY][sX]["id"] in s.monsterInteractableBlocks['unsteppable']:
-                    continue
-                else:
+                if self.perm.data[DRP['room'][sY][sX]['id']] & self.perm.STEP:
                     self.y = sY if isinstance(y, list) else y
                     self.x = sX if isinstance(x, list) else x
-                    eEv.spawn(self.y, self.x, self.icon)
+                    eEvent.spawn(self.y, self.x, self.icon)
 
                     break
 
-        else:
-            self.Dy, self.Dx = Dy, Dx
-            self.y, self.x   = y, x
+                else: continue
+
+        else: self.y, self.x = y, x
+
+        block = DRP['room'][self.y][self.x]
         
-        self.stepped = DRP['room'][self.y][self.x]\
-                       if   DRP in s.monsterInteractableBlocks['steppable']['maintainable']\
-                       else obj('-bb', '0')
+        self.stepped = block\
+                if  hasattr(self.perm, 'MAINTAIN')\
+                and self.perm.data[block['id']]&self.perm.MAINTAIN\
+            else block['blockData']\
+                if block.get('blockData', False)\
+            else obj('-bb', 'floor')
 
     def damaged(self) -> None:
         if s.hitPos['pos'] and [self.y, self.x] in s.hitPos['pos']:
@@ -110,7 +115,7 @@ class Enemy:
                 if   not dmg: msg  = f"{cc['fg']['L']}공격{cc['end']}이 빗나갔습니다!"
                 elif crit:    msg += f" {cc['fg']['L']}치명타!{cc['end']}"
 
-                if dmg: eEv.hitted(self.y, self.x, self.icon, self.id, self.hashKey)
+                if dmg: eEvent.hitted(self.y, self.x, self.icon, self.id, self.tag)
                 addLog(msg, colorKey='L')
 
                 if sound: play("entity", "enemy", "damage", sound)
@@ -125,8 +130,8 @@ class Enemy:
             sound  = ("entity", "enemy", "enemyHit")
             s.DROD = [f"{cc['fg']['F']}{self.name if not DR else DR}{cc['end']}", 'F']
 
-            if s.target['hashKey'] != self.hashKey:
-                s.target['hashKey']    = self.hashKey
+            if s.target['tag'] != self.tag:
+                s.target['tag']        = self.tag
                 s.target['attackable'] = False
 
             if s.df > 0:
@@ -161,10 +166,9 @@ class Enemy:
         room = s.Dungeon[self.Dy][self.Dx]['room']
 
         for i in range(length):
-            if room[self.y-Dir[0]][self.x-Dir[1]]['id']\
-            in s.monsterInteractableBlocks['unsteppable']:
+            if not self.perm.data[room[self.y-Dir[0]][self.x-Dir[1]]['id']] & self.perm.STEP:
                 play("object", "wall", "hit")
-                eEv.hitted(self.y, self.x, self.icon, self.id, self.hashKey)
+                eEvent.hitted(self.y, self.x, self.icon, self.id, self.tag)
                 self.hp -= atk-i
                 addLog(f"{cc['fg']['F']}{self.name}{cc['end']}{pp(self.name,'sub',True)} {cc['fg']['L']}{atk-i}{cc['end']}만큼의 피해를 입었습니다! {cc['fg']['R']}(체력 : {self.hp}){cc['end']}", colorKey='R')
 
@@ -176,17 +180,31 @@ class Enemy:
             self.y   -= Dir[0]
             self.x   -= Dir[1]
 
-            self.stepped                                        = s.Dungeon[self.Dy][self.Dx]['room'][self.y][self.x]
-            s.Dungeon[self.Dy][self.Dx]['room'][self.y][self.x] = obj('-be', str(self.id), block=iset(self.icon), hashKey=self.hashKey)
+            self.stepped = s.Dungeon[self.Dy][self.Dx]['room'][self.y][self.x]
+            
+            s.Dungeon[self.Dy][self.Dx]['room'][self.y][self.x] = obj(
+                '-be', self.id,
+                block=iset(self.icon),
+                tag  =self.tag
+            )
 
             time.sleep(0.05)
 
     def isTargetted(self) -> None:
-        if  s.target['hashKey'] == self.hashKey\
+        if  s.target['tag'] == self.tag\
         and s.target['command']:
             for _ in range(2):
-                s.Dungeon[self.Dy][self.Dx]['room'][self.y][self.x] = obj('-be', '-1', block=iset(f"{cc['bg']['L']}{self.icon}{cc['end']}"), hashKey=self.hashKey); time.sleep(0.07)
-                s.Dungeon[self.Dy][self.Dx]['room'][self.y][self.x] = obj('-be', '-1', block=iset(self.icon), hashKey=self.hashKey);                                time.sleep(0.07)
+                s.Dungeon[self.Dy][self.Dx]['room'][self.y][self.x] = obj(
+                    '-be', 'invincibleEntity',
+                    block=iset(f"{cc['bg']['L']}{self.icon}{cc['end']}"),
+                    tag  =self.tag
+                ); time.sleep(0.07)
+
+                s.Dungeon[self.Dy][self.Dx]['room'][self.y][self.x] = obj(
+                    '-be', 'invincibleEntity',
+                    block=iset(self.icon),
+                    tag  =self.tag
+                ); time.sleep(0.07)
 
             s.target['command'] = False
 
@@ -215,13 +233,16 @@ class Enemy:
 
         if saveStepped:
             self.stepped = block\
-                    if block['id']\
-                    in s.monsterInteractableBlocks['steppable']['maintainable']\
+                    if self.perm.data[block['id']]&self.perm.MAINTAIN\
                 else block['blockData']\
                     if block.get('blockData', False)\
-                else obj('-bb', '0')
+                else obj('-bb', 'floor')
             
-        s.Dungeon[self.Dy][self.Dx]['room'][self.y][self.x] = obj('-be', str(self.id), block=iset(self.icon), hashKey=self.hashKey)
+        s.Dungeon[self.Dy][self.Dx]['room'][self.y][self.x] = obj(
+            '-be', self.id,
+            block=iset(self.icon),
+            tag  =self.tag
+        )
         
 
 # region Pain
@@ -237,13 +258,21 @@ class Pain(Enemy):
 
     - 보스방 스폰 가능
     """
-    def __init__(self, name, icon, ID, hashKey):
-        super().__init__(name, icon, ID, hashKey)
+    def __init__(self, name, icon, ID, tag):
+        super().__init__(name, icon, ID, tag)
         self.coolTimes = cooltimes.Pain()
 
         if s.sanjibaMode: self.coolTimes.divideHalf(self.coolTimes.modeException)
 
-    def start(self, setHp:int, setAtk:int, Dy:int, Dx:int, y:int, x:int) -> None: super().start(setHp, setAtk, Dy, Dx, y, x)
+    def start(self      ,
+              setHp :int,
+              setAtk:int,
+              Dy    :int,
+              Dx    :int,
+              y     :int,
+              x     :int,
+              perm       ) -> None:
+        super().start(setHp, setAtk, Dy, Dx, y, x, perm)
 
     def move(self) -> None:
         DRP  = s.Dungeon[self.Dy][self.Dx]
@@ -258,71 +287,71 @@ class Pain(Enemy):
                     if randrange(1,1216) == 1215:
                         self.atk += 1+(round(s.stage/10))
                         play("entity", "enemy", "pain", "growl")
-                        se.addEffect('600', 50)
+                        se.addEffect('kitrima', 50)
                         addLog(f"{cc['fg']['F']}{self.name}{cc['end']}({self.icon}){pp(self.name,'sub',True)} 울부짖습니다!", colorKey='F')
                         addLog(f"{cc['fg']['F']}{self.name}{cc['end']}({self.icon})의 공격력이 {cc['fg']['L']}{1+(round(s.stage/10))}{cc['end']}만큼 상승합니다.", colorKey='F')
 
                         for _ in range(3):
                             DRP['room'][self.y][self.x] = obj(
-                                '-be', '-1',
-                                block  =f"{cc['fg']['F']}{self.icon}{cc['end']}",
-                                hashKey=self.hashKey
-                            )
-                            time.sleep(0.1)
+                                '-be', 'invincibleEntity',
+                                block=f"{cc['fg']['F']}{self.icon}{cc['end']}",
+                                tag  =self.tag
+                            ); time.sleep(0.1)
 
                             DRP['room'][self.y][self.x] = obj(
-                                '-be', '-1',
-                                block  =self.icon,
-                                hashKey=self.hashKey
-                            )
-                            time.sleep(0.1)
+                                '-be', 'invincibleEntity',
+                                block=self.icon,
+                                tag  =self.tag
+                            ); time.sleep(0.1)
 
-                        DRP['room'][self.y][self.x] = obj('-be', str(self.id), block=self.icon, hashKey=self.hashKey)
+                        DRP['room'][self.y][self.x] = obj('-be', self.id, block=self.icon, tag=self.tag)
 
                     path = AStar.main(
                         (self.y, self.x),
-                        [300],
-                        s.monsterInteractableBlocks['steppable']['total']
-                        )
+                        ['player1', 'player2'],
+                        self.perm.IDSet['step']
+                    )
+
                     if not path:
                         ay, ax = -1, -1
                         if sum([ay,ax])==-2 or (self.y,self.x)==(ay,ax):
                             while 1:
-                                if DRP['room'][
-                                    ay:=randrange(1, len(DRP['room'])-1)][
-                                    ax:=randrange(1, len(DRP['room'][0])-1)]\
-                                ['id'] in s.interactableBlocks['unsteppable']: continue
+                                if not self.perm.data[DRP['room']\
+                                [ay:=randrange(1, s.roomData['maxHeight']-1)]\
+                                [ax:=randrange(1, s.roomData['maxWidth'] -1)]\
+                                ['id']] & self.perm.STEP: continue
+
                                 break
 
                         if randrange(0,2):
                             self.x += 1\
-                                    if self.x<ax\
-                                       and DRP['room'][self.y][self.x+1]["id"] in s.interactableBlocks['steppable']['total']\
+                                    if  self.x<ax\
+                                    and self.perm.data[DRP['room'][self.y][self.x+1]["id"]]&self.perm.STEP\
                                 else -1\
-                                    if self.x>ax\
-                                       and DRP['room'][self.y][self.x-1]["id"] in s.interactableBlocks['steppable']['total']\
+                                    if  self.x>ax\
+                                    and self.perm.data[DRP['room'][self.y][self.x-1]["id"]]&self.perm.STEP\
                                 else 0
                             
                         else:
                             self.y += 1\
                                    if  self.y<ay\
-                                   and DRP['room'][self.y+1][self.x]["id"] in s.interactableBlocks['steppable']['total']\
+                                   and self.perm.data[DRP['room'][self.y+1][self.x]["id"]]&self.perm.STEP\
                                 else -1\
                                    if  self.y>ay\
-                                   and DRP['room'][self.y-1][self.x]["id"] in s.interactableBlocks['steppable']['total']\
+                                   and self.perm.data[DRP['room'][self.y-1][self.x]["id"]]&self.perm.STEP\
                                 else 0
-                    elif DRP['room'][path[0]][path[1]]['id'] == 300:
+                            
+                    elif DRP['room'][path[0]][path[1]]['id'] in ('player1', 'player2'):
                         DRP['room'][self.y][self.x] = obj(
-                            '-be', '-1',
+                            '-be', 'invincibleEntity',
                             block=f"{cc['fg']['F']}{self.icon}{cc['end']}",
-                            hashKey=self.hashKey
-                        )
-                        time.sleep(0.1)
+                            tag  =self.tag
+                        ); time.sleep(0.1)
 
                         DRP['room'][self.y][self.x] = obj(
-                            '-be', str(self.id),
-                            block  =self.icon,
-                            hashKey=self.hashKey
+                            '-be', self.id,
+                            block=self.icon,
+                            tag  =self.tag
                         )
 
                         self.attack(
@@ -349,31 +378,37 @@ class Unrest(Enemy):
 
     - 보스방 스폰 가능
     """
-    def __init__(self, name, icon, ID, hashKey):
-        super().__init__(name, icon, ID, hashKey)
+    def __init__(self, name, icon, ID, tag):
+        super().__init__(name, icon, ID, tag)
         self.coolTimes = cooltimes.Unrest()
 
         if s.sanjibaMode:
             self.coolTimes.divideHalf(self.coolTimes.modeException)
 
-    def start(self, setHp:int, setAtk:int, Dy:int, Dx:int, y:int, x:int) -> None: super().start(setHp, setAtk, Dy, Dx, y, x)
+    def start(self      ,
+              setHp :int,
+              setAtk:int,
+              Dy    :int,
+              Dx    :int,
+              y     :int,
+              x     :int,
+              perm       ) -> None:
+        super().start(setHp, setAtk, Dy, Dx, y, x, perm)
 
     def Targetted(self, DRP) -> None:
         play("entity", "enemy", "unrest", "targetLock")
         for _ in range(3):
             DRP['room'][self.y][self.x] = obj(
-                '-be', '-1',
-                block  =iset(f"{cc['fg']['F']}{self.icon}{cc['end']}"),
-                hashKey=self.hashKey
-            )
-            time.sleep(self.coolTimes.targetted)
+                '-be', 'invincibleEntity',
+                block=iset(f"{cc['fg']['F']}{self.icon}{cc['end']}"),
+                tag  =self.tag
+            ); time.sleep(self.coolTimes.targetted)
 
             DRP['room'][self.y][self.x] = obj(
-                '-be', '-1',
-                block  =iset(self.icon),
-                hashKey=self.hashKey
-            )
-            time.sleep(self.coolTimes.targetted)
+                '-be', 'invincibleEntity',
+                block=iset(self.icon),
+                tag  =self.tag
+            ); time.sleep(self.coolTimes.targetted)
 
     def move(self) -> None:
         DRP = s.Dungeon[self.Dy][self.Dx]
@@ -381,14 +416,14 @@ class Unrest(Enemy):
         if not self.coolTime:
             self.coolTime = randrange(*self.coolTimes.turnEnd)
             if self.isFocused:
-                if [self.Dy, self.Dx] != [s.Dy, s.Dx]: self.isFocused = False; return
+                if (self.Dy, self.Dx) != (s.Dy, s.Dx): self.isFocused = False; return
 
                 bfx, bfy = self.x, self.y
                 if self.hp > 0:
                     Moves, Moves1 = ["+=", "-="], ["+", "-"]
 
                     if (self.Dy, self.Dx)==(s.Dy, s.Dx) and (self.y==s.y or self.x==s.x):
-                        self.stepped = obj('-bb', '0')
+                        self.stepped = obj('-bb', 'floor')
 
                         if self.x == s.x:
                             a = 0 if self.y<s.y else 1
@@ -396,14 +431,15 @@ class Unrest(Enemy):
 
                             while 1:
                                 if not l.pause:
-                                    if DRP['room'][eval(f"self.y{Moves1[a]}1")][self.x]["id"] == 300:
+                                    if DRP['room'][eval(f"self.y{Moves1[a]}1")][self.x]["id"] in ('player1', 'player2'):
                                         self.attack(
                                             [eval(f"0{Moves1[a]}1"), 0],
                                             choice(["충격파", "추돌", "들이박힘"])
                                         ); break
                                     
-                                    if  DRP['room'][eval(f"self.y{Moves1[a]}1")][self.x]["id"]\
-                                    not in s.monsterInteractableBlocks['breakable']:
+                                    if not self.perm.data[
+                                        DRP['room'][eval(f"self.y{Moves1[a]}1")][self.x]["id"]
+                                    ] & self.perm.BREAK:
                                         break
 
                                     bfy, bfx = self.y, self.x
@@ -421,14 +457,15 @@ class Unrest(Enemy):
 
                             while 1:
                                 if not l.pause:
-                                    if DRP['room'][self.y][eval(f"self.x{Moves1[a]}1")]["id"] == 300:
+                                    if DRP['room'][self.y][eval(f"self.x{Moves1[a]}1")]["id"] in ('player1', 'player2'):
                                         self.attack(
                                             [0, eval(f"0{Moves1[a]}1")],
                                             choice(["충격파", "추돌", "들이박힘"])
                                             ); break
                                     
-                                    if  DRP['room'][self.y][eval(f"self.x{Moves1[a]}1")]["id"]\
-                                    not in s.monsterInteractableBlocks['breakable']:
+                                    if not self.perm.data[
+                                        DRP['room'][self.y][eval(f"self.x{Moves1[a]}1")]["id"]
+                                    ] & self.perm.BREAK:
                                         break
 
                                     bfy, bfx = self.y, self.x
@@ -443,27 +480,28 @@ class Unrest(Enemy):
                     else:
                         if randrange(0,2):
                             self.x += 1\
-                                    if self.x<s.x and DRP['room'][self.y][self.x+1]["id"]\
-                                    in s.monsterInteractableBlocks['steppable']['total']\
+                                    if  self.x<s.x\
+                                    and self.perm.data[DRP['room'][self.y][self.x+1]["id"]] & self.perm.STEP\
                                 else -1\
-                                    if self.x>s.x and DRP['room'][self.y][self.x-1]["id"]\
-                                    in s.monsterInteractableBlocks['steppable']['total']\
-                                else  0
+                                    if  self.x>s.x\
+                                    and self.perm.data[DRP['room'][self.y][self.x-1]["id"]] & self.perm.STEP\
+                                else 0
+                            
                         else:
                             self.y += 1\
-                                    if self.y<s.y and DRP['room'][self.y+1][self.x]["id"]\
-                                    in s.monsterInteractableBlocks['steppable']['total']\
+                                    if  self.y<s.y\
+                                    and self.perm.data[DRP['room'][self.y+1][self.x]["id"]] & self.perm.STEP\
                                 else -1\
-                                    if self.y>s.y and DRP['room'][self.y-1][self.x]["id"]\
-                                    in s.monsterInteractableBlocks['steppable']['total']\
-                                else  0
+                                    if  self.y>s.y\
+                                    and self.perm.data[DRP['room'][self.y-1][self.x]["id"]] & self.perm.STEP\
+                                else 0
 
                         super().step(bfy, bfx)
 
             DRP['room'][self.y][self.x] = obj(
-                '-be', str(self.id),
-                block  =iset(self.icon),
-                hashKey=self.hashKey
+                '-be', self.id,
+                block=iset(self.icon),
+                tag  =self.tag
             )
 
         else: super().wait()
@@ -481,28 +519,34 @@ class Resentment(Enemy):
     
     - 보스방에서는 스폰되지 않음.
     """
-    def __init__(self, name, icon, ID, hashKey):
-        super().__init__(name, icon, ID, hashKey)
+    def __init__(self, name, icon, ID, tag):
+        super().__init__(name, icon, ID, tag)
         self.coolTimes = cooltimes.Resentment()
 
         if s.sanjibaMode: self.coolTimes.divideHalf(self.coolTimes.modeException)
 
-    def start(self, setHp:int, setAtk:int, Dy:int, Dx:int, y:int, x:int) -> None: super().start(setHp, setAtk, Dy, Dx, y, x)
+    def start(self      ,
+              setHp :int,
+              setAtk:int,
+              Dy    :int,
+              Dx    :int,
+              y     :int,
+              x     :int,
+              perm       ) -> None:
+        super().start(setHp, setAtk, Dy, Dx, y, x, perm)
 
     def blink(self, DRP) -> None:
         DRP['room'][self.y][self.x] = obj(
-            '-be', '-1',
-            block  =iset(f"{cc['fg']['F']}{self.icon}{cc['end']}"),
-            hashKey=self.hashKey
-        )
-        time.sleep(self.coolTimes.blink)
+            '-be', 'invincibleEntity',
+            block=iset(f"{cc['fg']['F']}{self.icon}{cc['end']}"),
+            tag  =self.tag
+        ); time.sleep(self.coolTimes.blink)
 
         DRP['room'][self.y][self.x] = obj(
-            '-be', str(self.id),
-            block  =iset(self.icon),
-            hashKey=self.hashKey
-        )
-        time.sleep(self.coolTimes.blink)
+            '-be', self.id,
+            block=iset(self.icon),
+            tag  =self.tag
+        ); time.sleep(self.coolTimes.blink)
 
     def targetted(self, DRP) -> None:
         for _ in range(3): self.blink(DRP)
@@ -516,33 +560,43 @@ class Resentment(Enemy):
         ]
 
         DRP['room'][self.y][self.x] = obj(
-            '-bb', '-1', block=f"{cc['fg']['F']}X {cc['end']}")
+            '-be', 'invincibleEntity',
+            block=f"{cc['fg']['F']}X {cc['end']}"
+        )
         particle = f"{cc['fg']['F']}. {cc['end']}"
             
         for expP in expPs:
-            if DRP['room'][expP[0]][expP[1]]["id"] in s.interactableBlocks["explodable"]:
+            if self.perm.data[DRP['room'][expP[0]][expP[1]]["id"]] & self.perm.EXPLOSION:
                 DRP['room'][expP[0]][expP[1]] = obj(
-                   '-bb', '-1',
+                   '-bb', 'invincibleBlock',
                    block=particle
                 )
                
-            elif DRP['room'][expP[0]][expP[1]]["id"] in [300, 301]:
+            elif DRP['room'][expP[0]][expP[1]]["id"] in ('player1', 'player2'):
                 s.steppedBlock = obj(
-                    '-bb', '900',
+                    '-bb', 'ashChip',
                     block=f"{cc['fg']['G1']}{escapeAnsi(DRP['room'][expP[0]][expP[1]]['block'])}{cc['end']}"
                 )
 
         time.sleep(self.coolTimes.explosion)
             
         for expP in expPs:
-            if DRP['room'][expP[0]][expP[1]] == obj('-bb', '-1', block=particle):
+            if DRP['room'][expP[0]][expP[1]] == obj('-bb', 'invincibleBlock', block=particle):
                 DRP['room'][expP[0]][expP[1]] = obj(
-                    '-bb', '900',
+                    '-bb', 'ashChip',
                     block=f"{cc['fg']['G1']}. {cc['end']}"
                 )
             
         self.icon = iset(choice(['×', 'x', 'X']))
         self.hp   = 0
+
+    def getSurroundingID(self, DRP) -> tuple:
+        return (
+            DRP['room'][self.y-1][self.x]  ['id'],
+            DRP['room'][self.y]  [self.x+1]['id'],
+            DRP['room'][self.y+1][self.x]  ['id'],
+            DRP['room'][self.y]  [self.x-1]['id']
+        )
 
     def move(self) -> None:
         DRP = s.Dungeon[self.Dy][self.Dx]
@@ -553,20 +607,12 @@ class Resentment(Enemy):
                 if [self.Dy, self.Dx] != [s.Dy, s.Dx]: self.isFocused = False; return
 
                 if self.hp > 0:
-                    if 300 in [
-                        DRP['room'][self.y-1][self.x]  ["id"],
-                        DRP['room'][self.y+1][self.x]  ["id"],
-                        DRP['room'][self.y]  [self.x-1]["id"],
-                        DRP['room'][self.y]  [self.x+1]["id"]
-                    ]:
+                    if 'player1' in (data:=self.getSurroundingID(DRP))\
+                    or 'player2' in data:
                         self.targetted(DRP)
 
-                        if 300 in [
-                            DRP['room'][self.y-1][self.x]  ["id"],
-                            DRP['room'][self.y+1][self.x]  ["id"],
-                            DRP['room'][self.y]  [self.x-1]["id"],
-                            DRP['room'][self.y]  [self.x+1]["id"]
-                        ]:
+                        if 'player1' in (data:=self.getSurroundingID(DRP))\
+                        or 'player2' in data:
                             play("entity", "enemy", "resentment", "explosion")
                             self.attack([0, 0], "폭발")
                             
@@ -575,9 +621,9 @@ class Resentment(Enemy):
                             if randrange(0,2): say(choice(TIOTA))
 
                         else: DRP['room'][self.y][self.x] = obj(
-                            '-be', str(self.id),
-                            block  =iset(self.icon),
-                            hashKey=self.hashKey
+                            '-be', self.id,
+                            block=iset(self.icon),
+                            tag  =self.tag
                         )
 
                     else: self.blink(DRP)

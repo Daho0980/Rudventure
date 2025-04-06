@@ -1,9 +1,10 @@
-from random import randrange
+from random import randrange, choices, choice
 
 from Game.utils.advanced.DungeonMaker.tools import graphicMaker
 
 from Assets.data import (
-    percentage as per
+    totalGameStatus as s,
+    percentage      as per
 )
 from Game.utils.advanced.DungeonMaker.roomData import (
     data as rData,
@@ -81,12 +82,12 @@ def main(Map     :list      ,
             ] or\
             [y, x] in p:
                 Map[y][x] = {
-                    "roomIcon"        : rData[4]          ,
-                    "doors"           : Map[y][x]['doors'],
-                    "roomType"        : "endPoint"        ,
-                    "isPlayerHere"    : False             ,
-                    "isPlayerVisited" : 2                 ,
-                    "summonCount"     : 1                 ,
+                    "roomIcon"        : rData[4]                             ,
+                    "doors"           : Map[y][x]['doors']                   ,
+                    "roomType"        : "endPoint"                           ,
+                    "isPlayerHere"    : False                                ,
+                    "isPlayerVisited" : 2                                    ,
+                    "summonData"      : [choice(s.enemyIds['bossAvailable'])],
                     "interaction"     : False
                     }
                 break
@@ -126,23 +127,33 @@ def main(Map     :list      ,
 
         elif roomKind != 4: roomKind = 1
 
-        # 몬스터 summonCount 설정
-        SCP  = randrange(1,101)
-        size = randrange(1, 6)\
-                if SCP<=per.monsterSpawnSize['small']\
-            else randrange(6, 8)\
-                if  SCP> per.monsterSpawnSize["small"]\
-                and SCP<=per.monsterSpawnSize['medium']\
-            else 8
+        # 몬스터 summonData 설정
+        SCP         = randrange(1,101)
+        monsterData = choices(
+            s.enemyIds['total'],
+            weights=[1]*len(s.enemyIds['total']),
+
+            k=randrange(1, 6)\
+                    if SCP<=per.monsterSpawnSize['small']\
+                else randrange(6, 8)\
+                    if  SCP> per.monsterSpawnSize["small"]\
+                    and SCP<=per.monsterSpawnSize['medium']\
+                else 8
+        )
 
         # 방 데이터 정리
         currLength                             += 1
         Map[y][x]['roomIcon']                   = rData[roomKind]
         Map[y][x]['roomType']                   = rType[roomKind]
-        Map[y][x]['isPlayerVisited']            = 2 if roomKind==4 or showAll==True else 0
+        Map[y][x]['isPlayerVisited']            = 2 if roomKind==4 or showAll else 0
         Map[y][x]['doors'][locationData[2]]     = 1
         Map[bfy][bfx]['doors'][locationData[3]] = 1
-        Map[y][x]['summonCount']                = 1 if roomKind==4 else 0 if roomKind in[2,3] else size
+
+        Map[y][x]['summonData'] = [choice(s.enemyIds['bossAvailable'])]\
+                if roomKind==4\
+            else []\
+                if roomKind in(2,3)\
+            else monsterData
 
     if rawPrint == False and Map: return graphicMaker(Map)
     else:                         return Map

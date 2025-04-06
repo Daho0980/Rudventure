@@ -5,7 +5,7 @@ stage:int = 0
 Dungeon :list = []
 roomData:dict = {
     "type" : "None",
-    "cell" : 0     ,
+    "cell" : 0,
 
     "maxWidth"  : 0,
     "maxHeight" : 0,
@@ -19,7 +19,7 @@ clearEntity:bool = False
 
 # region Modes
 bodyPreservationMode:bool = False
-ezMode              :bool = False
+cowardMode          :bool = False
 sanjibaMode         :bool = False
 
 # region Entity

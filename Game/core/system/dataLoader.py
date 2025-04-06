@@ -27,10 +27,9 @@ def obj(path:str, target:str, **addData) -> dict:
     global objCache
 
     match path:
-        case "-bb" : path = s.path['blockData']['block']
-        case "-be" : path = s.path['blockData']['entity']
-        case "-ba" : path = s.path['blockData']['animal']
-        case "-se" : path = s.path['statusEffectData']
+        case "-bb" : path = s.path['data']['block']
+        case "-be" : path = s.path['data']['entity']
+        case "-se" : path = s.path['data']['statusEffect']
 
     if (path,target) in objCache:
         data = deepcopy(objCache[(path,target)])

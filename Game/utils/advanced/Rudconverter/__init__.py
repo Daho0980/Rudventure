@@ -45,7 +45,7 @@ def save() -> int:
             "fairWind", "Mhp", "Mdf", "Mxp", "Mlvl", "MFairWind",
             "critRate", "critDMG", "evasionRate", "statusFormula",
             "entityDataMaintained", "gameRecord",
-            "ezMode", "sanjibaMode", "bodyPreservationMode",
+            "cowardMode", "sanjibaMode", "bodyPreservationMode",
         ]
 
         data        = {}
@@ -62,9 +62,9 @@ def save() -> int:
             if isinstance(value, dict): value = jdkr.serializeDict(value)
             commentData[i]  = value
 
-        statusData["playerIcon"] = s.ids[300]
-        data      ["status"    ] = statusData
-        data      ["comments"  ] = commentData
+        statusData["playerIcon"] = s.eids['player1']
+        data      ["status"]     = statusData
+        data      ["comments"]   = commentData
 
 
         json    .dump(data, saveJson, ensure_ascii=False)

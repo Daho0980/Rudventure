@@ -10,18 +10,18 @@ def main(effect, sequence):
     if effect['seq'] != sequence: return
 
     match effect['id']:
-        case 1:
+        case 'bloodStomping':
             s.steppedBlock = obj(
-                '-bb', '27',
+                '-bb', 'blood',
                 block=iset(s.bloodIcon[1]),
                 nbt  ={
-                    "link"      : False,
-                    "stack"     : 1
+                    "link"  : False,
+                    "stack" : 1
                 },
                 blockData=s.steppedBlock
             )
         
-        case 600:
+        case 'kitrima':
             if not effect['tick']%15 or effect['tick']==1:
                 s.hp -= 1
                 sound.echo(
