@@ -24,55 +24,32 @@ from Game.entities.player import (
 )
 
 
+def _setPlayerStatus(hp, df, atk, hgr, critRate, critDMG, Mxp, Mlvl, MFW, evasionRate=0) -> None:
+    s.hp     = hp
+    s.df     = df
+    s.atk    = atk
+    s.hunger = hgr
+
+    s.critRate = critRate
+    s.critDMG  = critDMG
+
+    s.Mhp  = hp
+    s.Mdf  = df
+    s.Mxp  = Mxp
+    s.Mlvl = Mlvl
+
+    s.MFairWind = MFW
+
+    s.evasionRate = evasionRate
+
 def set() -> None:
     if s.name.lower() in ["레포", "repo"]:
-        s.hp     = 8
-        s.df     = 1
-        s.atk    = 1
-        s.hunger = 2500
-
-        s.critRate = 4
-        s.critDMG  = 32
-        
-        s.Mhp  = s.hp
-        s.Mdf  = s.df
-        s.Mxp  = 4
-        s.Mlvl = 32
-
-        s.MFairWind = 90
+        _setPlayerStatus(8, 1, 1, 2500, 4, 32, 4, 32, 90)
 
     elif s.name.lower() in ["업로드", "upload"]:
-        s.hp     = 5
-        s.df     = 2
-        s.atk    = 3
-        s.hunger = 1000
-
-        s.critRate    = 75
-        s.critDMG     = 0
-        s.evasionRate = 45
+        _setPlayerStatus(5, 2, 3, 1000, 75, 0, 6, 12, 90, 45)
         
-        s.Mhp  = s.hp
-        s.Mdf  = s.df
-        s.Mxp  = 6
-        s.Mlvl = 12
-
-        s.MFairWind = 90
-        
-    else:
-        s.hp     = 10
-        s.df     = 5
-        s.atk    = 1
-        s.hunger = 2000
-
-        s.critRate = 10
-        s.critDMG  = 10
-        
-        s.Mhp  = s.hp
-        s.Mdf  = s.df
-        s.Mxp  = 10
-        s.Mlvl = 20
-
-        s.MFairWind = 90
+    else: _setPlayerStatus(10, 5, 1, 2000, 10, 10, 10, 20, 90)
 
 def start() -> None:
     getRoomData()
@@ -141,24 +118,23 @@ def orbBoxEvent(y:int, x:int, face:str) -> None:
         block=iset(s.bids[orbId], Type=face)
     )
         
-def orbEvent(ID:str) -> None:
-    orbData = {
-        "S" : {
-            "hp"  : 1,
-            "df"  : 1,
-            "atk" : 1,
-            "hg"  : 50,
-            "cs"  : 1
-        },
-        "B" : {
-            "hp"  : 3,
-            "df"  : 2,
-            "atk" : 2,
-            "hg"  : 75,
-            "cs"  : 5
-        }
+orbData = {
+    "S" : {
+        "hp"  : 1,
+        "df"  : 1,
+        "atk" : 1,
+        "hg"  : 50,
+        "cs"  : 1
+    },
+    "B" : {
+        "hp"  : 3,
+        "df"  : 2,
+        "atk" : 2,
+        "hg"  : 75,
+        "cs"  : 5
     }
-
+}
+def orbEvent(ID:str) -> None:
     S, T    = ID[-1], ID[:-4]
     point   = orbData[S][T]
     comment = randrange(1,101) <= per.getOrb
@@ -223,22 +199,22 @@ def orbEvent(ID:str) -> None:
 
 
 # region main
-def move(Dir, distance:int) -> None:
+def move(direction) -> None:
     roomGrid = s.Dungeon[s.Dy][s.Dx]['room']
 
     bfy, bfx   = s.y, s.x
     ty, tx     = s.y, s.x
     bfDy, bfDx = s.Dy, s.Dx
 
-    match Dir:
-        case curses.KEY_UP   : ty -= distance
-        case curses.KEY_DOWN : ty += distance
+    match direction:
+        case curses.KEY_UP   : ty -= 1
+        case curses.KEY_DOWN : ty += 1
         case curses.KEY_LEFT :
-            tx    -= distance
+            tx    -= 1
             s.face = 'r'
 
         case curses.KEY_RIGHT:
-            tx    += distance
+            tx    += 1
             s.face = 'l'
 
     s.hunger -= 1
@@ -505,11 +481,11 @@ def move(Dir, distance:int) -> None:
 
 
 # region extended
-def observe(Dir) -> None:
+def observe(direction) -> None:
     roomGrid:dict = s.Dungeon[s.Dy][s.Dx]['room']
 
     ty, tx = s.y, s.x
-    match Dir:
+    match direction:
         case curses.KEY_UP   : ty -= 1
         case curses.KEY_DOWN : ty += 1
         case curses.KEY_LEFT : tx -= 1
@@ -575,7 +551,7 @@ def say(text:str, TextColor:str="pc") -> None:
 
 def whistle() -> None:
     play("player", "whistle", "wa"if not randrange(0,915) else str(choice([1,2,3,4])))
-    if s.target['tag']:
+    if s.target['tag'] and s.enemyCount:
         s.target['attackable'] = True
         s.target['command']    = True
         addLog(

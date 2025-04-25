@@ -1,12 +1,9 @@
 from   math      import ceil
 from   itertools import chain
 
-from Assets.data.color import cColors as cc
-
-from Game.utils.graphics import (
-    escapeAnsi,
-    actualLen
-    )
+from Assets.data.color             import cColors as cc
+from Game.utils.graphics           import escapeAnsi
+from Game.utils.CExt.libtext       import actualLen
 
 
 Line:dict[str,dict[int,list[str]]] = {

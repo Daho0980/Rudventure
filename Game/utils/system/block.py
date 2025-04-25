@@ -2,7 +2,8 @@ from random import randrange
 from copy   import deepcopy
 
 from Game.core.system.structures import Conveyor
-from Game.utils.graphics         import actualLen, escapeAnsi
+from Game.utils.graphics         import escapeAnsi
+from Game.utils.CExt.libtext     import actualLen
 
 
 isetCache:Conveyor = Conveyor(200)

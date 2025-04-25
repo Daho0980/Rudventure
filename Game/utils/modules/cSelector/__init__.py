@@ -4,16 +4,13 @@ from   cusser import Cusser
 
 from .                       import macros as m
 from Game.utils.system.sound import play
+from Game.utils.graphics     import escapeAnsi, anchor
+from Game.utils.CExt.libtext import actualLen
 
 from Assets.data.color import (
     cColors as cc,
 
     customColor
-    )
-from Game.utils.graphics import (
-    escapeAnsi,
-    actualLen,
-    anchor
     )
 
 
@@ -34,7 +31,7 @@ def main(title     :str,
     `title`(str, list)                     : 메뉴바의 타이틀이 될 문자열, 리스트 형태로 기입 시 타이틀과 메뉴의 공백이 제거됨. 무조건 기입해야 함\n
     `stdscr`(func)                         : 해당 모듈 외부에 있는 stdscr 사용 시 기입하는 매개변수, 기본적으로 빈 문자열로 지정되어 있음\n
     `menu`(list(1d))                   : 메뉴바의 메뉴가 될 리스트, 아무것도 지정하지 않을 시
-        ```py
+        ```
         {'Why did you do...' : 'WHY...'}
         ```
         와 같은 이스터에그가 생성됨\n
@@ -45,7 +42,7 @@ def main(title     :str,
     `tag`(str)                             : 상시로 메뉴 맨 아래에 생기는 문자열, 기본적으로 빈 문자열로 지정되어 있음\n
     `frontTag`(str)                        : 상시로 메뉴 맨 위에 생기는 문자열, 기본적으로 빈 문자열로 지정되어 있음\n\n
     예시 :
-        ```py
+        ```
     cSelector.main(
         title=f'이것은 타이틀입니다!',
         menu={
@@ -91,17 +88,17 @@ def _convert(menu, maxLine:int): # 1차원 메뉴를 2차원으로 재배열
             
     return newmenu
 
-def _display(stdscr,
-             title           :str        ,
-             menu            :list       ,
-             menuValues      :list       ,
-             arrow           :list       ,
-             maxLine         :int        ,
-             lineSpace       :int        ,
-             currSelectColumn:int        ,
-             currSelectRow   :int        ,
-             tag             :str        ,
-             frontTag        :str         ):
+def _display(stdscr               ,
+             title           :str ,
+             menu            :list,
+             menuValues      :list,
+             arrow           :list,
+             maxLine         :int ,
+             lineSpace       :int ,
+             currSelectColumn:int ,
+             currSelectRow   :int ,
+             tag             :str ,
+             frontTag        :str  ):
     """
     `title`(str, list)                       : 메뉴바의 타이틀이 될 문자열, 리스트 형태로 기입 시 타이틀과 메뉴의 공백이 제거됨, 무조건 기입해야 함\n
     `menu`(list(1d))                         : 메뉴바의 메뉴가 될 리스트, 무조건 기입해야 함\n
@@ -151,11 +148,11 @@ def _system(stdscr,
 
     menuKeys, menuValues = [], []
 
-    if maxLine == 'max'   : maxLine = len(menu)
-    if maxLine > len(menu): raise Exception('최대 세로 배열수는 menu 개수보다 많을 수 없습니다!')
+    if maxLine == 'max'    : maxLine = len(menu)
+    if maxLine  > len(menu): raise Exception('최대 세로 배열수는 menu 개수보다 많을 수 없습니다!')
 
     if isinstance(menu, dict):
-        menuKeys  :(list|dict) = list(menu.keys()  )
+        menuKeys  :(list|dict) = list(menu.keys())
         menuValues:list        = list(menu.values())
 
     else: menuKeys = menu
@@ -181,6 +178,7 @@ def _system(stdscr,
                 else: growtRate += 1
 
             else: break
+            
         currSelectColumn = growtRate
         currSelectRow    = 0
 

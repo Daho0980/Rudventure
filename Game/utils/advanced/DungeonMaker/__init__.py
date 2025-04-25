@@ -1,6 +1,6 @@
-from Assets.data         import totalGameStatus as s
-from Assets.data.color   import cColors         as cc
-from Game.utils.graphics import joineach
+from Assets.data             import totalGameStatus as s
+from Assets.data.color       import cColors         as cc
+from Game.utils.CExt.libtext import joineach
 
 from .roomData   import data as rData
 from .algorithms import snake
@@ -21,7 +21,7 @@ def centerGridMapReturn(grid:list, blank:int=0):
         `blank`(int)                : 맵의 옆으로 추가될 공백칸 길이, 기본적으로 `0`으로 설정되어 있음
     """
     blanks = " "*blank
-    output = ""
+    output = []
 
     DisplayMap    = []
     subDisplayMap = []
@@ -65,9 +65,9 @@ def centerGridMapReturn(grid:list, blank:int=0):
                             }{grid[row][column]['roomIcon'][0]}{cc['end']}"
         
     for index, mainline in enumerate(DisplayMap):
-        output += (blanks+joineach(mainline,subDisplayMap[index])+blanks+("\n"if index!=rowLength-1 else""))
+        output.append(blanks+joineach(mainline,subDisplayMap[index])+blanks+('\n'if index!=rowLength-1 else""))
 
-    return output
+    return ''.join(output)
 
 def DungeonMaker(showAll=False) -> list:
     output = []

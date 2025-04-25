@@ -84,7 +84,7 @@ def _setFrame(func):
             setPos =[1, 1]
             )-1
         ]
-        s.frame     = (1/s.frameRate)-(0.0017/(s.frameRate//60 or 1))
+        s.frame     = (1/s.frameRate)-(0.002/(s.frameRate//60 or 1))
         s.currFrame = s.frame
 
         func(*args)
@@ -180,6 +180,8 @@ f"이름이 {cc['fg']['R']}{md.cMarkdown([2, 4])}없거나{cc['end']} \
                             case 4:
                                 s.lightName = f"{s.playerColor[0]}{temporaryName[:2]}\033[;38;5;214m{temporaryName[2]}\033[;38;5;220m{temporaryName[3]}{cc['end']}"
 
+                        addEffect('combinator', "∞", merge=False)
+
                     case "업로드"|"upload":
                         from Game.pages.character import upload
 
@@ -188,6 +190,8 @@ f"이름이 {cc['fg']['R']}{md.cMarkdown([2, 4])}없거나{cc['end']} \
                                 s.lightName = f"{cc['fg']['W']}{temporaryName[0]}{s.playerColor[0]}{temporaryName[1:]}{cc['end']}"
                             case 6:
                                 s.lightName = f"{cc['fg']['W']}{temporaryName[:2]}\033[;38;5;253m{temporaryName[2]}{s.playerColor[0]}{temporaryName[3:]}{cc['end']}"
+
+                        addEffect('hunter', "∞", merge=False)
                     
                     case _: addEffect('fatality', "∞", merge=False)
 

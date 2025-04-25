@@ -1,14 +1,11 @@
-from re import A
 import time
 
-from Assets.data.color       import cColors as cc
-from Game.utils.modules      import Textbox
-from Game.utils.system.sound import play
+from Assets.data.color             import cColors as cc
+from Game.utils.modules            import Textbox
+from Game.utils.system.sound       import play
+from Game.utils.CExt.libtext       import actualLen
 
-from . import (
-    actualLen,
-    anchor
-)
+from . import anchor
 
 
 def showStage(stdscr, stageName:str):
@@ -22,11 +19,10 @@ def showStage(stdscr, stageName:str):
             f"{cc['fg']['R']}나 락{cc['end']}",
             Type        ="middle",
             inDistance  =1,
-            outDistance= 3,
-            maxLine     =int(actualLen(stageName)/2)-2, 
+            outDistance =3,
+            maxLine     =19,
             endLineBreak=True,
-            LineType    ="double",
-            addWidth    =3
+            LineType    ="double"
             )
         ); stdscr.refresh()
     play("soundEffects", "smash")
@@ -41,10 +37,9 @@ def showStage(stdscr, stageName:str):
             Type        ="middle",
             inDistance  =1,
             outDistance =3,
-            AMLS        =True,
+            maxLine     =19,
             endLineBreak=True,
-            LineType    ="double",
-            addWidth    =3
+            LineType    ="double"
             )
         ); stdscr.refresh()
     

@@ -2,27 +2,15 @@ import re
 import unicodedata
 
 
-charLvl = ["░", "▒", "▓", "█"]
+charLvl = ("░", "▒", "▓", "█")
 
 _ansiCompile = re.compile(r'(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]')
 escapeAnsi   = lambda l: _ansiCompile.sub('',l)
 
-def level(level:int, width:int=10, charType:list=[]) -> str:
+def level(level:int, width:int=10, charType:tuple=()) -> str:
     charType = charLvl if not charType else charType
     OLV, TLV = divmod(level, int(100/width))
     return ((charType[3]*OLV)+(charType[round(TLV*(3/width))])+(charType[0]*(width-OLV)))[:width]
-
-def actualLen(l):
-    total_length = 0
-    EAWC         = {}
-
-    for char in l:
-        if char in EAWC: width = EAWC[char]
-        else:
-            width      = unicodedata.east_asian_width(char)
-            EAWC[char] = width
-        total_length += 2 if width in['F','W']else 1
-    return total_length
 
 def anchor(stdscr,
            string     :str,
@@ -51,10 +39,3 @@ def anchor(stdscr,
     if       returnEndyx and     returnStr: return output, y+len(string.split("\n")), x # type: ignore
     elif not returnEndyx and     returnStr: return output
     elif     returnEndyx and not returnStr: return y+len(string.split("\n")), x # type: ignore
-
-def joineach(mainline: list, subline: list) -> str:
-    lenDiff = len(mainline)-(len(subline)+1)
-    if   lenDiff > 0: subline  += ['']* lenDiff
-    elif lenDiff < 0: mainline += ['']*-lenDiff
-
-    return ''.join([item for pair in zip(mainline, subline+[''])for item in pair])

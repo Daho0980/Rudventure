@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-import time ; import curses ; import random
-from   cusser                 import Cusser
+import curses ; import random
+from   cusser   import Cusser
+from   time     import sleep, perf_counter
 
 from .                   import _main_extended as ME
 from .entities           import player
@@ -94,7 +95,7 @@ def gameChecker(stdscr) -> None:
             stdscr.refresh()
             if s.gameRecord: import Game.core.system.deathLogWriter
 
-            time.sleep(1)
+            sleep(1)
             achievements = {
                 "            이름" : [s.lightName,                                1],
                 "            사인" : [f"{s.DROD[0]}",                             2],
@@ -108,7 +109,7 @@ def gameChecker(stdscr) -> None:
 
                 stdscr.addstr(f"\033[{x-FBS};{y}H{text} : {achievementsValues[num][0]}\n")
                 stdscr.refresh()
-                time.sleep(0.2)
+                sleep(0.2)
 
                 y += achievementsValues[num][1]
 
@@ -152,8 +153,8 @@ f"""
             ); stdscr.refresh()
             
             logger.clear()
-            s.clearEntity = True ; time.sleep(0.6)
-            s.clearEntity = False; time.sleep(1.9)
+            s.clearEntity = True ; sleep(0.6)
+            s.clearEntity = False; sleep(1.9)
             stdscr.refresh()
 
 
@@ -213,10 +214,10 @@ while s.main:
     player.start()
     randPlaceOrb()
 
-    ME.spawnCompanion(stdscr)
+    ME.spawnCompanion()
     
     stage.showStage(stdscr,
-        f"지 하   {cc['fg']['R']}-{s.stage+1}{cc['end']}   층"
+        f"{cc['fg']['R']}-{s.stage+1}{cc['end']}   층"
     )
 
     ME.startComment()
@@ -237,7 +238,7 @@ while s.main:
     while not q.quest():
         if s.hp<=0 or s.hunger<=0 or not s.main: break
         if l.jpsf:
-            a_render = time.perf_counter()
+            a_render = perf_counter()
             renderer.render(stdscr)
             if not l.pause:
                 playerChecker()
@@ -247,10 +248,10 @@ while s.main:
                     quickStarter = 1
 
                 roomManager.raiseRoomEvent()
+
+            sleep(max((s.currFrame-(perf_counter()-a_render)), 0))
             
-            time.sleep(max((s.currFrame-(time.perf_counter()-a_render)), 0))
-            
-        else: time.sleep(1)
+        else: sleep(1)
 
     if s.hunger <= 0: s.DROD = [f"{cc['fg']['Y']}아사{cc['end']}", 'Y']
     gameChecker(stdscr)

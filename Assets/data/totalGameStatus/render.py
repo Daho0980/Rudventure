@@ -2,10 +2,9 @@
 frameRate :int       = -1
 currFrame :float     = 0
 frame     :int|float = 0
-renderTime:float     = 0
 
-elapsedFrame:int = 0
-currentFrame:int = 0
+elapsedFrameCount:int = 0
+currentFrameCount:int = 0
 
 # region UISettings
 statusDesign  :int  = 1 # 1||0

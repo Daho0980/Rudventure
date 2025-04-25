@@ -19,7 +19,7 @@ class KeyBind:
     mute       = 92 # \
 
     whistle    = 122 # Shift + Z
-    playerMode = 120 # Shift + M
+    playerMode = 120 # Shift + X
 
     slot1, slot2, slot3 = 49, 50, 51 # 1, 2, 3
     slot4, slot5, slot6 = 52, 53, 54 # 4, 5, 6

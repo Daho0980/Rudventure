@@ -1,4 +1,5 @@
-from random import choice
+from random    import choice
+from itertools import chain
 
 from Assets.data.color import cColors as cc
 
@@ -13,7 +14,16 @@ s.playerIdentity   = "repo"
 s.playerColor      = ["\033[;38;5;92m", "CR"]
 s.eids['player1']  = f"{s.playerColor[0]}ᓩ{cc['end']}"
 s.playerVoice      = "repo"
-s.playerDamageIcon = list(map(lambda c: f"{chr(c)} ", range(5124, 5184)))
+s.playerDamageIcon = list(map(
+    lambda c: f"{chr(c)} ",
+    chain(
+        range(0x1402, 0x141b),
+        range(0x1430, 0x1460),
+        range(0x1471, 0x1482),
+        range(0x148f, 0x14ba),
+        [0x14d4],
+    )
+))
                         
 per.treasureComment = 100
 per.monologue       = {

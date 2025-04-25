@@ -52,12 +52,20 @@ def deserializeDict(data):
     return result
 
 if __name__ == '__main__':
-    data = {0: "zero", 1: "one", 2.5: "two point five", (1, 2, 3): ("tuple", "man"), "str_key": "string value", ("very", 9006): ({"I":"lovin", (1) : "t"}, "fr")}
+    data = {
+        0             : "zero",
+        1             : "one",
+        2.5           : "two point five",
+        (1, 2, 3)     : ( "tuple", "man" ),
+        "str_key"     : "string value",
+        ("very", 9006): ( {"I":"lovin", (1) : "t"}, "fr" )
+    }
 
-    print(f"Original data : {data}\n")
+    print(f"Original data : \n    {(a:=str(data))}\n")
 
     json_data = serializeDict(data)
-    print(json_data, end="\n\n")
+    print(f"Serialized data: \n    {json_data}\n")
 
     data_back = deserializeDict(json_data)
-    print(data_back)
+    print(f"Deserialized data: \n    {data_back}")
+    print(f"both data are {a==str(data_back)}.")

@@ -17,11 +17,13 @@ def add(icon       :str       ,
 
 {f"{status}\n\n"if status else ''}{explanation}"""
     
-    infoWindow['time'], infoWindow['setTime'] = time, time
+    infoWindow['time'] = infoWindow['setTime'] = time
 
 def remove() -> None:
-    infoWindow['text']                        = 0
-    infoWindow['time'], infoWindow['setTime'] = 0, 0
+      infoWindow['text']\
+    = infoWindow['time']\
+    = infoWindow['setTime']\
+    = 0
 
 def _getBlockInfo(fileName:str, target:str, Type:str):
     """
@@ -70,7 +72,7 @@ def dataExtraction(blockId:str, blockType:str, **blockData) -> dict|None:
         output              = {}
         output["icon"]      = blockData['block']
         output["blockName"] = _getBlockInfo(blockType, f"{blockId}.name", "string")
-        output["status"]    = _getBlockInfo(blockType, f"{blockId}.status", "string") if blockType == "weapon" else ""
+        output["status"]    = _getBlockInfo(blockType, f"{blockId}.status", "string") if blockType=="weapon" else ""
         
         try:
             if blockData['nbt']['link'] and _getBlockInfo(blockType, f"{blockId}.dataType", "number")==2:

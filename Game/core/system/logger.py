@@ -86,7 +86,7 @@ def addLog(text:str, duration:int=50, colorKey:str='E') -> None:
     if   len(s.onDisplay) <  s.maxStack: add(text, duration)
     elif len(s.onDisplay) >= s.maxStack:
         s.onDisplay.pop(0)
-        s.onTime.pop(0)
+        s.onTime   .pop(0)
         add(text, duration)
     
     for conn, addr in server.connected_clients:

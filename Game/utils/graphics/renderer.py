@@ -6,8 +6,9 @@ from   random import randrange, choices, choice
 from Assets.data.color           import cColors as cc
 from Game.core.system.structures import Conveyor
 from Game.entities.player        import statusEffect
-from Game.utils.advanced         import DungeonMaker as dgm
 from Game.utils.modules          import Textbox
+from Game.utils.advanced         import DungeonMaker as dgm
+from Game.utils.CExt.libtext     import actualLen
 
 from Assets.data import (
     totalGameStatus as s,
@@ -17,7 +18,6 @@ from Assets.data import (
 )
 from . import (
     escapeAnsi,
-    actualLen,
     anchor
 )
 
@@ -316,7 +316,7 @@ Number of total entities : {s.totalEntityCount}
 monologue : ({s.monologueCount},{s.monologueRange},{p.monologue['min']},{p.monologue['max']})
 
 Elapsed time : {s.elapsedTime:.2f}
-FPS : {s.currentFrame}""",
+FPS : {s.currentFrameCount}""",
 
             Type         ="right",
             AMLS         =True,
@@ -346,4 +346,4 @@ FPS : {s.currentFrame}""",
 
     stdscr.erase()
     stdscr.addstr(''.join(Display))
-    s.elapsedFrame += 1
+    s.elapsedFrameCount += 1

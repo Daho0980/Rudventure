@@ -31,7 +31,7 @@ def add() -> None:
                         if s.recordKey: addLog(f"keyCode : {k}", colorKey='Y')
                         if k in [key.up, key.down, key.left, key.right]:
                             match s.playerMode:
-                                case "normal":  player.move(k, 1)
+                                case "normal":  player.move(k)
                                 case "observe": player.observe(k)
 
                         match k:
@@ -69,16 +69,13 @@ def add() -> None:
                             # region Sound
                             case key.volumeDown|key.mute|key.volumeUp:
                                 sound    = "check"
-                                charType = [] if l.useSound else [".", "x", "Y", "X"]
+                                charType = () if l.useSound else (".", "x", "Y", "X")
                                 
                                 if   k==key.volumeDown and s.volume:     s.volume -= 5
                                 elif k==key.volumeUp   and s.volume<100: s.volume += 5
                                 elif k==key.mute:
                                     l.useSound = False if l.useSound else True
                                     sound      = "block"
-                                    charType   = [] if l.useSound else [".","x","Y","X"]
-
-                                else: sound = "block"
 
                                 play("soundEffects", sound)
                                 iWin.add(
@@ -91,6 +88,7 @@ def add() -> None:
                             case key.whistle: player.whistle()
                             case key.playerMode:
                                 s.playerMode = "observe" if s.playerMode=="normal" else "normal"
+                                
                                 color = {"observe":cc['fg']['Y'], "normal":cc['fg']['L']}[s.playerMode]
                                 play("soundEffects", "check")
                                 addLog(

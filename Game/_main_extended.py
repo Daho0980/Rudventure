@@ -46,12 +46,13 @@ def _blink(func):
 
 # region Function
 @_ephemera
-def spawnCompanion(stdscr) -> None:
+def spawnCompanion() -> None:
     if  not s.stage\
     and not s.isLoadfromBody\
     and s.name.lower() in ["업로드", "upload"]:
         entity.addAnimal(
             'cat', 10, 1, 3, 6,
+
             name     ="구름이",
             color    =[cc['fg']['W'],'W'],
             friendly =True,
