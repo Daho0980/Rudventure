@@ -1,3 +1,5 @@
+import io
+import zlib
 import random
 from   PIL      import Image, ImageDraw, ImageFont
 from   datetime import datetime
@@ -30,9 +32,16 @@ ftColors:dict = {
 
 # 이미지 크기 및 배경 설정
 x, y  = 650, 700
-image = Image    .new     ("RGB", (x, y), (0, 0, 0))
-draw  = ImageDraw.Draw    (image)
-font  = ImageFont.truetype(f"{s.TFP}Assets{s.s}fonts{s.s}DungGeunMo.ttf", 20)
+image = Image    .new ("RGB", (x, y), (0, 0, 0))
+draw  = ImageDraw.Draw(image)
+
+with open(f"{s.TFP}Assets{s.s}fonts{s.s}font.zlib", 'rb') as f:
+    fontData = f.read()
+
+font = ImageFont.truetype(
+    io.BytesIO(zlib.decompress(fontData)),
+    20
+)
 
 stringInserter = lambda ol, il, index: ol[:index]+il+ol[index:]
 
