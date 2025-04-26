@@ -69,13 +69,14 @@ def add() -> None:
                             # region Sound
                             case key.volumeDown|key.mute|key.volumeUp:
                                 sound    = "check"
-                                charType = () if l.useSound else (".", "x", "Y", "X")
                                 
                                 if   k==key.volumeDown and s.volume:     s.volume -= 5
                                 elif k==key.volumeUp   and s.volume<100: s.volume += 5
                                 elif k==key.mute:
                                     l.useSound = False if l.useSound else True
                                     sound      = "block"
+
+                                charType = () if l.useSound else (".", "x", "Y", "X")
 
                                 play("soundEffects", sound)
                                 iWin.add(
