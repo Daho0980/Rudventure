@@ -18,8 +18,8 @@ def main(stdscr) -> None:
                     f"{cc['fg']['R']}무, 무슨?!{cc['end']}",
                     Type        ="middle",
                     AMLS        =True,
-                    inDistance  =1,
-                    addWidth    =5,
+                    inDistance  =(1, 0b11),
+                    extendWidth =5,
                     coverColor  =cc['fg']['R'],
                     endLineBreak=True
                 )+f"""

@@ -36,6 +36,7 @@ def renderChat():
             if s.client.isConnect:
                 systemOut = mf.receiveChat()
                 if systemOut == "excepted": s.client.isConnect = False
+                
         chatWin.refresh()
 
         inputWin.refresh()
@@ -102,7 +103,6 @@ CWH     = y-3
 chatWin = stdscr.subwin(CWH, x, 0, 0)
 
 inputWin = stdscr.subwin(3, x, CWH, 0)
-# inputWin.keypad(True)
 
 threading.Thread(target=renderChat,
                  daemon=True       ).start()

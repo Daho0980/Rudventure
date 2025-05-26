@@ -13,6 +13,8 @@ from Game.utils.system.block     import iset
 from Game.utils.system.sound     import play
 
 
+negativeVars = ("perm")
+
 class Animal:
     def __init__(self              ,
                  tribe         :str,
@@ -73,7 +75,6 @@ class Animal:
                 sY = randrange(1, s.roomData['maxHeight']-1)
                 sX = randrange(1, s.roomData['maxWidth'] -1)
 
-                # if s.Dungeon[Dy][Dx]['room'][sY][sX]["id"] in s.monsterInteractableBlocks['unsteppable']:
                 if self.perm.data[s.Dungeon[Dy][Dx]['room'][sY][sX]["id"]] & self.perm.STEP:
                     self.y = sY if isinstance(y, list) else y
                     self.x = sX if isinstance(x, list) else x
@@ -85,9 +86,6 @@ class Animal:
 
         else: self.y,  self.x  = y, x
 
-        # self.stepped = DRP['room'][self.y][self.x]\
-        #         if DRP in s.interactableBlocks['steppable']['maintainable']\
-        #     else obj('-bb', '0')
         block = DRP['room'][self.y][self.x]
 
         self.stepped = block\
@@ -183,12 +181,6 @@ class Animal:
 
         self.face = getFace(self.x, bfx, self.face)
         s.Dungeon[self.Dy][self.Dx]['room'][bfy][bfx] = self.stepped
-        # self.stepped = block\
-        #         if block['id']\
-        #         in s.monsterInteractableBlocks['steppable']['maintainable']\
-        #     else block['blockData']\
-        #         if block.get('blockData', False)\
-        #     else obj('-bb', '0')
         self.stepped = block\
                 if self.perm.data[block['id']]&self.perm.MAINTAIN\
             else block['blockData']\
@@ -205,7 +197,7 @@ class Animal:
     def saveData(self):
         s.entityDataMaintained['addAnimal'][self.tag]               = {}
         s.entityDataMaintained['addAnimal'][self.tag]["funcParams"] = self.initFuncParams
-        s.entityDataMaintained['addAnimal'][self.tag]['selfParams'] = self.__dict__
+        s.entityDataMaintained['addAnimal'][self.tag]['selfParams'] = { k:v for k, v in self.__dict__.items() if k not in negativeVars }
 
     def loadData(self, data):
         for key, value in data.items():

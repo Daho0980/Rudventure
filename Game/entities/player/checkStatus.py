@@ -30,7 +30,7 @@ def ashChipCheck() -> None:
 
         play("system", "ashDiskUp")
         addLog(
-            f"{cc['fg']['G1']}재의 그릇{cc['end']}의 수가 증가했습니다! (그릇의 수 {cc['fg']['G1']}{s.Mlvl-1}{cc['end']} -> {cc['fg']['F']}{s.Mlvl}{cc['end']})",
+            f"{cc['fg']['G1']}재의 그릇{cc['end']}의 수가 증가했습니다! [{cc['fg']['G1']}{s.Mlvl-1}{cc['end']} -> {cc['fg']['F']}{s.Mlvl}{cc['end']}]",
             colorKey='G1'
         )
 

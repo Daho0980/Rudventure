@@ -24,5 +24,4 @@ def status_1(status:str, value:str):
     except Exception as e:
         mf.error("상태 변경 중 예기치 못한 오류가 발생했습니다.", e)
         return False
-    # mf.sendChat(["RCC", f"s.{status} = {value}"])
     

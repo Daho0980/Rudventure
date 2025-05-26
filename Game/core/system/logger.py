@@ -13,7 +13,7 @@ from Assets.data import (
 class Server:
     def __init__(self, host='localhost', port=-1):
         self.host = host
-        self.port = port if port!=-1 else randrange(1024, 49152)
+        self.port = randrange(1024, 49152) if port==-1 else port
         s.port    = self.port
 
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -33,7 +33,7 @@ class Server:
     def clientHandler(self, conn, addr):
         try:
             while True:
-                if not (data := eval(self.receiveData(conn).decode())): break
+                if not (data:=eval(self.receiveData(conn).decode())): break
 
                 match data[0]:
                     # TODO: str(("RCC.REC", ...))에서 왜 여타 타입을 배제하는지 알아내기
@@ -49,6 +49,7 @@ class Server:
                     
                     case "RGS":
                         self.sendData(conn, addr, str(("RGS.REC", (status:=eval(data[1]), str(type(status))[8:-2]))))
+                        
                         continue
                     
                 addLog(escapeAnsi(f"{data[0]} : {data[1]}"))

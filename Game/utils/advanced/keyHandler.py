@@ -1,3 +1,5 @@
+# NOTE: 이 코드 중 일부는 앱 빌드 버전과 다르게 구성되어 있음.
+#       고로 복붙 시 조심
 import os      ; import    curses
 import asyncio ; import threading
 
@@ -20,7 +22,7 @@ cc = color.cColors
 
 
 def add() -> None:
-    async def interactions(stdscr):
+    async def main(stdscr):
         while s.main:
             if l.jpsf:
                 k = stdscr.getch()
@@ -37,30 +39,30 @@ def add() -> None:
                         match k:
                             # region UI
                             case key.dungeonMap:
-                                s.showDungeonMap = 0 if s.showDungeonMap else 1
+                                s.showDungeonMap ^= 1
                                 play("soundEffects", "smash")
 
                             case key.debug:
-                                s.debug = False if s.debug else True
+                                s.debug ^= 1
                                 play("soundEffects", "smash")
                                 addLog(f"{cc['fg']['B1']}디버그 모드{cc['end']}가 {['꺼', '켜'][s.debug]}졌습니다.", colorKey='N')
 
                             case key.keyRecord:
-                                s.recordKey = False if s.recordKey else True
+                                s.recordKey ^= 1
                                 play("soundEffects", "smash")
                                 addLog(f"{cc['fg']['B1']}키 기록 모드{cc['end']}가 {['꺼', '켜'][s.recordKey]}졌습니다. 이제부터 {cc['fg']['Y']}입력된 모든 키{cc['end']}는 게임 로그에 표시됩니다.", colorKey='N')
 
                             case key.statusUIDesign:
-                                s.statusDesign = 0 if s.statusDesign else 1
+                                s.statusDesign ^= 1
                                 play("soundEffects", "smash")
                                 addLog(f"스탯 창 디자인이 {cc['fg']['Y']}{['콤팩트', '코지'][s.statusDesign]}{cc['end']}로 변경되었습니다.", colorKey='N')
 
                             case key.cameraMove:
-                                s.dynamicCameraMoving = 0 if s.dynamicCameraMoving else 1
+                                s.dynamicCameraMoving ^= 1
                                 play("soundEffects", "smash")
                                 addLog(f"{cc['fg']['B1']}다★이☆나★믹 카☆메★라 무☆빙{cc['end']}이 {['꺼', '켜'][s.dynamicCameraMoving]}졌습니다.", colorKey='N')
 
-                            case key.openChat:
+                            case key.openChat: # XXX 이 부분(from line 0~1)
                                 os.system(f"osascript -e 'tell application \"Terminal\" to do script \"{s.TFP}runChat.command\"' >/dev/null 2>&1")
                                 os.system("osascript -e 'tell application \"Terminal\" to set bounds of front window to {0, 0, 600, 1000}'")
                                 play("soundEffects", "check")
@@ -68,13 +70,14 @@ def add() -> None:
 
                             # region Sound
                             case key.volumeDown|key.mute|key.volumeUp:
-                                sound    = "check"
+                                sound = "check"
                                 
-                                if   k==key.volumeDown and s.volume:     s.volume -= 5
+                                if   k==key.volumeDown and s.volume    : s.volume -= 5
                                 elif k==key.volumeUp   and s.volume<100: s.volume += 5
                                 elif k==key.mute:
-                                    l.useSound = False if l.useSound else True
-                                    sound      = "block"
+                                    l.useSound ^= 1
+
+                                    sound = "block"
 
                                 charType = () if l.useSound else (".", "x", "Y", "X")
 
@@ -98,8 +101,8 @@ def add() -> None:
                                 )
 
                             case key.slot1|key.slot4|\
-                            key.slot2|key.slot5|\
-                            key.slot3|key.slot6:
+                                 key.slot2|key.slot5|\
+                                 key.slot3|key.slot6:
                                 if len(s.inventory['cells'])>=k-48 and not s.inventory['cells'][k-49]['disabled']:
                                     if k-49 != s.inventory['pointer']:
                                         s.inventory['pointer'] = k-49
@@ -108,8 +111,8 @@ def add() -> None:
                                 else: play("soundEffects", "block")
                             
                             case key.SE1|key.SE2|key.SE3|\
-                            key.SE4|key.SE5|key.SE6|\
-                            key.SE7|key.SE8|key.SE9:
+                                 key.SE4|key.SE5|key.SE6|\
+                                 key.SE7|key.SE8|key.SE9:
                                 effectIndex = indexConverter(k)
 
                                 if len(s.statusEffect['line']) >= s.statusEffect['pointer']+effectIndex+1:
@@ -143,8 +146,8 @@ def add() -> None:
                                     else: s.statusEffect['pointer'] = 0
 
                     if k == key.pause:
-                        l.pause     = False if l.pause else True
-                        s.currFrame = 1/3   if l.pause else s.frame
+                        l.pause     ^= 1
+                        s.currFrame  = 1/3 if l.pause else s.frame
 
                         play("soundEffects", "smash")
                 
@@ -155,6 +158,6 @@ def add() -> None:
     threading.Thread(
         name  ="keyHandler",
         target=lambda: curses.wrapper(
-            lambda stdscr: asyncio.run(interactions(stdscr))
+            lambda stdscr: asyncio.run(main(stdscr))
         )
     ).start()

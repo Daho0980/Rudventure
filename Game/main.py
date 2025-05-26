@@ -48,7 +48,7 @@ def playerChecker() -> None:
 def gameChecker(stdscr) -> None:
     if s.main == 1:
         stdscr.clear(); stdscr.refresh()
-        l.jpsf = 0
+        l.jpsf = 0b0
 
         if s.hp<=0 or s.hunger<=0:
             dp.load(
@@ -65,15 +65,15 @@ def gameChecker(stdscr) -> None:
 
             play("system", "defeat")
             _, bx, deadSign = Textbox.TextBox(
-                f"{cc['fg']['F'] if s.lvl>=s.Mlvl else cc['fg']['R']}   사 망 하 셨 습 니 다   \n\n   {cc['fg']['F'] if s.lvl>=s.Mlvl else cc['fg']['R']}\"{comment}\"   ",
+                f"{cc['fg']['F'if s.lvl>=s.Mlvl else'R']}   사 망 하 셨 습 니 다   \n\n   {cc['fg']['F'if s.lvl>=s.Mlvl else 'R']}\"{comment}\"   ",
 
                 Type        ="middle",
-                inDistance  =1,
-                outDistance =1,
+                inDistance  =(1, 0b11),
+                outDistance =(1, 0b11),
                 AMLS        =True,
                 endLineBreak=True,
                 LineType    ="bold",
-                coverColor  =cc['fg']['F'] if s.lvl>=s.Mlvl else cc['fg']['R'],
+                coverColor  =cc['fg']['F'if s.lvl>=s.Mlvl else'R'],
                 returnSizeyx=True
             )
 
@@ -131,7 +131,7 @@ f"""
 
             s.main = 0
             curses.endwin()
-            exit(0 if theChoice-1 else 1)
+            exit((theChoice-1)^1)
 
         else:
             dp.quickLoad('goDeeper')
@@ -143,8 +143,8 @@ f"""
                     f"   {cc['fg']['L']}지 배   성 공{cc['end']}   \n\n   {cc['fg']['L']}\"{random.choice(c.victory[int((s.hp/s.Mhp)*3)])}{cc['fg']['L']}\"{cc['end']}   ",
 
                     Type        ="middle",
-                    inDistance  =1,
-                    outDistance =1,
+                    inDistance  =(1, 0b11),
+                    outDistance =(1, 0b11),
                     AMLS        =True,
                     endLineBreak=True,
                     LineType    ="bold",
@@ -204,7 +204,8 @@ while s.main:
     dp.quickLoad('enter')
     dp.update()
     
-    if s.bodyPreservationMode and s.gameRecord: s.entitySaveTrigger = True
+    if s.bodyPreservationMode and s.gameRecord:
+        s.entitySaveTrigger = True
 
     s.MFairWind += 10
     s.fairWind   = random.randrange(1, s.MFairWind+1)
@@ -231,7 +232,7 @@ while s.main:
 
     s.stage += 1
 
-    l.jpsf       = 1
+    l.jpsf       = 0b1
     quickStarter = 0
 
     curses.flushinp()

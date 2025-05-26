@@ -4,6 +4,7 @@ from   random import choice
 from Game.core.system                 import configs
 from Game.core.system.dataLoader      import elm
 from Game.utils.advanced.Rudconverter import load
+from Game.utils.modules               import textReader
 from Game.utils.graphics              import animation, anchor
 
 from Assets.data import (
@@ -124,10 +125,10 @@ def main(stdscr) -> None:
                                 t.TextBox(
                                     f"정말로 이 {cc['fg']['R']}육신{cc['end']}을 선택하시겠습니까?\n\n{cc['fg']['L']}<< {selectedFile.removesuffix('.rud')} >>{cc['end']}",
                                     Type        ="middle",
-                                    outDistance =1,
+                                    outDistance =(1, 0b11),
                                     AMLS        =True,
                                     endLineBreak=True,
-                                    addWidth    =3
+                                    extendWidth =3
                                 ),
                                 ["네", "아니오"],
                                 [1,0,255,10],
@@ -145,10 +146,10 @@ def main(stdscr) -> None:
                                 t.TextBox(
                                     f"준비된 {cc['fg']['R']}육신{cc['end']}이 없네요 :/",
                                     Type        ="middle",
-                                    outDistance =1,
+                                    outDistance =(1, 0b11),
                                     AMLS        =True,
                                     endLineBreak=True,
-                                    addWidth    =3
+                                    extendWidth =3
                                 ),
                                 {"저런..." : "아이고 이런..."},
                                 [1,0,255,10],
@@ -167,6 +168,7 @@ def main(stdscr) -> None:
                             "그래픽 설정...": "전반적인 그래픽을 설정합니다.",
                             "게임 모드..."  : "활성화할 게임 모드를 관리합니다.",
                             "음량 설정..."  : "게임의 음량을 설정합니다.",
+                            "정보..."       : "게임의 정보를 봅니다.",
                             ""              : "",
                             "완료"          : ""
                         },
@@ -248,9 +250,9 @@ def main(stdscr) -> None:
                                                 ]
                                             )
                                             match UISettings:
-                                                case 1: s.statusDesign   = 0     if s.statusDesign   else 1
-                                                case 2: s.debug          = False if s.debug          else True
-                                                case 3: s.showDungeonMap = 0     if s.showDungeonMap else 1
+                                                case 1: s.statusDesign   ^= 1
+                                                case 2: s.debug          ^= 1
+                                                case 3: s.showDungeonMap ^= 1
                                                 case 4:
                                                     configs.save()
                                                     break
@@ -289,10 +291,11 @@ def main(stdscr) -> None:
                                                 "<< 터미널 설정 >>",
                                                 {
                                                     "터미널 화면 조정..."                           : "게임을 가장 이상적으로 즐기기 위해 \n터미널의 크기를 재조정합니다.",
-                                                    f"터미널 크기 확인 : {s.checkTerminalSize}"     : "게임 시작 직후 터미널의 크기를 확인해\n경고 문구를 출력합니다.",
+                                                    f"터미널 크기 확인      : {s.checkTerminalSize}": "게임 시작 직후 터미널의 크기를 확인해\n경고 문구를 출력합니다.",
                                                     f"터미널 크기 자동 조정 : {s.autoTerminalSize}" : "게임 시작 시 터미널 크기가 최소 기준보다\n작다면 자동으로 최소 기준으로 설정합니다.",
-                                                    ""                                              : "",
-                                                    "완료"                                          : ""
+
+                                                    ""     : "",
+                                                    "완료" : ""
                                                 },
                                                 [1,0,255,10],
                                                 '@)',
@@ -304,8 +307,13 @@ def main(stdscr) -> None:
                                                 case 1:
                                                     while 1:
                                                         y, x       = stdscr.getmaxyx()
-                                                        screenType = 0 if y<s.sss['minimum'][0] or x<s.sss['minimum'][1] else 1 if s.sss['minimum'][0]<=y<s.sss['recommended'][0] and s.sss['minimum'][1]<=x<s.sss['recommended'][1] else 2
-                                                        baseColor  = [cc['fg']['R'], cc['fg']['Y'], cc['fg']['L']][screenType]
+                                                        screenType = 0\
+                                                                if y<s.sss['minimum'][0] or x<s.sss['minimum'][1]\
+                                                            else 1\
+                                                                if  s.sss['minimum'][0]<=y<s.sss['recommended'][0]\
+                                                                and s.sss['minimum'][1]<=x<s.sss['recommended'][1]\
+                                                            else 2
+                                                        baseColor = [cc['fg']['R'], cc['fg']['Y'], cc['fg']['L']][screenType]
 
                                                         animation.Box.forward(stdscr, y-3, x-2, "double", boxColor=baseColor)
                                                         terminalSizeSettings = clc.main(
@@ -324,8 +332,8 @@ def main(stdscr) -> None:
                                                             case 1: break
                                                             case 2: continue
 
-                                                case 2: s.checkTerminalSize = False if s.checkTerminalSize else True
-                                                case 3: s.autoTerminalSize  = False if s.autoTerminalSize  else True
+                                                case 2: s.checkTerminalSize = bool(s.checkTerminalSize^1)
+                                                case 3: s.autoTerminalSize  = bool(s.autoTerminalSize ^1)
                                                 case 4:
                                                     configs.save()
                                                     break
@@ -370,9 +378,9 @@ def main(stdscr) -> None:
                                     getPos     =True
                                 )
                                 match modSettings:
-                                    case 1: s.bodyPreservationMode = False if s.bodyPreservationMode else True
-                                    case 2: s.cowardMode               = False if s.cowardMode               else True
-                                    case 3: s.sanjibaMode          = False if s.sanjibaMode          else True
+                                    case 1: s.bodyPreservationMode ^= 1
+                                    case 2: s.cowardMode           ^= 1
+                                    case 3: s.sanjibaMode          ^= 1
                                     case 4: break
                                     
                         case 3:
@@ -404,7 +412,27 @@ def main(stdscr) -> None:
 
                                     case 4: volumeRate += 1 if volumeRate < 50 else 0
 
-                        case 4: break
+                        case 4:
+                            # textReader.main(f"Assets{s.s}docs{s.s}LICENSE")
+                            while 1:
+                                about = clc.main(
+                                    "<< 정보 >>",
+                                    {
+                                        "제작진..."   : "Rudventure의 크레딧입니다.",
+                                        "라이선스..." : "게임에 사용된 외부 라이브러리의 라이선스를\n볼 수 있습니다.",
+                                        ""         : "",
+                                        "완료"     : ""
+                                    },
+                                    [1,0,255,10],
+                                    '@)',
+                                    background=['[fullSizeBox]', '[version]'],
+                                )
+                                match about:
+                                    case 1: textReader.main(f"Assets{s.s}docs{s.s}Credits", renderType='middle')
+                                    case 2: textReader.main(f"Assets{s.s}docs{s.s}LICENSE")
+
+                                    case 3: break
+                        case 5: break
 
             case 4: clc.main(
                 "제작중",

@@ -25,7 +25,7 @@ def render() -> str:
         AMLS         =True,
         LineType     ="cornerDouble",
         sideText     =f"{s.statusEffect['pointer']//9}",
-        sideTextPos  =["under", "left"],
+        sideTextPos  =('under', 'left'),
         coverSideText=True
     )
 

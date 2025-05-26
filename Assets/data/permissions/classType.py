@@ -12,14 +12,14 @@ def _pronounization(pronoun:str):
     
     return decorator
 
-class ByteFlag:
+class BitFlag:
     _flag = 0b0
 
     def f_int(self) -> int: return 0b0
 
     @_pronounization(pronoun="f_int")
     def getFlag(self) -> int:
-        if self._flag == 0b0:
+        if not self._flag:
             self._flag = 0b1
         
         else:

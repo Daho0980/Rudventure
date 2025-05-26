@@ -1,5 +1,4 @@
-from functools import wraps
-from random    import choice
+from random import choice
 
 from Assets.data.color import cColors       as cc
 from .entities         import entity, player
@@ -21,28 +20,6 @@ def _ephemera(func):
     
     return wrapper
 
-def _blink(func):
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        if kwargs.get('trigger', False) and func.__name__ in funcData:
-            target = funcData.pop(func.__name__)
-
-            func.__code__ = target['code']
-
-            return
-
-        elif func.__name__ not in funcData:
-            func(*args, **kwargs)
-
-            funcData[func.__name__] = {
-                "code"   : func.__code__,
-                "wrapper": wrapper
-            }
-
-            func.__code__ = (_:=lambda*a,**k:None).__code__
-    
-    return wrapper
-
 
 # region Function
 @_ephemera
@@ -60,8 +37,8 @@ def spawnCompanion() -> None:
             SICR     =True,
             extraData={ "loyalty":10 }
         )
-    elif s.isLoadfromBody and not l.isSaveLoaded:
-        l.isSaveLoaded = True
+    elif s.isLoadfromBody and not l.loadLock:
+        l.loadLock = 0b1
         entity.loadEntities()
 
 @_ephemera

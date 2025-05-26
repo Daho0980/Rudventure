@@ -1,5 +1,5 @@
 from .          import _player, _animal, _oikad
-from .classType import ByteFlag
+from .classType import BitFlag
 
 
 Player = _player.Permission()
@@ -12,6 +12,6 @@ Pain       = _oikad._pain      .Permission()
 Unrest     = _oikad._unrest    .Permission()
 Resentment = _oikad._resentment.Permission()
 
-ByteFlag.package()
+BitFlag.package()
 
 del _player, _animal, _oikad

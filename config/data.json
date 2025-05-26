@@ -1,6 +1,6 @@
 {
     "statusDesign": 1,
-    "debug": false,
+    "debug": 0,
     "showDungeonMap": 0,
     "frameRate": 0,
     "volume": 50,

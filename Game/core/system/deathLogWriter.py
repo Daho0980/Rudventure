@@ -43,8 +43,6 @@ font = ImageFont.truetype(
     20
 )
 
-stringInserter = lambda ol, il, index: ol[:index]+il+ol[index:]
-
 def textObfuscator(text, r=1) -> str:
     output = ""
 

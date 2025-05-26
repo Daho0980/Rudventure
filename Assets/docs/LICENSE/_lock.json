@@ -1,0 +1,34 @@
+{
+    "audioplayer": [
+        true,
+        false
+    ],
+    "cusser": [
+        true,
+        false
+    ],
+    "ijson": [
+        true,
+        false
+    ],
+    "ochre": [
+        true,
+        false
+    ],
+    "PIL": [
+        true,
+        false
+    ],
+    "psutil": [
+        true,
+        false
+    ],
+    "pypresence": [
+        true,
+        false
+    ],
+    "stransi": [
+        true,
+        false
+    ]
+}

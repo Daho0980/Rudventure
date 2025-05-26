@@ -1,19 +1,18 @@
 import re
-import unicodedata
 
 
-charLvl = ("░", "▒", "▓", "█")
+LVL_CHAR = ("░", "▒", "▓", "█")
 
 _ansiCompile = re.compile(r'(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]')
 escapeAnsi   = lambda l: _ansiCompile.sub('',l)
 
 def level(level:int, width:int=10, charType:tuple=()) -> str:
-    charType = charLvl if not charType else charType
+    charType = charType or LVL_CHAR
     OLV, TLV = divmod(level, int(100/width))
     return ((charType[3]*OLV)+(charType[round(TLV*(3/width))])+(charType[0]*(width-OLV)))[:width]
 
-def anchor(stdscr,
-           string     :str,
+def anchor(stdscr                     ,
+           string     :str            ,
            y          :int      =0    ,
            x          :int      =0    ,
            addOnyx    :list[int]=[0,0],

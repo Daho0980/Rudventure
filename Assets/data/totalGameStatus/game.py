@@ -18,9 +18,9 @@ killAll    :bool = False
 clearEntity:bool = False
 
 # region Modes
-bodyPreservationMode:bool = False
-cowardMode          :bool = False
-sanjibaMode         :bool = False
+bodyPreservationMode:int = 0b0
+cowardMode          :int = 0b0
+sanjibaMode         :int = 0b0
 
 # region Entity
 enemyCount      :int = 0

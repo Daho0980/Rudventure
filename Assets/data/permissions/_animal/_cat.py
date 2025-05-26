@@ -1,7 +1,7 @@
-from Assets.data.permissions.classType import ByteFlag
+from Assets.data.permissions.classType import BitFlag
 
 
-class Permission(ByteFlag):
+class Permission(BitFlag):
     data = { 
         "invincibleBlock" : 0b10,
         "void" : 0b0,

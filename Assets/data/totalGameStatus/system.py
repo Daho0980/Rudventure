@@ -24,12 +24,12 @@ sss:dict[str, tuple] = {
     "minimum"     : ( 58, 122 ),
     "recommended" : ( 67, 195 )
 }
-autoTerminalSize :bool|None = None
-checkTerminalSize:bool|None = None
+autoTerminalSize :bool = False
+checkTerminalSize:bool = False
 
 # region Key
-key            = __import__("Game.core.system.keyBind", fromlist=["KeyBind"]).KeyBind()
-recordKey:bool = False
+key           = __import__("Game.core.system.keyBind", fromlist=["KeyBind"]).KeyBind()
+recordKey:int = 0b0
 
 # region Time record
 startTime  :float = 0

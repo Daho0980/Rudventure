@@ -1,123 +1,288 @@
-from   math      import ceil
-from   itertools import chain
+from re        import compile
+from itertools import chain
 
-from Assets.data.color             import cColors as cc
-from Game.utils.graphics           import escapeAnsi
-from Game.utils.CExt.libtext       import actualLen
+from Assets.data.color        import cColors   as cc
+from Game.utils.graphics      import escapeAnsi
+from Game.utils.RSExt.libtext import measure, cut
 
 
-Line:dict[str,dict[int,list[str]]] = {
-    "normal" : {0:["┌", "┐"], 1:["└", "┘"], 2:["├", "┤"], 3:["─", "│"]},
-    "double" : {0:["╔", "╗"], 1:["╚", "╝"], 2:["╠", "╣"], 3:["═", "║"]},
-    "bold"   : {0:["┏", "┓"], 1:["┗", "┛"], 2:["┣", "┫"], 3:["━", "┃"]},
+BOX_OVER  = 0b10
+BOX_UNDER = 0b1
+
+boxLineData:dict[str,dict[int,tuple[str, str]]] = {
+    "normal" : {0:("┌", "┐"), 1:("└", "┘"), 2:("├", "┤"), 3:("─", "│")},
+    "double" : {0:("╔", "╗"), 1:("╚", "╝"), 2:("╠", "╣"), 3:("═", "║")},
+    "bold"   : {0:("┏", "┓"), 1:("┗", "┛"), 2:("┣", "┫"), 3:("━", "┃")},
     
-    "cornerDouble" : {0:["╔", "╗"], 1:["╚", "╝"], 2:["╠", "╣"], 3:["─", "┃"]},
+    "cornerDouble" : {0:("╔", "╗"), 1:("╚", "╝"), 2:("╠", "╣"), 3:("─", "┃")},
 }
 
-def TextBox(Inp            :str                         ,
-            Type           :str      ="left"            ,
-            maxLine        :int      =100               ,
-            fillChar       :str      =" "               ,
-            inDistance     :int      =0                 ,
-            outDistance    :int      =0                 ,
-            addWidth       :int      =0                 ,
-            AMLS           :bool     =False             ,
-            endLineBreak   :bool     =False             ,
-            returnSizeyx   :bool     =False             ,
-            LineType       :str      ="normal"          ,
-            alwaysReturnBox:bool     =True              ,
-            sideText       :str      =""                ,
-            sideTextPos    :list[str]=["over", "middle"],
-            coverSideText  :bool     =False             ,
-            coverColor     :str      =""                 ) -> str:
-        """
-        ``Inp``(str)                                                                : 텍스트박스 내용, 줄바꿈하려면 `\\n`을 사용해야 함\n
-        ``Type``(str["left", "middle", "right"])                                    : 위치 설정, 기본적으로 `"left"`로 설정되어 있음\n
-        ``maxLine``(int)                                                            : 최대 박스 길이 설정. AMLS를 True로 할거라면 그냥 신경쓰지 않는 게 좋음, 기본적으로 `100`으로 설정되어 있음\n
-        ``fillChar``(char)                                                          : 박스 안을 채울 텍스트. 딱 한 개만 허용, 기본적으로 `" "`로 설정되어 있음\n
-        ``inDistance``(int>=0)                                                      : 박스 안쪽 텍스트의 위, 아래 공백 크기 설정, 기본적으로 `0`으로 설정되어 있음\n
-        ``outDistance``(int>=0)                                                     : 박스 바깥의 공백 크기 설정, 기본적으로 `0`으로 설정되어 있음\n
-        ``addWidth``(int>=0)                                                        : 텍스트 양 옆 거리 설정, 기본적으로 `0`으로 설정되어 있음\n
-        ``AMLS``(bool)                                                              : 가장 긴 텍스트의 길이에 맞게 설정할지에 대한 여부. 이미 maxLine을 설정했다면 신경쓰지 않는 게 좋음, 기본적으로 `False`로 설정되어 있음\n
-        ``endLineBreak``(bool)                                                      : 개행 문자 여부, 기본적으로 `False`로 설정되어 있음\n
-        ``returnSizeyx``(bool)                                                      : 박스와 함께 오른쪽 아래 위치 추가 반환 여부, 기본적올 `False`로 설정되어 있음\n
-        ``LineType``(str["normal", "double", "bold"])                               : 텍스트박스 테두리 종류 설정, 기본적으로 `"normal"`로 설정되어 있음\n
-        ``alwaysReturnBox``(bool)                                                   : 빈 문자열 입력 시 무조건적인 박스 반환 여부, 기본적으로 `True`로 설정되어 있음\n
-        ``sideText``(str)                                                           : 텍스트박스의 선 사이에 들어갈 텍스트, 기본적으로 `""`로 설정되어 있음\n
-        ``sideTextPos``(list[str("over", "under"), str("left", "middle", "right")]) : sideText가 들어갈 위치, 기본적으로 `["over", "middle"]`로 설정되어 있음\n
-        ``coverSideText``(bool)                                                     : sideText 양 옆을 텍스트박스가 감쌀지에 대한 여부, 기본적으로 `False`로 설정되어 있음\n
-        ``coverColor``(str)                                                         : 박스와 내부 텍스트를 채울 색. 텍스트에 색이 들어가 있다면 다시 채워지지 않음. 기본적으로 `" "`로 설정되어 있음\n
-        """
-        if   not len(Inp) and     alwaysReturnBox: Inp = "..."
-        elif not len(Inp) and not alwaysReturnBox: return ""
+_TBMacroRegex = compile(r"TextBox\.([^_]+)_")
+
+def _getMacroCMD(text:str) -> str|None:
+    if (data:=_TBMacroRegex.search(text)): return data.group(1)
+
+def _getTextInsertedLine(pos      :str           ,
+                         text     :str           ,
+                         corner   :tuple[str,str],
+                         bar      :str           ,
+                         padWidth :int           ,
+                         isCovered:bool          ,
+                         end      :str           ,
+                         color    :str            ) -> str:
+    match pos:
+        case "middle":
+            halfLine = bar*int(padWidth/2)
+            output   = f"{halfLine}{text}{''if isCovered else color}{halfLine}{bar if padWidth&1 else ''}"
+    
+        case "left":  output = f"{text}{bar*padWidth}"
+        case "right": output = f"{bar*padWidth}{text}"
+
+    return f"{color}{corner[0]}{output}{corner[1]}{end}"
 
 
-        Display    = ""
-        FrontSpace = ""
-        BackSpace  = ""
-        FixedLine  = ""
+def TextBox(Inp:str,
+            
+            maxLine    :int            =100      ,
+            extendWidth:int            =0        ,
+            inDistance :tuple[int, int]=(0, 0b00),
+            outDistance:tuple[int, int]=(0, 0b00),
 
-        Texts        = Inp.split("\n")
-        endLine      = "\n" if endLineBreak else ""
-        fullAddWidth = addWidth*2 if Type=="middle"else addWidth
-        end          = cc['end'] if coverColor else ''
+            Type       :str            ="left"            ,
+            fillChar   :str            =" "               ,
+            LineType   :str            ="normal"          ,
+            sideText   :str            =""                ,
+            coverColor :str            =""                ,
+            sideTextPos:tuple[str,str] =("over", "middle"),
 
-        if coverSideText: sideText = f"{Line[LineType][2][1]}{sideText}{Line[LineType][2][0]}"
-        if AMLS:          maxLine  = max(map(lambda l: actualLen(escapeAnsi(l)), chain(Texts,[sideText])))
+            AMLS         :bool=False,
+            safeBox      :bool=True ,
+            textSplit    :bool=True ,
+            endLineBreak :bool=False,
+            overEllipsis :bool=False,
+            returnSizeyx :bool=False,
+            coverSideText:bool=False,
+            height       :int =0                           ) -> str:
+    """
+    Inp **(str)**:
+        글상자의 내용.
+        줄바꿈하려면 `\\n`을 사용해야 함
 
-        if sideText and sideTextPos[0]=="over":
-            style = {
-                "left"   : f"{coverColor}{sideText}{Line[LineType][3][0]*((maxLine+fullAddWidth)-actualLen(escapeAnsi(sideText)))}",
-                "middle" : f"{coverColor}{Line[LineType][3][0]*(ceil(int(((maxLine+fullAddWidth)-actualLen(escapeAnsi(sideText)))/2)))}{sideText}{coverColor}{Line[LineType][3][0]*(ceil(int(((maxLine+fullAddWidth)-actualLen(escapeAnsi(sideText)))/2)))}{Line[LineType][3][0]if(maxLine+fullAddWidth+actualLen(escapeAnsi(sideText)))%2 else''}",
-                "right"  : f"{coverColor}{Line[LineType][3][0]*((maxLine+fullAddWidth)-actualLen(escapeAnsi(sideText)))}{sideText}{coverColor}"
-                }[sideTextPos[1]]
-            FixedLine = f"{coverColor}{Line[LineType][0][0]}{end}{style}{Line[LineType][0][1]}{end}\n"
+    Type **(str["left", "middle", "right"])**:
+        글상자 내용의 위치 설정.
+        기본값 : `"left"`
 
-        else: FixedLine = f"{coverColor}{Line[LineType][0][0]}{Line[LineType][3][0]*(maxLine+fullAddWidth)}{Line[LineType][0][1]}{end}\n"
+    maxLine **(int)**:
+        최대 박스 길이 설정.
+        `AMLS`를 사용하는 경우 그대로 두는 것이 좋음.
+        기본값 : `100`
 
-        Display += "\n"*outDistance+FixedLine+(f"{coverColor}{Line[LineType][3][1]}{end}{fillChar*(maxLine+fullAddWidth)}{coverColor}{Line[LineType][3][1]}{end}\n")*inDistance
-        for textLine in Texts:
-            space = actualLen(escapeAnsi(textLine))
+    fillChar **(char)**:
+        박스 안을 채울 캐릭터.
+        기본값 : `" "`
 
-            if textLine.startswith("TextBox."):
-                if textLine == "TextBox.Line_": Display += f"{coverColor}{Line[LineType][2][0]}{Line[LineType][3][0]*(maxLine+fullAddWidth)}{Line[LineType][2][1]}{end}\n"
-                elif textLine.startswith("TextBox.Middle_"):
-                    space   -= 15
-                    Display += f"{coverColor}{Line[LineType][3][1]}{end}{fillChar*int((maxLine-space)/2)}{textLine.lstrip('TextBox.Middle_')}{fillChar*(int((maxLine-space)/2) if not (maxLine-space)%2 else int((maxLine-space)/2)+1)}{coverColor}{Line[LineType][3][1]}{end}\n"
+    inDistance **(tuple[int>=0, 0b{2}])**:
+        박스 내부 상하 공백 크기 설정.
+        기본값 : `(0, 0b00)`
 
-                elif textLine.startswith("TextBox.Left_"):
-                    space   -= 13
-                    Display += f"{coverColor}{Line[LineType][3][1]}{end}{textLine.lstrip('TextBox.Left_')}{fillChar*((maxLine-space)+addWidth)}{coverColor}{Line[LineType][3][1]}{end}\n"
+    outDistance **(tuple[int>=0, 0b{2}])**:
+        박스 외부 상하 공백 크기 설정.
+        기본값 : `(0, 0b00)`
 
-                elif textLine.startswith("TextBox.Right_"):
-                    space   -= 14
-                    Display += f"{coverColor}{Line[LineType][3][1]}{end}{fillChar*((maxLine-space)+addWidth)}{textLine.lstrip('TextBox.Right_')}{coverColor}{Line[LineType][3][1]}{end}\n"
+    extendWidth **(int>=0)**:
+        텍스트 양 옆 거리 설정.
+        기본값 : `0`
 
-            else:
-                match Type:
-                    case "left": BackSpace = fillChar*((maxLine-space)+addWidth)
-                    case "middle":
-                        FrontSpace = fillChar*(int((maxLine-space)/2)+addWidth)
-                        BackSpace  = fillChar*(int((maxLine-space)/2)+addWidth if not (maxLine-space)%2 else int((maxLine-space)/2)+1+addWidth)
+    AMLS **(bool)**:
+        가장 긴 텍스트의 길이에 대한 박스 너비 설정 여부.
+        이미 maxLine을 설정했다면 신경쓰지 않는 게 좋음.
+        기본값 : `False`
 
-                    case "right": FrontSpace = fillChar*((maxLine-space)+addWidth)
-                
-                Display += f"{coverColor}{Line[LineType][3][1]}{end}{FrontSpace}{textLine}{BackSpace}{coverColor}{Line[LineType][3][1]}{end}\n"
+    endLineBreak **(bool)**:
+        개행 문자 여부.
+        기본값 : `False`
 
-        if sideText and sideTextPos[0]=="under":
-            style = {
-                "left"   : f"{coverColor}{sideText}{Line[LineType][3][0]*((maxLine+fullAddWidth)-actualLen(escapeAnsi(sideText)))}",
-                "middle" : f"{coverColor}{Line[LineType][3][0]*(ceil(int(((maxLine+fullAddWidth)-actualLen(escapeAnsi(sideText)))/2)))}{sideText}{coverColor}{Line[LineType][3][0]*(ceil(int(((maxLine+fullAddWidth)-actualLen(escapeAnsi(sideText)))/2)))}{Line[LineType][3][0]if(maxLine+fullAddWidth+actualLen(escapeAnsi(sideText)))%2 else''}",
-                "right"  : f"{coverColor}{Line[LineType][3][0]*((maxLine+fullAddWidth)-actualLen(escapeAnsi(sideText)))}{sideText}{coverColor}"
-                }[sideTextPos[1]]
-            FixedLine = f"{coverColor}{Line[LineType][1][0]}{end}{style}{Line[LineType][1][1]}{end}{endLine}"
+    returnSizeyx **(bool)**:
+        박스 크기 추가 반환 여부.
+        기본값 : `False`
 
-        else: FixedLine = f"{coverColor}{Line[LineType][1][0]}{Line[LineType][3][0]*(maxLine+fullAddWidth)}{Line[LineType][1][1]}{end}{endLine}"
+    LineType **(str["normal", "double", "bold", "cornerDouble"])**:
+        글상자 테두리 종류 설정.
+        기본값 : `"normal"`
 
-        Display += ((f"{coverColor}{Line[LineType][3][1]}{end}{fillChar*(maxLine+fullAddWidth)}{coverColor}{Line[LineType][3][1]}{end}\n")*inDistance)+FixedLine+("\n"*outDistance)
+    safeBox **(bool)**:
+        무조건적 박스 반환 여부.
+        기본값 : `True`
 
-        if returnSizeyx: return len(Display.split("\n"))-((outDistance*2)+2), maxLine+2, Display # type: ignore
-        else:            return Display
+    sideText **(str)**:
+        글상자 선 사이에 들어갈 텍스트.
+        기본값 : `""`
+
+    sideTextPos **(tuple[str("over", "under"), str("left", "middle", "right")])**:
+        `sideText`가 들어갈 위치.
+        기본값 : `("over", "middle")`
+
+    coverSideText **(bool)**:
+        `sideText` 양 옆을 선이 감쌀지에 대한 여부.
+        기본값 : `False`
+
+    coverColor **(str)**:
+        박스와 내부 텍스트를 채울 색.
+        텍스트에 색이 들어가 있다면 다시 채워지지 않음.
+        기본값 : `" "`
+
+    textSplit **(bool)**:
+        문장이 maxLine 초과 시 분할 여부.
+        `AMLS`를 사용하는 경우 그대로 두는 것이 좋음.
+        기본값 : `True` 
+    """
+    if not len(Inp):
+        if not safeBox: return ""
+        Inp = "..."
+
+    Display = []
+
+    outline     = []
+    upperInline = []
+    lowerInline = []
+
+    endLine  = '\n'      if endLineBreak else ''
+    end      = cc['end'] if coverColor   else ''
+
+    boxLine = boxLineData[LineType]
+    boxBar  = boxLine[3][0]
+    boxSide = f"{coverColor}{boxLine[3][1]}{end}"
+
+    if AMLS:
+        maxLine = max(map(
+            lambda l: measure(escapeAnsi(l)),
+            chain((txtLines:=Inp.split('\n')), [sideText])
+        ))
+    
+    else:
+        txtLines = cut(Inp, maxLine, textSplit, overEllipsis, height)
+
+    boxWidth  = maxLine+(extendWidth*(1+(Type=="middle")))
+    emptyLine = f"{boxSide}{fillChar*boxWidth}{boxSide}"
+
+    if sideText:
+        if coverSideText:
+            sideText = f"{boxLine[2][1]}{sideText}{coverColor}{boxLine[2][0]}"
+
+        sidePadWidth = boxWidth-measure(escapeAnsi(sideText))
+
+    if outDistance[1]&0b11: outline = ['']*outDistance[0]
+
+    extra = (len(txtLines)-Inp.count('\n')-1)
+    match inDistance[1]:
+        case 0b10: upperInline = [emptyLine]*(inDistance[0]-extra)
+        case 0b01: lowerInline = [emptyLine]*(inDistance[0]-extra)
+        case 0b11:
+            upperInline = [emptyLine]*(inDistance[0]-(extra//2))
+            lowerInline = [emptyLine]*(inDistance[0]-(extra//2)+(extra&1))
+
+    del extra
+
+    if outDistance[1]&BOX_OVER: Display.extend(outline)
+    Display.append(
+        _getTextInsertedLine(
+            sideTextPos[1],
+            sideText,
+            boxLine[0],
+            boxBar,
+            sidePadWidth,
+            coverSideText,
+            end,
+            coverColor
+        )\
+            if  sideText\
+            and sideTextPos[0]=="over"\
+        else f"{coverColor}{boxLine[0][0]}{boxBar*boxWidth}{boxLine[0][1]}{end}"
+    )
+    if inDistance[1]&BOX_OVER: Display.extend(upperInline)
+
+    for txtLine in txtLines:
+        space    = measure(escapeAnsi(txtLine))
+        padWidth = maxLine-space
+
+        if txtLine.startswith("TextBox."):
+            match _getMacroCMD(txtLine):
+                case "Line":
+                    Display.append(
+                        f"{coverColor}{boxLine[2][0]}{boxBar*boxWidth}{boxLine[2][1]}{end}"
+                    )
+
+                case "Middle":
+                    halfSpace = (padWidth//2)+7
+
+                    Display.append(
+                        f"{boxSide}{fillChar*(halfSpace+extendWidth)}{
+                            txtLine.lstrip('TextBox.Middle_')
+                        }{fillChar*(halfSpace+extendWidth+(padWidth&1)+1)
+                        }{boxSide}"
+                    )
+
+                case "Left":
+                    Display.append(
+                        f"{boxSide}{txtLine.lstrip('TextBox.Left_')}{
+                            fillChar*(padWidth+13+extendWidth)\
+                        }{boxSide}"
+                    )
+
+                case "Right":
+                    Display.append(
+                        f"{boxSide}{
+                            fillChar*(padWidth+14+extendWidth)
+                        }{txtLine.lstrip('TextBox.Right_')}{boxSide}"
+                    )
+
+        else:
+            match Type:
+                case "middle":
+                    halfSpace = padWidth//2
+
+                    Display.append(
+                        f"{boxSide}{fillChar*(halfSpace+extendWidth)}{
+                            txtLine
+                        }{fillChar*(halfSpace+extendWidth+(padWidth&1))
+                        }{boxSide}"
+                    )
+                    
+                case "left":
+                    Display.append(
+                        f"{boxSide}{txtLine}{
+                            fillChar*(padWidth+extendWidth)
+                        }{boxSide}"
+                    )
+
+                case "right":
+                    Display.append(
+                        f"{boxSide}{
+                            fillChar*(padWidth+extendWidth)
+                        }{txtLine}{boxSide}"
+                    )
+
+    if inDistance[1]&BOX_UNDER:
+        Display.extend(lowerInline)
+    Display.append(
+        _getTextInsertedLine(
+            sideTextPos[1],
+            sideText,
+            boxLine[1],
+            boxBar,
+            sidePadWidth,
+            coverSideText,
+            end,
+            coverColor
+        )\
+            if  sideText\
+            and sideTextPos[0]=="under"\
+        else f"{coverColor}{boxLine[1][0]}{boxBar*boxWidth}{boxLine[1][1]}{end}{endLine}"
+    )
+    if outDistance[1]&BOX_UNDER: Display.extend(outline)
+
+    if returnSizeyx: return len(Display)-(outDistance[0]*2), maxLine+2, '\n'.join(Display) # type: ignore
+    else:            return '\n'.join(Display)
 
 
 # How to use:

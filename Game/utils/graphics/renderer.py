@@ -8,7 +8,7 @@ from Game.core.system.structures import Conveyor
 from Game.entities.player        import statusEffect
 from Game.utils.modules          import Textbox
 from Game.utils.advanced         import DungeonMaker as dgm
-from Game.utils.CExt.libtext     import actualLen
+from Game.utils.RSExt.libtext    import measure
 
 from Assets.data import (
     totalGameStatus as s,
@@ -79,7 +79,7 @@ def statusBar(status        :int          ,
     elif not usePercentage: statusForDisplay = maxStatus if status>maxStatus else status
     
     Display.append(f"{'|'*statusForDisplay+emptyCellColor+'|'*((maxStatus-statusForDisplay) if showEmptyCell else 0)}{cc['fg']['G1']}{barTypes[barType][1]}{cc['end']}")
-    if status-maxStatus > 0: Display.append(f" {color}+{status-maxStatus}{cc['end']}")
+    if (status-maxStatus) > 0: Display.append(f" {color}+{status-maxStatus}{cc['end']}")
     Display.append(f"{',' if len(backTag)>0 and showComma else ''} {backTag}"+("\n"if end else ""))
 
     return ''.join(Display)
@@ -99,8 +99,8 @@ def inventory():
                     Type       ="middle",
                     LineType   ="bold",
                     sideText   =str(cellIndex+1),
-                    sideTextPos=["over", "middle"],
-                    coverColor =cc['fg']['Y'] if s.inventory['pointer'] == cellIndex else cc['fg']['G1'] if s.inventory['cells'][cellIndex]['disabled'] else ''
+                    sideTextPos=('over', 'middle'),
+                    coverColor =cc['fg']['Y'] if s.inventory['pointer']==cellIndex else cc['fg']['G1'] if s.inventory['cells'][cellIndex]['disabled'] else ''
                 )
                 lines.extend(cell.split("\n"))
 
@@ -186,10 +186,10 @@ def render(stdscr):
             AMLS         =True,
             LineType     ='double',
             sideText     ="미궁 지도",
-            sideTextPos  =["under", "middle"],
+            sideTextPos  =('under', 'middle'),
             coverSideText=True
         )
-        Display.append(anchor(stdscr, buffer, y=2, x=x-actualLen(buffer.split("\n")[-1]), returnStr=True))
+        Display.append(anchor(stdscr, buffer, y=2, x=x-measure(buffer.split("\n")[-1]), returnStr=True))
 
     # Status
     statusText = ""
@@ -206,7 +206,7 @@ TextBox.Line_\n저주 : {cc['fg']['F']}{s.lvl}{cc['end']}, {cc['fg']['F']}{int((
         AMLS         =True,
         LineType     ='double',
         sideText     ="상태",
-        sideTextPos  =["under", "left"],
+        sideTextPos  =('under', 'left'),
         coverSideText=True
     )
         
@@ -249,7 +249,7 @@ TextBox.Line_\n저주 : {cc['fg']['F']}{s.lvl}{cc['end']}, {cc['fg']['F']}{int((
             AMLS         =True,
             LineType     ='double',
             sideText     ="상태",
-            sideTextPos  =["under", "left"],
+            sideTextPos  =('under', 'left'),
             coverSideText=True
         )
 
@@ -267,12 +267,12 @@ TextBox.Line_\n저주 : {cc['fg']['F']}{s.lvl}{cc['end']}, {cc['fg']['F']}{int((
     else:
         logText = Textbox.TextBox(
             "\n".join(s.onDisplay),
-            maxLine        =x-3,
-            LineType       ='double',
-            alwaysReturnBox=False,
-            sideText       ="로그",
-            sideTextPos    =["over", "middle"],
-            coverSideText  =True
+            maxLine      =x-3,
+            LineType     ='double',
+            safeBox      =False,
+            sideText     ="로그",
+            sideTextPos  =('over', 'middle'),
+            coverSideText=True
         )
         logCache[logHash] = logText
 
@@ -280,19 +280,19 @@ TextBox.Line_\n저주 : {cc['fg']['F']}{s.lvl}{cc['end']}, {cc['fg']['F']}{int((
 
     # Info window (observe mode)
     if s.infoWindow['time']:
-        maxLen         = max(map(lambda l: actualLen(escapeAnsi(l)), s.infoWindow['text'].split('\n')))
+        maxLen         = max(map(lambda l: measure(escapeAnsi(l)), s.infoWindow['text'].split('\n')))
         sideTextSpace  = 6 if maxLen>6 else 0; maxLen -= sideTextSpace
         timeGauge      = int((s.infoWindow['time']/s.infoWindow['setTime'])*maxLen)
         infoWindowText = Textbox.TextBox(
             s.infoWindow['text'],
 
-            AMLS           =True,
-            LineType       ='double',
-            alwaysReturnBox=False,
-            sideText       =f"{cc['fg']['Y']}{'━'*(timeGauge)}{cc['fg']['G1']}{'━'*(maxLen-timeGauge)}{cc['end']}",
-            sideTextPos    =["under", "middle"],
-            coverSideText  =True,
-            coverColor     =cc['end']
+            AMLS         =True,
+            LineType     ='double',
+            safeBox      =False,
+            sideText     =f"{cc['fg']['Y']}{'━'*(timeGauge)}{cc['fg']['G1']}{'━'*(maxLen-timeGauge)}{cc['end']}",
+            sideTextPos  =('under', 'middle'),
+            coverSideText=True,
+            coverColor   =cc['end']
         ).split('\n')
 
         Display.append(anchor(stdscr, '\n'.join(infoWindowText), y=2, x=int(x/2)-int(len(infoWindowText[0])/2), returnStr=True))
@@ -323,7 +323,7 @@ FPS : {s.currentFrameCount}""",
             LineType     ="bold",
             returnSizeyx =True,
             sideText     ="디버그 콘솔",
-            sideTextPos  =["over", "right"],
+            sideTextPos  =('over', 'right'),
             coverSideText=True
         )
 

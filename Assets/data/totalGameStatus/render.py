@@ -7,9 +7,9 @@ elapsedFrameCount:int = 0
 currentFrameCount:int = 0
 
 # region UISettings
-statusDesign  :int  = 1 # 1||0
-showDungeonMap:int  = 0 # 0||1
-debug         :bool = False
+statusDesign  :int  = 0b1 # 1||0
+showDungeonMap:int  = 0b0 # 0||1
+debug         :int  = 0b0
 infoWindow    :dict = {
     "text"    : "",
     "time"    : 0,
@@ -21,7 +21,7 @@ currentCurseNoiseFrequency:int = 0
 curseNoiseFrequency       :int = 5
 
 # region Camera set
-dynamicCameraMoving:int = 0 # 0||1
+dynamicCameraMoving:int = 0b0 # 0||1
 
 noisePool:dict[str,list[str]] = {
     "pattern" : [

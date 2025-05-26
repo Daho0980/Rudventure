@@ -581,7 +581,6 @@ class Cat(Animal):
                                     path = AStar.main(
                                         (self.y, self.x),
                                         [300],
-                                        # s.interactableBlocks['steppable']['total']
                                         self.perm.IDSet['step']
                                     )
 

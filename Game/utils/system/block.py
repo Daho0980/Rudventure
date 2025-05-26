@@ -3,7 +3,7 @@ from copy   import deepcopy
 
 from Game.core.system.structures import Conveyor
 from Game.utils.graphics         import escapeAnsi
-from Game.utils.CExt.libtext     import actualLen
+from Game.utils.RSExt.libtext    import measure
 
 
 isetCache:Conveyor = Conveyor(200)
@@ -23,7 +23,7 @@ def iset(block:str, space:str=' ', Type:str="n") -> str:
     if key in isetCache:
         return deepcopy(isetCache[key])
     
-    if actualLen(escapeAnsi(block)) == 1:
+    if measure(escapeAnsi(block)) == 1:
         match Type:
             case "n"|"r": block = f"{block}{space}"
             case "l":     block = f"{space}{block}"

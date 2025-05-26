@@ -3,7 +3,6 @@ import time
 from Assets.data.color             import cColors as cc
 from Game.utils.modules            import Textbox
 from Game.utils.system.sound       import play
-from Game.utils.CExt.libtext       import actualLen
 
 from . import anchor
 
@@ -18,8 +17,8 @@ def showStage(stdscr, stageName:str):
         Textbox.TextBox(
             f"{cc['fg']['R']}나 락{cc['end']}",
             Type        ="middle",
-            inDistance  =1,
-            outDistance =3,
+            inDistance  =(1, 0b11),
+            outDistance =(3, 0b11),
             maxLine     =19,
             endLineBreak=True,
             LineType    ="double"
@@ -35,8 +34,8 @@ def showStage(stdscr, stageName:str):
             f"{cc['fg']['R']}나 락{cc['end']}\n\n{stageName}",
 
             Type        ="middle",
-            inDistance  =1,
-            outDistance =3,
+            inDistance  =(1, 0b11),
+            outDistance =(3, 0b11),
             maxLine     =19,
             endLineBreak=True,
             LineType    ="double"

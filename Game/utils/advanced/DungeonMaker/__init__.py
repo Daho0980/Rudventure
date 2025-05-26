@@ -37,8 +37,8 @@ def centerGridMapReturn(grid:list, blank:int=0):
         for column in range(len(DisplayMap[row])):
             FixY, FixX = row+toolY, column+toolX
 
-            if  0 <= FixY              <= rowLength-1\
-            and 0 <= FixX              <= len(DisplayMap[row])-1\
+            if  0 <= FixY <= rowLength-1\
+            and 0 <= FixX <= len(DisplayMap[row])-1\
             and len(grid[row][column]) >  0:      
                 if  FixX  <len(DisplayMap[row])-1\
                 and column<len(DisplayMap[row])-1:
@@ -117,10 +117,10 @@ def DungeonMaker(showAll=False) -> list:
 
         if   not isStartExist: continue
         elif "endPoint" in [
-            "startPoint" if s.Dy == 0 or not output[s.Dy-1][s.Dx] else output[3][4]['roomType'],
-            "startPoint" if s.Dx == 8 or not output[s.Dy][s.Dx+1] else output[4][5]['roomType'],
-            "startPoint" if s.Dy == 8 or not output[s.Dy+1][s.Dx] else output[5][4]['roomType'],
-            "startPoint" if s.Dx == 0 or not output[s.Dy][s.Dx-1] else output[4][3]['roomType']
+            "startPoint" if s.Dy==0 or not output[s.Dy-1][s.Dx] else output[3][4]['roomType'],
+            "startPoint" if s.Dx==8 or not output[s.Dy][s.Dx+1] else output[4][5]['roomType'],
+            "startPoint" if s.Dy==8 or not output[s.Dy+1][s.Dx] else output[5][4]['roomType'],
+            "startPoint" if s.Dx==0 or not output[s.Dy][s.Dx-1] else output[4][3]['roomType']
         ]: continue
         break
 

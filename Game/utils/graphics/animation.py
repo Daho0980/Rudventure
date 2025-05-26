@@ -98,10 +98,10 @@ class Box:
                 stdscr,
                 Textbox.TextBox(
                     ''.join([" "*(totalC)]),
-                    AMLS           =True,
-                    LineType       =lineType,
-                    coverColor     =boxColor,
-                    alwaysReturnBox=False
+                    AMLS      =True,
+                    LineType  =lineType,
+                    coverColor=boxColor,
+                    safeBox   =False
                 ),
                 addOnyx=[1, 0]
             )
@@ -119,10 +119,10 @@ class Box:
                 stdscr,
                 Textbox.TextBox(
                     '\n'.join([" "*column]*totalR),
-                    AMLS           =True,
-                    LineType       =lineType,
-                    coverColor     =boxColor,
-                    alwaysReturnBox=False
+                    AMLS      =True,
+                    LineType  =lineType,
+                    coverColor=boxColor,
+                    safeBox   =False
                 ),
                 addOnyx=[1, 0]
             )
@@ -157,10 +157,10 @@ class Box:
                 stdscr,
                 Textbox.TextBox(
                     '\n'.join([" "*column]*(n+sum(r[i+1:]))),
-                    AMLS           =True,
-                    LineType       =lineType,
-                    coverColor     =boxColor,
-                    alwaysReturnBox=False
+                    AMLS      =True,
+                    LineType  =lineType,
+                    coverColor=boxColor,
+                    safeBox   =False
                 ),
                 addOnyx=[1, 0]
             )
@@ -176,10 +176,10 @@ class Box:
                 stdscr,
                 Textbox.TextBox(
                     ''.join([" "*(n+sum(c[i+1:]))]),
-                    AMLS           =True,
-                    LineType       =lineType,
-                    coverColor     =boxColor,
-                    alwaysReturnBox=False
+                    AMLS      =True,
+                    LineType  =lineType,
+                    coverColor=boxColor,
+                    safeBox   =False
                 ),
                 addOnyx=[1, 0]
             )

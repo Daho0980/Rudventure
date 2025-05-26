@@ -108,9 +108,9 @@ f"""뇌 빼고 엔터만 치고 계신 것 같으니 특별히
 {cc['fg']['Y']}<< {temporaryName} >>{cc['end']}
 (으)로 정해드리겠습니다. 어때요, 좋죠?""",
                     Type        ="middle",
-                    outDistance =1,
+                    outDistance =(1, 0b11),
                     AMLS        =True,
-                    addWidth    =3
+                    extendWidth =3
                     ),
                 ["네", "네 히히"],
                 [1,0,255,10],
@@ -135,16 +135,16 @@ f"""뇌 빼고 엔터만 치고 계신 것 같으니 특별히
         sound.play   ("system", "selector", "select")
         stdscr.clear (); stdscr.refresh()
 
-        if len(temporaryName) == 0 or len(temporaryName.split()) == 0:
+        if len(temporaryName)==0 or len(temporaryName.split())==0:
             cSelector.main(
                 t.TextBox(
 f"이름이 {cc['fg']['R']}{md.cMarkdown([2, 4])}없거나{cc['end']} \
 {cc['fg']['R']}{md.cMarkdown([2, 4])}공백 밖에 없으면{cc['end']}\n\
 말하기 {cc['fg']['R']}{md.cMarkdown([2, 4])}곤란{cc['end']}해지실게요",
                     Type        ="middle",
-                    outDistance =1,
+                    outDistance =(1, 0b11),
                     AMLS        =True,
-                    addWidth    =3
+                    extendWidth =3
                     ),
                 ["네..."],
                 [1,0,255,10],
@@ -159,10 +159,10 @@ f"이름이 {cc['fg']['R']}{md.cMarkdown([2, 4])}없거나{cc['end']} \
             t.TextBox(
                 f"{cc['fg']['Y']}<< {temporaryName} >>{cc['end']}\n\n이 이름이 맞습니까?",
                 Type        ="middle",
-                outDistance =1,
+                outDistance =(1, 0b11),
                 AMLS        =True,
-                addWidth    =3
-                ),
+                extendWidth =3
+            ),
             ["네", "아니오", "", "그냥 정해주세요..."]if reTryCount>=3 else["네", "아니오"],
             [1,0,255,10],
             '@)',
@@ -204,9 +204,9 @@ f"이름이 {cc['fg']['R']}{md.cMarkdown([2, 4])}없거나{cc['end']} \
                     t.TextBox(
                         f"좋습니다. 그럼...\n{cc['fg']['Y']}<< {temporaryName} >>{cc['end']}\n는 어떠신가요?",
                         Type        ="middle",
-                        outDistance =1,
+                        outDistance =(1, 0b11),
                         AMLS        =True,
-                        addWidth    =3
+                        extendWidth =3
                         ),
                     ["네", "그냥 제가 할게요;"],
                     [1,0,255,10],

@@ -4,3 +4,5 @@ from secrets import choice
 
 _letterPool = ascii_letters+digits
 main        = lambda length=6: ''.join(choice(_letterPool)for _ in range(length))
+
+del ascii_letters, digits

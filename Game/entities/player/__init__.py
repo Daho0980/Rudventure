@@ -89,7 +89,7 @@ def damage(block:str="?", atk:int=1) -> tuple:
     event.bleeding(dmg)
 
     if s.hp <= 0: s.DROD = [
-        f"{cc['fg']['R']}{choice(["과다출혈","피로 과다","졸도","자살","우울증"])}{cc['end']}",
+        f"{cc['fg']['R']}{choice(["과다출혈","피로 과다","졸도","자살","우울증","과로"])}{cc['end']}",
         'R'
     ]
 
