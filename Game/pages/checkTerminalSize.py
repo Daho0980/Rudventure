@@ -1,12 +1,11 @@
 from Assets.data             import totalGameStatus as s
 from Assets.data.color       import cColors         as cc
-from Game.core.system        import configs
-from Game.utils.modules      import cSelector, Textbox
+from Game.core.system.config import configs
+from Game.utils.modules      import Textbox
+from Game.utils.modules      import cSelector as clc
 from Game.utils.system       import cinp
 from Game.utils.system.sound import play
 
-
-clc = cSelector
 
 def main(stdscr) -> None:
     if s.checkTerminalSize:
@@ -30,7 +29,8 @@ def main(stdscr) -> None:
 다음부터 자동으로 재조정하시겠습니까?""",
                 ["네", "아니오", "두 번 다신 내 화면에 나오지 마쇼.\n  이건 내 마지막 경고요."],
                 [1,0,255,10],
-                '@)'
+                '@)',
+                escapeReturn=2
             ):
                 case 1:
                     s.autoTerminalSize = True

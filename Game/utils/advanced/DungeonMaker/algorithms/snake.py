@@ -66,7 +66,7 @@ def main(Map     :list      ,
             getBack(bfx, bfy)
             continue
 
-        if Map[y][x]["roomIcon"] in rData: # 방 덮어쓰기 방지
+        if s.DungeonMap[y][x] in rData: # 방 덮어쓰기 방지
             p = [
                 [y-1    if y>0             else y, x],
                 [y+1    if y<len(Map)-1    else y, x],
@@ -82,7 +82,6 @@ def main(Map     :list      ,
             ] or\
             [y, x] in p:
                 Map[y][x] = {
-                    "roomIcon"        : rData[4]                             ,
                     "doors"           : Map[y][x]['doors']                   ,
                     "roomType"        : "endPoint"                           ,
                     "isPlayerHere"    : False                                ,
@@ -90,6 +89,9 @@ def main(Map     :list      ,
                     "summonData"      : [choice(s.enemyIds['bossAvailable'])],
                     "interaction"     : False
                     }
+                
+                s.DungeonMap[y][x] = rData[4]
+
                 break
 
             elif endCount >= 8: Map = []; break
@@ -143,11 +145,12 @@ def main(Map     :list      ,
 
         # 방 데이터 정리
         currLength                             += 1
-        Map[y][x]['roomIcon']                   = rData[roomKind]
         Map[y][x]['roomType']                   = rType[roomKind]
         Map[y][x]['isPlayerVisited']            = 2 if roomKind==4 or showAll else 0
         Map[y][x]['doors'][locationData[2]]     = 1
         Map[bfy][bfx]['doors'][locationData[3]] = 1
+
+        s.DungeonMap[y][x] = rData[roomKind]
 
         Map[y][x]['summonData'] = [choice(s.enemyIds['bossAvailable'])]\
                 if roomKind==4\

@@ -1,22 +1,29 @@
-from Assets.data             import totalGameStatus as s
-from Assets.data.color       import cColors         as cc
-from Game.core.system.logger import addLog
-from Game.utils.system.sound import play
+from Assets.data.color          import cColors as cc
+from Game.core.system.io.logger import addLog
+from Game.utils.system.sound    import play
 
-from Game.utils.system.roomManager.interactions import changeDoor
+from Assets.data import (
+    totalGameStatus as s,
+    flags           as f
+)
+from Game.utils.system.roomManager.interactions import (
+    changeDoor
+)
 
 
 def event0(data) -> None:
     if not data['summonData'] and s.enemyCount:
         data['summonData'] = ['command.roomEnd']
-        s.roomLock = True
+        f.roomLock = True
 
         changeDoor('wall', data, "░░")
         play("object", "door", "close")
 
-    if not s.enemyCount and s.roomLock:
-        s.roomLock                           = False
+    if not s.enemyCount and f.roomLock:
+        f.roomLock                           = False
         s.Dungeon[s.Dy][s.Dx]['interaction'] = True
+
+        s.exaltation += 5
         
         changeDoor('door', data)
         play("object", "door", "open")

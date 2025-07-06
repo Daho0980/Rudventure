@@ -9,11 +9,18 @@
 ```
 cd desktop; git clone https://github.com/Daho0980/Rudventure.git
 ```
-을 입력 후 'runGame.command'를 클릭하여 실행   
+로 클론 후 'launch'를 클릭하여 실행   
+   
+또는 배포된 앱으로 설치 후 바로 실행 가능   
+
+### Linux(& WSL)
+```
+차후 지원 예정
+```
 
 ### Windows   
 ```
-현재 지원 불가
+지원 불가
 ```
 
 ## TODO   
@@ -31,3 +38,4 @@ cd desktop; git clone https://github.com/Daho0980/Rudventure.git
 - [ ] 수집품 시스템(게임에서 죽어도 유지, 메뉴에서 볼 수 있음)   
 - [ ] 육신 보존 모드 개편(모드 활성화 시 `스테이지 클리어 시 저장`이 아닌 `이벤트 방에서 육신 저장터가 생성`됨)
 - [ ] Windows 지원   
+- [ ] Linux 경험 개편

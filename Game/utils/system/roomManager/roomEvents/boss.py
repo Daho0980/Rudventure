@@ -1,14 +1,17 @@
 from random import randrange, choice
 
-from Game.entities.player        import say
-from Game.core.system.dataLoader import obj
-from Game.utils.system.block     import iset
-from Game.utils.system.sound     import play
+from Game.entities.player.event import say
+from Game.utils.system.block    import iset
+from Game.utils.system.sound    import play
 
 from Assets.data import (
     totalGameStatus as s,
     percentage      as p,
-    comments        as c
+    comments        as c,
+    flags           as f
+)
+from Game.core.system.data.dataLoader import (
+    obj
 )
 from Game.utils.system.roomManager.interactions import (
     randPlaceOrb,
@@ -28,11 +31,13 @@ def event(data) -> None:
 
         summonEnemy(data['summonData'], 3, 2, randrange(5, 11))
 
-    elif not s.enemyCount and s.roomLock:
-        s.roomLock                            = False
+    elif not s.enemyCount and f.roomLock:
+        f.roomLock                            = False
         s.Dungeon[s.Dy][s.Dx]['room'][11][11] = obj('-bb', 'exit', block=iset(s.bids['exit']))
         s.Dungeon[s.Dy][s.Dx]['interaction']  = True
         randPlaceOrb(2)
+
+        s.exaltation += 5
 
         changeDoor('door', data)
         play("object", "door", "open")

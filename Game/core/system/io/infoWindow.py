@@ -1,4 +1,4 @@
-from .dataLoader                 import elm
+from ..data.dataLoader           import elm
 from Assets.data                 import totalGameStatus as s
 from Assets.data.color           import cColors         as cc
 from Assets.data.totalGameStatus import infoWindow

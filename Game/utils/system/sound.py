@@ -4,12 +4,12 @@ from   audioplayer import AudioPlayer
 
 from Assets.data import (
     totalGameStatus as s,
-    lockers         as l
+    flags           as f
 )
 
 
 def play(*path, loop:bool=False, block:bool=False, volume:int=-1) -> None:
-    if l.useSound and path:
+    if f.useSound and path:
         if block:
             AudioPlayer(
                 f"{s.TFP}sounds{s.s}{s.s.join(path)}.wav",

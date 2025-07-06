@@ -4,6 +4,8 @@ from   cusser   import Cusser
 from   time     import sleep, perf_counter
 
 from .                   import _main_extended as ME
+from .core.system.io     import logger
+from .core.system.state  import quests as q
 from .entities           import player
 from .entities.player    import checkStatus           as cs
 from .pages              import mainSettings, mainMenu
@@ -16,15 +18,12 @@ from .utils.system.sound import play
 from Assets.data import (
     totalGameStatus as s,
     comments        as c,
-    lockers         as l,
+    flags           as f,
 
     color
 )
-from .core.system import (
-    discordPresence as dp,
-    quests          as q,
-
-    logger
+from .core.system.integration import (
+    discordPresence as dp
 )
 from .utils.advanced.Rudconverter import (
     save
@@ -39,7 +38,7 @@ stdscr = Cusser(curses.initscr())
 cc = color.cColors
 
 def playerChecker() -> None:
-    if not l.isDying:
+    if not f.isDying:
         cs.defCheck    ()
         cs.hpCheck     ()
         cs.curseCheck  ()
@@ -48,9 +47,9 @@ def playerChecker() -> None:
 def gameChecker(stdscr) -> None:
     if s.main == 1:
         stdscr.clear(); stdscr.refresh()
-        l.jpsf = 0b0
+        f.jpsf = 0b0
 
-        if s.hp<=0 or s.hunger<=0:
+        if s.hp<=0 or s.hgr<=0:
             dp.load(
                 large_image="rudventure-icon1",
                 small_image=s.playerColor[1],
@@ -58,7 +57,7 @@ def gameChecker(stdscr) -> None:
                 state      =f"사인 : {escapeAnsi(s.DROD[0])}"
             ); dp.update()
 
-            s.killAll = True
+            f.killAll = True
             comment   = random.choice(c.defeat["CO"if s.lvl>=s.Mlvl else"HL"if s.hp<=0 else"HUL"])
 
             stdscr.nodelay(False)
@@ -93,7 +92,7 @@ def gameChecker(stdscr) -> None:
             FBSA = f"\033[{f'{(FBS)}D'if FBS>0 else f'{abs(FBS)}C'}"
             
             stdscr.refresh()
-            if s.gameRecord: import Game.core.system.deathLogWriter
+            if s.gameRecord: import Game.core.system.io.deathLogWriter
 
             sleep(1)
             achievements = {
@@ -153,8 +152,8 @@ f"""
             ); stdscr.refresh()
             
             logger.clear()
-            s.clearEntity = True ; sleep(0.6)
-            s.clearEntity = False; sleep(1.9)
+            f.clearEntity = True ; sleep(0.6)
+            f.clearEntity = False; sleep(1.9)
             stdscr.refresh()
 
 
@@ -170,14 +169,13 @@ if s.name == "":
     mainSettings.main(stdscr)
     player      .set ()
     if s.cowardMode:
-        s.hp     *= 2
-        s.df     *= 2
-        s.atk    *= 5
-        s.hunger *= 2
+        s.hp  *= 2
+        s.df  *= 2
+        s.atk *= 5
+        s.hgr *= 2
 
-        s.Mhp        = s.hp
-        s.Mdf        = s.df
-        s.MFairWind *= 2
+        s.Mhp = s.hp
+        s.Mdf = s.df
 
         s.critRate   *= 2
         s.critDMG    *= 2
@@ -186,9 +184,11 @@ else: mainSettings.presetted()
 
 stdscr.nodelay(True)
 
+
 keyHandler.add()
-from Game.core.system import (
+from Game.core.system.state import (
     frameCounter,
+    exaltation,
     monologue
 ) # 스레드 연결
 
@@ -200,15 +200,13 @@ if not dp.isConnected:
 
 else: logger.addLog(f"포트는 {cc['fg']['L']}{s.port}{cc['end']}입니다.", colorKey='Y')
 
+
 while s.main:
     dp.quickLoad('enter')
     dp.update()
     
     if s.bodyPreservationMode and s.gameRecord:
-        s.entitySaveTrigger = True
-
-    s.MFairWind += 10
-    s.fairWind   = random.randrange(1, s.MFairWind+1)
+        f.saveEntity = True
     
     s.Dungeon = DungeonMaker.DungeonMaker()
 
@@ -226,22 +224,22 @@ while s.main:
     dp.quickLoad('inDungeon')
     dp.update()
 
-    if s.entitySaveTrigger:
+    if f.saveEntity:
         save()
-        s.entitySaveTrigger = False
+        f.saveEntity = False
 
     s.stage += 1
 
-    l.jpsf       = 0b1
+    f.jpsf       = 0b1
     quickStarter = 0
 
     curses.flushinp()
     while not q.quest():
-        if s.hp<=0 or s.hunger<=0 or not s.main: break
-        if l.jpsf:
+        if s.hp<=0 or s.hgr<=0 or not s.main: break
+        if f.jpsf:
             a_render = perf_counter()
             renderer.render(stdscr)
-            if not l.pause:
+            if not f.pause:
                 playerChecker()
 
                 if not quickStarter:
@@ -254,5 +252,5 @@ while s.main:
             
         else: sleep(1)
 
-    if s.hunger <= 0: s.DROD = [f"{cc['fg']['Y']}아사{cc['end']}", 'Y']
+    if s.hgr <= 0: s.DROD = [f"{cc['fg']['Y']}아사{cc['end']}", 'Y']
     gameChecker(stdscr)

@@ -21,12 +21,12 @@ DSRE = [r";\s*", r"\s*=\s*"]
 sayFuncParams = ["text", "colorKey"]
 
 playerStatus = {
-    "total" : [
-        "hp", "Mhp", "df", "Mdf", "atk", "hunger", "lvl", "Mlvl",
-        "xp", "Mxp", "fairWind", "MFairWind", "ashChip",
+    "total" : (
+        "hp", "Mhp", "df", "Mdf", "atk", "hgr", "Mhgr", "lvl", "Mlvl",
+        "xp", "Mxp", "exaltation", "MExaltation", "ashChip",
         "critRate", "critDMG", "evasionRate"
-    ],
-    "percentage" : ["critRate", "evasionRate"]
+    ),
+    "percentage" : ( "critRate", "evasionRate", "exaltation" )
 }
 
 

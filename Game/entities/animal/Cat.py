@@ -5,22 +5,27 @@ from   threading import Thread
 from .                           import Animal
 from Assets.data.color           import cColors     as cc
 from functions.grammar           import pstpos      as pp
+from Game.entities.player        import event       as pev
 from Game.entities.algorithms    import AStar, OPath
 from Game.utils.system.tts       import TTS, TTC
 from Game.utils.system.sound     import play
 from Game.utils.system.block     import iset
-from Game.core.system.logger     import addLog
-from Game.core.system.dataLoader import obj
 
 from Assets.data import (
     totalGameStatus as s,
     comments        as c,
-    lockers         as l
+    flags           as f
 )
 from Game.entities import (
     player as p,
 
     event
+)
+from Game.core.system.io.logger import (
+    addLog
+)
+from Game.core.system.data.dataLoader import (
+    obj
 )
 
 
@@ -495,7 +500,7 @@ class Cat(Animal):
                             self.combo   -= 1
 
                         while 1:
-                            if not l.pause:
+                            if not f.pause:
                                 if not self.checkPlayerisHere(): break
 
                                 if self.targetTag:
@@ -575,7 +580,7 @@ class Cat(Animal):
                             self.chattering()
 
                             while 1:
-                                if not l.pause:
+                                if not f.pause:
                                     if not self.checkPlayerisHere(): break
 
                                     path = AStar.main(
@@ -599,7 +604,7 @@ class Cat(Animal):
                                             ("entity", "animal", "cat", "slash"),
                                             "장난이었는데..."
                                         )
-                                        p.say           (choice(c.collide['animal']['catAttack']))
+                                        pev.say(choice(c.collide['animal']['catAttack']))
                                         self.resetAction()
 
                                         return
@@ -614,7 +619,7 @@ class Cat(Animal):
                         
                         case "goToSide":
                             while 1:
-                                if not l.pause:
+                                if not f.pause:
                                     if not self.checkPlayerisHere(): break
 
                                     path = AStar.main(
@@ -725,7 +730,7 @@ class Cat(Animal):
                             )
                             
                             while (self.y,self.x) != (path[0][0]-gotoY,path[0][1]-gotoX):
-                                if not l.pause:
+                                if not f.pause:
                                     if not self.checkPlayerisHere():
                                         self.actionCount = 0
                                         break
@@ -738,7 +743,7 @@ class Cat(Animal):
                                         self.say(choice(catComments['attacked']))
 
                                         if blockID in ('player1', 'player2'):
-                                            p.say(choice(c.collide['animal']['cat']))
+                                            pev.say(choice(c.collide['animal']['cat']))
 
                                         break
 
@@ -751,7 +756,7 @@ class Cat(Animal):
                                 time.sleep(speed)
 
                             for direction in path:
-                                if not l.pause:
+                                if not f.pause:
                                     if not self.checkPlayerisHere():
                                         self.actionCount = 0
 
@@ -765,7 +770,7 @@ class Cat(Animal):
                                         self.say(choice(catComments['attacked']))
 
                                         if blockID in ('player1', 'player2'):
-                                            p.say(choice(c.collide['animal']['cat']))
+                                            pev.say(choice(c.collide['animal']['cat']))
 
                                         break
 

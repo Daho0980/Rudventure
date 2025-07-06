@@ -4,16 +4,16 @@ import os      ; import    curses
 import asyncio ; import threading
 
 from Assets.data.totalGameStatus       import key
-from Game.core.system                  import infoWindow as iWin
-from Game.core.system.logger           import addLog
+from Game.core.system.io               import infoWindow as iWin
+from Game.core.system.io.logger        import addLog
 from Game.entities                     import player
 from Game.entities.player.statusEffect import indexConverter
-from Game.utils.graphics               import level
+from Game.utils.graphics.UI            import level
 from Game.utils.system.sound           import play
 
 from Assets.data import (
     totalGameStatus as s,
-    lockers         as l,
+    flags           as f,
 
     color
 )
@@ -24,12 +24,12 @@ cc = color.cColors
 def add() -> None:
     async def main(stdscr):
         while s.main:
-            if l.jpsf:
+            if f.jpsf:
                 k = stdscr.getch()
                 
                 # region Move
                 if k != -1:
-                    if not l.pause:
+                    if not f.pause:
                         if s.recordKey: addLog(f"keyCode : {k}", colorKey='Y')
                         if k in [key.up, key.down, key.left, key.right]:
                             match s.playerMode:
@@ -63,7 +63,7 @@ def add() -> None:
                                 addLog(f"{cc['fg']['B1']}다★이☆나★믹 카☆메★라 무☆빙{cc['end']}이 {['꺼', '켜'][s.dynamicCameraMoving]}졌습니다.", colorKey='N')
 
                             case key.openChat: # XXX 이 부분(from line 0~1)
-                                os.system(f"osascript -e 'tell application \"Terminal\" to do script \"{s.TFP}runChat.command\"' >/dev/null 2>&1")
+                                os.system(f"osascript -e 'tell application \"Terminal\" to do script \"{s.TFP}chatctl\"' >/dev/null 2>&1")
                                 os.system("osascript -e 'tell application \"Terminal\" to set bounds of front window to {0, 0, 600, 1000}'")
                                 play("soundEffects", "check")
                                 addLog(f"{cc['fg']['Y']}Rudventure Commandline{cc['end']}은 별도의 창에서 열립니다.", colorKey='N')
@@ -75,17 +75,17 @@ def add() -> None:
                                 if   k==key.volumeDown and s.volume    : s.volume -= 5
                                 elif k==key.volumeUp   and s.volume<100: s.volume += 5
                                 elif k==key.mute:
-                                    l.useSound ^= 1
+                                    f.useSound ^= 1
 
                                     sound = "block"
 
-                                charType = () if l.useSound else (".", "x", "Y", "X")
+                                charType = () if f.useSound else (".", "x", "Y", "X")
 
                                 play("soundEffects", sound)
                                 iWin.add(
                                     f"{cc['fg']['R']}◎{cc['end']}",
                                     f"{cc['fg']['B1']}음량 조절{cc['end']}",
-                                    f"   [ {cc['fg']['Y']}{level(s.volume, 20, charType)}{cc['end']} ]   "
+                                    f"   [ {cc['fg']['Y']}{level.get(s.volume, 20, charType)}{cc['end']} ]   "
                                 )
                                 
                             # region System
@@ -146,8 +146,8 @@ def add() -> None:
                                     else: s.statusEffect['pointer'] = 0
 
                     if k == key.pause:
-                        l.pause     ^= 1
-                        s.currFrame  = 1/3 if l.pause else s.frame
+                        f.pause     ^= 1
+                        s.currFrame  = 1/3 if f.pause else s.frame
 
                         play("soundEffects", "smash")
                 

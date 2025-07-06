@@ -7,8 +7,6 @@ from .status                     import cooltimes
 from Assets.data.color           import cColors  as cc
 from Assets.data.comments        import TIOTA
 from functions.grammar           import pstpos as pp
-from Game.core.system.logger     import addLog
-from Game.core.system.dataLoader import obj
 from Game.entities.algorithms    import AStar
 from Game.entities.functions     import getFace
 from Game.utils.system.block     import iset
@@ -17,13 +15,17 @@ from Game.utils.graphics         import escapeAnsi
 
 from Assets.data import (
     totalGameStatus as s,
-    lockers         as l
+    flags           as f
 )
 from Game.entities.player import (
-    event        as pEv,
-    statusEffect as se,
-
-    say
+    event        as pev,
+    statusEffect as se
+)
+from Game.core.system.io.logger import (
+    addLog
+)
+from Game.core.system.data.dataLoader import (
+    obj
 )
 
 
@@ -94,15 +96,15 @@ class Enemy:
         if s.hitPos['pos'] and [self.y, self.x] in s.hitPos['pos']:
             posIndex = s.hitPos['pos'].index([self.y, self.x])
 
-            rate:int                 = randrange(1,101)
             sound                    = None
             crit, isHit              = None, True
             entity, dmg, attackSound = s.hitPos['data'][posIndex]
 
+            rate = randrange(1,101)
             if entity == "player":
                 if rate <= s.critRate:
                     sound, crit = "critical", True
-                    dmg         = round(eval(f"(s.atk+(s.critDMG*0.1)){choice(['+','-'])}(s.atk*(s.critDMG*0.005))"))
+                    dmg         = int((dmg+(s.critDMG*0.1)) + (dmg*(s.critDMG*0.01)))
 
                 elif rate >= 90:
                     sound, dmg, isHit = "miss", 0, False
@@ -111,7 +113,7 @@ class Enemy:
 
             self.hp -= dmg
             if self.hp > 0:
-                msg = f"{cc['fg']['F']}{self.name}{cc['end']}{pp(self.name,'sub',True)} {cc['fg']['L']}{dmg}{cc['end']}만큼의 피해를 입었습니다! {cc['fg']['R']}(체력 : {self.hp}){cc['end']}"
+                msg = f"{cc['fg']['F']}{self.name}{cc['end']}{pp(self.name,'sub',True)} {cc['fg']['L']}{dmg}{cc['end']}만큼의 피해를 입었습니다!"
                 if   not dmg: msg  = f"{cc['fg']['L']}공격{cc['end']}이 빗나갔습니다!"
                 elif crit:    msg += f" {cc['fg']['L']}치명타!{cc['end']}"
 
@@ -135,7 +137,7 @@ class Enemy:
                 s.target['attackable'] = False
 
             if s.df > 0:
-                pEv.defended()
+                pev.defended()
                 sound = ("player", "armor", "defended")
                 self.knockback(Dir, randrange(1,3), s.atk)
                 s.df -= 1
@@ -150,11 +152,11 @@ class Enemy:
                     addLog(f"{cc['fg']['B1']}방어구{cc['end']}가 부서졌습니다!", colorKey='B1')
 
             else:
-                pEv.hitted()
+                pev.hitted()
                 dmg = self.atk
 
             s.hp -= dmg
-            pEv.bleeding(dmg)
+            pev.bleeding(dmg)
 
             play(*sound)
             addLog(
@@ -170,7 +172,7 @@ class Enemy:
                 play("object", "wall", "hit")
                 eEvent.hitted(self.y, self.x, self.icon, self.id, self.tag)
                 self.hp -= atk-i
-                addLog(f"{cc['fg']['F']}{self.name}{cc['end']}{pp(self.name,'sub',True)} {cc['fg']['L']}{atk-i}{cc['end']}만큼의 피해를 입었습니다! {cc['fg']['R']}(체력 : {self.hp}){cc['end']}", colorKey='R')
+                addLog(f"{cc['fg']['F']}{self.name}{cc['end']}{pp(self.name,'sub',True)} {cc['fg']['L']}{atk-i}{cc['end']}만큼의 피해를 입었습니다!", colorKey='R')
 
                 return
             
@@ -287,7 +289,7 @@ class Pain(Enemy):
                     if randrange(1,1216) == 1215:
                         self.atk += 1+(round(s.stage/10))
                         play("entity", "enemy", "pain", "growl")
-                        se.addEffect('kitrima', 50)
+                        se.addEffect('kitrima', 30)
                         addLog(f"{cc['fg']['F']}{self.name}{cc['end']}({self.icon}){pp(self.name,'sub',True)} 울부짖습니다!", colorKey='F')
                         addLog(f"{cc['fg']['F']}{self.name}{cc['end']}({self.icon})의 공격력이 {cc['fg']['L']}{1+(round(s.stage/10))}{cc['end']}만큼 상승합니다.", colorKey='F')
 
@@ -430,7 +432,7 @@ class Unrest(Enemy):
                             self.Targetted(DRP)
 
                             while 1:
-                                if not l.pause:
+                                if not f.pause:
                                     if DRP['room'][eval(f"self.y{Moves1[a]}1")][self.x]["id"] in ('player1', 'player2'):
                                         self.attack(
                                             [eval(f"0{Moves1[a]}1"), 0],
@@ -456,7 +458,7 @@ class Unrest(Enemy):
                             self.Targetted(DRP)
 
                             while 1:
-                                if not l.pause:
+                                if not f.pause:
                                     if DRP['room'][self.y][eval(f"self.x{Moves1[a]}1")]["id"] in ('player1', 'player2'):
                                         self.attack(
                                             [0, eval(f"0{Moves1[a]}1")],
@@ -618,7 +620,7 @@ class Resentment(Enemy):
                             
                             self.explosion(DRP)
                             self.xpMultiplier = 2
-                            if randrange(0,2): say(choice(TIOTA))
+                            if randrange(0,2): pev.say(choice(TIOTA))
 
                         else: DRP['room'][self.y][self.x] = obj(
                             '-be', self.id,

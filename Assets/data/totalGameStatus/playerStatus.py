@@ -17,18 +17,19 @@ bfDx:int = 0
 bfx :int = 0
 bfy :int = 0
 
-hp      :int = 0
-xp      :int = 0
-df      :int = 0
-hunger  :int = 0
-lvl     :int = 0
-fairWind:int = 0
+hp        :int = 0
+xp        :int = 0
+df        :int = 0
+hgr       :int = 0
+lvl       :int = 0
+exaltation:int = 0
 
-Mhp      :int = 0
-Mdf      :int = 0
-Mxp      :int = 0
-Mlvl     :int = 0
-MFairWind:int = 0
+Mhp        :int = 0
+Mdf        :int = 0
+Mxp        :int = 0
+Mhgr       :int = 0
+Mlvl       :int = 0
+MExaltation:int = 100
 
 atk        :int = 0
 critRate   :int = 0

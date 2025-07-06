@@ -1,7 +1,7 @@
 import time
 
 from .sound              import play
-from Assets.data         import lockers   as l
+from Assets.data         import flags     as f
 from Game.utils.graphics import escapeAnsi
 
 
@@ -43,15 +43,13 @@ def TTS(text     :str                                     ,
         voicePath:tuple    =("player","voice","glagatrof"),
         delay    :float|int=0.07                          ,
         useLvl   :bool     =True                           ) -> None:
-    if l.useSound:
-        lineData  = lineAnalyzer(text, delay, useLvl)
+    if f.useSound:
         voiceType = "no"
-        soundCond = (delay,delay*4)
 
-        for t, vt in zip(*lineData.values()):
+        for t, vt in zip(*lineAnalyzer(text, delay, useLvl).values()):
             if useLvl and vt: voiceType = vt
 
-            if t in soundCond:
+            if t in (delay, delay*4):
                 play(*voicePath, voiceType)\
                     if useLvl\
                 else play(*voicePath)

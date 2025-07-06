@@ -1,8 +1,8 @@
 #!/usr/bin/env python3.13
 import os
 
-from Assets.data                 import totalGameStatus as s
-from Game.core.system.dataLoader import makePath
+from Assets.data                      import totalGameStatus as s
+from Game.core.system.data.dataLoader import makePath
 
 
 s.s = '/'

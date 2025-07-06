@@ -1,8 +1,8 @@
 import os
 import json
 
-from Assets.data import totalGameStatus as s
-from .           import discordPresence as dp
+from ..integration import discordPresence as dp
+from Assets.data   import totalGameStatus as s
 
 
 def reset() -> None:
@@ -55,7 +55,7 @@ def save() -> None:
                 "clientID"          : dp.clientID
             },
             data,
-            indent=4,
+            indent      =4,
             ensure_ascii=True
         )
 

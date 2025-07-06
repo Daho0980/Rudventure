@@ -1,15 +1,18 @@
 import time ; import threading
 from   random import randrange
 
-from Assets.data.color           import cColors as cc
-from functions.grammar           import pstpos  as pp
-from Game.core.system.logger     import addLog
-from Game.core.system.dataLoader import obj
-from Game.utils.system.sound     import play
-from Game.utils.advanced         import hashGenerator
+from Assets.data.color          import cColors as cc
+from functions.grammar          import pstpos  as pp
+from Game.core.system.io.logger import addLog
+from Game.utils.system.sound    import play
+from Game.utils.advanced        import hashGenerator
 
 from Assets.data import (
-    totalGameStatus as s
+    totalGameStatus as s,
+    flags           as f
+)
+from Game.core.system.data.dataLoader import (
+    obj
 )
 
 
@@ -78,7 +81,7 @@ from Game.utils.system       import xpSystem as xps
              
 from Assets.data import (
     totalGameStatus as s,
-    lockers         as l
+    flags           as f
 )
              
              
@@ -90,12 +93,12 @@ from Assets.data import (
     perm
 )
 
-if {lock}: s.roomLock = True
+if {lock}: f.roomLock = True
 
 while s.main:
-    if s.killAll or s.clearEntity: break
+    if f.killAll or f.clearEntity: break
 
-    if l.jpsf and not l.pause:
+    if f.jpsf and not f.pause:
         if {mClass}.hp <= 0:
             s.enemyCount       -= {entityCount}
             s.entityCount      -= {entityCount}
@@ -107,7 +110,7 @@ while s.main:
 if s.target['tag'] == {mClass}.tag:
     s.target = {{"tag" : "", "attackable" : False, "command" : False}}
 
-if s.main and not (s.killAll or s.clearEntity):
+if s.main and not (f.killAll or f.clearEntity):
     xps.getXP({curse}*{mClass}.xpMultiplier)
     s.Dungeon[{mClass}.Dy][{mClass}.Dx]['room'][{mClass}.y][{mClass}.x] = {{
         'block' : f"{cc['fg']['G1']}{{{mClass}.icon}}{cc['end']}",
@@ -118,7 +121,7 @@ if s.main and not (s.killAll or s.clearEntity):
         }}
         """)
         s.entityHashPool.remove(tag)
-        if s.main and not (s.killAll or s.clearEntity):
+        if s.main and not (f.killAll or f.clearEntity):
             s.killCount += 1
             if sendEffect:
                 play("player", "slash")
@@ -195,7 +198,7 @@ from Game.utils.system       import xpSystem as xps
 
 from Assets.data import (
     totalGameStatus as s,
-    lockers         as l
+    flags           as f
 )
 
              
@@ -222,10 +225,10 @@ if {preloadData}: {entity}.loadData({preloadData})
 
 while s.main:
     {entity}.waitingGame()
-    if   s.killAll:                    break
-    elif s.clearEntity and not {MCBF}: break
+    if   f.killAll:                    break
+    elif f.clearEntity and not {MCBF}: break
 
-    if l.jpsf and not l.pause:
+    if f.jpsf and not f.pause:
         if {entity}.hp <= 0:
             s.entityCount -= {entityCount}
             s.totalEntityCount -= 1
@@ -234,7 +237,7 @@ while s.main:
     else:
         time.sleep(0.05)
 
-if s.main and not (s.killAll or s.clearEntity):
+if s.main and not (f.killAll or f.clearEntity):
     if {endowmentofFragment}:
         addMonster(
             0,
@@ -262,7 +265,7 @@ if s.main and not (s.killAll or s.clearEntity):
         s.entityHashPool.remove(tag)
         if tag in s.friendlyEntity: s.friendlyEntity.remove(tag)
         
-        if s.main and not (s.killAll or s.clearEntity):
+        if s.main and not (f.killAll or f.clearEntity):
             s.killCount += 1
             play("player", "slash")
             play("entity", "enemy", "dead")

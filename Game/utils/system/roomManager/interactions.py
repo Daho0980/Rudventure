@@ -1,10 +1,13 @@
 import threading
 from   random   import randrange, choices
 
-from Assets.data                 import totalGameStatus as s
-from Game.core.system.dataLoader import obj
-from Game.entities.entity        import addMonster
-from Game.utils.system.block     import iset
+from Assets.data             import totalGameStatus as s
+from Game.entities.entity    import addMonster
+from Game.utils.system.block import iset
+
+from Game.core.system.data.dataLoader import (
+    obj
+)
 
 
 def changeDoor(blockID:str, data:dict, icon:str="None") -> None:

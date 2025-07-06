@@ -1,14 +1,16 @@
 from random import randrange, choice
 from copy   import deepcopy
 
-from Assets.data.color           import cColors as cc
-from Game.core.system.dataLoader import obj
-from Game.utils.system.block     import iset
+from Assets.data.color       import cColors as cc
+from Game.utils.system.block import iset
 
 from Assets.data import (
     totalGameStatus as s,
     percentage      as per,
     rooms           as r
+)
+from Game.core.system.data.dataLoader import (
+    obj
 )
 
 
@@ -22,7 +24,7 @@ def graphicMaker(MapData:list):
     for i in range(len(MapData)):
         grid.append([])
         for j in range(len(MapData[i])):
-            if len(MapData[i][j]) > 0: grid[i].append(f"{cc['fg'][MapData[i][j]['roomIcon'][1]]}{MapData[i][j]['roomIcon'][0]}{cc['end']}")
+            if len(MapData[i][j]) > 0: grid[i].append(f"{cc['fg'][s.DungeonMap[i][j][1]]}{s.DungeonMap[i][j][0]}{cc['end']}")
             else                     : grid[i].append(' ')
 
     return grid
@@ -116,7 +118,7 @@ def makeRoom(Map:list):
                                     ]
                                 ][randrange(0, 4)]
 
-                                output[row][column]['roomIcon'] = [s.bids['clayModel'][:1], status[0]]
+                                s.DungeonMap[row][column] = (s.bids['clayModel'][:1], status[0])
                                 baseMap[c['y']][c['x']]         = obj(
                                     '-bb', 'clayModel',
                                     block=iset(f"{cc['fg'][status[0]]}{s.bids['clayModel']}{cc['end']}"),
@@ -127,7 +129,7 @@ def makeRoom(Map:list):
                                             [f"'대신 {status[1]}(와)과 응원을 드리겠습니다.'", status[2]],
                                             ["'그럼 화이팅!'", "s.enemyCount -= 1"]
                                         ],
-                                        "command" : "time.sleep(0.5); p.say(choice(c.clayModelAnswer))",
+                                        "command" : "time.sleep(0.5); say(choice(c.clayModelAnswer))",
                                         "delay"   : 0.5,
                                         "voice"   : "clayModel"
                                     }
@@ -142,7 +144,7 @@ def makeRoom(Map:list):
                                     rNbt = [ ("linkedInteraction", True) ]
                                     ctd  = False
 
-                                output[row][column]['roomIcon'] = ['Y', "F"if ctd else"A"]
+                                s.DungeonMap[row][column] = ('Y', "F"if ctd else"A")
 
                                 for y, x, icon in (
                                     [c['ym'], c['xm'], f"{cc['fg']['F'if ctd else'A']}‾\\{cc['end']}"],

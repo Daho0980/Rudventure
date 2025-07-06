@@ -1,8 +1,11 @@
-from .                           import commands
-from Assets.data                 import totalGameStatus as s
-from Assets.data.color           import cColors         as cc
-from Game.core.system.dataLoader import obj
-from Game.utils.modules.Textbox  import TextBox
+from .                          import commands
+from Assets.data                import totalGameStatus as s
+from Assets.data.color          import cColors         as cc
+from Game.utils.modules.Textbox import TextBox
+
+from Game.core.system.data.dataLoader import (
+    obj
+)
 
 
 keyIndex:dict[int,int] = {

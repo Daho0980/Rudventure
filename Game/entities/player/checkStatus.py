@@ -1,10 +1,10 @@
 from random import choice
 
-from .                       import event   as pev
-from Assets.data.color       import cColors as cc
-from Game.entities           import player  as p
-from Game.core.system.logger import addLog
-from Game.utils.system.sound import play
+from .                          import event   as pev
+from Assets.data.color          import cColors as cc
+from Game.entities.player.event import say
+from Game.core.system.io.logger import addLog
+from Game.utils.system.sound    import play
 
 from Assets.data import (
     totalGameStatus as s,
@@ -16,7 +16,7 @@ def hpCheck() -> None:
     if s.hp<=int(s.Mhp*0.3) and not s.hpLow:
         play("system", "hpLow")
         s.hpLow = True
-        p.say(choice(c.lowHp))
+        say(choice(c.lowHp))
 
     elif int((s.hp / s.Mhp) * 10) > 3: s.hpLow = False
 

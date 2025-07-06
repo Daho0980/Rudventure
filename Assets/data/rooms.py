@@ -1,6 +1,6 @@
 from itertools import chain
 
-from Game.core.system.dataLoader import obj
+from Game.core.system.data.dataLoader import obj
 
 
 dataPath = __import__("Assets.data.totalGameStatus", fromlist=["path"]).path['data']['block']

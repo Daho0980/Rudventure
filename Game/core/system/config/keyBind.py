@@ -1,4 +1,9 @@
-from curses import KEY_UP, KEY_RIGHT, KEY_DOWN, KEY_LEFT
+from curses import (
+    KEY_UP   ,
+    KEY_RIGHT,
+    KEY_DOWN ,
+    KEY_LEFT
+)
 
 
 class KeyBind:

@@ -6,7 +6,7 @@ from Game.utils.graphics import escapeAnsi
 
 from Assets.data import (
     totalGameStatus as s,
-    lockers         as l
+    flags           as f
 )
 
 
@@ -103,7 +103,7 @@ threading.Thread(target=server.clientAccepter, daemon=True).start()
 
 def logChecker() -> None:
     while s.main:
-        if l.jpsf and not l.pause:
+        if f.jpsf and not f.pause:
             time.sleep(0.1)
             if s.onTime: s.onTime = list(map(lambda t: t-1, s.onTime))
 

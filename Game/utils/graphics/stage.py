@@ -1,8 +1,8 @@
 import time
 
-from Assets.data.color             import cColors as cc
-from Game.utils.modules            import Textbox
-from Game.utils.system.sound       import play
+from Assets.data.color       import cColors as cc
+from Game.utils.modules      import Textbox
+from Game.utils.system.sound import play
 
 from . import anchor
 

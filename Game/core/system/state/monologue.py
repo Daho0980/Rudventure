@@ -1,13 +1,13 @@
 import time ; import threading
 from   random import randrange, choices, choice
 
-from Game.entities.player import say
+from Game.entities.player.event import say
 
 from Assets.data import (
     totalGameStatus as s,
     percentage      as p,
     comments        as c,
-    lockers         as l
+    flags           as f
 )
 
 
@@ -15,20 +15,20 @@ def counter() -> None:
     s.monologueRange = randrange(p.monologue['min'], p.monologue['max']+1)
 
     while s.main:
-        if l.jpsf and not l.pause and not s.enemyCount:
+        if f.jpsf and not f.pause and not s.enemyCount:
             if s.monologueCount == s.monologueRange:
                 say(choices(
                     [
                         choice(c.monologue['ELS']),
                         choice(c.monologue[
-                            choice([
-                                "HL"  if s.hpLow                else "ELS",
-                                "HUL" if round(s.hunger/20)<=30 else "ELS",
-                                "CO"  if s.Mlvl-s.lvl==10       else "ELS"
-                            ])
+                            choice((
+                                "HL"  if s.hpLow                     else "ELS",
+                                "HUL" if int((s.hgr/s.Mhgr)*100)<=30 else "ELS",
+                                "CO"  if s.Mlvl-s.lvl==10            else "ELS"
+                            ))
                         ])
                     ],
-                    weights=[60,40],
+                    weights=(60,40),
                     k      =1
                     )[0])
 

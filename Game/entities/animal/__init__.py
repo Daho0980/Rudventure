@@ -1,16 +1,24 @@
 import time
-from   random import randrange, choice
+from   random import randrange
 
-from Assets.data                 import totalGameStatus as s
-from Assets.data.color           import cColors         as cc
-from functions.grammar           import pstpos          as pp
-from Game.entities.functions     import getFace
-from Game.core.system.dataLoader import obj
-from Game.core.system.logger     import addLog
-from Game.entities               import event
-from Game.entities.player        import event as pEvent
-from Game.utils.system.block     import iset
-from Game.utils.system.sound     import play
+from Assets.data.color       import cColors as cc
+from functions.grammar       import pstpos  as pp
+from Game.entities.functions import getFace
+from Game.entities           import event
+from Game.entities.player    import event as pEvent
+from Game.utils.system.block import iset
+from Game.utils.system.sound import play
+
+from Assets.data import (
+    totalGameStatus as s,
+    flags           as f
+)
+from Game.core.system.data.dataLoader import (
+    obj
+)
+from Game.core.system.io.logger import (
+    addLog
+)
 
 
 negativeVars = ("perm")
@@ -101,18 +109,19 @@ class Animal:
             rate:int         = randrange(1,101)
             sound            = None
             crit, isHit      = True, True
-            entity, dmg, attackSound = s.hitPos['data'][posIndex][0], s.hitPos['data'][posIndex][1], s.hitPos['data'][posIndex][2]
+            entity, dmg, attackSound = s.hitPos['data'][posIndex]
 
             if entity == "player":
                 if rate <= s.critRate:
                     sound, crit = "critical", True
-                    dmg         = round(eval(f"(s.atk+(s.critDMG*0.1)){choice(['+', '-'])}(s.atk*(s.critDMG*0.005))"))
+                    dmg         = int((dmg+(s.critDMG*0.1)) + (dmg*(s.critDMG*0.01)))
+
                 elif rate >= 90:
                     sound, dmg, isHit = "miss", 0, False
 
             self.hp -= dmg
             if self.hp > 0:
-                msg = f"{cc['fg']['F']}{self.name}{cc['end']}{pp(self.name,'sub',True)} {cc['fg']['L']}{dmg}{cc['end']}만큼의 피해를 입었습니다! {cc['fg']['R']}(체력 : {self.hp}){cc['end']}"
+                msg = f"{cc['fg']['F']}{self.name}{cc['end']}{pp(self.name,'sub',True)} {cc['fg']['L']}{dmg}{cc['end']}만큼의 피해를 입었습니다!"
                 if   not dmg: msg  = f"{cc['fg']['L']}공격{cc['end']}이 빗나갔습니다!"
                 elif crit   : msg += f" {cc['fg']['L']}치명타!{cc['end']}"
 
@@ -204,4 +213,4 @@ class Animal:
             exec(f"self.{key} = {repr(value)}")
 
     def waitingGame(self):
-        if s.entitySaveTrigger: self.saveData()
+        if f.saveEntity: self.saveData()

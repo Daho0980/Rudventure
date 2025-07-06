@@ -1,9 +1,12 @@
 from random import randrange
 from copy   import deepcopy
 
-from Game.core.system.structures import Conveyor
-from Game.utils.graphics         import escapeAnsi
-from Game.utils.RSExt.libtext    import measure
+from Game.utils.graphics      import escapeAnsi
+from Game.utils.RSExt.libtext import measure
+
+from Game.utils.dataStructures.conveyor import (
+    Conveyor
+)
 
 
 isetCache:Conveyor = Conveyor(200)

@@ -28,7 +28,7 @@ autoTerminalSize :bool = False
 checkTerminalSize:bool = False
 
 # region Key
-key           = __import__("Game.core.system.keyBind", fromlist=["KeyBind"]).KeyBind()
+key           = __import__("Game.core.system.config.keyBind", fromlist=("KeyBind",)).KeyBind()
 recordKey:int = 0b0
 
 # region Time record

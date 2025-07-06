@@ -2,8 +2,8 @@ import os   ; import json
 from   zlib   import compress, decompress
 from   base64 import b64encode, b64decode
 
-from Game.core.system        import jsonDataKeyRecoverer as jdkr
-from Game.core.system.logger import addLog
+from Game.core.system.data      import jsonDataKeyRecoverer as jdkr
+from Game.core.system.io.logger import addLog
 
 from Assets.data import (
     totalGameStatus as s,
@@ -41,8 +41,8 @@ def save() -> int:
         Vars = [
             "name", "playerDamageIcon", "playerColor", "playerVoice",
             "stage", "killCount", "inventory", "statusEffect",
-            "hp", "df", "atk", "hunger", "xp", "lvl", "ashChip",
-            "fairWind", "Mhp", "Mdf", "Mxp", "Mlvl", "MFairWind",
+            "hp", "df", "atk", "hgr", "xp", "lvl", "ashChip",
+            "exaltation", "Mhp", "Mdf", "Mhgr", "Mxp", "Mlvl", "MExaltation",
             "critRate", "critDMG", "evasionRate", "statusFormula",
             "entityDataMaintained", "gameRecord",
             "cowardMode", "sanjibaMode", "bodyPreservationMode",

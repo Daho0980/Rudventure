@@ -3,7 +3,7 @@ from random import randrange
 from Assets.data import (
     totalGameStatus as s,
     percentage      as p,
-    lockers         as l
+    flags           as f
 )
 from .roomEvents import (
     treasure,
@@ -14,10 +14,10 @@ from .roomEvents import (
 
 
 def raiseRoomEvent() -> None:
-    if not l.isDying:
+    if not f.isDying:
         data = s.Dungeon[s.Dy][s.Dx]
 
-        if l.jpsf and not data['interaction']:
+        if f.jpsf and not data['interaction']:
             match data['roomType']:
                 case "room": normal.event(data)
                 case "event":

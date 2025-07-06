@@ -1,34 +1,34 @@
 {
     "audioplayer": [
         true,
-        false
+        true
     ],
     "cusser": [
         true,
-        false
+        true
     ],
     "ijson": [
         true,
-        false
+        true
     ],
     "ochre": [
         true,
-        false
+        true
     ],
     "PIL": [
         true,
-        false
+        true
     ],
     "psutil": [
         true,
-        false
+        true
     ],
     "pypresence": [
         true,
-        false
+        true
     ],
     "stransi": [
         true,
-        false
+        true
     ]
 }

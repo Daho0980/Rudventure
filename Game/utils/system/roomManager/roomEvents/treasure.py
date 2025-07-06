@@ -1,6 +1,6 @@
 from random import choice
 
-from Game.entities.player import say
+from Game.entities.player.event import say
 
 from Assets.data import (
     totalGameStatus as s,

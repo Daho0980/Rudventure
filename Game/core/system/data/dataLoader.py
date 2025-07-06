@@ -2,12 +2,17 @@ import ijson
 from   copy        import deepcopy
 from   collections import deque
 
-from .structures import Conveyor
 from Assets.data import totalGameStatus as s
+
+from Game.utils.dataStructures.conveyor import (
+    Conveyor
+)
 
 
 objCache = Conveyor(100)
 elmCache = Conveyor(100)
+
+makePath = lambda *path: s.TFP + s.s.join(path)
 
 def _setValue(dd, value, path):
     for i in path[:-1]: dd = dd[i]
@@ -16,8 +21,6 @@ def _setValue(dd, value, path):
 def _addValue(dd, value, path):
     for i in path[:-1]: dd = dd[i]
     dd[path[-1]].append(value)
-
-makePath = lambda *path: s.TFP + s.s.join(path)
 
 def obj(path:str, target:str, **addData) -> dict:
     """

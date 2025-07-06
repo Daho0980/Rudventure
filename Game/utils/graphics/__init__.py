@@ -1,15 +1,8 @@
 import re
 
 
-LVL_CHAR = ("░", "▒", "▓", "█")
-
 _ansiCompile = re.compile(r'(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]')
 escapeAnsi   = lambda l: _ansiCompile.sub('',l)
-
-def level(level:int, width:int=10, charType:tuple=()) -> str:
-    charType = charType or LVL_CHAR
-    OLV, TLV = divmod(level, int(100/width))
-    return ((charType[3]*OLV)+(charType[round(TLV*(3/width))])+(charType[0]*(width-OLV)))[:width]
 
 def anchor(stdscr                     ,
            string     :str            ,
@@ -24,13 +17,13 @@ def anchor(stdscr                     ,
         list(zip(map(lambda n:int(n/2),stdscr.getmaxyx()),[0,1]))
     )
     y, x = y+addOnyx[0], x+addOnyx[1]+1
-    
+
     output:str = ''.join(
         [
-            escc for line in zip(
+            ec for line in zip(
                 [f"\033[{x};{_}H" for _ in range(y-1, y+(len(lines)))],
                 string.split("\n")
-                ) for escc in line
+                ) for ec in line
             ]
         )
     if not returnStr: stdscr.addstr(output)

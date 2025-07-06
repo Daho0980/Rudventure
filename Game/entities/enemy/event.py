@@ -2,10 +2,13 @@ import time
 
 from Assets.data                 import totalGameStatus as s
 from Assets.data.color           import cColors         as cc
-from Game.core.system.dataLoader import obj
 from Game.utils.graphics         import escapeAnsi
 from Game.utils.system.block     import iset
 from Game.utils.system.sound     import play
+
+from Game.core.system.data.dataLoader import (
+    obj
+)
 
 
 def hitted(y:int, x:int, icon:str, ID:str, tag:str) -> None:

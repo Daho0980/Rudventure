@@ -1,12 +1,13 @@
 from random import randrange, choice
 
-from Game.entities.player    import say
-from Game.utils.system.sound import play
+from Game.entities.player.event import say
+from Game.utils.system.sound    import play
 
 from Assets.data import (
     totalGameStatus as s,
     percentage      as p,
-    comments        as c
+    comments        as c,
+    flags           as f
 )
 from Game.utils.system.roomManager.interactions import (
     randPlaceOrb,
@@ -33,7 +34,7 @@ def event(data) -> None:
     if data['summonData']:
         doorData = tuple(data['doors'].values())
         if sum(doorData) > 1:
-            data['roomIcon'] = [roomData[doorData], ""]
+            s.DungeonMap[s.Dy][s.Dx] = (roomData[doorData], "")
 
         summonEnemy(data['summonData'])
 
@@ -47,10 +48,12 @@ def event(data) -> None:
         changeDoor('wall', data, "░░")
         play("object", "door", "close")
 
-    elif not s.enemyCount and s.roomLock:
-        s.roomLock                           = False
+    elif not s.enemyCount and f.roomLock:
+        f.roomLock                           = False
         s.Dungeon[s.Dy][s.Dx]['interaction'] = True
         if randrange(0, 101) > p.clearedRoomLoot: randPlaceOrb()
+
+        s.exaltation += 5
 
         changeDoor('door', data)
         play("object", "door", "open")

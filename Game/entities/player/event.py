@@ -2,21 +2,24 @@ import time ; import threading
 from   copy   import deepcopy
 from   random import randrange, shuffle, choice
 
-from Assets.data.color           import cColors  as cc
-from Assets.data.permissions     import Player   as perm
-from Game.core.system            import logger
-from Game.core.system.dataLoader import obj
-from Game.entities               import player as p
-from Game.utils.system.tts       import TTS, TTC
-from Game.utils.graphics         import escapeAnsi
-from Game.utils.system.block     import iset
-from Game.utils.system.sound     import play # 이거 씀
+from Assets.data.color       import cColors as cc
+from Assets.data.permissions import Player  as perm
+from functions.grammar       import pstpos  as pp
+from Game.entities           import player  as p
+from Game.core.system.io     import logger
+from Game.utils.system.tts   import TTS, TTC
+from Game.utils.graphics     import escapeAnsi
+from Game.utils.system.block import iset
+from Game.utils.system.sound import play # 이거 씀
 
 from Assets.data import (
     totalGameStatus as s,
     comments        as c, # 얘도 쓰는거임
-    lockers         as l
+    flags           as f
     )
+from Game.core.system.data.dataLoader import (
+    obj
+)
 
 
 def hitted() -> None:
@@ -34,6 +37,37 @@ def hitted() -> None:
             s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x]['block'] = iset(s.eids['player1'])
 
     threading.Thread(target=event, daemon=True).start()
+
+def damagedByBlock(block:str="?", atk:int=1) -> tuple:
+    sound = ("player", "hit")
+    hitted()
+    logger.addLog(
+        f"{s.lightName}{pp(s.name,'sub',True)} [ {block} ] 에 의해 상처입었습니다",
+        colorKey='R'
+    )
+
+    if s.df > 0:
+        sound = ("player", "armor", "defended")
+        s.df -= 1
+        if s.df < 0: dmg = int(atk/2)
+        else:        dmg = int(atk/3)
+                
+        if s.df <= 0 and s.dfCrack <= 0:
+            sound     = ("player", "armor", "armorCrack")
+            s.dfCrack = 1
+            logger.addLog(f"{cc['fg']['B1']}방어구{cc['end']}가 부서졌습니다!", colorKey='B1')
+
+    else: dmg = atk
+
+    s.hp -= dmg
+    bleeding(dmg)
+
+    if s.hp <= 0: s.DROD = [
+        f"{cc['fg']['R']}{choice(["과다출혈","피로 과다","졸도","자살","우울증","과로"])}{cc['end']}",
+        'R'
+    ]
+
+    return sound
 
 def defended() -> None:
     def event() -> None:
@@ -53,23 +87,23 @@ def defended() -> None:
 
 def cursedDeath() -> None:
     def event() -> None:
-        s.killAll = True
-        l.isDying = True
+        f.killAll = True
+        f.isDying = True
         logger.clear()
 
         s.DROD = [f"{cc['fg']['F']}저주받음{cc['end']}", 'F']
 
-        p.say("큭..")
+        say("큭..")
         s.eids['player1']                                = f"{cc['fg']['F']}{escapeAnsi(s.eids['player1'])}{cc['end']}"
         s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x]['block'] = iset(s.eids['player1'])
         time.sleep(1.5)
 
         s.eids['player1']                                = f"{cc['fg']['F']}a{cc['end']}"
         s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x]['block'] = iset(s.eids['player1'])
-        p.say(f"크{cc['fg']['F']}으윽...")
+        say(f"크{cc['fg']['F']}으윽...")
         time.sleep(1.7)
 
-        p.say("크아아아아아아악!!!!!!", TextColor=cc['fg']['F'])
+        say("크아아아아아아악!!!!!!", TextColor=cc['fg']['F'])
         while s.hp!=1:
             s.hp -= 1
             time.sleep(0.15)
@@ -92,6 +126,27 @@ def cursedDeath() -> None:
     
     threading.Thread(target=event, daemon=True).start()
 
+def _linkedSay(lines:list[str]) -> None:
+    def target():
+        nonlocal lines
+        for line in lines:
+            say(line); time.sleep(TTC(line, logTick=False)+1)
+
+    threading.Thread(target=target, daemon=True).start()
+
+def say(text:str, TextColor:str="pc") -> None:
+    if isinstance(text, list): _linkedSay(text); return
+
+    logger.addLog(
+        f"{s.playerColor[0] if TextColor=='pc'else TextColor}\"{text}\"{cc['end']}",
+        duration=max(50, TTC(text)),
+        colorKey=s.playerColor[1]
+    )
+    threading.Thread(
+        target=lambda: TTS(text, voicePath=("player", "voice", s.playerVoice)),
+        daemon=True
+    ).start()
+
 def readSign(texts, delay, voice, command="") -> None:
     def target() -> None:
         nonlocal texts, delay
@@ -109,6 +164,17 @@ def readSign(texts, delay, voice, command="") -> None:
         exec(command)
     
     threading.Thread(target=target, daemon=True).start()
+
+def getRoomData() -> None:
+    room = s.Dungeon[s.Dy][s.Dx]
+
+    s.roomData['type'] = room['name']
+    s.roomData['cell'] = sum(map(lambda l:len(l),room['room']))
+
+    s.roomData['maxHeight'] = len(room['room'])
+    s.roomData['maxWidth']  = len(max(room['room'], key=len))
+
+    s.roomData['maxCharWidth'] = s.roomData['maxWidth']*2
 
 def linkedInteraction(y:int, x:int, _id:str, afterData:dict, color:str):
     for r in range(y-1, y+2):
