@@ -616,7 +616,7 @@ class Cat(Animal):
 
                                     path = AStar.main(
                                         (self.y, self.x),
-                                        [300],
+                                        ['player1', 'player2'],
                                         self.perm.IDSet['step']
                                     )
 
@@ -628,7 +628,7 @@ class Cat(Animal):
 
                                             return
                                         
-                                    elif block.take(*path)['id'] == 300:
+                                    elif block.take(*path)['id'] in ('player1', 'player2'):
                                         self.loseStress(10)
                                         self.attackPlayer(
                                             1,
@@ -656,7 +656,7 @@ class Cat(Animal):
 
                                     path = AStar.main(
                                         (self.y, self.x),
-                                        [300],
+                                        ['player1', 'player2'],
                                         self.perm.IDSet['step']
                                     )
                                     
@@ -668,7 +668,7 @@ class Cat(Animal):
 
                                             return
                                         
-                                    elif block.take(*path)['id'] == 300:
+                                    elif block.take(*path)['id'] in ('player1', 'player2'):
                                         self.loseStress(5)
                                         self.say(choice(comfortableCry))
                                         self.resetAction()
