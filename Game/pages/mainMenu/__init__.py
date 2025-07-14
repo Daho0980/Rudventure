@@ -155,7 +155,7 @@ def main(stdscr) -> None:
                                                 {
                                                     f"현재 스탯 UI : {['콤팩트', '코지'][s.statusDesign]}" : "좌상단에 표시될 스탯의 디자인을\n변경합니다.",
                                                     f"디버그 콘솔  : {switch.get(s.debug)}"                : "우중단에 표시될 디버그 콘솔\n표시 여부입니다.",
-                                                    f"지도 표시    : {switch.get(s.showDungeonMap)}"       : "우상단에 표시될 맵\n표시 여부입니다.",
+                                                    f"지도 표시    : {switch.get(s.showDungeonMap)}"       : "우상단에 표시될 지도\n표시 여부입니다.",
                                                     ""                                                     : "",
                                                     "완료"                                                 : ""
                                                 },

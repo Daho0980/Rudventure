@@ -10,9 +10,6 @@ from Assets.data import (
 from Game.core.system.io.logger import (
     addLog
 )
-from Game.core.system.data.dataLoader import (
-    obj
-)
 from Game.entities.player.event import (
     linkedInteraction,
     sayCmt
