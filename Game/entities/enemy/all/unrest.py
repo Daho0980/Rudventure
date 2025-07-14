@@ -53,7 +53,8 @@ class Unrest(Enemy):
                     block=iset(f"{cc['fg']['F']}{self.icon}{cc['end']}"),
                     tag  =self.tag
                 ),
-                self.y, self.x
+                self.y, self.x,
+                self.Dy, self.Dx
             ); time.sleep(self.coolTimes.targetted)
 
             block.place(
@@ -62,7 +63,8 @@ class Unrest(Enemy):
                     block=iset(self.icon),
                     tag  =self.tag
                 ),
-                self.y, self.x
+                self.y, self.x,
+                self.Dy, self.Dx
             ); time.sleep(self.coolTimes.targetted)
 
     def move(self) -> None:
@@ -160,7 +162,8 @@ class Unrest(Enemy):
                     block=iset(self.icon),
                     tag  =self.tag
                 ),
-                self.y, self.x
+                self.y, self.x,
+                self.Dy, self.Dx
             )
 
         else: super().wait()

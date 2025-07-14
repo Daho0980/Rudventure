@@ -11,7 +11,7 @@ from Game.core.system.data.dataLoader import (
 )
 
     
-def spawn(y:int, x:int, icon:str, tag:str) -> None:
+def spawn(y:int, x:int, icon:str) -> None:
     play("entity", "enemy", "charge")
     for i in ('.', 'x', 'X'):
         block.place(

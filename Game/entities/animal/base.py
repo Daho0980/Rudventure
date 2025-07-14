@@ -89,8 +89,7 @@ class Animal:
                     self.x = sX if isinstance(x, list) else x
                     event.spawn(
                         self.y, self.x,
-                        f"{self.color}{self.icon}{cc['end']}",
-                        self.tag
+                        f"{self.color}{self.icon}{cc['end']}"
                     )
                     
                     break
@@ -185,7 +184,8 @@ class Animal:
                 ),
                 tag=self.tag
             ),
-            self.y, self.x
+            self.y, self.x,
+            self.Dy, self.Dx
         )
         time.sleep(0.03)
 
@@ -197,14 +197,15 @@ class Animal:
                 ),
                 tag=self.tag
             ),
-            self.y, self.x
+            self.y, self.x,
+            self.Dy, self.Dx
         )
 
     def step(self, bfy:int, bfx:int) -> None:
         blockData = block.take(self.y, self.x)
 
         self.face = getFace(self.x, bfx, self.face)
-        s.Dungeon[self.Dy][self.Dx]['room'][bfy][bfx] = self.stepped
+        block.place(self.stepped, bfy, bfx, self.Dy, self.Dx)
         self.stepped = blockData\
                 if self.perm.data[blockData['id']]&self.perm.MAINTAIN\
             else blockData['blockData']\
@@ -217,7 +218,8 @@ class Animal:
                 block=iset(f"{self.color}{self.icon}{cc['end']}"),
                 tag=self.tag
             ),
-            self.y, self.x
+            self.y, self.x,
+            self.Dy, self.Dx
         )
         
     def saveData(self):

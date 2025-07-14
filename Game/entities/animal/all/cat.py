@@ -167,7 +167,8 @@ class Cat(Animal):
                 '-be', 'invincibleEntity',
                 block=f"{cc['fg']['A']}O {cc['end']}"
             ),
-            self.y, self.x
+            self.y, self.x,
+            self.Dy, self.Dx
         ); time.sleep(0.05)
 
         block.place(
@@ -175,7 +176,8 @@ class Cat(Animal):
                 '-be', 'invincibleEntity',
                 block=f"{cc['fg']['A']}{self.icon}{cc['end']}"
             ),
-            self.y, self.x
+            self.y, self.x,
+            self.Dy, self.Dx
         ); time.sleep(0.05)
 
         block.place(
@@ -185,7 +187,8 @@ class Cat(Animal):
                 id   =self.id,
                 tag  =self.tag
             ),
-            self.y, self.x
+            self.y, self.x,
+            self.Dy, self.Dx
         ); time.sleep(0.05)
 
         play("entity", "animal", "cat", "teleport")
@@ -194,8 +197,7 @@ class Cat(Animal):
         play("entity", "animal", "cat", "cloudy", "cry", "long")
         event.spawn(
             self.y, self.x,
-            f"{self.color}{self.icon}{cc['end']}",
-            self.tag
+            f"{self.color}{self.icon}{cc['end']}"
         )
         play("entity", "animal", "cat", "teleport")
 
@@ -208,17 +210,17 @@ class Cat(Animal):
             self.stepped = block.get('floor')
             self.stage   = s.stage
 
-        else: block.place(self.stepped, self.y, self.x)
+        else: block.place(self.stepped, self.y, self.x, self.Dy, self.Dx)
 
         self.coolTime    = 0
         self.Dy, self.Dx = s.Dy, s.Dx
 
-        for y, x in [
+        for y, x in (
             (s.y-1,s.x  ),
             (s.y,  s.x+1),
             (s.y+1,s.x  ),
             (s.y,  s.x-1)
-        ]:
+        ):
             blockData = block.take(y, x)
             if self.perm.data[blockData['id']] & self.perm.STEP:
                 self.y, self.x = y, x
@@ -235,10 +237,10 @@ class Cat(Animal):
                 return False
 
         while 1:
-            ry  = randrange(1, s.roomData['maxHeight']-1)
-            rx  = randrange(1, s.roomData['maxWidth'] -1)
+            ry = randrange(1, s.roomData['maxHeight']-1)
+            rx = randrange(1, s.roomData['maxWidth'] -1)
             
-            if not self.perm.data[block.take(ry, rx)['id']] & self.perm.STEP:
+            if not (self.perm.data[block.take(ry, rx)['id']]&self.perm.STEP):
                 continue
 
             self.y, self.x = ry, rx
@@ -402,6 +404,8 @@ class Cat(Animal):
             termArray[randrange(0,len(termArray))] = 30
 
         for term in map(lambda i: i/100, termArray):
+            if not self.checkPlayerisHere(): return
+            
             block.place(
                 obj(
                     '-be', self.id,
@@ -411,7 +415,8 @@ class Cat(Animal):
                     ),
                     tag=self.tag
                 ),
-                self.y, self.x
+                self.y, self.x,
+                self.Dy, self.Dx
             ); time.sleep(0.03)
 
             block.place(
@@ -423,7 +428,8 @@ class Cat(Animal):
                     ),
                     tag=self.tag
                 ),
-                self.y, self.x
+                self.y, self.x,
+                self.Dy, self.Dx
             ); time.sleep(term)
 
         block.place(
@@ -435,7 +441,8 @@ class Cat(Animal):
                 ),
                 tag=self.tag
             ),
-            self.y, self.x
+            self.y, self.x,
+            self.Dy, self.Dx
         )
 
     def grooming(self) -> None:
@@ -448,7 +455,8 @@ class Cat(Animal):
                 ),
                 tag=self.tag
             ),
-            self.y, self.x
+            self.y, self.x,
+            self.Dy, self.Dx
         ); time.sleep(randrange(1,14)/10)
 
         block.place(
@@ -460,7 +468,8 @@ class Cat(Animal):
                 ),
                 tag=self.tag
             ),
-            self.y, self.x
+            self.y, self.x,
+            self.Dy, self.Dx
         )
 
     def checkPWRest(self, stress) -> bool:
@@ -865,7 +874,8 @@ class Cat(Animal):
                                         k=1
                                     )[0])
                                 ),
-                                ty, tx
+                                ty, tx,
+                                self.Dy, self.Dx
                             )
                             
                             self.camouflage = {k:0 for k in self.camouflage}
@@ -891,7 +901,8 @@ class Cat(Animal):
                                 ),
                                 tag=self.tag
                             ),
-                            self.y, self.x
+                            self.y, self.x,
+                            self.Dy, self.Dx
                         )
                         if self.checkPWRest(stress): break
                         time.sleep(1.5)
@@ -906,7 +917,8 @@ class Cat(Animal):
                                 ),
                                 tag=self.tag
                             ),
-                            self.y, self.x
+                            self.y, self.x,
+                            self.Dy, self.Dx
                         )
                         if self.checkPWRest(stress): break
                         time.sleep(1.5)

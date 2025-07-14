@@ -84,6 +84,9 @@ def attack(entityData:dict, sound:tuple=("player", "slash")) -> None:
     def target():
         nonlocal entityData, sound
 
+        if not entityData.get('tag'):
+            return
+
         if not (target:=s.entityMap.get(entityData['tag'])):
             return
         

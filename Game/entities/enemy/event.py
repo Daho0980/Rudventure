@@ -13,8 +13,6 @@ from Game.core.system.data.dataLoader import (
 
 
 def spawn(y:int, x:int, icon:str, tag:str) -> None:
-    roomGrid:dict = s.Dungeon[s.Dy][s.Dx]['room']
-
     play("entity", "enemy", "charge")
     for i in ('. ', 'x ', 'X '):
         block.place(

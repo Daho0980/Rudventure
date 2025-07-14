@@ -68,7 +68,8 @@ class Pain(Enemy):
                                     block=f"{cc['fg']['F']}{self.icon}{cc['end']}",
                                     tag  =self.tag
                                 ),
-                                self.y, self.x
+                                self.y, self.x,
+                                self.Dy, self.Dx
                             ); time.sleep(0.1)
 
                             block.place(
@@ -77,12 +78,14 @@ class Pain(Enemy):
                                     block=self.icon,
                                     tag  =self.tag
                                 ),
-                                self.y, self.x
+                                self.y, self.x,
+                                self.Dy, self.Dx
                             ); time.sleep(0.1)
 
                         block.place(
                             obj('-be', self.id, block=self.icon, tag=self.tag),
-                            self.y, self.x
+                            self.y, self.x,
+                            self.Dy, self.Dx
                         )
 
                     path = AStar.main(
@@ -127,7 +130,8 @@ class Pain(Enemy):
                                 block=f"{cc['fg']['F']}{self.icon}{cc['end']}",
                                 tag  =self.tag
                             ),
-                            self.y, self.x
+                            self.y, self.x,
+                            self.Dy, self.Dx
                         ); time.sleep(0.1)
 
                         block.place(
@@ -136,7 +140,8 @@ class Pain(Enemy):
                                 block=self.icon,
                                 tag  =self.tag
                             ),
-                            self.y, self.x
+                            self.y, self.x,
+                            self.Dy, self.Dx
                         )
 
                         self.attack(

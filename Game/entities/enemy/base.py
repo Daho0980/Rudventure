@@ -139,7 +139,8 @@ class Enemy:
                 ),
                 tag=self.tag
             ),
-            self.y, self.x
+            self.y, self.x,
+            self.Dy, self.Dx
         )
         time.sleep(0.03)
 
@@ -149,7 +150,8 @@ class Enemy:
                 block=iset(self.icon),
                 tag  =self.tag
             ),
-            self.y, self.x
+            self.y, self.x,
+            self.Dy, self.Dx
         )
 
     def knockback(self, Dir:list, length:int, atk:int) -> None:
@@ -165,7 +167,7 @@ class Enemy:
 
                 return
             
-            block.place(self.stepped, self.y, self.x) # type: ignore
+            block.place(self.stepped, self.y, self.x, self.Dy, self.Dx)
 
             self.face = getFace(self.x-Dir[1], self.x, self.face)
             self.y   -= Dir[0]
@@ -179,7 +181,8 @@ class Enemy:
                     block=iset(self.icon),
                     tag  =self.tag
                 ),
-                self.y, self.x                
+                self.y, self.x,
+                self.Dy, self.Dx
             )
 
             time.sleep(0.05)
@@ -194,7 +197,8 @@ class Enemy:
                         block=iset(f"{cc['bg']['L']}{self.icon}{cc['end']}"),
                         tag  =self.tag
                     ),
-                    self.y, self.x
+                    self.y, self.x,
+                    self.Dy, self.Dx
                 ); time.sleep(0.07)
 
                 block.place(
@@ -203,7 +207,8 @@ class Enemy:
                         block=iset(self.icon),
                         tag  =self.tag
                     ),
-                    self.y, self.x
+                    self.y, self.x,
+                    self.Dy, self.Dx
                 ); time.sleep(0.07)
 
             s.target['command'] = False
@@ -243,5 +248,6 @@ class Enemy:
                 block=iset(self.icon),
                 tag  =self.tag
             ),
-            self.y, self.x
+            self.y, self.x,
+            self.Dy, self.Dx
         )

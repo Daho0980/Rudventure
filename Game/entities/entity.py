@@ -218,7 +218,7 @@ entityObj = {ID}.{entity}(
         {MCBF}, {SICR}
     ]
 )
-
+s.entityMap["{tag}"] = entityObj
 entityObj.start(
     {hp}, {atk},
     {Dy}, {Dx}, {y}, {x},

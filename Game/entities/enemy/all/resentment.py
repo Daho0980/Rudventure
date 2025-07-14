@@ -52,7 +52,8 @@ class Resentment(Enemy):
                 block=iset(f"{cc['fg']['F']}{self.icon}{cc['end']}"),
                 tag  =self.tag
             ),
-            self.y, self.x
+            self.y, self.x,
+            self.Dy, self.Dx
         ); time.sleep(self.coolTimes.blink)
 
         block.place(
@@ -61,7 +62,8 @@ class Resentment(Enemy):
                 block=iset(self.icon),
                 tag  =self.tag
             ),
-            self.y, self.x
+            self.y, self.x,
+            self.Dy, self.Dx
         )
 
     def targetted(self) -> None:
@@ -80,7 +82,8 @@ class Resentment(Enemy):
                 '-be', 'invincibleEntity',
                 block=f"{cc['fg']['F']}X {cc['end']}"
             ),
-            self.y, self.x
+            self.y, self.x,
+            self.Dy, self.Dx
         )
         particle = f"{cc['fg']['F']}. {cc['end']}"
         for expP in expPs:
@@ -88,7 +91,8 @@ class Resentment(Enemy):
             if self.perm.data[blockData['id']] & self.perm.EXPLOSION:
                 block.place(
                     block.get('invincibleBlock', block=particle),
-                    *expP
+                    *expP,
+                    self.Dy, self.Dx
                 )
                
             elif blockData['id'] in ('player1', 'player2'):
@@ -105,7 +109,8 @@ class Resentment(Enemy):
                         'ashChip',
                         block=f"{cc['fg']['G1']}. {cc['end']}"
                     ),
-                    *expP
+                    *expP,
+                    self.Dy, self.Dx
                 )
             
         self.icon = iset(choice(['×', 'x', 'X']))
@@ -147,7 +152,8 @@ class Resentment(Enemy):
                                     block=iset(self.icon),
                                     tag  =self.tag
                                 ),
-                                self.y, self.x
+                                self.y, self.x,
+                                self.Dy, self.Dx
                             )
 
                     else: self.blink()
