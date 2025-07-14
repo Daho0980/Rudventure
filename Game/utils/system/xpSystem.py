@@ -18,7 +18,7 @@ def getXP(count:int=0) -> None:
 
         if s.lvl >= (s.Mlvl/2):
             exec(s.statusFormula['curseBloodSucking'])
-            s.DROD = [f"{cc['fg']['F']}흡혈{cc['end']}", 'F']
+            s.DROD = (f"{cc['fg']['F']}흡혈{cc['end']}", 'F')
 
         play("system", "curseUp")
         addLog(f"{cc['fg']['F']}저주가 한 층 더 깊어집니다...{cc['end']}", colorKey='F')

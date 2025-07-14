@@ -1,4 +1,3 @@
-#!/usr/bin/env python3.13
 import os
 
 from Assets.data                      import totalGameStatus as s

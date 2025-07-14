@@ -1,8 +1,7 @@
 from ..base import BlockBehavior
 
-from random import choice
-
 from Assets.data.color import cColors as cc
+from Game.tools        import block
 
 from Assets.data import (
     totalGameStatus as s,
@@ -16,7 +15,7 @@ from Game.core.system.data.dataLoader import (
 )
 from Game.entities.player.event import (
     linkedInteraction,
-    say
+    sayCmt
 )
 
 
@@ -57,15 +56,19 @@ class NormalStatue(BlockBehavior):
                         "type"  : 'block',
                         "nbt"   : { "link" : True }
                     },
-                    cc['fg']['F']
+                    cc['fg']['F'],
+                    delay=0.1
                 )
 
-            else: s.Dungeon[s.Dy][s.Dx]['room'][ty][tx] = obj('-bb', 'cursedStatue', nbt={ "link" : True })
+            else: block.place(block.get('cursedStatue', nbt={ "link" : True }), ty, tx)
 
             addLog(
                 f"{s.playerColor[0]}당신{cc['end']}의 몸에서 {cc['fg']['F']}저주{cc['end']}가 빠져나가는 것이 느껴집니다...",
                 colorKey='A'
             )
-            say(choice(c.curseDecrease[''.join(commentType)]))
+            sayCmt(
+                c.curseDecrease['cmt'][''.join(commentType)],
+                c.curseDecrease['prob']
+            )
 
         return ty, tx, data['sound']

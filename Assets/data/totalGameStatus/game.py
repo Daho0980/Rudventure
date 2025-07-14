@@ -20,14 +20,12 @@ cowardMode          :int = 0b0
 sanjibaMode         :int = 0b0
 
 # region Entity
-enemyCount      :int = 0
-entityCount     :int = 0
-totalEntityCount:int = 0
+enemyCount  :int = 0
+vEntityCount:int = 0
 
-entityHashPool:list[str]            = []
-hitPos        :dict[str,list[list]] = {
-    "pos" : [],
-    "data": []
-}
+currEntityCount:int = 0
+maxEntityCount :int = 16
+
+entityMap           :dict      = {  }
 friendlyEntity      :list[str] = []
 entityDataMaintained:dict      = { "addAnimal"  : {} }

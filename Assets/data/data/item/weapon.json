@@ -1,0 +1,63 @@
+{
+    "testWeapon" : {
+        "icon" : "w",
+        "name" : "테스트 아이템(무기)",
+        "id" : "testWeapon",
+        "type" : "weapon",
+        "status" : {
+            "atk" : 10,
+            "durability" : [50, 100],
+            "weight" : 7,
+            "payload" : 10,
+            "infection" : [10, 100]
+        }
+    },
+    "animus" : {
+        "icon" : "\u001b[;38;5;12m⇀\u001b[0m",
+        "name" : "아니무스",
+        "id" : "animus",
+        "type" : "weapon",
+        "status" : {
+            "atk" : 6,
+            "durability" : ["∞", "∞"],
+            "weight" : 3,
+            "payload" : "∞",
+            "infection" : ["∞", "∞"]
+        },
+        "nbt" : {
+            "link" : false
+        }
+    },
+    "anima" : {
+        "icon" : "\u001b[;38;5;12m⇁\u001b[0m",
+        "name" : "아니마",
+        "id" : "anima",
+        "type" : "weapon",
+        "status" : {
+            "atk" : 5,
+            "durability" : ["∞", "∞"],
+            "weight" : 2,
+            "payload" : "∞",
+            "infection" : ["∞", "∞"]
+        },
+        "nbt" : {
+            "link" : false
+        }
+    },
+    "animusAnima" : {
+        "icon" : "\u001b[;38;5;12m⇋\u001b[0m",
+        "name" : "아니무스&아니마",
+        "id" : "animusAnima",
+        "type" : "weapon",
+        "status" : {
+            "atk" : 11,
+            "durability" : ["∞", "∞"],
+            "weight" : 5,
+            "payload" : "∞",
+            "infection" : ["∞", "∞"]
+        },
+        "nbt" : {
+            "link" : false
+        }
+    }
+}

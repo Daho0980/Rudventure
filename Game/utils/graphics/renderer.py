@@ -3,7 +3,7 @@ import time
 import psutil
 from   random import randrange, choices, choice
 
-from Assets.data.color           import cColors as cc
+from Assets.data.color           import cColors     as cc
 from Game.entities.player        import statusEffect
 from Game.utils.modules          import Textbox
 from Game.utils.advanced         import DungeonMaker as dgm
@@ -14,14 +14,15 @@ from . import (
     anchor
 )
 from Assets.data import (
-    totalGameStatus as s,
-    percentage      as p,
+    totalGameStatus as s  ,
     UIPreset        as UIP,
+    comments        as c,
     flags           as f
 )
 from Game.utils.graphics.UI import (
-    statusBar,
-    inventory
+    inventory as invUI,
+
+    statusBar
 )
 from Game.utils.dataStructures.conveyor import (
     Conveyor
@@ -64,11 +65,6 @@ def percent(cr, mx) -> int:
 
 # region Render
 def render(stdscr):
-    """
-    메인 디스플레이 출력 함수
-
-        `grid`(list(2d)) : 맵의 그래픽 데이터가 포함됨.
-    """
     global noiseBuffer
 
     grid    = s.Dungeon[s.Dy][s.Dx]['room']
@@ -129,7 +125,7 @@ def render(stdscr):
                 statusBar.get(s.df,  color=cc['fg']['B1'], statusName="방어력", maxStatus=s.Mdf                  ),
                 statusBar.get(s.atk, color=cc['fg']['L'] , statusName="공격력", maxStatus=10, showEmptyCell=False),
                 statusBar.get(
-                    math.ceil(s.hgr/200),
+                    math.ceil((s.hgr/s.Mhgr)*10),
 
                     color     =cc['fg']['Y'],
                     statusName="허  기",
@@ -189,7 +185,7 @@ TextBox.Line_\n저주 : {cc['fg']['F']}{s.lvl}{cc['end']}, {cc['fg']['F']}{int((
     statusText += f"\n\n{statusEffect.render()}"
 
     # Inventory
-    statusText += f"\n\n{inventory.get()}"
+    statusText += f"\n\n{invUI.get()}"
 
     Display.append(anchor(stdscr, statusText, y=2, x=1, returnStr=True))
 
@@ -242,10 +238,12 @@ Dx : {s.Dx}, Dy : {s.Dy}
 x : {s.x}, y : {s.y}
 {'\n'.join(map(lambda d:f"{d[0]} : {d[1]}",s.roomData.items()))}
 
-Number of entities : {s.entityCount}
+Number of entities : {s.currEntityCount}/{s.maxEntityCount}
 Number of enemies : {s.enemyCount}
-Number of total entities : {s.totalEntityCount}
-monologue : ({s.monologueCount},{s.monologueRange},{p.monologue['min']},{p.monologue['max']})
+Number of vEntities : {s.vEntityCount}
+Number of sounds : {s.currSoundCount}/{s.maxSoundCount}
+
+monologue : ({s.monologueCount},{s.monologueRange},{c.monologue['range']['min']},{c.monologue['range']['max']})
 
 Elapsed time : {s.elapsedTime:.2f}
 FPS : {s.currentFrameCount}""",

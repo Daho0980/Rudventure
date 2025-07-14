@@ -1,13 +1,20 @@
 from random import randrange, choice
 from copy   import deepcopy
 
-from Assets.data.color       import cColors as cc
-from Game.utils.system.block import iset
+from Assets.data.probs           import dungeon as per
+from Assets.data.color           import cColors as cc
+from Game.behavior.blocks.events import squishy
+from Game.utils.system.block     import iset
 
 from Assets.data import (
     totalGameStatus as s,
-    percentage      as per,
     rooms           as r
+)
+from Game.behavior.blocks.events.clayModel import (
+    Orb,
+    Life,
+
+    afterAction
 )
 from Game.core.system.data.dataLoader import (
     obj
@@ -108,30 +115,27 @@ def makeRoom(Map:list):
                     case 'event':
                         match output[row][column]['eventType']:
                             case 0:
-                                status = [
-                                    ['R',  f"{cc['fg']['R']}빈 최대 체력{cc['end']} 1칸",    "s.Mhp += 1"],
-                                    ['B1', f"{cc['fg']['B1']}빈 최대 방어력{cc['end']} 1칸", "s.Mdf += 1"],
-                                    ['L',  f"{cc['fg']['L']}공격력{cc['end']} 1",            "s.atk += 1"],
-                                    [
-                                        'G1', f"{cc['fg']['G1']}재의 그릇{cc['end']} 1개",
-                                        "s.Mlvl += 1; play('system', 'ashDiskUp'); logger.addLog(f\"{cc['fg']['G1']}재의 그릇{cc['end']}이 {cc['fg']['F']}1{cc['end']} 개 증가했습니다. (최대 레벨 {cc['fg']['G1']}{s.Mlvl-1}{cc['end']} -> {cc['fg']['F']}{s.Mlvl}{cc['end']})\", colorKey='G1')"
-                                    ]
-                                ][randrange(0, 4)]
+                                status = (
+                                    ('R',  f"{cc['fg']['R']}빈 최대 체력{cc['end']} 1칸"   , Orb.hp     ),
+                                    ('B1', f"{cc['fg']['B1']}빈 최대 방어력{cc['end']} 1칸", Orb.df     ),
+                                    ('L',  f"{cc['fg']['L']}공격력{cc['end']} 1"           , Orb.atk    ),
+                                    ('G1', f"{cc['fg']['G1']}재의 그릇{cc['end']} 1개"     , Orb.ashChip)
+                                )[randrange(0,4)]
 
                                 s.DungeonMap[row][column] = (s.bids['clayModel'][:1], status[0])
-                                baseMap[c['y']][c['x']]         = obj(
+                                baseMap[c['y']][c['x']]   = obj(
                                     '-bb', 'clayModel',
                                     block=iset(f"{cc['fg'][status[0]]}{s.bids['clayModel']}{cc['end']}"),
                                     nbt={
                                         "texts" : [
-                                            [f"'와우, 방금 당신 1/6의 확률을 뚫고 {cc['fg'][status[0]]}저{cc['end']}를 만나셨어요!'", "s.enemyCount += 1"],
+                                            (f"'와우, 여긴 어떻게 오신 거예요?'", Life.awake),
                                             "'다른 이벤트가 없어서 실망하셨다고요? 저런...'",
-                                            [f"'대신 {status[1]}(와)과 응원을 드리겠습니다.'", status[2]],
-                                            ["'그럼 화이팅!'", "s.enemyCount -= 1"]
+                                            (f"'대신 {status[1]}와/과 응원을 드리겠습니다.'", status[2]),
+                                            ("'그럼 화이팅!'", Life.kill)
                                         ],
-                                        "command" : "time.sleep(0.5); say(choice(c.clayModelAnswer))",
                                         "delay"   : 0.5,
-                                        "voice"   : "clayModel"
+                                        "voice"   : "clayModel",
+                                        "command" : afterAction
                                     }
                                 )
 
@@ -185,29 +189,10 @@ def makeRoom(Map:list):
                                 nbt  ={
                                     "face"    : face,
                                     "count"   : 50 if hasEvent else -1,
-                                    "command" : choice([
-                                        f"""
-play("object", "squishy", "open")
-kind = choice(('aorta', 'venaCava'))
-s.Dungeon[s.Dy][s.Dx]['room'][ty][tx] = {{
-    "block" : iset(s.bids[kind], Type='{face}'),
-    "id"    : kind,
-    "type"  : 'block'
-}}
-""",
-                                    f"""
-play("object", "squishy", "explosion")
-s.hp -= 5
-event.bleeding(5)
-s.DROD = ["{cc['fg']['B1']}말랑이{cc['end']}", 'B1']
-s.Dungeon[s.Dy][s.Dx]['room'][ty][tx] = {{
-    "block" : f'{cc['fg']['B1']}x {cc['end']}',
-    "id"    : 'floor',
-    "type"  : 'block'
-}}
-event.readSign(["{cc['fg']['B1']}'하하하, 터어어어얼렸구나!!'{cc['end']}"], 0.07, "clayModel")
-"""
-                                    ])
+                                    "command" : choice((
+                                        squishy.giveLoot,
+                                        squishy.explosion
+                                    ))
                                 }
                             )
 

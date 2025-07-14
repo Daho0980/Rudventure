@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-import curses ; import random
-from   cusser   import Cusser
-from   time     import sleep, perf_counter
+import curses
+from   random import choice
+from   cusser import Cusser
+from   time   import sleep, perf_counter
 
 from .                   import _main_extended as ME
 from .core.system.io     import logger
@@ -58,7 +59,7 @@ def gameChecker(stdscr) -> None:
             ); dp.update()
 
             f.killAll = True
-            comment   = random.choice(c.defeat["CO"if s.lvl>=s.Mlvl else"HL"if s.hp<=0 else"HUL"])
+            comment   = choice(c.defeat["CO"if s.lvl>=s.Mlvl else"HL"if s.hp<=0 else"HUL"])
 
             stdscr.nodelay(False)
 
@@ -139,7 +140,7 @@ f"""
             play("system", "clear")
             anchor(stdscr,
                 Textbox.TextBox(
-                    f"   {cc['fg']['L']}지 배   성 공{cc['end']}   \n\n   {cc['fg']['L']}\"{random.choice(c.victory[int((s.hp/s.Mhp)*3)])}{cc['fg']['L']}\"{cc['end']}   ",
+                    f"   {cc['fg']['L']}지 배   성 공{cc['end']}   \n\n   {cc['fg']['L']}\"{choice(c.victory[int((s.hp/s.Mhp)*3)])}{cc['fg']['L']}\"{cc['end']}   ",
 
                     Type        ="middle",
                     inDistance  =(1, 0b11),
@@ -187,9 +188,9 @@ stdscr.nodelay(True)
 
 keyHandler.add()
 from Game.core.system.state import (
-    frameCounter,
     exaltation,
-    monologue
+    monologue,
+    frame
 ) # 스레드 연결
 
 if not dp.isConnected:
@@ -211,10 +212,13 @@ while s.main:
     s.Dungeon = DungeonMaker.DungeonMaker()
 
     player.start()
+    if s.stage == 0:
+        ME.placeExclusiveItem()
     randPlaceOrb()
 
     ME.spawnCompanion()
     
+    s.currSoundCount = 0
     stage.showStage(stdscr,
         f"{cc['fg']['R']}-{s.stage+1}{cc['end']}   층"
     )
@@ -252,5 +256,5 @@ while s.main:
             
         else: sleep(1)
 
-    if s.hgr <= 0: s.DROD = [f"{cc['fg']['Y']}아사{cc['end']}", 'Y']
+    if s.hgr <= 0: s.DROD = (f"{cc['fg']['Y']}아사{cc['end']}", 'Y')
     gameChecker(stdscr)

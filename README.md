@@ -39,3 +39,4 @@ cd desktop; git clone https://github.com/Daho0980/Rudventure.git
 - [ ] 육신 보존 모드 개편(모드 활성화 시 `스테이지 클리어 시 저장`이 아닌 `이벤트 방에서 육신 저장터가 생성`됨)
 - [ ] Windows 지원   
 - [ ] Linux 경험 개편
+- [ ] 컨트롤러 지원(DualSense, Xbox Wireless Controller, Joy-con)

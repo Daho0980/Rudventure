@@ -9,20 +9,25 @@ from Assets.data import (
 
 
 def play(*path, loop:bool=False, block:bool=False, volume:int=-1) -> None:
+    if s.currSoundCount >= s.maxSoundCount: return
+    if s.volume == 0                      : return
+
+    s.currSoundCount += 1
+
+    def target():
+        AudioPlayer(
+            f"{s.TFP}sounds{s.s}{s.s.join(path)}.wav",
+            volume=volume if volume>-1 else s.volume
+        ).play(loop=loop, block=True)
+
+        s.currSoundCount -= 1
+
     if f.useSound and path:
-        if block:
-            AudioPlayer(
-                f"{s.TFP}sounds{s.s}{s.s.join(path)}.wav",
-                volume=volume if volume>-1 else s.volume
-            ).play(loop=loop, block=True)
+        if block: target()
 
         else:
             threading.Thread(
-                target=lambda: AudioPlayer(
-                    f"{s.TFP}sounds{s.s}{s.s.join(path)}.wav",
-                    volume=volume if volume>-1 else s.volume
-                ).play(loop=loop, block=True),
-                
+                target=target,
                 name  ="sound",
                 daemon=True
             ).start()

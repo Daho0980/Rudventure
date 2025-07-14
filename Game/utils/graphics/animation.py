@@ -3,6 +3,7 @@ import time
 from .                  import anchor
 from Game.utils.modules import Textbox
 
+
 class Graphs:
     @staticmethod
     def IOAD(length:int) -> list[int]:

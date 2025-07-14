@@ -1,0 +1,19 @@
+{
+    "testTool" : {
+        "name" : "테스트 아이템(도구)",
+        "dataType" : 5,
+        "explanation" : {
+            "observe" : "그 무엇이든 세그폴트를 일으키는 도구.",
+            "surface" : "무슨 용도인지 감도 잡히지 않는다."
+        }
+    },
+    "ásotus" : {
+        "name" : "아소투스",
+        "dataType" : 7,
+        "explanation" : {
+            "observe" : "어느 \u001b[;38;5;11m조합자\u001b[0m가 썼다고 알려진 조리 도구.\n꽤 단단하다.",
+            "link" : "\u001b[;38;5;11m나의 반쪽.\u001b[0m",
+            "surface" : "단단해보이는 조리 도구.\n프라이팬처럼 생겼다."
+        }
+    }
+}

@@ -1,14 +1,11 @@
 from ..base        import BlockBehavior
 from ..orbStandard import interactSound
 
-from random import randrange, choice
-
-from Game.entities.player.event import say
+from Game.entities.player.event import sayCmt
 from Game.utils.system.sound    import play
 
 from Assets.data import(
-    totalGameStatus as s  ,
-    percentage      as per,
+    totalGameStatus as s,
     comments        as c
 )
 
@@ -18,13 +15,16 @@ class DfOrbS(BlockBehavior):
         point = s.orbData['S']['df']
 
         if s.df == s.Mdf:
-            say(choice(c.getOrb['df']['dfTooOver']['S']))
+            target = c.getOrb['df']['dfTooOver']
+            sayCmt(target['cmt']['S'], target['prob'])
 
             return data['ty'], data['tx'], interactSound()
         
         if (s.df+point) > s.Mdf:
             s.df = s.Mdf
-            say(choice(c.getOrb['df']['dfOver']['S']))
+
+            target = c.getOrb['df']['dfOver']
+            sayCmt(target['cmt']['S'], target['prob'])
 
             return data['ty'], data['tx'], interactSound()
         
@@ -34,11 +34,11 @@ class DfOrbS(BlockBehavior):
             play("system", "perfectLvlUp")
             s.exaltation += 10
 
-        if randrange(1, 101) <= per.getOrb:
-            if s.df == s.Mdf:
-                say(choice(c.getOrb['df']['dfFull']['S']))
+            target = c.getOrb['df']['dfFull']
+            sayCmt(target['cmt']['S'], target['prob'])
 
-            elif s.df == point:
-                say(choice(c.getOrb['df']['restorationed']['S']))
+        elif s.df == point:
+            target = c.getOrb['df']['restorationed']
+            sayCmt(target['cmt']['S'], target['prob'])
 
         return data['ty'], data['tx'], interactSound()

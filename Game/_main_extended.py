@@ -1,8 +1,7 @@
-from random import choice
-
 from .entities              import entity
-from .entities.player.event import say
-from Assets.data.color      import cColors as cc
+from .entities.player.event import sayCmt
+from Assets.data.color      import cColors    as cc
+from Game.tools             import item, block
 
 from Assets.data import (
     totalGameStatus as s,
@@ -27,7 +26,7 @@ def _ephemera(func):
 def spawnCompanion() -> None:
     if  not s.stage\
     and not f.isLoadfromBody\
-    and s.name.lower() in ["업로드", "upload"]:
+    and s.playerIdentity == 'upload':
         entity.addAnimal(
             'cat', 10, 1, 3, 6,
 
@@ -44,13 +43,49 @@ def spawnCompanion() -> None:
 
 @_ephemera
 def startComment() -> None:
-    say(
-        choice(
-            c.loadsaveStart\
-                if  s.bodyPreservationMode
-                and f.isLoadfromBody\
-            else c.startWithCowardmode\
-                if s.cowardMode\
-            else c.start
-        )
-    )
+    target = c.loadsaveStart\
+        if  s.bodyPreservationMode\
+        and f.isLoadfromBody\
+    else c.startWithCowardmode\
+        if s.cowardMode\
+    else c.start
+    sayCmt(target['cmt'], target['prob'])
+
+def placeExclusiveItem() -> None:
+    match s.playerIdentity:
+        case "repo":
+            block.randPlace(
+                item.package(item.get(
+                    'tool', 'ásotus',
+                    nbt = {
+                        'link' : True,
+                        'orbSlot' : []
+                    }
+                )),
+                (1, s.roomData['maxHeight']-2),
+                (1,  s.roomData['maxWidth']-2),
+                    
+                ['floor']
+            )
+
+        case "upload":
+            block.randPlace(
+                item.package(item.get(
+                    'weapon', 'animus',
+                    nbt = { 'link' : True }
+                )),
+                (1, s.roomData['maxHeight']-2),
+                (1,  s.roomData['maxWidth']-2),
+                    
+                ['floor']
+            )
+            block.randPlace(
+                item.package(item.get(
+                    'weapon', 'anima',
+                    nbt = { 'link' : True }
+                )),
+                (1, s.roomData['maxHeight']-2),
+                (1,  s.roomData['maxWidth']-2),
+                    
+                ['floor']
+            )

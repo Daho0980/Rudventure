@@ -1,13 +1,10 @@
 from ..base        import BlockBehavior
 from ..orbStandard import interactSound
 
-from random import randrange, choice
-
-from Game.entities.player.event import say
+from Game.entities.player.event import sayCmt
 
 from Assets.data import(
-    totalGameStatus as s  ,
-    percentage      as per,
+    totalGameStatus as s,
     comments        as c
 )
 
@@ -16,10 +13,11 @@ class AtkOrbS(BlockBehavior):
     def interact(self, **data):
         s.atk += s.orbData['S']['atk']
 
-        if randrange(1, 101) <= per.getOrb:
-            if s.atk > s.stage:
-                say(choice(c.getOrb['atk']['hiAtk']['S']))
-            else:
-                say(choice(c.getOrb['atk']['lowAtk']['S']))
+        if s.atk > s.stage:
+            target = c.getOrb['atk']['hiAtk']
+        else:
+            target = c.getOrb['atk']['lowAtk']
+
+        sayCmt(target['cmt']['S'], target['prob'])
 
         return data['ty'], data['tx'], interactSound()

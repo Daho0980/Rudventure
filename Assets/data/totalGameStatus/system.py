@@ -18,9 +18,12 @@ port     :int       = -1
 # region Sound
 volume:int = 50
 
+currSoundCount:int = 0
+maxSoundCount :int = 64
+
 # region Terminal
-# TMI: The origin of this name is 'S'creen'S'ize'S' LMAO
-sss:dict[str, tuple] = {
+# NOTE(it's TMI actually btw): The origin of this name is 'S'creen'S'ize'S' LMAO
+sss:dict[str, tuple[int,int]] = {
     "minimum"     : ( 58, 122 ),
     "recommended" : ( 67, 195 )
 }
@@ -36,4 +39,4 @@ startTime  :float = 0
 elapsedTime:float = 0
 
 # region Dead reason
-DROD:list = [None, '']
+DROD:tuple[str, str] = ("None", '')

@@ -6,6 +6,7 @@ from functions.grammar       import pstpos  as pp
 from Game.entities.functions import getFace
 from Game.entities           import event
 from Game.entities.player    import event as pEvent
+from Game.tools              import block
 from Game.utils.system.block import iset
 from Game.utils.system.sound import play
 
@@ -86,7 +87,11 @@ class Animal:
                 if self.perm.data[s.Dungeon[Dy][Dx]['room'][sY][sX]["id"]] & self.perm.STEP:
                     self.y = sY if isinstance(y, list) else y
                     self.x = sX if isinstance(x, list) else x
-                    event.spawn(self.y, self.x, f"{self.color}{self.icon}{cc['end']}")
+                    event.spawn(
+                        self.y, self.x,
+                        f"{self.color}{self.icon}{cc['end']}",
+                        self.tag
+                    )
                     
                     break
 
@@ -94,52 +99,18 @@ class Animal:
 
         else: self.y,  self.x  = y, x
 
-        block = DRP['room'][self.y][self.x]
+        blockData = block.take(self.y, self.x)
 
-        self.stepped = block\
-                if self.perm.data[block['id']]&self.perm.MAINTAIN\
-            else block['blockData']\
-                if block.get('blockData', False)\
-            else obj('-bb', 'floor')
-        
-    def damaged(self) -> None:
-        if s.hitPos['pos'] and [self.y, self.x] in s.hitPos['pos']:
-            posIndex = s.hitPos['pos'].index([self.y, self.x])
-
-            rate:int         = randrange(1,101)
-            sound            = None
-            crit, isHit      = True, True
-            entity, dmg, attackSound = s.hitPos['data'][posIndex]
-
-            if entity == "player":
-                if rate <= s.critRate:
-                    sound, crit = "critical", True
-                    dmg         = int((dmg+(s.critDMG*0.1)) + (dmg*(s.critDMG*0.01)))
-
-                elif rate >= 90:
-                    sound, dmg, isHit = "miss", 0, False
-
-            self.hp -= dmg
-            if self.hp > 0:
-                msg = f"{cc['fg']['F']}{self.name}{cc['end']}{pp(self.name,'sub',True)} {cc['fg']['L']}{dmg}{cc['end']}만큼의 피해를 입었습니다!"
-                if   not dmg: msg  = f"{cc['fg']['L']}공격{cc['end']}이 빗나갔습니다!"
-                elif crit   : msg += f" {cc['fg']['L']}치명타!{cc['end']}"
-
-                if dmg:
-                    event.hitted(
-                        self.y, self.x,
-                        f"{self.color}{self.icon}{cc['end']}",
-                        self.id, self.tag
-                    )
-                addLog(msg, colorKey='L')
-                if sound: play("entity", "enemy", "damage", sound)
-                if isHit: play(*attackSound)
+        self.stepped = blockData\
+                if self.perm.data[blockData['id']]&self.perm.MAINTAIN\
+            else blockData['blockData']\
+                if blockData.get('blockData', False)\
+            else block.get('floor')
         
     def wait(self) -> None:
         self.coolTime -= 1
         
         if self.isFocused:
-            self.damaged()
             if self.hp <= 0: self.coolTime = 0
             time.sleep(0.001)
 
@@ -149,16 +120,36 @@ class Animal:
                 self.coolTime  = 0
             time.sleep(0.01)
 
-    def attack(self, ty:int, tx:int, attackSound:tuple) -> None:
-        s.hitPos['pos'] .append([ty, tx])
-        s.hitPos['data'].append([self.tribe, self.atk, attackSound])
-        time.sleep(0.001)
-        s.hitPos['pos'] .remove([ty, tx])
-        s.hitPos['data'].remove([self.tribe, self.atk, attackSound])
+    def attack(self, entityData:dict, attackSound:tuple) -> None:
+        if not (target:=s.entityMap.get(entityData['tag'])):
+            return
+
+        atk = self.atk
+
+        crit     = None
+        dmgSound = None
+
+        if randrange(1, 101) <= 10:
+            dmgSound = "critical"
+            crit     = True
+            atk      = int(self.atk*1.5)
+
+        if target.hp-atk > 0:
+            msg = f"{self.color}{self.name}{cc['end']}{pp(self.name,'sub',True)} {cc['fg']['R']}{target.name}{cc['end']}에게 {cc['fg']['L']}{atk}{cc['end']}만큼의 피해를 입혔습니다!"
+            if crit: msg += f" {cc['fg']['L']}치명타!{cc['end']}"
+
+            target.hitted()
+            addLog(msg)
+
+            play(*attackSound)
+            if dmgSound:
+                play("entity", "enemy", "damage", dmgSound)
+
+        target.hp -= atk
 
     def attackPlayer(self, atk:int, attackSound:tuple, DR:str="") -> None:
         sound = ("entity", "enemy", "enemyHit")
-        s.DROD = [f"{self.color}{DR or self.name}{cc['end']}", self.colorKey]
+        s.DROD = (f"{self.color}{DR or self.name}{cc['end']}", self.colorKey)
         if s.df > 0:
             pEvent.defended()
             sound = ("player", "armor", "defended")
@@ -185,23 +176,49 @@ class Animal:
 
         addLog(f"{s.lightName}{pp(s.name,'sub',True)} {self.color}{self.name}{cc['end']}({self.icon}) 에 의해 {cc['fg']['R']}{atk}{cc['end']}만큼의 피해를 입었습니다!", colorKey='R')
 
+    def hitted(self) -> None:
+        block.place(
+            obj(
+                '-be', 'invincibleEntity',
+                block=iset(
+                    f"{cc['fg']['R']}{self.icon}{cc['end']}"
+                ),
+                tag=self.tag
+            ),
+            self.y, self.x
+        )
+        time.sleep(0.03)
+
+        block.place(
+            obj(
+                '-be', self.id,
+                block=iset(
+                    f"{self.color}{self.icon}{cc['end']}"
+                ),
+                tag=self.tag
+            ),
+            self.y, self.x
+        )
+
     def step(self, bfy:int, bfx:int) -> None:
-        block = s.Dungeon[self.Dy][self.Dx]['room'][self.y][self.x]
+        blockData = block.take(self.y, self.x)
 
         self.face = getFace(self.x, bfx, self.face)
         s.Dungeon[self.Dy][self.Dx]['room'][bfy][bfx] = self.stepped
-        self.stepped = block\
-                if self.perm.data[block['id']]&self.perm.MAINTAIN\
-            else block['blockData']\
-                if block.get('blockData', False)\
-            else obj('-bb', 'floor')
+        self.stepped = blockData\
+                if self.perm.data[blockData['id']]&self.perm.MAINTAIN\
+            else blockData['blockData']\
+                if blockData.get('blockData', False)\
+            else block.get('floor')
         
-        s.Dungeon[self.Dy][self.Dx]['room'][self.y][self.x] = {
-            'block' : iset(f"{self.color}{self.icon}{cc['end']}", Type=self.face),
-            'id'    : self.id                                                    ,
-            'type'  : 'entity'                                                   ,
-            'tag'   : self.tag
-            }
+        block.place(
+            obj(
+                '-be', self.id,
+                block=iset(f"{self.color}{self.icon}{cc['end']}"),
+                tag=self.tag
+            ),
+            self.y, self.x
+        )
         
     def saveData(self):
         s.entityDataMaintained['addAnimal'][self.tag]               = {}

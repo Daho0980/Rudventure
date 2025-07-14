@@ -23,11 +23,15 @@ class KeyBind:
     volumeUp   = 93 # ]
     mute       = 92 # \
 
-    whistle    = 122 # Shift + Z
-    playerMode = 120 # Shift + X
+    whistle    = 122 # Z
+    playerMode = 120 # X
 
     slot1, slot2, slot3 = 49, 50, 51 # 1, 2, 3
     slot4, slot5, slot6 = 52, 53, 54 # 4, 5, 6
+
+    itemInfo = 105 # I
+    useItem  = 101 # E
+    putItem  = 113 # Q
 
     pause = 32 # space
 

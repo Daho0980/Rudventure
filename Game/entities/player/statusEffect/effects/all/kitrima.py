@@ -22,4 +22,4 @@ class Kitrima(StatusEffect):
                 colorKey='F'
             )
 
-            s.DROD = [f"{cc['fg']['F']}신경성 쇼크{cc['end']}", 'F']
+            s.DROD = (f"{cc['fg']['F']}신경성 쇼크{cc['end']}", 'F')

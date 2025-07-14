@@ -1,11 +1,11 @@
-from random import randrange, choice
+from random import randrange
 
-from Game.entities.player.event import say
+from Assets.data.probs          import dungeon as per
+from Game.entities.player.event import sayCmt
 from Game.utils.system.sound    import play
 
 from Assets.data import (
     totalGameStatus as s,
-    percentage      as p,
     comments        as c,
     flags           as f
 )
@@ -38,12 +38,13 @@ def event(data) -> None:
 
         summonEnemy(data['summonData'])
 
-        if randrange(1, 101) <= p.enterinBattle:
-            say(choice(
-                c.enterinBattle[5]\
-                    if len(data['summonData']) >= 5\
-                else c.enterinBattle[0]
-            ))
+        sayCmt(
+            c.enterinBattle['cmt'][5]\
+                if len(data['summonData']) >= 5\
+            else c.enterinBattle['cmt'][0],
+
+            c.enterinBattle['prob']
+        )
 
         changeDoor('wall', data, "░░")
         play("object", "door", "close")
@@ -51,7 +52,7 @@ def event(data) -> None:
     elif not s.enemyCount and f.roomLock:
         f.roomLock                           = False
         s.Dungeon[s.Dy][s.Dx]['interaction'] = True
-        if randrange(0, 101) > p.clearedRoomLoot: randPlaceOrb()
+        if randrange(0, 101) > per.clearedRoomLoot: randPlaceOrb()
 
         s.exaltation += 5
 

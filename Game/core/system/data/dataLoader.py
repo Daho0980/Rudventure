@@ -9,8 +9,8 @@ from Game.utils.dataStructures.conveyor import (
 )
 
 
-objCache = Conveyor(100)
-elmCache = Conveyor(100)
+objCache = Conveyor(64)
+elmCache = Conveyor(64)
 
 makePath = lambda *path: s.TFP + s.s.join(path)
 
@@ -34,6 +34,10 @@ def obj(path:str, target:str, **addData) -> dict:
         case "-be" : path = s.path['data']['entity']
         case "-se" : path = s.path['data']['statusEffect']
 
+        case "-it" : path = s.path['data']['item.tool']
+        case "-iw" : path = s.path['data']['item.weapon']
+        case "-ic" : path = s.path['data']['item.consumable']
+        
     if (path,target) in objCache:
         data = deepcopy(objCache[(path,target)])
 

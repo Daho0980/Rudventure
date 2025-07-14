@@ -23,14 +23,14 @@ def get() -> str:
                     f"{boxColor}┃{cc['end']} {
                         ' '\
                             if not s.inventory['cells'][cellIndex]['item']\
-                        else s.inventory['cells'][cellIndex]['block']
+                        else s.inventory['cells'][cellIndex]['item']['icon']
                     } {boxColor}┃{cc['end']}",
 
                     f"{boxColor}┗━━━┛{cc['end']}"
                 )
                 lines.extend(cell)
 
-        if len(lines)>3:
+        if len(lines) > 3:
             lines = [
                 f"{lines[0]}{lines[3]}",
                 f"{lines[1]}{lines[4]}",

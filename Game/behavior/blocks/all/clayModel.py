@@ -2,27 +2,20 @@ from ..base import BlockBehavior
 
 from Assets.data                import totalGameStatus as s
 from Game.entities.player.event import readSign
-
-from Game.core.system.data.dataLoader import (
-    obj
-)
+from Game.tools                 import block
 
 
 class ClayModel(BlockBehavior):
     def interact(self, **data):
-        nbt = data['block']['nbt']
-
         s.DungeonMap[s.Dy][s.Dx] = ('☷', 'O')
-        readSign(
-            nbt['texts'],
-            nbt['delay'],
-            nbt['voice'],
-            nbt['command']
-        )
+        readSign(**data['block']['nbt'])
 
-        s.Dungeon[s.Dy][s.Dx]['room'][data['ty']][data['tx']] = obj(
-            '-bb', 'deadClayModel',
-            nbt={ 'link' : True }
+        block.place(
+            block.get(
+                'deadClayModel',
+                nbt={ 'link' : True }
+            ),
+            data['ty'], data['tx']
         )
 
         return data['ty'], data['tx'], data['sound']

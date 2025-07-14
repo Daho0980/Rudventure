@@ -34,3 +34,11 @@ def cinp(stdscr,
     if clearAfter: stdscr.erase()
 
     return escapeAnsi(Inp)
+
+def sieve(data:dict, stat:int) -> str:
+    last = ""
+    for ratio, element in data.items():
+        last = element
+        if stat <= ratio: return element
+
+    else: return last

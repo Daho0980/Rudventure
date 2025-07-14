@@ -2,17 +2,14 @@ from ..base import BlockBehavior
 
 from Assets.data                import totalGameStatus as s
 from Game.entities.player.event import getRoomData
-
-from Game.core.system.data.dataLoader import (
-    obj
-)
+from Game.tools                 import block
 
 
 class Door(BlockBehavior):
     def interact(self, **data):
         ty, tx = data['ty'], data['tx']
 
-        s.Dungeon[s.Dy][s.Dx]['room'][ty][tx] = obj('-bb', 'door')
+        s.Dungeon[s.Dy][s.Dx]['room'][ty][tx] = block.get('door')
 
         # ┏>|y, x| : U->D D->U L->R R->L
         pos     = [data['bfy']-ty, data['bfx']-tx]
@@ -38,12 +35,12 @@ class Door(BlockBehavior):
         ty, tx = wayPoint[wayType]
 
         s.Dungeon[s.Dy][s.Dx]['isPlayerVisited'] = 2
-        roomPos = [
-            [s.Dy-1 if s.Dy>0 else s.Dy,                   s.Dx],
-            [s.Dy, s.Dx+1 if s.Dx<len(s.Dungeon[0])-1 else s.Dx],
-            [s.Dy+1 if s.Dy<len(s.Dungeon)-1 else s.Dy,    s.Dx],
-            [s.Dy,                   s.Dx-1 if s.Dx>0 else s.Dx]
-        ]
+        roomPos = (
+            (s.Dy-1 if s.Dy>0 else s.Dy,                   s.Dx),
+            (s.Dy, s.Dx+1 if s.Dx<len(s.Dungeon[0])-1 else s.Dx),
+            (s.Dy+1 if s.Dy<len(s.Dungeon)-1 else s.Dy,    s.Dx),
+            (s.Dy,                   s.Dx-1 if s.Dx>0 else s.Dx)
+        )
             
         for i in range(len(roomPos)):
             if  len(s.Dungeon[roomPos[i][0]][roomPos[i][1]])               >0\

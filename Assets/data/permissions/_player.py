@@ -26,7 +26,7 @@ class Permission(BitFlag):
         "deadClayModel" : 0b110,
         "flower" : 0b101,
         "petal" : 0b1,
-        "item" : 0b101,
+        "item" : 0b111,
         "corpse" : 0b1,
         "blood" : 0b101,
         "normalStatue" : 0b110,

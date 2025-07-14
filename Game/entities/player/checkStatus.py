@@ -2,7 +2,7 @@ from random import choice
 
 from .                          import event   as pev
 from Assets.data.color          import cColors as cc
-from Game.entities.player.event import say
+from Game.entities.player.event import sayCmt
 from Game.core.system.io.logger import addLog
 from Game.utils.system.sound    import play
 
@@ -16,7 +16,7 @@ def hpCheck() -> None:
     if s.hp<=int(s.Mhp*0.3) and not s.hpLow:
         play("system", "hpLow")
         s.hpLow = True
-        say(choice(c.lowHp))
+        sayCmt(c.lowHp['cmt'], c.lowHp['prob'])
 
     elif int((s.hp / s.Mhp) * 10) > 3: s.hpLow = False
 

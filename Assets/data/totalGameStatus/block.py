@@ -47,6 +47,21 @@ bloodIcon:dict[int,str] = {
     1 : "░",
 }
 
+bloodInteractableBlock:dict[str, tuple] = {
+    "stackable" : ( 'floor', 'flower', 'petal', 'ashChip' ),
+    "stickable" : (
+        'wall', 'door', 'orbBox', 'exit',
+        'squishy0', 'squishy1',
+        'hpOrbS', 'dfOrbS', 'atkOrbS', 'hgOrbS', 'csOrbS',
+        'hpOrbB', 'dfOrbB', 'atkOrbB', 'hgOrbB', 'csOrbB',
+        'clayModel', 'deadClayModel',
+        'flower', 'petal', 'item', 'corpse',
+        'normalStatue', 'cursedStatue',
+        'aorta', 'venaCava',
+        'ashChip'
+    )
+}
+
 orbData = {
     "S" : {
         "hp"  : 1,

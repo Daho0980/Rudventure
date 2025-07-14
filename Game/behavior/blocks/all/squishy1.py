@@ -2,12 +2,9 @@ from ..base import BlockBehavior
 
 from Assets.data             import totalGameStatus as s
 from Assets.data.color       import cColors         as cc
+from Game.tools              import block
 from Game.utils.system.block import iset
-from Game.utils.system.sound import play # 이거 씀2
 
-from Game.core.system.data.dataLoader import (
-    obj
-)
 from Game.core.system.io.logger import (
     addLog
 )
@@ -28,16 +25,19 @@ class Squishy1(BlockBehavior):
             )
 
             BID = 'squishy0'
-            s.Dungeon[s.Dy][s.Dx]['room'][ty][tx] = obj(
-                '-bb', BID,
-                block=iset(s.bids[BID], Type=face),
-                nbt={
-                    "face"    : face,
-                    "count"   : count-1,
-                    "command" : command
-                }
+            block.place(
+                block.get(
+                    BID,
+                    block=iset(s.bids[BID], Type=face),
+                    nbt={
+                        "face"    : face,
+                        "count"   : count-1,
+                        "command" : command
+                    }
+                ),
+                ty, tx
             )
             
-        else: exec(command)
+        else: command(data['ty'], data['tx'], face)
 
         return data['bfy'], data['bfx'], ("object", "squishy", "squish")

@@ -26,14 +26,13 @@ from .atkOrbB import AtkOrbB
 from .hgOrbB  import HgOrbB
 from .csOrbB  import CsOrbB
 
-from .ashChip import AshChip
-
+from .ashChip  import AshChip
 from .aorta    import Aorta
 from .venaCava import VenaCava
+from .item     import Item
 
 from .flower import Flower
 from .petal  import Petal
-
 from .blood import Blood
 
 behaviorMap:dict[str, BlockBehavior] = {
@@ -60,6 +59,7 @@ behaviorMap:dict[str, BlockBehavior] = {
     "ashChip" : AshChip(),
     "aorta" : Aorta(),
     "venaCava" : VenaCava(),
+    "item" : Item(),
     "flower" : Flower(),
     "petal" : Petal(),
     "blood" : Blood()

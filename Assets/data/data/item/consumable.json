@@ -1,0 +1,15 @@
+{
+    "testConsumable" : {
+        "icon" : "e",
+        "name" : "테스트 아이템(소모품)",
+        "id" : "testConsumable",
+        "type" : "consumable",
+        "status" : {
+            "atk" : 0,
+            "durability" : [1, 1],
+            "weight" : 1,
+            "payload" : 10,
+            "infection" : [95, 100]
+        }
+    }
+}

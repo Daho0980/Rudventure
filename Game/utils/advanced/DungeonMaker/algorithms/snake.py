@@ -1,10 +1,10 @@
 from random import randrange, choices, choice
 
-from Game.utils.advanced.DungeonMaker.tools import graphicMaker
+from Assets.data       import totalGameStatus as s
+from Assets.data.probs import dungeon         as per
 
-from Assets.data import (
-    totalGameStatus as s,
-    percentage      as per
+from Game.utils.advanced.DungeonMaker.tools import (
+    graphicMaker
 )
 from Game.utils.advanced.DungeonMaker.roomData import (
     data as rData,
@@ -32,14 +32,13 @@ def main(Map     :list      ,
         `x`(int)           : 최초로 선언될 x값, 보통 맵의 중심인 4로 시작함
         `rawPrint`(bool)   : 맵 데이터를 그대로 보낼지에 대한 여부, 기본적으로 `False`로 설정되어 있음
     """
-    global roomIcons
-    global direction
-
-    currLength                                    = 0
-    maxBranchLength                               = randrange(9, 17)
-    maxEventRoomCount, eventRoomCount             = randrange(1, 3 ), 0
-    maxTreasureBoxRoomCount, treasureBoxRoomCount = randrange(1, 3 ), 0
-    bfx, bfy                                      = 0, 0
+    currLength              = 0
+    maxBranchLength         = randrange(9, 17)
+    maxEventRoomCount       = randrange(1, 3)
+    eventRoomCount          = 0
+    maxTreasureBoxRoomCount = randrange(1, 3)
+    treasureBoxRoomCount    = 0
+    bfx, bfy                = 0, 0
 
     possibility = [
         ['y', 1, 'U', 'D'],
@@ -62,7 +61,7 @@ def main(Map     :list      ,
         exec(f"{locationData[0]}+={locationData[1]}", coordinateNamespace)
         x, y = coordinateNamespace['x'], coordinateNamespace['y']
 
-        if y>len(Map)-1 or y<0 or x>len(Map[0])-1 or x<0: # 맵 탈출(outOfRangeError) 방지
+        if y>len(Map)-1 or y<0 or x>len(Map[0])-1 or x<0: # 맵 탈출(outOfRange) 방지
             getBack(bfx, bfy)
             continue
 
@@ -136,14 +135,13 @@ def main(Map     :list      ,
             weights=[1]*len(s.enemyIds['total']),
 
             k=randrange(1, 6)\
-                    if SCP<=per.monsterSpawnSize['small']\
+                    if SCP<=per.enemySpawnSize['small']\
                 else randrange(6, 8)\
-                    if  SCP> per.monsterSpawnSize["small"]\
-                    and SCP<=per.monsterSpawnSize['medium']\
+                    if  SCP> per.enemySpawnSize["small"]\
+                    and SCP<=per.enemySpawnSize['medium']\
                 else 8
         )
 
-        # 방 데이터 정리
         currLength                             += 1
         Map[y][x]['roomType']                   = rType[roomKind]
         Map[y][x]['isPlayerVisited']            = 2 if roomKind==4 or showAll else 0

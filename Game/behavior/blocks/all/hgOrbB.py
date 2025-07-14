@@ -1,9 +1,7 @@
 from ..base        import BlockBehavior
 from ..orbStandard import interactSound
 
-from random import choice
-
-from Game.entities.player.event import say
+from Game.entities.player.event import sayCmt
 
 from Assets.data import(
     totalGameStatus as s,
@@ -16,9 +14,10 @@ class HgOrbB(BlockBehavior):
         point = s.orbData['B']['hg']
 
         if (s.hgr+point) > s.Mhgr:
-            say(choice(c.getOrb['hgr']['over']['B']))
-
             s.hgr = s.Mhgr
+
+            target = c.getOrb['hgr']['over']
+            sayCmt(target['cmt']['B'], target['prob'])
 
             return data['ty'], data['tx'], interactSound()
         

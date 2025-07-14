@@ -1,14 +1,11 @@
 from ..base        import BlockBehavior
 from ..orbStandard import interactSound
 
-from random import randrange, choice
-
-from Game.entities.player.event import say
+from Game.entities.player.event import sayCmt
 from Game.utils.system.sound    import play
 
 from Assets.data import(
-    totalGameStatus as s  ,
-    percentage      as per,
+    totalGameStatus as s,
     comments        as c
 )
 
@@ -18,13 +15,16 @@ class HpOrbS(BlockBehavior):
         point = s.orbData['S']['hp']
 
         if s.hp == s.Mhp:
-            say(choice(c.getOrb['hp']['hpTooOver']['S']))
+            target = c.getOrb['hp']['hpTooOver']
+            sayCmt(target['cmt']['S'], target['prob'])
 
             return data['ty'], data['tx'], interactSound()
 
         if (s.hp+point) > s.Mhp:
             s.hp = s.Mhp
-            say(choice(c.getOrb['hp']['hpOver']['S']))
+
+            target = c.getOrb['hp']['hpOver']
+            sayCmt(target['cmt']['S'], target['prob'])
 
             return data['ty'], data['tx'], interactSound()
 
@@ -34,15 +34,14 @@ class HpOrbS(BlockBehavior):
             play("system", "perfectLvlUp")
             s.exaltation += 10
 
-        if randrange(1, 101) <= per.getOrb:
-            if s.hp == s.Mhp:
-                say(choice(c.getOrb['hp']['hpFull']['S']))
+            target = c.getOrb['hp']['hpFull']
+            sayCmt(target['cmt']['S'], target['prob'])
 
-                return data['ty'], data['tx'], interactSound()
+            return data['ty'], data['tx'], interactSound()
 
-            if s.hpLow:
-                say(choice(c.getOrb['hp']['hpLow']['S']))
-            else:
-                say(choice(c.getOrb['hp']['notHpLow']['S']))
+        if s.hpLow: target = c.getOrb['hp']['hpLow']
+        else      : target = c.getOrb['hp']['notHpLow']
+
+        sayCmt(target['cmt']['S'], target['prob'])
 
         return data['ty'], data['tx'], interactSound()

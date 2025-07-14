@@ -2,24 +2,21 @@ import time
 from   random    import randrange, choices, choice
 from   threading import Thread
 
-from .                           import Animal
-from Assets.data.color           import cColors     as cc
-from functions.grammar           import pstpos      as pp
-from Game.entities.player        import event       as pev
-from Game.entities.algorithms    import AStar, OPath
-from Game.utils.system.tts       import TTS, TTC
-from Game.utils.system.sound     import play
-from Game.utils.system.block     import iset
+from ..base                   import Animal
+from Assets.data.color        import cColors as cc
+from functions.grammar        import pstpos  as pp
+from Game.entities            import event
+from Game.entities.player     import event as pev
+from Game.entities.algorithms import AStar, OPath
+from Game.utils.system.tts    import TTS, TTC
+from Game.tools               import block
+from Game.utils.system.sound  import play
+from Game.utils.system.block  import iset
 
 from Assets.data import (
     totalGameStatus as s,
     comments        as c,
     flags           as f
-)
-from Game.entities import (
-    player as p,
-
-    event
 )
 from Game.core.system.io.logger import (
     addLog
@@ -164,30 +161,42 @@ class Cat(Animal):
 
     # region tools
     def teleport(self) -> None:
-        roomGrid = s.Dungeon[self.Dy][self.Dx]['room']
-
         play("entity", "animal", "cat", "cloudy", "cry", "long")
-        roomGrid[self.y][self.x] = obj(
-            '-be', 'invincibleEntity',
-            block=f"{cc['fg']['A']}O {cc['end']}"
+        block.place(
+            obj(
+                '-be', 'invincibleEntity',
+                block=f"{cc['fg']['A']}O {cc['end']}"
+            ),
+            self.y, self.x
         ); time.sleep(0.05)
 
-        roomGrid[self.y][self.x] = obj(
-            '-be', 'invincibleEntity',
-            block=f"{cc['fg']['A']}{self.icon}{cc['end']}"
+        block.place(
+            obj(
+                '-be', 'invincibleEntity',
+                block=f"{cc['fg']['A']}{self.icon}{cc['end']}"
+            ),
+            self.y, self.x
         ); time.sleep(0.05)
 
-        roomGrid[self.y][self.x] = obj('-be', self.id,
-            block=f"{self.color}{self.icon}{cc['end']}",
-            id   =self.id,
-            tag  =self.tag
-        )
-        time.sleep(0.05)
+        block.place(
+            obj(
+                '-be', self.id,
+                block=f"{self.color}{self.icon}{cc['end']}",
+                id   =self.id,
+                tag  =self.tag
+            ),
+            self.y, self.x
+        ); time.sleep(0.05)
+
         play("entity", "animal", "cat", "teleport")
 
     def superTeleport(self) -> None:
         play("entity", "animal", "cat", "cloudy", "cry", "long")
-        event.spawn(self.y, self.x, f"{self.color}{self.icon}{cc['end']}")
+        event.spawn(
+            self.y, self.x,
+            f"{self.color}{self.icon}{cc['end']}",
+            self.tag
+        )
         play("entity", "animal", "cat", "teleport")
 
     def checkPlayerisHere(self) -> bool:
@@ -196,10 +205,10 @@ class Cat(Animal):
 
         if self.stage != s.stage:
             self.setLoyalty()
-            self.stepped = obj('-bb', 'floor')
+            self.stepped = block.get('floor')
             self.stage   = s.stage
 
-        else: s.Dungeon[self.Dy][self.Dx]['room'][self.y][self.x] = self.stepped
+        else: block.place(self.stepped, self.y, self.x)
 
         self.coolTime    = 0
         self.Dy, self.Dx = s.Dy, s.Dx
@@ -210,15 +219,15 @@ class Cat(Animal):
             (s.y+1,s.x  ),
             (s.y,  s.x-1)
         ]:
-            block = s.Dungeon[self.Dy][self.Dx]['room'][y][x]
-            if self.perm.data[block['id']] & self.perm.STEP:
+            blockData = block.take(y, x)
+            if self.perm.data[blockData['id']] & self.perm.STEP:
                 self.y, self.x = y, x
 
-                self.stepped = block\
-                        if self.perm.data[block['id']]&self.perm.MAINTAIN\
-                    else block['blockData']\
-                        if block.get('blockData', False)\
-                    else obj('-bb', 'floor')
+                self.stepped = blockData\
+                        if self.perm.data[blockData['id']]&self.perm.MAINTAIN\
+                    else blockData['blockData']\
+                        if blockData.get('blockData', False)\
+                    else block.get('floor')
                 
                 if self.stage != s.stage: self.superTeleport()
                 else                    : self.teleport()
@@ -226,12 +235,12 @@ class Cat(Animal):
                 return False
 
         while 1:
-            DRP = s.Dungeon[self.Dy][self.Dx]['room']
-            ry = randrange(1, s.roomData['maxHeight']-1)
-            rx = randrange(1, s.roomData['maxWidth'] -1)
+            ry  = randrange(1, s.roomData['maxHeight']-1)
+            rx  = randrange(1, s.roomData['maxWidth'] -1)
             
-            if not self.perm.data[DRP[ry][rx]['id']] & self.perm.STEP:
+            if not self.perm.data[block.take(ry, rx)['id']] & self.perm.STEP:
                 continue
+
             self.y, self.x = ry, rx
 
             break
@@ -245,7 +254,6 @@ class Cat(Animal):
         self.coolTime -= 1
         
         if self.isFocused:
-            self.damaged()
             if self.hp <= 0: self.coolTime = 0
             time.sleep(0.001)
 
@@ -322,8 +330,8 @@ class Cat(Animal):
         match self.target:
             case "player":
                 self.actionPurpose = choices(
-                    ["say", "goToSide"] if self.attackPlayerCooltime\
-                    else ["say", "goToSide", "attack"],
+                    ("say", "goToSide") if self.attackPlayerCooltime\
+                    else ("say", "goToSide", "attack"),
                     weights=[
                         actionP['player']['say'][1],
                         actionP['player']['goToSide']
@@ -345,7 +353,7 @@ class Cat(Animal):
                     return
                 
                 self.actionPurpose = choices(
-                    ["spinAround", "move", "grooming"],
+                    ("spinAround", "move", "grooming"),
                     weights=[
                         actionP['else']['spinAround'],
                         actionP['else']['move'],
@@ -368,8 +376,9 @@ class Cat(Animal):
         if self.statusData: self.statusData = {}
 
     # region functions
-    def say(self                                                           ,
-            text     :str                                                  ,
+    def say(self    ,
+            text:str,
+
             voicePath:tuple=("entity","animal","cat","cloudy","cry","short")) -> None:
         addLog(
             f"{self.color}\"{text}\"{cc['end']}",
@@ -388,58 +397,70 @@ class Cat(Animal):
 
     def chattering(self) -> None:
         termArray = [5]*randrange(7,19)
+
         for _ in range(randrange(0, 4)):
             termArray[randrange(0,len(termArray))] = 30
 
         for term in map(lambda i: i/100, termArray):
-            DRP = s.Dungeon[self.Dy][self.Dx]
-            DRP['room'][self.y][self.x] = obj(
-                '-be', self.id,
-                block=iset(
-                    f"{cc['bg']['A']}{self.icon}{cc['end']}",
-                    Type=self.face
+            block.place(
+                obj(
+                    '-be', self.id,
+                    block=iset(
+                        f"{cc['bg']['A']}{self.icon}{cc['end']}",
+                        Type=self.face
+                    ),
+                    tag=self.tag
                 ),
-                tag=self.tag
-            )
-            time.sleep(0.03)
-            DRP['room'][self.y][self.x] = obj(
+                self.y, self.x
+            ); time.sleep(0.03)
+
+            block.place(
+                obj(
+                    '-be', self.id,
+                    block=iset(
+                        f"{self.color}{self.icon}{cc['end']}",
+                        Type=self.face
+                    ),
+                    tag=self.tag
+                ),
+                self.y, self.x
+            ); time.sleep(term)
+
+        block.place(
+            obj(
                 '-be', self.id,
                 block=iset(
                     f"{self.color}{self.icon}{cc['end']}",
                     Type=self.face
                 ),
                 tag=self.tag
-            )
-            time.sleep(term)
-
-        DRP['room'][self.y][self.x] = obj(
-            '-be', self.id,
-            block=iset(
-                f"{self.color}{self.icon}{cc['end']}",
-                Type=self.face
             ),
-            tag=self.tag
+            self.y, self.x
         )
 
     def grooming(self) -> None:
-        DRP = s.Dungeon[self.Dy][self.Dx]
-        DRP['room'][self.y][self.x] = obj(
-            '-be', self.id,
-            block=iset(
-                f"{cc['bg']['A']}{self.icon}{cc['end']}",
-                Type=self.face
+        block.place(
+            obj(
+                '-be', self.id,
+                block=iset(
+                    f"{cc['bg']['A']}{self.icon}{cc['end']}",
+                    Type=self.face
+                ),
+                tag=self.tag
             ),
-            tag=self.tag
-        )
-        time.sleep(randrange(1,14)/10)
+            self.y, self.x
+        ); time.sleep(randrange(1,14)/10)
 
-        DRP['room'][self.y][self.x] = obj(
-            '-be', self.id,
-            block=iset(
-                f"{self.color}{self.icon}{cc['end']}",
-                Type=self.face
+        block.place(
+            obj(
+                '-be', self.id,
+                block=iset(
+                    f"{self.color}{self.icon}{cc['end']}",
+                    Type=self.face
+                ),
+                tag=self.tag
             ),
-            tag=self.tag
+            self.y, self.x
         )
 
     def checkPWRest(self, stress) -> bool:
@@ -450,7 +471,7 @@ class Cat(Animal):
         
         return False
 
-    # region move code
+    # region move
     def move(self) -> None:
         global comfortableCry, cry
         global catComments
@@ -480,7 +501,7 @@ class Cat(Animal):
                                 self.say(choice(catComments['complaint']))
                                 self.ignoreCommand = True
 
-                        if self.targetTag not in s.entityHashPool:
+                        if self.targetTag not in s.entityMap:
                             self.targetTag = ""
                             self.combo     = 0
 
@@ -516,7 +537,7 @@ class Cat(Animal):
                                         self.perm.IDSet['enemy'],
                                         self.perm.IDSet['step']
                                     )
-                                    
+
                                 if not path:
                                     self.getStress()
                                     if not randrange(0,10): self.say(choice(cry))
@@ -524,22 +545,22 @@ class Cat(Animal):
 
                                     return
                                 
-                                elif self.perm.data[DRP['room'][path[0]][path[1]]['id']] & self.perm.ENEMY:
+                                elif self.perm.data[(target:=block.take(*path))['id']] & self.perm.ENEMY:
                                     self.loseStress(randrange(1,3))
-                                    self.attack(path[0], path[1], ("entity", "animal", "cat", "slash"))
+                                    self.attack(target, ("entity", "animal", "cat", "slash"))
 
                                     if not self.targetTag:
-                                        if DRP['room'][path[0]][path[1]]['type'] == 'entity':
-                                            self.targetTag = DRP['room'][path[0]][path[1]]['tag']
+                                        if target['type'] == 'entity':
+                                            self.targetTag = target['tag']
 
                                     if choices([0,1],[55,45],k=1)[0]:
-                                        for target in choices(["leg", "side", "tail"], [55, 30, 15], k=2):
-                                            self.ashWeight[target] += 1
+                                        for dustIdx in choices(["leg", "side", "tail"], [55, 30, 15], k=2):
+                                            self.ashWeight[dustIdx] += 1
                                     self.resetAction()
 
                                     return
                                 
-                                elif DRP['room'][path[0]][path[1]]['id'] == 'invincibleEntity':
+                                elif block.take(*path)['id'] == 'invincibleEntity':
                                     self.getStress()
                                     if not randrange(0,10): self.say(choice(cry))
 
@@ -567,11 +588,12 @@ class Cat(Animal):
                                 text = choice(catComments['requestMhp'])
 
                             else: text = choice(catComments['chat'])
-                            self.say        (text)
+                            self.say(text)
                             self.resetAction()
                         
                         case "attack":
-                            if not self.attackPlayerCooltime: self.attackPlayerCooltime = randrange(7,16)
+                            if not self.attackPlayerCooltime:
+                                self.attackPlayerCooltime = randrange(7,16)
 
                             addLog(
                                 f"{self.color}{self.name}{cc['end']}{pp(self.name,'sub',True)} 당신을 노려봅니다...",
@@ -597,14 +619,15 @@ class Cat(Animal):
 
                                             return
                                         
-                                    elif DRP['room'][path[0]][path[1]]['id'] == 300:
+                                    elif block.take(*path)['id'] == 300:
                                         self.loseStress(10)
                                         self.attackPlayer(
                                             1,
                                             ("entity", "animal", "cat", "slash"),
                                             "장난이었는데..."
                                         )
-                                        pev.say(choice(c.collide['animal']['catAttack']))
+                                        target = c.entity['animal']['cat']['attack']
+                                        pev.sayCmt(target['cmt'], target['prob'])
                                         self.resetAction()
 
                                         return
@@ -630,15 +653,15 @@ class Cat(Animal):
                                     
                                     if not path:
                                         if not randrange(0,10):
-                                            self.getStress  (2)
-                                            self.say        (choice(cry))
+                                            self.getStress(2)
+                                            self.say(choice(cry))
                                             self.resetAction()
 
                                             return
                                         
-                                    elif DRP['room'][path[0]][path[1]]['id'] == 300:
-                                        self.loseStress (5)
-                                        self.say        (choice(comfortableCry))
+                                    elif block.take(*path)['id'] == 300:
+                                        self.loseStress(5)
+                                        self.say(choice(comfortableCry))
                                         self.resetAction()
                                         
                                         return
@@ -667,7 +690,7 @@ class Cat(Animal):
                                 while 1:
                                     ay = randrange(1, len(DRP['room']   )-1)
                                     ax = randrange(1, len(DRP['room'][0])-1)
-                                    if not (self.perm.data[DRP['room'][ay][ax]['id']]&self.perm.STEP):
+                                    if not (self.perm.data[block.take(ay, ax)['id']]&self.perm.STEP):
                                         continue
 
                                     break
@@ -675,19 +698,19 @@ class Cat(Animal):
                             if randrange(0,2):
                                 self.x += 1\
                                         if  self.x<ax\
-                                        and self.perm.data[DRP['room'][self.y][self.x+1]["id"]]&self.perm.STEP\
+                                        and self.perm.data[block.take(self.y, self.x+1)['id']]&self.perm.STEP\
                                     else -1\
                                         if  self.x>ax\
-                                        and self.perm.data[DRP['room'][self.y][self.x-1]["id"]]&self.perm.STEP\
+                                        and self.perm.data[block.take(self.y, self.x-1)['id']]&self.perm.STEP\
                                     else  0
                                 
                             else:
                                 self.y += 1\
                                        if  self.y<ay\
-                                       and self.perm.data[DRP['room'][self.y+1][self.x]["id"]]&self.perm.STEP\
+                                       and self.perm.data[block.take(self.y+1, self.x)['id']]&self.perm.STEP\
                                     else -1\
                                        if  self.y>ay\
-                                       and self.perm.data[DRP['room'][self.y-1][self.x]["id"]]&self.perm.STEP\
+                                       and self.perm.data[block.take(self.y-1, self.x)['id']]&self.perm.STEP\
                                     else  0
                             
                             super().step(bfy, bfx)
@@ -735,15 +758,16 @@ class Cat(Animal):
                                         self.actionCount = 0
                                         break
 
-                                    blockID = DRP['room'][self.y+gotoY][self.x+gotoX]['id']
-                                    if not self.perm.data[blockID] & self.perm.STEP:
+                                    blockId = block.take(self.y+gotoY, self.x+gotoX)['id']
+                                    if not self.perm.data[blockId] & self.perm.STEP:
                                         self.getStress(3)
                                         self.actionCount = 0
                                         play("entity", "animal", "cat", "collide")
                                         self.say(choice(catComments['attacked']))
 
-                                        if blockID in ('player1', 'player2'):
-                                            pev.say(choice(c.collide['animal']['cat']))
+                                        if blockId in ('player1', 'player2'):
+                                            target = c.entity['animal']['cat']['collide']
+                                            pev.sayCmt(target['cmt'], target['prob'])
 
                                         break
 
@@ -762,15 +786,16 @@ class Cat(Animal):
 
                                         break
 
-                                    blockID = DRP['room'][direction[0]][direction[1]]['id']
-                                    if not self.perm.data[blockID] & self.perm.STEP:
+                                    blockId = block.take(*direction)['id']
+                                    if not self.perm.data[blockId] & self.perm.STEP:
                                         self.getStress(3)
                                         self.actionCount = 0
                                         play("entity", "animal", "cat", "collide")
                                         self.say(choice(catComments['attacked']))
 
-                                        if blockID in ('player1', 'player2'):
-                                            pev.say(choice(c.collide['animal']['cat']))
+                                        if blockId in ('player1', 'player2'):
+                                            target = c.entity['animal']['cat']['collide']
+                                            pev.sayCmt(target['cmt'], target['prob'])
 
                                         break
 
@@ -799,7 +824,7 @@ class Cat(Animal):
                             )
                             
                             target = choices(
-                                ["leg", "side", "tail"],
+                                ("leg", "side", "tail"),
                                 list(self.ashWeight.values()),
                                 k=1
                             )[0]
@@ -820,8 +845,7 @@ class Cat(Animal):
                                 (self.y+1, self.x  ),
                                 (self.y,   self.x-1)
                             ]:
-                                blockID = s.Dungeon[self.Dy][self.Dx]['room'][y][x]['id']
-                                if self.perm.data[blockID] & self.perm.STEP:
+                                if self.perm.data[block.take(y, x)['id']] & self.perm.STEP:
                                     ty, tx = y, x
 
                                     break
@@ -833,12 +857,15 @@ class Cat(Animal):
                                 return
                             
                             self.say(choice(catComments['spitOut']))
-                            s.Dungeon[self.Dy][self.Dx]['room'][ty][tx] = obj('-bb',
-                                str(choices(
-                                    ('csOrbS', 'dfOrbS', 'atkOrbS'),
-                                    list(self.camouflage.values()),
-                                    k=1
-                                )[0])
+                            block.place(
+                                obj('-bb',
+                                    str(choices(
+                                        ('csOrbS', 'dfOrbS', 'atkOrbS'),
+                                        list(self.camouflage.values()),
+                                        k=1
+                                    )[0])
+                                ),
+                                ty, tx
                             )
                             
                             self.camouflage = {k:0 for k in self.camouflage}
@@ -855,25 +882,31 @@ class Cat(Animal):
                     while self.stressLvl!=1 and self.stressPt!=0:
                         if self.checkPWRest(stress): break
 
-                        s.Dungeon[self.Dy][self.Dx]['room'][self.y][self.x] = obj(
-                            '-be', self.id,
-                            block=iset(
-                                f"{cc['bg']['A']}{self.icon}{cc['end']}",
-                                Type=self.face
+                        block.place(
+                            obj(
+                                '-be', self.id,
+                                block=iset(
+                                    f"{cc['bg']['A']}{self.icon}{cc['end']}",
+                                    Type=self.face
+                                ),
+                                tag=self.tag
                             ),
-                            tag=self.tag
+                            self.y, self.x
                         )
                         if self.checkPWRest(stress): break
                         time.sleep(1.5)
                         if self.checkPWRest(stress): break
 
-                        s.Dungeon[self.Dy][self.Dx]['room'][self.y][self.x] = obj(
-                            '-be', self.id,
-                            block=iset(
-                                f"{self.color}{self.icon}{cc['end']}",
-                                Type=self.face
+                        block.place(
+                            obj(
+                                '-be', self.id,
+                                block=iset(
+                                    f"{self.color}{self.icon}{cc['end']}",
+                                    Type=self.face
+                                ),
+                                tag=self.tag
                             ),
-                            tag=self.tag
+                            self.y, self.x
                         )
                         if self.checkPWRest(stress): break
                         time.sleep(1.5)

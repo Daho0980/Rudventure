@@ -1,0 +1,31 @@
+{
+    "testTool" : {
+        "icon" : "t",
+        "name" : "테스트 아이템(도구)",
+        "id" : "testTool",
+        "type" : "tool",
+        "status" : {
+            "atk" : 3,
+            "durability" : [30, 100],
+            "weight" : 6,
+            "payload" : 15,
+            "infection" : [50, 100]
+        }
+    },
+    "ásotus" : {
+        "icon" : "\u001b[;38;5;8mႴ\u001b[0m",
+        "name" : "아소투스",
+        "id" : "ásotus",
+        "type" : "tool",
+        "status" : {
+            "atk" : 5,
+            "durability" : ["∞", "∞"],
+            "weight" : 6,
+            "payload" : "∞",
+            "infection" : ["∞", "∞"]
+        },
+        "nbt" : {
+            "link" : false
+        }
+    }
+}

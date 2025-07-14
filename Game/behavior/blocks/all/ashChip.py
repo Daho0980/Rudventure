@@ -1,7 +1,7 @@
 from ..base import BlockBehavior
 
 from Assets.data       import totalGameStatus as s
-from Assets.data.color import cColors as cc
+from Assets.data.color import cColors         as cc
 
 from Game.core.system.io.logger import (
     addLog

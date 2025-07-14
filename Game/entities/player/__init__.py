@@ -1,14 +1,17 @@
-import time
 import curses
-from   random import randrange, choice
+from   random    import randrange, choice
+from   threading import Thread
 
 from .                        import statusEffect
 from Assets.data              import totalGameStatus as s
 from Assets.data.permissions  import Player          as perm
 from Assets.data.color        import cColors         as cc
-from Game.behavior.blocks.all import behaviorMap
-from Game.core.system.io      import infoWindow as iWin
+from functions.grammar        import pstpos          as pp
+from Game.behavior.items.all  import behaviorMap     as itemBMap
+from Game.behavior.blocks.all import behaviorMap     as blockBMap
+from Game.core.system.io      import infoWindow      as iWin
 from Game.entities.player     import event
+from Game.tools               import inventory, block
 from Game.utils.system.block  import iset
 from Game.utils.system.sound  import play
 
@@ -20,7 +23,7 @@ from Game.core.system.data.dataLoader import (
 )
 
 
-def _setPlayerStatus(hp, df, atk, hgr, critRate, critDMG, Mxp, Mlvl, evasionRate=0) -> None:
+def _setPlayerStatus(hp, df, atk, hgr, critRate, critDMG, missRate, Mxp, Mlvl, evasionRate=0) -> None:
     s.hp  = hp
     s.df  = df
     s.atk = atk
@@ -28,6 +31,7 @@ def _setPlayerStatus(hp, df, atk, hgr, critRate, critDMG, Mxp, Mlvl, evasionRate
 
     s.critRate = critRate
     s.critDMG  = critDMG
+    s.missRate = missRate
 
     s.Mhp  = hp
     s.Mdf  = df
@@ -39,12 +43,29 @@ def _setPlayerStatus(hp, df, atk, hgr, critRate, critDMG, Mxp, Mlvl, evasionRate
 
 def set() -> None:
     if s.name.lower() in ("레포", "repo"):
-        _setPlayerStatus(8, 1, 1, 2500, 4, 32, 4, 32)
+        _setPlayerStatus(8, 1, 1, 2500, 4, 32, 32, 4, 32)
 
     elif s.name.lower() in ("업로드", "upload"):
-        _setPlayerStatus(5, 2, 3, 1000, 75, 0, 6, 12, 90)
+        _setPlayerStatus(5, 2, 3, 1000, 75, 0, 5, 6, 12, 25)
         
-    else: _setPlayerStatus(10, 5, 1, 2000, 10, 10, 10, 20)
+    else: _setPlayerStatus(10, 5, 1, 2000, 10, 10, 10, 10, 20)
+
+def _changePosWithFace(direction, ty, tx) -> tuple[int, int]:
+    match direction:
+        case curses.KEY_UP:
+            ty    -= 1
+            s.face = 'u'
+        case curses.KEY_DOWN:
+            ty    += 1
+            s.face = 'd'
+        case curses.KEY_LEFT:
+            tx    -= 1
+            s.face = 'r'
+        case curses.KEY_RIGHT:
+            tx    += 1
+            s.face = 'l'
+
+    return ty, tx
 
 def start() -> None:
     event.getRoomData()
@@ -55,54 +76,87 @@ def start() -> None:
             len(s.Dungeon[s.Dy][s.Dx]['room'][0])
         ]
     )
-    s.face         = 'n'
+    s.face         = 'u'
     s.steppedBlock = s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x]
-    s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x] = obj('-be', 'player1', block=iset(s.eids['player1']))
+    block.place(obj('-be', 'player1', block=iset(s.eids['player1'])), s.y, s.x)
 
-def attack(ty, tx, attackSound:tuple=("player", "slash")) -> None:
-    s.hitPos['pos'] .append([ty, tx])
-    s.hitPos['data'].append(["player", s.atk, attackSound])
-    time.sleep(0.001)
-    s.hitPos['pos'] .remove([ty, tx])
-    s.hitPos['data'].remove(["player", s.atk, attackSound])
+def attack(entityData:dict, sound:tuple=("player", "slash")) -> None:
+    def target():
+        nonlocal entityData, sound
+
+        if not (target:=s.entityMap.get(entityData['tag'])):
+            return
+        
+        atk = s.atk
+        if (data:=inventory.get()): atk += data['status']['atk']
+
+        isHit    = True
+        crit     = None
+        dmgSound = None
+
+        rate = randrange(1,101)
+        if rate <= s.missRate:
+            dmgSound = "miss"
+            atk      = 0
+            isHit    = False
+
+        elif rate <= s.critRate:
+            dmgSound = "critical"
+            crit     = True
+            atk      = int((atk+(s.critDMG*0.1))+(atk*(s.critDMG*0.01)))
+
+        if target.hp-atk > 0:
+            msg = f"{cc['fg']['R']}{target.name}{cc['end']}{pp(target.name,'sub',True)} {cc['fg']['L']}{atk}{cc['end']}만큼의 피해를 입었습니다!"
+            if crit: msg += f" {cc['fg']['L']}치명타!{cc['end']}"
+
+            if isHit:
+                target.hitted()
+                addLog(msg)
+
+            else:
+                addLog(f"{cc['fg']['L']}공격{cc['end']}이 빗나갔습니다!")
+
+            if isHit   : play(*sound)
+            if dmgSound: play("entity", "enemy", "damage", dmgSound)
+
+        target.hp -= atk
+
+        inventory.durabilityDecrease()
+        if data: itemBMap[data['type']][data['id']].attack()
+
+    Thread(
+        target=target,
+        name  ="playerAttack",
+        daemon=True
+    ).start()
 
 # region main
 def move(direction) -> None:
     roomGrid = s.Dungeon[s.Dy][s.Dx]['room']
 
+    ty, tx     = _changePosWithFace(direction, s.y, s.x)
     bfy, bfx   = s.y, s.x
-    ty, tx     = s.y, s.x
     bfDy, bfDx = s.Dy, s.Dx
-
-    match direction:
-        case curses.KEY_UP   : ty -= 1
-        case curses.KEY_DOWN : ty += 1
-        case curses.KEY_LEFT :
-            tx    -= 1
-            s.face = 'r'
-
-        case curses.KEY_RIGHT:
-            tx    += 1
-            s.face = 'l'
 
     s.hgr -= 1
 
     sound = ("player", "move")
     
     # accessibility
-    if not perm.data[roomGrid[ty][tx]['id']] & (perm.STEP|perm.INTERACTION|perm.ENTITY):
+    if not perm.data[roomGrid[ty][tx]['id']]\
+           & (perm.STEP|perm.INTERACTION|perm.ENTITY):
         ty  , tx   = bfy , bfx
         s.Dy, s.Dx = bfDy, bfDx
 
-    roomGrid = s.Dungeon[s.Dy][s.Dx]['room']
-    block    = roomGrid[ty][tx]
-    blockID  = block['id']
+    roomGrid  = s.Dungeon[s.Dy][s.Dx]['room']
+    blockData = block.take(ty, tx)
+    blockID   = blockData['id']
 
     # entity action
     if perm.data[blockID] & perm.ENTITY:
 
-        if  block.get('tag', False)\
-        and block['tag'] in s.friendlyEntity:
+        if  blockData.get('tag', False)\
+        and blockData['tag'] in s.friendlyEntity:
             sound = ("player", "hit")
 
             addLog(
@@ -113,16 +167,16 @@ def move(direction) -> None:
         else:
             sound = None
 
-            if block.get('tag', False):
-                s.target['tag'] = block['tag']
+            if blockData.get('tag', False):
+                s.target['tag'] = blockData['tag']
 
-            attack(ty, tx)
+            if perm.data[blockData['id']]&perm.ATTACK: attack(blockData)
 
     # block interaction
     else:
-        if blockID in behaviorMap:
-            ty, tx, sound = behaviorMap[blockID].interact(
-                block=block,
+        if blockID in blockBMap:
+            ty, tx, sound = blockBMap[blockID].interact(
+                block=blockData,
                 sound=sound,
                 ty   =ty,
                 tx   =tx,
@@ -147,15 +201,15 @@ def move(direction) -> None:
 
     s.Dungeon[bfDy][bfDx]['room'][bfy][bfx] = s.steppedBlock
 
-    block          = s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x]
-    if perm.data[block['id']] & perm.STEP:
-        s.steppedBlock = block\
+    blockData = block.take(s.y, s.x)
+    if perm.data[blockData['id']] & perm.STEP:
+        s.steppedBlock = blockData\
                 if perm.data[blockID]&perm.MAINTAIN\
-            else block['blockData']\
-                if block.get('blockData', False)\
-            else obj('-bb', 'floor')
+            else blockData['blockData']\
+                if blockData.get('blockData', False)\
+            else block.get('floor')
     
-    s.Dungeon[s.Dy][s.Dx]['room'][s.y][s.x] = obj('-be', 'player1', block=iset(s.eids['player1']))
+    block.place(obj('-be', 'player1', block=iset(s.eids['player1'])), s.y, s.x)
 
     if sound: play(*sound)
 
@@ -166,22 +220,27 @@ def move(direction) -> None:
 def observe(direction) -> None:
     roomGrid:dict = s.Dungeon[s.Dy][s.Dx]['room']
 
-    ty, tx = s.y, s.x
-    match direction:
-        case curses.KEY_UP   : ty -= 1
-        case curses.KEY_DOWN : ty += 1
-        case curses.KEY_LEFT : tx -= 1
-        case curses.KEY_RIGHT: tx += 1
+    ty, tx = _changePosWithFace(direction, s.y, s.x)
 
-    titleOnly    = False
-    block = roomGrid[ty][tx]
+    titleOnly = False
+    blockData = roomGrid[ty][tx]
     
-    match block['id']:
+    match blockData['id']:
         case 'cat':
-            if block['tag'] in s.friendlyEntity:
-                block['nbt'] = { "link" : True }
+            if blockData['tag'] in s.friendlyEntity:
+                blockData['nbt'] = { "link" : True }
 
-    data = iWin.dataExtraction(block['id'], block['type'], **block)
+    data = iWin.itemDataExtraction(
+        blockData['nbt']['itemData']['id'],
+        blockData['nbt']['itemData']['type'],
+        **blockData['nbt']['itemData']
+    )\
+        if blockData['id'] == 'item'\
+    else iWin.blockDataExtraction(
+        blockData['id'],
+        blockData['type'],
+        **blockData
+    )
 
     if not data:
         titleOnly  = True
@@ -189,29 +248,22 @@ def observe(direction) -> None:
             "block"  : "블록",
             "entity" : "엔티티",
             "item"   : "아이템"
-        }[block['type']]
+        }[blockData['type']]
 
         data = {
             "icon"        : f"{cc['fg']['R']}X{cc['end']}",
-            "blockName"   : f"{cc['fg']['R']}해당 {targetType}의 정보가{cc['end']}\n      {cc['fg']['R']}존재하지 않습니다!{cc['end']}",
+            "name"        : f"{cc['fg']['R']}해당 {targetType}의 정보가{cc['end']}\n      {cc['fg']['R']}존재하지 않습니다!{cc['end']}",
             "status"      : "",
-            "explanation" : ""
-            ""
+            "explanation" : "",
+            "subStatus"   : ""
         }
 
-    iWin.add(
-        data['icon'],
-        data['blockName'],
-        data['status'],
-        data['explanation'],
-
-        titleOnly=titleOnly
-    )
+    iWin.add(*data.values(), titleOnly=titleOnly)
 
     s.playerMode = "normal"
 
 def whistle() -> None:
-    play("player", "whistle", "wa"if not randrange(0,915) else str(choice([1,2,3,4])))
+    play("player", "whistle", "wa"if not randrange(0,915) else str(choice((1,2,3,4))))
     if s.target['tag'] and s.enemyCount:
         s.target['attackable'] = True
         s.target['command']    = True

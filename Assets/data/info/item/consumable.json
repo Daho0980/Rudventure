@@ -1,0 +1,10 @@
+{
+    "testConsumable" : {
+        "name" : "테스트 아이템(소모품)",
+        "dataType" : 5,
+        "explanation" : {
+            "observe" : "소모하기엔 너무 아까운 소모품.",
+            "surface" : "도대체 무슨 용도인지는 아무도 모른다."
+        }
+    }
+}

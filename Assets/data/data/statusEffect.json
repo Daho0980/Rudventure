@@ -7,10 +7,10 @@
         "seq" : "back",
         "description" : "\u001b[;38;5;11m위대한 몽상가\u001b[0m로부터 분리된 권능.\n이 힘을 이겨내지 못한 자는 결국 미쳐버린다.\n\n\u001b[;38;5;9m...그 누구든.\u001b[0m"
     },
-    "hunter" :{
+    "angelHunter" :{
         "icon" : "\u001b[;38;5;32m♅\u001b[0m",
         "name" : "\u001b[;38;5;11m천사 사냥꾼\u001b[0m",
-        "id" : "hunter",
+        "id" : "angelHunter",
         "tick" : "∞",
         "seq" : "back",
         "description" : "\u001b[;38;5;9m이계의 천사를 죽인 이\u001b[0m에게 주어진 표식.\n그 증오와 혐오는 깊숙히 뿌리내려\n\u001b[;38;5;10m무한한 동기\u001b[0m를 부여한다."

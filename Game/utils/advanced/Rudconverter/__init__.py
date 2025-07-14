@@ -39,32 +39,26 @@ def save() -> int:
         saveJson  = open(file_path, 'w')
 
         Vars = [
-            "name", "playerDamageIcon", "playerColor", "playerVoice",
-            "stage", "killCount", "inventory", "statusEffect",
+            "name", "playerColor", "playerVoice", "playerIdentity", "playerDamageIcon",
+            "stage", "killCount",
+            "inventory", "statusEffect", "statusFormula",
             "hp", "df", "atk", "hgr", "xp", "lvl", "ashChip",
-            "exaltation", "Mhp", "Mdf", "Mhgr", "Mxp", "Mlvl", "MExaltation",
-            "critRate", "critDMG", "evasionRate", "statusFormula",
+            "Mhp", "Mdf", "Mhgr", "Mxp", "Mlvl",
+            "critRate", "critDMG", "evasionRate", "missRate",
             "entityDataMaintained", "gameRecord",
             "cowardMode", "sanjibaMode", "bodyPreservationMode",
         ]
 
         data        = {}
         statusData  = {}
-        commentData = {}
 
         for i in Vars:
             value = getattr(s, i)
             if isinstance(value, dict): value = jdkr.serializeDict(value)
             statusData[i]  = value
-            
-        for i in commentVars:
-            value = getattr(c, i)
-            if isinstance(value, dict): value = jdkr.serializeDict(value)
-            commentData[i]  = value
 
         statusData["playerIcon"] = s.eids['player1']
-        data      ["status"]     = statusData
-        data      ["comments"]   = commentData
+        data["status"]           = statusData
 
 
         json    .dump(data, saveJson, ensure_ascii=False)

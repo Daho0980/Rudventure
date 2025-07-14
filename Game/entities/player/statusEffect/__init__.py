@@ -54,3 +54,23 @@ def addEffect(ID:str, tick:int|str, merge:bool=True) -> None:
             break
 
     else: s.statusEffect['line'].append(obj('-se', ID, tick=tick))
+
+def search(effectId:str, rng:str="local") -> dict|None:
+    """
+    ### rng
+    - local  : 현재 표시되는 라인만 검사
+    - global : 모든 라인 검사
+    """
+    if not (rng=='local' or rng=='global'): return None
+
+    ptr = s.statusEffect['pointer']
+                
+    for effect in (
+        s.statusEffect['line'][ptr:ptr+9]
+            if rng == 'local'
+        else s.statusEffect['line']
+    ):
+        if effect['id'] == effectId:
+            return effect
+        
+    return None

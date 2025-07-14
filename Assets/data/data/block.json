@@ -163,9 +163,9 @@
         "type" : "block",
         "nbt" : {
             "texts" : [],
-            "command" : "",
             "delay" : 0.5,
-            "voice" : "clayModel"
+            "voice" : "clayModel",
+            "command" : ""
         }
     },
     "deadClayModel" : {
@@ -197,14 +197,13 @@
         "block" : "? ",
         "id" : "item",
         "type" : "item",
+        "blockData" : {
+            "block" : "  ",
+            "id" : "floor",
+            "type" : "block"
+        },
         "nbt" : {
-            "itemData" : {
-                "icon" : "?",
-                "name" : "item",
-                "id" : -1,
-                "type" : "item.item",
-                "nbt" : {}
-            }
+            "itemData" : {}
         }
     },
     "corpse" : {

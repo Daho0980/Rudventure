@@ -34,6 +34,7 @@ MExaltation:int = 100
 atk        :int = 0
 critRate   :int = 0
 critDMG    :int = 0
+missRate   :int = 0
 evasionRate:int = 0
 
 statusFormula = {
@@ -75,7 +76,8 @@ playerMode:str = "normal" # normal||observe
 monologueCount:int = 0
 monologueRange:int = 0
 
-playerDamageIcon:list[str] = ['@']
+playerDamageIcon:list[str]      = ['@']
+playerColor     :tuple[str,str] = (cc['fg']['L'], "L")
+playerVoice     :str            = "glagatrof"
 
-playerVoice:str       = "glagatrof"
-playerColor:list[str] = [cc['fg']['L'], "L"]
+isPlayerSaying:bool = False

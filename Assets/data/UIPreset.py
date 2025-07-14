@@ -16,7 +16,7 @@ status:dict[int|str, str] = {
 ║체력 : {cc['fg']['R']}10/10{cc['end']} | 방어력 : {cc['fg']['B1']}5/5{cc['end']}║
 ║ 허기 : {cc['fg']['Y']}100%{cc['end']} | 공격력 : {cc['fg']['L']}1{cc['end']}  ║
 ║                           ║
-║       풍력 : {cc['fg']['A']}50/100{cc['end']}       ║
+║      고양감 : {cc['fg']['A']}50/100{cc['end']}      ║
 ╠═══════════════════════════╣
 ║잿조각  {cc['fg']['G1']}0{cc['end']}                  ║
 ╠═══════════════════════════╣
@@ -29,7 +29,7 @@ status:dict[int|str, str] = {
 ║공격력   {cc['fg']['G1']}[{cc['fg']['L']}|{cc['fg']['G1']}]{cc['end']}                    ║
 ║허  기   {cc['fg']['G1']}[{cc['fg']['Y']}||||||||||{cc['fg']['G1']}]{cc['end']}, {cc['fg']['Y']}100%{cc['end']}     ║
 ║                                ║
-║풍  력   {cc['fg']['G1']}{{{cc['fg']['A']}|||||{cc['fg']['G1']}|||||}} {cc['fg']['A']}50{cc['end']}        ║
+║고양감   {cc['fg']['G1']}{{{cc['fg']['A']}|||||{cc['fg']['G1']}|||||}} {cc['fg']['A']}50{cc['end']}        ║
 ╠════════════════════════════════╣
 ║잿조각  {cc['fg']['G1']}0{cc['end']}                       ║
 ╠════════════════════════════════╣
@@ -45,7 +45,7 @@ status:dict[int|str, str] = {
 }
 
 dungeonMap:dict[int|str, str] = {
-    0 : "맵이 활성화되어 있지 않습니다",
+    0 : "지도가 활성화되어 있지 않습니다",
     1 : f"""╔═══════════════════╗
 ║   {cc['fg']['F']}?{cc['end']}═{cc['fg']['B1']}/{cc['end']}             ║
 ║     {cc['fg']['A']}Y{cc['end']}   ╔═╗       ║
@@ -66,29 +66,31 @@ dungeonMap:dict[int|str, str] = {
 
 debugConsole:dict[int|str, str] = {
     0 : "디버그 콘솔이 활성화되어 있지 않습니다",
-    1 : """┏━━━━━━━━━━━━━━━┫디버그 콘솔┣┓
-┃     Python version : 3.13.0┃
-┃     Window size : (58, 122)┃
-┃    Memory usage :  36.00 MB┃
-┃      Number of threads : 12┃
-┃                Port : 12345┃
-┃                            ┃
-┃              Dx : 4, Dy : 4┃
-┃                x : 6, y : 6┃
-┃                 type : Room┃
-┃                  cell : 169┃
-┃               maxWidth : 13┃
-┃              maxHeight : 13┃
-┃           maxCharWidth : 26┃
-┃                            ┃
-┃      Number of entities : 0┃
-┃       Number of enemies : 0┃
-┃Number of total entities : 0┃
-┃ monologue : (0,950,350,950)┃
-┃                            ┃
-┃        Elapsed time : 00.00┃
-┃                     FPS : 0┃
-┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+    1 : """┏━━━━━━━━━━━━━━┫디버그 콘솔┣┓
+┃    Python version : 3.13.0┃
+┃    Window size : (58, 122)┃
+┃   Memory usage :  36.00 MB┃
+┃     Number of threads : 12┃
+┃               Port : 12345┃
+┃                           ┃
+┃             Dx : 4, Dy : 4┃
+┃               x : 6, y : 6┃
+┃                type : Room┃
+┃                 cell : 169┃
+┃              maxWidth : 13┃
+┃             maxHeight : 13┃
+┃          maxCharWidth : 26┃
+┃                           ┃
+┃  Number of entities : 0/16┃
+┃      Number of enemies : 0┃
+┃     Number of vEnemies : 0┃
+┃    Number of sounds : 0/64┃
+┃                           ┃
+┃monologue : (0,950,350,950)┃
+┃                           ┃
+┃       Elapsed time : 00.00┃
+┃                    FPS : 0┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 """,
     'introduction' : f"""                                                              │
                                                               │

@@ -1,13 +1,15 @@
 # NOTE: 이 코드 중 일부는 앱 빌드 버전과 다르게 구성되어 있음.
-#       고로 복붙 시 조심
+#       고로 뭔가 문제가 있다 싶으면 얘 먼저 의심하자
 import os      ; import    curses
 import asyncio ; import threading
 
 from Assets.data.totalGameStatus       import key
+from Game.behavior.items.all           import behaviorMap
 from Game.core.system.io               import infoWindow as iWin
 from Game.core.system.io.logger        import addLog
 from Game.entities                     import player
 from Game.entities.player.statusEffect import indexConverter
+from Game.tools                        import inventory
 from Game.utils.graphics.UI            import level
 from Game.utils.system.sound           import play
 
@@ -50,7 +52,7 @@ def add() -> None:
                             case key.keyRecord:
                                 s.recordKey ^= 1
                                 play("soundEffects", "smash")
-                                addLog(f"{cc['fg']['B1']}키 기록 모드{cc['end']}가 {['꺼', '켜'][s.recordKey]}졌습니다. 이제부터 {cc['fg']['Y']}입력된 모든 키{cc['end']}는 게임 로그에 표시됩니다.", colorKey='N')
+                                addLog(f"{cc['fg']['B1']}키 기록 모드{cc['end']}가 {'켜'if s.recordKey else '꺼'}졌습니다. 이제부터 {cc['fg']['Y']}입력된 모든 키{cc['end']}는 게임 로그에 표시됩니다.", colorKey='N')
 
                             case key.statusUIDesign:
                                 s.statusDesign ^= 1
@@ -132,6 +134,34 @@ def add() -> None:
                                     )
 
                                 else: play("soundEffects", "block")
+
+                            case key.itemInfo:
+                                play("soundEffects", "check")
+                                if (itemData:=inventory.get()):
+                                    iWin.add(*iWin.itemDataExtraction(
+                                        itemData['id'],
+                                        itemData['type'],
+                                        onInventory=True,
+                                        **itemData
+                                    ).values()) # type: ignore
+
+                                else:
+                                    iWin.add(
+                                        f"{cc['fg']['R']}X{cc['end']}",
+                                        f"{cc['fg']['R']}아이템 없음{cc['end']}"
+                                    )
+
+                            case key.useItem:
+                                if (itemData:=inventory.get()):
+                                    behaviorMap[itemData['type']][itemData['id']].use()
+
+                                else: addLog("해당 슬롯에 아이템이 없습니다!", colorKey='R')
+
+                            case key.putItem:
+                                if (itemData:=inventory.get()):
+                                    behaviorMap[itemData['type']][itemData['id']].put()
+
+                                else: addLog("해당 슬롯에 아이템이 없습니다!", colorKey='R')
 
                             case key.SEUP:
                                 if len(s.statusEffect['line']) >= s.statusEffect['pointer']+9:
