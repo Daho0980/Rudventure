@@ -84,7 +84,7 @@ class Resentment(Enemy):
         )
         particle = f"{cc['fg']['F']}. {cc['end']}"
         for expP in expPs:
-            blockData = block.take(*expP)['id']
+            blockData = block.take(*expP)
             if self.perm.data[blockData['id']] & self.perm.EXPLOSION:
                 block.place(
                     block.get('invincibleBlock', block=particle),
