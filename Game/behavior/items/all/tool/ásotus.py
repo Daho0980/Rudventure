@@ -1,3 +1,4 @@
+from ...all                import behaviorMap
 from ...base               import ItemBehavior
 from ...weightCalcStandard import weightCalculate
 
@@ -19,10 +20,11 @@ class Ásotus(ItemBehavior):
 
         inventory.pop()
 
+        inventory.extend(1)
         for i in range(3):
             inventory.lock(i)
         
-        inventory.extend(3)
+        inventory.extend(2)
         inventory.stack(
             item.get(
                 'tool', 'ásotus',
@@ -54,3 +56,5 @@ class Ásotus(ItemBehavior):
         if s.playerIdentity == 'repo':
             target = c.specialComment['ásotus']['tread']
             sayCmt(target['cmt'], target['prob'])
+
+behaviorMap['tool']["ásotus"] = Ásotus()

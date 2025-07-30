@@ -29,7 +29,7 @@
         "id" : "bloodStomping",
         "tick" : 0,
         "seq" : "back",
-        "description" : "발에 피가 묻었다.\n이제 걸을 때마다 피가 바닥에 남는다."
+        "description" : "발에 피가 묻었다.\n걸을 때마다 피가 바닥에 남는다."
     },
     "kitrima" : {
         "icon" : "\u001b[;38;5;13mགྷ\u001b[0m",
@@ -38,5 +38,29 @@
         "tick" : 0,
         "seq" : "back",
         "description" : "머릿속에서 \u001b[;38;5;13m끔찍한 비명\u001b[0m이 끝없이 울려퍼지고 있다..."
+    },
+    "ovitem" : {
+        "icon" : "\u001b[;38;5;13mད\u001b[0m",
+        "name" :"저주 · 오비템",
+        "id" : "ovitem",
+        "tick" : 0,
+        "seq" : "fore",
+        "description" : "몸이 무겁다. 그것도 \u001b[;38;5;13m아주 강력하게\u001b[0m."
+    },
+    "qelqad" : {
+        "icon" : "\u001b[;38;5;13mཉ\u001b[0m",
+        "name" :"저주 · 겔가드",
+        "id" : "qelqad",
+        "tick" : 0,
+        "seq" : "back",
+        "description" : "이게 내 몸일 리 없다.\n\u001b[;38;5;13m나와 공간의 경계\u001b[0m가 모호해지고 있다."
+    },
+    "bijolóa" : {
+        "icon" : "\u001b[;38;5;13m༒\u001b[0m",
+        "name" :"저주 · 비졸로아",
+        "id" : "bijolóa",
+        "tick" : 0,
+        "seq" : "fore",
+        "description" : "\u001b[;38;5;13m분기가 파괴되었다.\u001b[0m\n더이상 내가 지나온 곳이 존재할 수 없다."
     }
 }

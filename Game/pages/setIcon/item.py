@@ -6,18 +6,14 @@ def main(func):
     def wrapper(*args):
         func(*args)
 
-        _tool()
-        _weapon()
-        _consumable()
+        s.originMark = {
+            "badal" : f"{cc['fg']['N']}신국 바달{cc['end']}",
+            "qantalotia" : f"{cc['fg']['A']}콴탈로티아{cc['end']}",
+            "ethlem" : f"{cc['fg']['P']}에틀렘{cc['end']}",
+            "vamulhen" : f"{cc['fg']['M']}바뮬헨{cc['end']}",
+            "samarGavim" : f"{cc['fg']['W']}사마르 가빔{cc['end']}",
+            "nimDraha" : f"{cc['fg']['L']}님 드라하{cc['end']}",
+            "senixn" : f"{cc['fg']['B1']}세닉션{cc['end']}"
+        }
 
     return wrapper
-
-def _tool():
-    s.iids['tool']['ásotus'] = f"{cc['fg']['G1']}Ⴔ{cc['end']}"
-
-def _weapon():
-    s.iids['weapon']['animus']       = f"{cc['fg']['B1']}⇀{cc['end']}"
-    s.iids['weapon']['anima']        = f"{cc['fg']['B1']}⇁{cc['end']}"
-    s.iids['weapon']['animusAnima']  = f"{cc['fg']['B1']}⇋{cc['end']}"
-
-def _consumable(): pass

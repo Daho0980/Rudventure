@@ -57,7 +57,7 @@ class Pain(Enemy):
                     if randrange(1,1216) == 1215:
                         self.atk += 1+(round(s.stage/10))
                         play("entity", "enemy", "pain", "growl")
-                        se.addEffect('kitrima', 30)
+                        se.addEffect('kitrima', 45)
                         addLog(f"{cc['fg']['F']}{self.name}{cc['end']}({self.icon}){pp(self.name,'sub',True)} 울부짖습니다!", colorKey='F')
                         addLog(f"{cc['fg']['F']}{self.name}{cc['end']}({self.icon})의 공격력이 {cc['fg']['L']}{1+(round(s.stage/10))}{cc['end']}만큼 상승합니다.", colorKey='F')
 

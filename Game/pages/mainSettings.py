@@ -3,6 +3,7 @@ from   random import choice
 
 from .setIcon          import block, item
 from Assets.data.color import cColors    as cc
+from Game.tools.item   import retain
 from Game.utils        import system
 from Game.utils.system import sound
 
@@ -47,8 +48,8 @@ def _setFrame(func):
     return _w
 
 @_setFrame
-@block.main
 @item.main
+@block.main
 def main(stdscr) -> None:
     stdscr.clear()
     nameChangeCount = 0
@@ -137,7 +138,9 @@ f"이름이 {cc['fg']['R']}{md.cMarkdown([2, 4])}없거나{cc['end']} \
                             case 4:
                                 s.lightName = f"{s.playerColor[0]}{temporaryName[:2]}\033[;38;5;214m{temporaryName[2]}\033[;38;5;220m{temporaryName[3]}{cc['end']}"
 
+                        retain('ásotus')
                         addEffect('combinator', "∞", merge=False)
+                        s.inventory['cells'].pop()
 
                     case "업로드"|"upload":
                         from .character import upload
@@ -148,7 +151,11 @@ f"이름이 {cc['fg']['R']}{md.cMarkdown([2, 4])}없거나{cc['end']} \
                             case 6:
                                 s.lightName = f"{cc['fg']['W']}{temporaryName[:2]}\033[;38;5;253m{temporaryName[2]}{s.playerColor[0]}{temporaryName[3:]}{cc['end']}"
 
+                        retain('animus')
+                        retain('anima')
+                        retain('animusAnima')
                         addEffect('angelHunter', "∞", merge=False)
+                        s.inventory['cells'].pop()
                     
                     case _: addEffect('fatality', "∞", merge=False)
 
@@ -200,6 +207,6 @@ f"이름이 {cc['fg']['R']}{md.cMarkdown([2, 4])}없거나{cc['end']} \
         time.sleep(2.8)
 
 @_setFrame
-@block.main
 @item.main
+@block.main
 def presetted(): pass

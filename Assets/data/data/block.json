@@ -22,7 +22,11 @@
     "door" : {
         "block" : ". ",
         "id" : "door",
-        "type" : "block"
+        "type" : "block",
+        "nbt" : {
+            "wp" : [4, 4, 6, 6],
+            "lock" : false
+        }
     },
     "orbBox" : {
         "block" : "\u001b[;38;5;11mÉ\u001b[0m ",

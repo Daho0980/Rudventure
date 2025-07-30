@@ -3,6 +3,8 @@ from .logger                     import addLog
 from Assets.data                 import totalGameStatus as s
 from Assets.data.color           import cColors         as cc
 from Assets.data.totalGameStatus import infoWindow
+from functions.grammar           import pstpos          as pp
+from Game.tools.item             import remember, retain
 from Game.utils.system           import sieve
 
 from functions.grammar import (
@@ -134,17 +136,34 @@ def _getItemInfo(fileName:str, target:str, Type:str):
 
 def itemDataExtraction(itemId:str, itemType:str, onInventory:bool=False, **itemData) -> dict|None:
     try:
+        isKnown  = remember(itemId)
         infoType = _getItemInfo(itemType, f"{itemId}.dataType", "number")
         output   = {
-            "icon"        : itemData['icon'],
-            "name"        : _getItemInfo(itemType, f"{itemId}.name", 'string'),
-            "status"      : "",
+            "icon" : itemData['icon'],
+            "name" : itemData['name']
+                    if (
+                        onInventory
+                        or isKnown
+                    )
+                else "???",
+            "status"      : [],
             "explanation" : [],
             "subStatus"   : []
         }
 
         if onInventory:
-            output['status'] = f"{cc['fg']['L']}{itemData['status']['atk']} 공격력{cc['end']}"
+            output['status'].append(
+                f"{cc['fg']['Y']}{s.typeMark[itemType]}{cc['end']} | {
+                    s.originMark[itemData['origin']]
+                        if s.originMark.get(itemData['origin'])
+                    else itemData['origin']
+                }"
+            )
+            output['status'].append(
+                f"{cc['fg']['L']}{itemData['status']['atk']} 공격력{cc['end']}"
+            )
+
+            output['status'] = '\n'.join(output['status'])
 
         durability = itemData['status']['durability']
         infection  = itemData['status']['infection']
@@ -172,7 +191,7 @@ def itemDataExtraction(itemId:str, itemType:str, onInventory:bool=False, **itemD
 
         output['subStatus'] = '\n'.join(output['subStatus'])
 
-        if onInventory and infoType&ItemInfoFlag.NORMAL:
+        if (onInventory or isKnown) and infoType&ItemInfoFlag.NORMAL:
             if  itemData.get('nbt')        \
             and itemData['nbt'].get('link')\
             and infoType&ItemInfoFlag.LINK:
@@ -199,6 +218,10 @@ def itemDataExtraction(itemId:str, itemType:str, onInventory:bool=False, **itemD
         )
 
         output['explanation'] = ''.join(output['explanation'])
+
+        if onInventory and not isKnown:
+            retain(itemId)
+            addLog(f"{cc['fg']['Y']}'{itemData['name']}'{cc['end']}{pp(itemData['name'],'sub',True)} 기억되었습니다.")
 
         if  False in list(output.values()): return None
         else                              : return output

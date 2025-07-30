@@ -2,13 +2,10 @@ import os   ; import json
 from   zlib   import compress, decompress
 from   base64 import b64encode, b64decode
 
+from Assets.data                import totalGameStatus as s
 from Game.core.system.data      import jsonDataKeyRecoverer as jdkr
 from Game.core.system.io.logger import addLog
 
-from Assets.data import (
-    totalGameStatus as s,
-    comments        as c
-)
 
 
 def _encode(strings:list[str]) -> list[str]:
@@ -31,9 +28,7 @@ def _changeExtention(name:str, beforeExt:str=".rud", afterExt:str=".json"):
     try:    os.rename(f"{name}{beforeExt}", f"{name}{afterExt}")
     except: return False
 
-def save() -> int:
-    commentVars  = [name for name in dir(c) if not name.startswith('__')]
-    
+def save() -> int:    
     try:
         file_path = f'{s.TFP}saveData{s.s}{s.name}.json'
         saveJson  = open(file_path, 'w')
@@ -41,7 +36,7 @@ def save() -> int:
         Vars = [
             "name", "playerColor", "playerVoice", "playerIdentity", "playerDamageIcon",
             "stage", "killCount",
-            "inventory", "statusEffect", "statusFormula",
+            "memory", "inventory", "statusEffect", "statusFormula",
             "hp", "df", "atk", "hgr", "xp", "lvl", "ashChip",
             "Mhp", "Mdf", "Mhgr", "Mxp", "Mlvl",
             "critRate", "critDMG", "evasionRate", "missRate",

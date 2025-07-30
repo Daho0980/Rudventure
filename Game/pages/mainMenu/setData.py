@@ -1,14 +1,9 @@
-from Assets.data.color import cColors as cc
-
-from Assets.data import (
-    totalGameStatus as s,
-    comments        as c
-)
+from Assets.data       import totalGameStatus as s
+from Assets.data.color import cColors         as cc
 
 
 def main(data):
     SD = data['status']
-    # CD = data['comments']
 
     s.name = SD['name']
 
@@ -23,6 +18,7 @@ def main(data):
     s.stage     = SD['stage']
     s.killCount = SD['killCount']
 
+    s.memory        = SD['memory']
     s.inventory     = SD['inventory']
     s.statusEffect  = SD['statusEffect']
     s.statusFormula = SD['statusFormula']

@@ -1,3 +1,4 @@
+from ...all  import behaviorMap
 from ...base import ItemBehavior
 
 
@@ -16,3 +17,5 @@ class AnimusAnima(ItemBehavior):
     
     def tread(self, itemId: str, itemType: str, payload: int) -> str:
         return super().tread(itemId, itemType, payload)
+    
+behaviorMap['weapon']["animusAnima"] = AnimusAnima()

@@ -46,7 +46,7 @@ def event(data) -> None:
             c.enterinBattle['prob']
         )
 
-        changeDoor('wall', data, "░░")
+        changeDoor('close', data['name'], data['doors'], "░░")
         play("object", "door", "close")
 
     elif not s.enemyCount and f.roomLock:
@@ -56,5 +56,5 @@ def event(data) -> None:
 
         s.exaltation += 5
 
-        changeDoor('door', data)
+        changeDoor('open', data['name'], data['doors'], ". ")
         play("object", "door", "open")

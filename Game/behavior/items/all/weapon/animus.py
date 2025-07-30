@@ -1,3 +1,4 @@
+from ...all                import behaviorMap
 from ...base               import ItemBehavior
 from ...weightCalcStandard import weightCalculate
 
@@ -27,6 +28,7 @@ class Animus(ItemBehavior):
 
         else:
             inventory.pop(targetIndex, True)
+            item.registration('weapon', "animusAnima")
             inventory.place(item.get(
                 'weapon', 'animusAnima',
                 nbt = { "link" : inventory.pop()['nbt']['link'] } # type: ignore
@@ -52,3 +54,5 @@ class Animus(ItemBehavior):
         if s.playerIdentity == 'upload':
             target = c.specialComment['animus']['tread']
             sayCmt(target['cmt'], target['prob'])
+
+behaviorMap['weapon']["animus"] = Animus()

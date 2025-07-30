@@ -2,37 +2,26 @@ import threading
 from   random   import randrange, choices
 
 from Assets.data             import totalGameStatus as s
+from Assets.data.doors       import doorWayPoint    as dwp
 from Game.entities.entity    import addEnemy
 from Game.tools.block        import get, randPlace
 from Game.utils.system.block import iset
 
-from Game.core.system.data.dataLoader import (
-    obj
-)
 
+def changeDoor(Type:str, roomName:str, doorData:dict[str,int], block:str) -> None:
+    """
+    Type = "open" || "close"
+    """
+    for n, a in doorData.items():
+        if a:
+            for y, x in dwp[roomName]['set'][n]:
+                target = s.Dungeon[s.Dy][s.Dx]['room'][y][x]
 
-def changeDoor(blockID:str, data:dict, icon:str="None") -> None:
-    c = {
-        'y' : s.roomData['maxHeight']//2,
-        'x' : s.roomData['maxWidth'] //2
-    }
-    DPG = {
-        'U' : [0,                         c['x']],
-        'R' : [c['y'],  s.roomData['maxWidth']-1],
-        'D' : [s.roomData['maxHeight']-1, c['x']],
-        'L' : [c['y'],                         0]
-    }
-    block = obj('-bb', blockID, block=iset(s.bids[blockID]if icon=="None"else icon))
-    room  = s.Dungeon[s.Dy][s.Dx]['room']
+                target['block'] = block
+                if Type   == "open" : target['nbt']['lock'] = False
+                elif Type == "close": target['nbt']['lock'] = True
 
-    for pos, activate in zip(*map(list, zip(*data['doors'].items()))):
-        if activate:
-            DPY, DPX = DPG[pos][:2]
-
-            room[DPY][DPX] = block
-            match pos:
-                case 'U'|'D': room[DPY][DPX-1], room[DPY][DPX+1] = block, block
-                case 'R'|'L': room[DPY-1][DPX], room[DPY+1][DPX] = block, block
+                else: raise Exception(f"'{Type}' 타입은 유효한 타입이 아닙니다!")
 
 def summonEnemy(data:list) -> None:
     def event() -> None:

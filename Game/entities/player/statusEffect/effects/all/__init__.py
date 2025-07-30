@@ -5,7 +5,11 @@ from .combinator  import Combinator
 from .angelHunter import AngelHunter
 
 from .bloodStomping import BloodStomping
-from .kitrima       import Kitrima
+
+from .kitrima import Kitrima
+from .ovitem  import Ovitem
+from .qelqad  import Qelqad
+from .bijolóa import Bijolóa
 
 
 effectMap:dict[str, StatusEffect] = {
@@ -13,5 +17,8 @@ effectMap:dict[str, StatusEffect] = {
     "combinator" : Combinator(),
     "angelHunter" : AngelHunter(),
     "bloodStomping" : BloodStomping(),
-    "kitrima" : Kitrima()
+    "kitrima" : Kitrima(),
+    "ovitem" : Ovitem(),
+    "qelqad" : Qelqad(),
+    "bijoloa" : Bijolóa()
 }

@@ -1,17 +1,23 @@
 from ..base import BlockBehavior
 
 from Game.behavior.items.all import behaviorMap
-from Game.tools.inventory    import collectFromBlock
 from Game.tools              import block
+from Game.tools.item         import registration
+from Game.tools.inventory    import collectFromBlock
 
 
 class Item(BlockBehavior):
     def interact(self, **data):
         blockData = block.take(data['ty'], data['tx'])
         itemData  = blockData['nbt']['itemData']
+        itemId    = itemData['id']
+        itemType  = itemData['type']
+
+        registration(itemType, itemId)
+
         match collectFromBlock(
             itemData,
-            behaviorMap[itemData['type']][itemData['id']],
+            behaviorMap[itemType][itemId],
             blockData['blockData'],
             data['ty'], data['tx']
         ):

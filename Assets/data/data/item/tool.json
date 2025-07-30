@@ -4,6 +4,7 @@
         "name" : "테스트 아이템(도구)",
         "id" : "testTool",
         "type" : "tool",
+        "origin" : "testField",
         "status" : {
             "atk" : 3,
             "durability" : [30, 100],
@@ -17,6 +18,7 @@
         "name" : "아소투스",
         "id" : "ásotus",
         "type" : "tool",
+        "origin" : "\u001b[;38;5;6m잊혀진 곳\u001b[0m",
         "status" : {
             "atk" : 5,
             "durability" : ["∞", "∞"],
@@ -26,6 +28,34 @@
         },
         "nbt" : {
             "link" : false
+        }
+    },
+    "grassFluteOfRondolha" : {
+        "icon" : "\u001b[;38;5;10m^\u001b[0m",
+        "name" : "롱돌라의 풀피리",
+        "id" : "grassFluteOfRondolha",
+        "type" : "tool",
+        "origin" : "ethlem",
+        "status" : {
+            "atk" : 0,
+            "durability" : [25, 25],
+            "weight" : 1,
+            "payload" : 1,
+            "infection" : [0, 10]
+        }
+    },
+    "gapabal" : {
+        "icon" : "\u001b[;38;5;9mƱ\u001b[0m",
+        "name" : "가파발",
+        "id" : "gapabal",
+        "type" : "tool",
+        "origin" : "vamulhen",
+        "status" : {
+            "atk" : 2,
+            "durability" : [85, 85],
+            "weight" : 10,
+            "payload" : 18,
+            "infection" : [0, 50]
         }
     }
 }

@@ -112,7 +112,7 @@ def DungeonMaker(showAll=False) -> list:
         if not output: continue
         for r in range(9):
             for c in range(9):
-                if output[r][c] and output[r][c]['roomType'] == "startPoint":
+                if output[r][c] and output[r][c]['roomType'] == 'startPoint':
                     isStartExist = True
                     s.Dy, s.Dx   = r, c
 

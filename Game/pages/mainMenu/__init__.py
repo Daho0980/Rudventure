@@ -189,7 +189,7 @@ def main(stdscr) -> None:
                                                     anchor(
                                                         stdscr,
                                                         UIP.debugConsole[s.debug],
-                                                        x        =stdscr.getmaxyx()[1]-(30 if s.debug else 38),
+                                                        x        =stdscr.getmaxyx()[1]-(29 if s.debug else 38),
                                                         y        =round(stdscr.getmaxyx()[0]/2)-(11 if s.debug else 0),
                                                         returnStr=True
                                                     ),

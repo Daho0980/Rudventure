@@ -1,3 +1,4 @@
+from ...all                import behaviorMap
 from ...base               import ItemBehavior
 from ...putItemStandard    import putItem
 from ...weightCalcStandard import weightCalculate
@@ -22,3 +23,5 @@ class TestTool(ItemBehavior):
     @weightCalculate
     def tread(self, itemId:str, itemType:str, payload:int) -> None:
         addLog("오이런정말멋진도구를밟아버렸어 - Sent from TestTool.tread method")
+
+behaviorMap['tool']["testTool"] = TestTool()

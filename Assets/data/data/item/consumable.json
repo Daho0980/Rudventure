@@ -4,12 +4,41 @@
         "name" : "테스트 아이템(소모품)",
         "id" : "testConsumable",
         "type" : "consumable",
+        "origin" : "testField",
         "status" : {
             "atk" : 0,
             "durability" : [1, 1],
             "weight" : 1,
             "payload" : 10,
             "infection" : [95, 100]
+        }
+    },
+    "beliefInIgnorance" : {
+        "icon" : "\u001b[;38;5;14mʝ\u001b[0m",
+        "name" : "무지를 향한 믿음",
+        "id" : "beliefInIgnorance",
+        "type" : "consumable",
+        "origin" : "badal",
+        "status" : {
+            "atk" : 1,
+            "durability" : [1, 1],
+            "weight" : 3,
+            "payload" : 2,
+            "infection" : [0, 50]
+        }
+    },
+    "ton" : {
+        "icon" : "ɸ",
+        "name" : "톤",
+        "id" : "ton",
+        "type" : "consumable",
+        "origin" : "senixn",
+        "status" : {
+            "atk" : 2,
+            "durability" : [5, 5],
+            "weight" : 1,
+            "payload" : 5,
+            "infection" : [0, 35]
         }
     }
 }

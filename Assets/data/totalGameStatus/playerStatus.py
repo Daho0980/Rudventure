@@ -47,6 +47,10 @@ ashChip:int = 0
 steppedBlock:dict = { 'block' : '  ', 'id' : 'floor', 'type' : 'block' }
 killCount   :int  = 0
 
+memory:dict[str,set[str]] = {
+    "item" : set()
+}
+
 inventory:dict = {
     "cells" : [
         { "item":{}, "disabled":False },

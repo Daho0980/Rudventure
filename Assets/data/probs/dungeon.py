@@ -10,3 +10,4 @@ treasureBox:dict[str,int] = {
 }
 
 statueContamination:int = 5
+endPointPillarBonus:int = 35

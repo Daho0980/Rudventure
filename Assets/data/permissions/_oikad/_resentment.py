@@ -5,7 +5,7 @@ class Permission(BitFlag):
     data = {
         "invincibleBlock" : 0b0,
         "void" : 0b0,
-        "floor" : 0b1,
+        "floor" : 0b11,
         "wall" : 0b0,
         "door" : 0b0,
         "orbBox" : 0b11,

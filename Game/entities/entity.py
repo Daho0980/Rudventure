@@ -38,7 +38,7 @@ def addEnemy(ID        :str           ,
     모든 적을 소환할 수 있는 함수
 
         `ID`(str)                    : 적의 id
-        `Dy`(int), `Dx`(int)         : 엔티티가 소환될 미궁 y, x값
+        `Dy`(int), `Dx`(int)         : 엔티티가 소환될 방 y, x값
         `y`(list|int), `x`(list|int) : 엔티티가 소환될 방 y, x값
             랜덤하게 소환하려면 list([min, max])로 기입,
             특정한 곳에 소환하려면 int로 기입해야 함. 이 둘은 모두 독립적으로 결정될 수 있음
@@ -124,6 +124,7 @@ if s.main and not (f.killAll or f.clearEntity):
 
         if s.main and not (f.killAll or f.clearEntity):
             s.killCount += 1
+            s.exaltation += 3
             if sendEffect:
                 play("player", "slash")
                 play("entity", "enemy", "dead")
@@ -159,7 +160,7 @@ def addAnimal(ID :str       ,
         `ID`(int)            : 엔티티의 고유 id
         `hp`(int)            : 엔티티가 가질 체력
         `atk`(int)           : 엔티티가 가질 공격력
-        `Dy`(int), `Dx`(int) : 엔티티가 소환될 미궁 y, x값
+        `Dy`(int), `Dx`(int) : 엔티티가 소환될 방 y, x값
         `y`(int), `x`(int)   : 엔티티가 소환될 방 y, x값
             랜덤하게 소환하려면 list([min, max])로 기입,
             특정한 곳에 소환하려면 int로 기입해야 함.
@@ -270,7 +271,7 @@ if s.main and not (f.killAll or f.clearEntity):
             s.killCount += 1
             play("player", "slash")
             play("entity", "enemy", "dead")
-            addLog(f"{color[0]}{name}{cc['end']}{pp(name,'sub',True)} 죽었습니다!", colorKey='F')
+            addLog(f"{color[0]}{name}{cc['end']}{pp(name,'sub',True)} 죽었습니다!", colorKey='R')
 
         s.currEntityCount -= 1
 

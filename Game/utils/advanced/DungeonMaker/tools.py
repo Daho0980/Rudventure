@@ -1,8 +1,9 @@
 from random import randrange, choice
 from copy   import deepcopy
 
-from Assets.data.probs           import dungeon as per
-from Assets.data.color           import cColors as cc
+from Assets.data.color           import cColors      as cc
+from Assets.data.doors           import doorWayPoint as dwp
+from Assets.data.probs           import dungeon      as per
 from Game.behavior.blocks.events import squishy
 from Game.utils.system.block     import iset
 
@@ -25,7 +26,7 @@ def graphicMaker(MapData:list):
     """
     맵의 데이터에서 방 아이콘만 빼내 그래픽을 출력하기 쉽게 하기 위해 만든 함수
 
-        `MapData`(list(2d)) : `deleteBlankData`함수로 공백칸을 제거한 맵이 포함됨, 무조건 기입해야 함
+        `MapData`(list(2d)) : `deleteBlankData`함수로 공백칸을 제거한 맵이 포함됨
     """
     grid = []
     for i in range(len(MapData)):
@@ -36,61 +37,133 @@ def graphicMaker(MapData:list):
 
     return grid
 
-def makeRoom(Map:list):
-    """
-    `deleteBlankData`함수로 수정된 맵 데이터 중 "room" 데이터를 추가하는 함수, 맵 데이터 중 "doors"도 활용함
+def _isPosAvailable(pos    :tuple[int,int],
+                    name   :str           ,
+                    mapArea:tuple[int,int] ) -> bool:
+    y , x  = pos
+    my, mx = mapArea
+    return (
+        name=='U' and y>=0  or
+        name=='R' and x< mx or
+        name=='D' and y< my or
+        name=='L' and x>=0
+    )
 
-        `Map`(list(raw)) : `deleteBlankData`함수로 수정된 맵이 포함됨, 무조건 기입해야 함
+locator:dict[str,str] = {'U' : 'D', 'R' : 'L', 'D' : 'U', 'L' : 'R'}
+def _setDoor(Map:list) -> list:
+    mapArea = (len(Map), len(Map[0]))
+
+    for row in range(mapArea[0]):
+        for col in range(mapArea[1]):
+            if Map[row][col]:
+                if Map[row][col]['roomType']=='endPoint': continue
+
+                roomName = Map[row][col]['name']
+
+                for name, rp in {
+                    n : p
+                    for n, p in {
+                        'U' : (row-1, col  ),
+                        'R' : (row  , col+1),
+                        'D' : (row+1, col  ),
+                        'L' : (row  , col-1)
+                    }.items()
+                    if  _isPosAvailable(p, n, mapArea)
+                    and Map[p[0]][p[1]]
+                    and (
+                        Map[p[0]][p[1]]['doors'][locator[n]]
+                        or not randrange(0, 3)
+                    )
+                }.items():
+                    targetRoomName = Map[rp[0]][rp[1]]['name']
+
+                    Map[row][col]['doors'][name]              = 1
+                    Map[rp[0]][rp[1]]['doors'][locator[name]] = 1
+
+                    for dp, wp in zip(
+                        dwp[roomName]['set'][name],
+                        dwp[targetRoomName]['out'][locator[name]]
+                    ):
+                        Map[row][col]['room'][dp[0]][dp[1]] = obj(
+                            '-bb', 'door',
+                            nbt={
+                                'wp'   : (*rp, *wp),
+                                'lock' : False
+                            }
+                        )
+
+                    for sdp, swp in zip(
+                        dwp[targetRoomName]['set'][locator[name]],
+                        dwp[roomName]['out'][name]
+                    ):
+                        Map[rp[0]][rp[1]]['room'][sdp[0]][sdp[1]] = obj(
+                            '-bb', 'door',
+                            nbt={
+                                'wp'   : (row, col, *swp),
+                                'lock' : False
+                            }
+                        )
+
+    return Map
+
+def makeRoom(Map:list) -> list:
+    """
+    방을 추가함
+
+    Map: 원본 던전 데이터
     """
     if not Map: return Map
 
-    output = deepcopy(Map)
-
-    # 방 생성
-    for row in range(len(output)):
-        for column in range(len(output[row])):
-            if len(output[row][column]) > 0:
-                if output[row][column]['roomType'] == 'endPoint':
-                    baseMap = deepcopy(r.bigRoom)
-                    output[row][column]['name'] = 'bigRoom'
-
-                elif output[row][column]['roomType'] == 'treasure':
-                    baseMap = deepcopy(r.treasureRoom)
-                    output[row][column]['name'] = 'treasureRoom'
-
-                elif output[row][column]['roomType']=='event' and output[row][column]['eventType']in[1,2,3]:
-                    baseMap = deepcopy(r.chapel)
-                    output[row][column]['name'] = 'chapel'
-
-                elif output[row][column]['roomType'] == 'startPoint':
-                    baseMap = deepcopy(r.Room)
-                    output[row][column]['name'] = 'Room'
-
-                else:
-                    roomNum = randrange(0, 3)
-                    baseMap = deepcopy([
-                        r.Room,
-                        r.verticallyLongRoom,
-                        r.horizonallyLongRoom
-                    ][roomNum])
-                    output[row][column]['name'] = [
-                        "Room",
-                        "verticallyLongRoom",
-                        "horizonallyLongRoom"
-                    ][roomNum]
-
-                c  = {
-                        'y'  : int(len(baseMap)   /2)  ,
-                        'ym' : int(len(baseMap)   /2)-1,
-                        'yp' : int(len(baseMap)   /2)+1,
-                        'x'  : int(len(baseMap[0])/2)  ,
-                        'xm' : int(len(baseMap[0])/2)-1,
-                        'xp' : int(len(baseMap[0])/2)+1
-                    } # 방 중심 및 주변 칸 위치 데이터
-
-                match output[row][column]['roomType']:
+    for row in range(len(Map)):
+        for col in range(len(Map[row])):
+            if Map[row][col]:
+                match Map[row][col]['roomType']:
+                    case 'endPoint':
+                        baseMap = deepcopy(r.EndPoint)
+                        Map[row][col]['name'] = "EndPoint"
+                    
                     case 'treasure':
-                        treasureLocations = {
+                        baseMap = deepcopy(r.TreasureRoom)
+                        Map[row][col]['name'] = "TreasureRoom"
+
+                    case 'event':
+                        if Map[row][col]['eventType']in[1,2,3]:
+                            baseMap = deepcopy(r.Chapel)
+                            Map[row][col]['name'] = "Chapel"
+
+                        else: Map[row][col]['roomType'] = "room"
+
+                    case 'startPoint':
+                        baseMap = deepcopy(r.Room)
+                        Map[row][col]['name'] = "Room"
+
+                if Map[row][col]['roomType'] == 'room':
+                    roomNum = randrange(0, 4)
+                    baseMap = deepcopy((
+                        r.Room,
+                        r.VerticallyLongRoom,
+                        r.HorizonallyLongRoom,
+                        r.Diamond
+                    )[roomNum])
+                    Map[row][col]['name'] = (
+                        "Room",
+                        "VerticallyLongRoom",
+                        "HorizonallyLongRoom",
+                        "Diamond"
+                    )[roomNum]
+
+                c = {
+                    'y'  : int(len(baseMap)   /2)  ,
+                    'ym' : int(len(baseMap)   /2)-1,
+                    'yp' : int(len(baseMap)   /2)+1,
+                    'x'  : int(len(baseMap[0])/2)  ,
+                    'xm' : int(len(baseMap[0])/2)-1,
+                    'xp' : int(len(baseMap[0])/2)+1
+                } # 방 중심 및 주변 칸 위치 데이터
+
+                match Map[row][col]['roomType']:
+                    case 'treasure':
+                        treasureLocs = {
                             0 : [
                                 [c['y'], c['x']]
                             ],
@@ -106,14 +179,18 @@ def makeRoom(Map:list):
                                 [c['yp'], c['xm']],
                                 [c['yp'], c['xp']]
                             ]
-                        }
+                        }[Map[row][col]['treasureRarity']]
 
-                        for tby, tbx in treasureLocations[output[row][column]['treasureRarity']]:
+                        for tby, tbx in treasureLocs:
                             face = choice(['l','r'])
-                            baseMap[tby][tbx] = obj('-bb', 'orbBox', block=iset(s.bids['orbBox'], Type=face), nbt={ "face" : face })
+                            baseMap[tby][tbx] = obj(
+                                '-bb', 'orbBox',
+                                block=iset(s.bids['orbBox'], Type=face),
+                                nbt  ={ "face" : face }
+                            )
 
                     case 'event':
-                        match output[row][column]['eventType']:
+                        match Map[row][col]['eventType']:
                             case 0:
                                 status = (
                                     ('R',  f"{cc['fg']['R']}빈 최대 체력{cc['end']} 1칸"   , Orb.hp     ),
@@ -122,7 +199,7 @@ def makeRoom(Map:list):
                                     ('G1', f"{cc['fg']['G1']}재의 그릇{cc['end']} 1개"     , Orb.ashChip)
                                 )[randrange(0,4)]
 
-                                s.DungeonMap[row][column] = (s.bids['clayModel'][:1], status[0])
+                                s.DungeonMap[row][col] = (s.bids['clayModel'][:1], status[0])
                                 baseMap[c['y']][c['x']]   = obj(
                                     '-bb', 'clayModel',
                                     block=iset(f"{cc['fg'][status[0]]}{s.bids['clayModel']}{cc['end']}"),
@@ -148,7 +225,7 @@ def makeRoom(Map:list):
                                     rNbt = [ ("linkedInteraction", True) ]
                                     ctd  = False
 
-                                s.DungeonMap[row][column] = ('Y', "F"if ctd else"A")
+                                s.DungeonMap[row][col] = ('Y', "F"if ctd else"A")
 
                                 for y, x, icon in (
                                     [c['ym'], c['xm'], f"{cc['fg']['F'if ctd else'A']}‾\\{cc['end']}"],
@@ -177,12 +254,11 @@ def makeRoom(Map:list):
                                             }
                                         }
 
-                                    else: continue
-
                     case 'startPoint':
                         if not randrange(0,8):
-                            hasEvent      = randrange(0,2)
-                            face          = choice(['l','r'])
+                            hasEvent = randrange(0,2)
+                            face     = choice(('l','r'))
+
                             baseMap[1][1] = obj(
                                 '-bb', 'squishy1',
                                 block= iset(s.bids['squishy1'], Type=face),
@@ -196,125 +272,20 @@ def makeRoom(Map:list):
                                 }
                             )
 
-                RDP :list[int]       = list(output[row][column]["doors"].values())
-                GRDP:list[list[int]] = [
-                    [0             ,            c['x']], # U
-                    [c['y']        , len(baseMap[0])-1], # R
-                    [len(baseMap)-1,            c['x']], # D
-                    [c['y']        ,                 0]  # L
-                ]
+                    case 'endPoint':
+                        for y, x in ((6,6), (16,6), (6,16), (16,16)):
+                            block  = "▓░" if x == 6 else "░▓"
+                            change = randrange(1,101) <= per.endPointPillarBonus
+                            baseMap[y][x] = obj(
+                                '-bb',
+                                'orbBox' if change else 'wall',
+                                block=block,
+                                nbt={ "face" : 's' } if change else {  }
+                            )
 
-                for DIE in range(len(RDP)):
-                    if RDP[DIE] == 1:
-                        baseMap[GRDP[DIE][0]][GRDP[DIE][1]] = obj('-bb', 'door')
-                        match DIE:
-                            case 0|2:
-                                baseMap[GRDP[DIE][0]][GRDP[DIE][1]-1] = obj('-bb', 'door')
-                                baseMap[GRDP[DIE][0]][GRDP[DIE][1]+1] = obj('-bb', 'door')
+                Map[row][col]["room"] = baseMap
 
-                            case 1|3:
-                                baseMap[GRDP[DIE][0]-1][GRDP[DIE][1]] = obj('-bb', 'door')
-                                baseMap[GRDP[DIE][0]+1][GRDP[DIE][1]] = obj('-bb', 'door')
-
-                output[row][column]["room"] = baseMap
-
-    for row in range(len(output)):
-        for column in range(len(output[row])):
-            if len(output[row][column]) > 0:
-                if output[row][column] and output[row][column]['roomType']=="endPoint" or not randrange(0,3): continue
-
-                p = [
-                    [row-1 if row>0 else row,                      column],
-                    [row+1 if row<len(output)-1 else row,          column],
-                    [row,                column-1 if column>0 else column],
-                    [row, column+1 if column<len(output[0])-1 else column]
-                    ]
-                for i, pos in enumerate(p):
-                    if len(output[pos[0]][pos[1]])==0: p[i] = [row, column]
-                
-                c = {
-                    0 : {
-                        'y'  : int(len(output[row][column]['room'])/2)   ,
-                        'my' : len(output[row][column]['room'])-1        ,
-                        'x'  : int(len(output[row][column]['room'][0])/2),
-                        'mx' : len(output[row][column]['room'][0])-1
-                    },
-                    'U' : { # subTarget 기준 D
-                        'my' : len(output[p[0][0]][p[0][1]]['room'])-1       ,
-                        'x'  : int(len(output[p[0][0]][p[0][1]]['room'][0])/2)
-                    },
-                    'D' : { # subTarget 기준 U
-                        'x'  : int(len(output[p[1][0]][p[1][1]]['room'][0])/2)
-                    },
-                    'L' : { # subTarget 기준 R
-                        'y'  : int(len(output[p[2][0]][p[2][1]]['room'])/2),
-                        'mx' : len(output[p[2][0]][p[2][1]]['room'][0])-1
-                    },
-                    'R' : { # subTarget 기준 L
-                        'y' : int(len(output[p[3][0]][p[3][1]]['room'])/2)
-                    },
-                }
-
-                R0DPG = {
-                    'U':[0         ,  c[0]['x']],
-                    'R':[c[0]['y'] , c[0]['mx']],
-                    'D':[c[0]['my'],  c[0]['x']],
-                    'L':[c[0]['y'] ,          0]
-                    }
-                SBDPG = {
-                    'D':[c['U']['my'],  c['U']['x']],
-                    'L':[c['R']['y'] ,            0],
-                    'U':[0           ,  c['D']['x']],
-                    'R':[c['L']['y'] , c['L']['mx']]
-                    }
-
-                dp         = [['U', 'D'], ['D', 'U'], ['L', 'R'], ['R', 'L']]
-                doorValues = list(output[row][column]['doors'].values())
-                grd        = [
-                    [R0DPG['U'], SBDPG['D']],
-                    [R0DPG['D'], SBDPG['U']],
-                    [R0DPG['L'], SBDPG['R']],
-                    [R0DPG['R'], SBDPG['L']]
-                ]
-
-                while [row, column] in p:
-                    del dp        [p.index([row, column])]
-                    del grd       [p.index([row, column])]
-                    del doorValues[p.index([row, column])]
-                    del p         [p.index([row, column])]
-
-                while 1 in doorValues:
-                    del p         [doorValues.index(1)]
-                    del dp        [doorValues.index(1)]
-                    del grd       [doorValues.index(1)]
-                    del doorValues[doorValues.index(1)]
-                
-                for i in range(len(p)):
-                        if output[p[i][0]][p[i][1]]['roomType'] != 4:
-                            output[row][column]['doors'][dp[i][0]]      = 1
-                            output[p[i][0]][p[i][1]]['doors'][dp[i][1]] = 1
-
-                            output[row][column]['room'][grd[i][0][0]][grd[i][0][1]]      = obj('-bb', 'door')
-                            output[p[i][0]][p[i][1]]['room'][grd[i][1][0]][grd[i][1][1]] = obj('-bb', 'door')
-
-                            if dp[i][0] in ['U', 'D']:
-                                # mainRoom
-                                output[row][column]['room'][grd[i][0][0]][grd[i][0][1]-1] = obj('-bb', 'door')
-                                output[row][column]['room'][grd[i][0][0]][grd[i][0][1]+1] = obj('-bb', 'door')
-
-                                # subRoom
-                                output[p[i][0]][p[i][1]]['room'][grd[i][1][0]][grd[i][1][1]-1] = obj('-bb', 'door')
-                                output[p[i][0]][p[i][1]]['room'][grd[i][1][0]][grd[i][1][1]+1] = obj('-bb', 'door')
-                            elif dp[i][0] in ['L', 'R']:
-                                # mainRoom
-                                output[row][column]['room'][grd[i][0][0]-1][grd[i][0][1]] = obj('-bb', 'door')
-                                output[row][column]['room'][grd[i][0][0]+1][grd[i][0][1]] = obj('-bb', 'door')
-
-                                # subRoom
-                                output[p[i][0]][p[i][1]]['room'][grd[i][1][0]-1][grd[i][1][1]] = obj('-bb', 'door')
-                                output[p[i][0]][p[i][1]]['room'][grd[i][1][0]+1][grd[i][1][1]] = obj('-bb', 'door')
-
-    return output
+    return _setDoor(Map)
 
 def deleteBlankData(grid:list):
     """
@@ -323,9 +294,9 @@ def deleteBlankData(grid:list):
         `grid`(list(raw)) : `initBranch`함수로 생긴 맵 데이터가 포함됨, 무조건 기입해야 함
     """
     if not grid: return grid
-    # 비어있는 잉여 데이터 정리
+    
     for row in range(len(grid)):
-        for column in range(len(grid[row])):
-            grid[row][column] = {} if grid[row][column]['roomType']==None else grid[row][column]
+        for col in range(len(grid[row])):
+            grid[row][col] = {} if grid[row][col]['roomType']==None else grid[row][col]
 
     return grid

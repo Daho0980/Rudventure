@@ -16,7 +16,7 @@ def event0(data) -> None:
         data['summonData'] = ['command.roomEnd']
         f.roomLock = True
 
-        changeDoor('wall', data, "░░")
+        changeDoor('close', data['name'], data['doors'], "░░")
         play("object", "door", "close")
 
     if not s.enemyCount and f.roomLock:
@@ -25,7 +25,7 @@ def event0(data) -> None:
 
         s.exaltation += 5
         
-        changeDoor('door', data)
+        changeDoor('open', data['name'], data['doors'], ". ")
         play("object", "door", "open")
 
 def event1() -> None:

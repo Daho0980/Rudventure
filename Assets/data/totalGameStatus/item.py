@@ -3,8 +3,10 @@ iids:dict[str,dict[str,str]] = {
         "ásotus" : 'Ⴔ'
     },
     "weapon" : {
-        "animus" : '',
-        "anima" : ''
+        "animus" : '⇀',
+        "anima" : '⇁',
+        "animusAnima" : '⇋',
+        "zayaka" : 'Ç'
     },
     "consumable" : {  }
 }
@@ -12,10 +14,10 @@ iids:dict[str,dict[str,str]] = {
 statRatioComments = {
     "durability" : {
         10 : "곧 부서질 것만 같다.",
-        20 : "금 간 곳이 많다.",
-        40 : "꽤 사용된 것 같다.",
-        70 : "이 정도면 쓸만하다.",
-        90 : "거의 새 것과도 같다."
+        20 : "금 간 부분이 많다.",
+        40 : "꽤 많이 사용된 것 같다.",
+        70 : "이 정도면 충분히 쓸 만하다.",
+        90 : "새것과 같다."
     },
 
     "infection" : {
@@ -38,3 +40,19 @@ itemPlaceableBlock:tuple = (
     'petal', 'corpse', 'blood', 'aorta',
     'venaCava', 'ashChip'
 )
+
+typeMark:dict[str,str] = {
+    "tool"       : "ޛ도구",
+    "weapon"     : "ރ무기",
+    "consumable" : "&소모품"
+}
+
+originMark:dict[str,str] = {
+    "badal"      : "신국 바달",
+    "qantalotia" : "콴탈로티아",
+    "ethlem"     : "에틀렘",
+    "vamulhen"   : "바뮬헨",
+    "samarGavim" : "사마르 가빔",
+    "nimDraha"   : "님 드라하",
+    "senixn"     : "세닉션"
+}

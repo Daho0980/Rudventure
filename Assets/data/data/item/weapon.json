@@ -4,6 +4,7 @@
         "name" : "테스트 아이템(무기)",
         "id" : "testWeapon",
         "type" : "weapon",
+        "origin" : "testField",
         "status" : {
             "atk" : 10,
             "durability" : [50, 100],
@@ -17,6 +18,7 @@
         "name" : "아니무스",
         "id" : "animus",
         "type" : "weapon",
+        "origin" : "\u001b[;38;5;12m낙원\u001b[0m",
         "status" : {
             "atk" : 6,
             "durability" : ["∞", "∞"],
@@ -33,6 +35,7 @@
         "name" : "아니마",
         "id" : "anima",
         "type" : "weapon",
+        "origin" : "\u001b[;38;5;12m낙원\u001b[0m",
         "status" : {
             "atk" : 5,
             "durability" : ["∞", "∞"],
@@ -49,6 +52,7 @@
         "name" : "아니무스&아니마",
         "id" : "animusAnima",
         "type" : "weapon",
+        "origin" : "\u001b[;38;5;12m낙원\u001b[0m",
         "status" : {
             "atk" : 11,
             "durability" : ["∞", "∞"],
@@ -58,6 +62,48 @@
         },
         "nbt" : {
             "link" : false
+        }
+    },
+    "zayaka" : {
+        "icon" : "\u001b[;38;5;5mÇ\u001b[0m",
+        "name" : "자야카",
+        "id" : "zayaka",
+        "type" : "weapon",
+        "origin" : "nimDraha",
+        "status" : {
+            "atk" : 7,
+            "durability" : [300, 300],
+            "weight" : 7,
+            "payload" : 20,
+            "infection" : [0, 250]
+        }
+    },
+    "ilawett" : {
+        "icon" : "\u001b[;38;5;15mҔ\u001b[0m",
+        "name" : "일라웨트",
+        "id" : "ilawett",
+        "type" : "weapon",
+        "origin" : "samarGavim",
+        "status" : {
+            "atk" : 9,
+            "durability" : [200, 200],
+            "weight" : 4,
+            "payload" : 15,
+            "infection" : [0, 400]
+        }
+    },
+    "omoreBiodegrader" : {
+        "icon" : "\u001b[;38;5;8mҵ\u001b[0m",
+        "name" : "오모어 생분해기",
+        "id" : "omoreBiodegrader",
+        "type" : "weapon",
+        "origin" : "qantalotia",
+        "status" : {
+            "atk" : 5,
+            "durability" : [150, 150],
+            "weight" : 8,
+            "payload" : 16,
+            "infection" : [0, 100]
         }
     }
 }
