@@ -1,16 +1,3 @@
-iids:dict[str,dict[str,str]] = {
-    "tool" : {
-        "ásotus" : 'Ⴔ'
-    },
-    "weapon" : {
-        "animus" : '⇀',
-        "anima" : '⇁',
-        "animusAnima" : '⇋',
-        "zayaka" : 'Ç'
-    },
-    "consumable" : {  }
-}
-
 statRatioComments = {
     "durability" : {
         10 : "곧 부서질 것만 같다.",
